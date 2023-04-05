@@ -31,6 +31,27 @@ def test_batched_tensor_repr() -> None:
     assert repr(BatchedTensor(torch.arange(3))) == "tensor([0, 1, 2], batch_dim=0)"
 
 
+###############################
+#     Indexing operations     #
+###############################
+
+
+def test_batched_tensor_getitem() -> None:
+    assert BatchedTensor(torch.arange(10).view(2, 5))[1, 1:3].equal(torch.tensor([6, 7]))
+
+
+def test_batched_tensor_setitem_tensor() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch[1, 1:3] = torch.tensor([16, 17])
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 16, 17, 8, 9]])))
+
+
+def test_batched_tensor_setitem_int() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch[1, 1:3] = 2
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 2, 2, 8, 9]])))
+
+
 #################################
 #     Comparison operations     #
 #################################
@@ -92,7 +113,7 @@ def test_batched_tensor_add_batch_dim_1() -> None:
     )
 
 
-def test_batched_tensor_add_incorrect_batch_dim():
+def test_batched_tensor_add_incorrect_batch_dim() -> None:
     with raises(RuntimeError):
         BatchedTensor(torch.ones(2, 3)).add(BatchedTensor(torch.ones(2, 3), batch_dim=1))
 
@@ -102,17 +123,17 @@ def test_batched_tensor_add_incorrect_batch_dim():
 ########################################
 
 
-def test_check_data_and_dim_correct():
+def test_check_data_and_dim_correct() -> None:
     check_data_and_dim(torch.ones(2, 3), batch_dim=0)
     # will fail if an exception is raised
 
 
-def test_check_data_and_dim_incorrect_data_dim():
+def test_check_data_and_dim_incorrect_data_dim() -> None:
     with raises(RuntimeError):
         check_data_and_dim(torch.tensor(2), batch_dim=0)
 
 
 @mark.parametrize("batch_dim", (-1, 2, 3))
-def test_check_data_and_dim_incorrect_batch_dim(batch_dim: int):
+def test_check_data_and_dim_incorrect_batch_dim(batch_dim: int) -> None:
     with raises(RuntimeError):
         check_data_and_dim(torch.ones(2, 3), batch_dim=batch_dim)
