@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+__all__ = ["BatchedTensor"]
+
 from collections.abc import Callable
 from typing import Any
 
 import torch
+from torch import Tensor
+
+from redcat.utils import IndexType
 
 
 class BatchedTensor:
@@ -57,9 +62,19 @@ class BatchedTensor:
         return self._data.shape[self._batch_dim]
 
     @property
-    def data(self) -> torch.Tensor:
+    def data(self) -> Tensor:
         r"""``torch.Tensor``: The data in the batch."""
         return self._data
+
+    ###############################
+    #     Indexing operations     #
+    ###############################
+
+    def __getitem__(self, index: IndexType) -> Tensor:
+        return self._data[index]
+
+    def __setitem__(self, index: IndexType, value: Tensor | int | float) -> None:
+        self._data[index] = value
 
     #################################
     #     Comparison operations     #
@@ -96,7 +111,7 @@ class BatchedTensor:
 
     def add(
         self,
-        other: BatchedTensor | torch.Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1,
     ) -> BatchedTensor:
         r"""Adds the input ``other``, scaled by ``alpha``, to the ``self``
@@ -133,7 +148,7 @@ class BatchedTensor:
         return torch.add(self, other, alpha=alpha)
 
 
-def check_data_and_dim(data: torch.Tensor, batch_dim: int) -> None:
+def check_data_and_dim(data: Tensor, batch_dim: int) -> None:
     r"""Checks if the tensor ``data`` and ``batch_dim`` are correct.
 
     Args:
