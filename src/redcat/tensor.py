@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["BatchedTensor"]
+__all__ = ["BatchedTensor", "check_data_and_dim"]
 
 from collections.abc import Callable
 from typing import Any

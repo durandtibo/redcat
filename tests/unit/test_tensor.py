@@ -33,7 +33,7 @@ def test_batched_tensor_repr() -> None:
 
 
 @mark.parametrize("device", get_available_devices())
-def test_batched_tensor_device(device: str)->None:
+def test_batched_tensor_device(device: str) -> None:
     device = torch.device(device)
     assert BatchedTensor(torch.ones(2, 3, device=device)).device == device
 

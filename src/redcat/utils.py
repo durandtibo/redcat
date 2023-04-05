@@ -10,7 +10,6 @@ DeviceType = Union[torch.device, str, int]
 IndexType = Union[None, int, slice, str, Tensor, Sequence]
 
 
-
 def get_available_devices() -> tuple[str, ...]:
     r"""Gets the available PyTorch devices on the machine.
 
