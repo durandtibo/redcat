@@ -6,6 +6,7 @@ from torch.overrides import is_tensor_like
 
 from redcat import BatchedTensor
 from redcat.tensor import check_data_and_dim
+from redcat.utils import get_available_devices
 
 
 def test_batched_tensor_is_tensor_like() -> None:
@@ -31,25 +32,55 @@ def test_batched_tensor_repr() -> None:
     assert repr(BatchedTensor(torch.arange(3))) == "tensor([0, 1, 2], batch_dim=0)"
 
 
-###############################
-#     Indexing operations     #
-###############################
+@mark.parametrize("device", get_available_devices())
+def test_batched_tensor_device(device: str)->None:
+    device = torch.device(device)
+    assert BatchedTensor(torch.ones(2, 3, device=device)).device == device
 
 
-def test_batched_tensor_getitem() -> None:
-    assert BatchedTensor(torch.arange(10).view(2, 5))[1, 1:3].equal(torch.tensor([6, 7]))
+#################################
+#     Conversion operations     #
+#################################
 
 
-def test_batched_tensor_setitem_tensor() -> None:
-    batch = BatchedTensor(torch.arange(10).view(2, 5))
-    batch[1, 1:3] = torch.tensor([16, 17])
-    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 16, 17, 8, 9]])))
+def test_batched_tensor_contiguous() -> None:
+    batch = BatchedTensor(torch.ones(3, 2).transpose(0, 1))
+    assert not batch.is_contiguous()
+    cont = batch.contiguous()
+    assert cont.equal(BatchedTensor(torch.ones(2, 3)))
+    assert cont.is_contiguous()
 
 
-def test_batched_tensor_setitem_int() -> None:
-    batch = BatchedTensor(torch.arange(10).view(2, 5))
-    batch[1, 1:3] = 2
-    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 2, 2, 8, 9]])))
+def test_batched_tensor_contiguous_custom_dim() -> None:
+    batch = BatchedTensor(torch.ones(3, 2).transpose(0, 1), batch_dim=1)
+    assert not batch.is_contiguous()
+    cont = batch.contiguous()
+    assert cont.equal(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+    assert cont.is_contiguous()
+
+
+def test_batched_tensor_contiguous_memory_format() -> None:
+    batch = BatchedTensor(torch.ones(2, 3, 4, 5))
+    assert not batch.data.is_contiguous(memory_format=torch.channels_last)
+    cont = batch.contiguous(memory_format=torch.channels_last)
+    assert cont.equal(BatchedTensor(torch.ones(2, 3, 4, 5)))
+    assert cont.is_contiguous(memory_format=torch.channels_last)
+
+
+def test_batched_tensor_to() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .to(dtype=torch.bool)
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.bool)))
+    )
+
+
+def test_batched_tensor_to_custom_dim() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .to(dtype=torch.bool)
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.bool), batch_dim=1))
+    )
 
 
 #################################

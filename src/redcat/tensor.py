@@ -8,8 +8,6 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from redcat.utils import IndexType
-
 
 class BatchedTensor:
     r"""Implements a batched tensor to easily manipulate a batch of examples.
@@ -66,15 +64,91 @@ class BatchedTensor:
         r"""``torch.Tensor``: The data in the batch."""
         return self._data
 
-    ###############################
-    #     Indexing operations     #
-    ###############################
+    @property
+    def device(self) -> torch.device:
+        r"""``torch.device``: The device where the batch data/tensor is."""
+        return self._data.device
 
-    def __getitem__(self, index: IndexType) -> Tensor:
-        return self._data[index]
+    #################################
+    #     Conversion operations     #
+    #################################
 
-    def __setitem__(self, index: IndexType, value: Tensor | int | float) -> None:
-        self._data[index] = value
+    def contiguous(
+        self, memory_format: torch.memory_format = torch.contiguous_format
+    ) -> BatchedTensor:
+        r"""Creates a batch with a contiguous representation of the data.
+
+        Args:
+            memory_format (``torch.memory_format``, optional):
+                Specifies the desired memory format.
+                Default: ``torch.contiguous_format``
+
+        Returns:
+            ``BatchedTensor``: A new batch with a contiguous
+                representation of the data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3)).contiguous()
+            >>> batch.data.is_contiguous()
+            True
+        """
+        return BatchedTensor(
+            data=self._data.contiguous(memory_format=memory_format), batch_dim=self._batch_dim
+        )
+
+    def is_contiguous(self, memory_format: torch.memory_format = torch.contiguous_format) -> bool:
+        r"""Indicates if a batch as a contiguous representation of the data.
+
+        Args:
+            memory_format (``torch.memory_format``, optional):
+                Specifies the desired memory format.
+                Default: ``torch.contiguous_format``
+
+        Returns:
+            bool: ``True`` if the data are stored with a contiguous
+                tensor, otherwise ``False``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.ones(2, 3)).is_contiguous()
+            True
+        """
+        return self._data.is_contiguous(memory_format=memory_format)
+
+    def to(self, *args, **kwargs) -> BatchedTensor:
+        r"""Moves and/or casts the data.
+
+        Args:
+            *args: see https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch-tensor-to
+            **kwargs: see https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch-tensor-to
+
+        Returns:
+            ``BatchedTensor``: A new batch with the data after dtype
+                and/or device conversion.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch_cuda = batch.to(device=torch.device('cuda:0'))
+            >>> batch_bool = batch.to(dtype=torch.bool)
+            >>> batch_bool.data
+            tensor([[True, True, True],
+                    [True, True, True]])
+        """
+        return BatchedTensor(data=self._data.to(*args, **kwargs), batch_dim=self._batch_dim)
 
     #################################
     #     Comparison operations     #
