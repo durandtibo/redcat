@@ -98,7 +98,7 @@ class BatchedTensor:
             True
         """
         return BatchedTensor(
-            data=self._data.contiguous(memory_format=memory_format), batch_dim=self._batch_dim
+            data=self._data.contiguous(memory_format=memory_format), **self._get_kwargs()
         )
 
     def is_contiguous(self, memory_format: torch.memory_format = torch.contiguous_format) -> bool:
@@ -148,7 +148,7 @@ class BatchedTensor:
             tensor([[True, True, True],
                     [True, True, True]])
         """
-        return BatchedTensor(data=self._data.to(*args, **kwargs), batch_dim=self._batch_dim)
+        return BatchedTensor(data=self._data.to(*args, **kwargs), **self._get_kwargs())
 
     #################################
     #     Comparison operations     #
@@ -220,6 +220,9 @@ class BatchedTensor:
                     [3., 3., 3.]], batch_dim=0)
         """
         return torch.add(self, other, alpha=alpha)
+
+    def _get_kwargs(self) -> dict:
+        return {"batch_dim": self._batch_dim}
 
 
 def check_data_and_dim(data: Tensor, batch_dim: int) -> None:

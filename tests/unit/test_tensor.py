@@ -1,5 +1,6 @@
-from typing import Union
+from typing import Any, Union
 
+import numpy as np
 import torch
 from pytest import mark, raises
 from torch.overrides import is_tensor_like
@@ -13,8 +14,23 @@ def test_batched_tensor_is_tensor_like() -> None:
     assert is_tensor_like(BatchedTensor(torch.ones(2, 3)))
 
 
+@mark.parametrize(
+    "data",
+    (
+        torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=torch.float),
+        np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=np.float32),
+        [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+        ((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)),
+    ),
+)
+def test_batched_tensor_init_data(data: Any) -> None:
+    assert BatchedTensor(data).data.equal(
+        torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=torch.float)
+    )
+
+
 @mark.parametrize("batch_dim", (-1, 1, 2))
-def test_batched_tensor_incorrect_batch_dim(batch_dim: int) -> None:
+def test_batched_tensor_init_incorrect_batch_dim(batch_dim: int) -> None:
     with raises(RuntimeError):
         BatchedTensor(torch.ones(2), batch_dim=batch_dim)
 

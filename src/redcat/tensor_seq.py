@@ -64,6 +64,87 @@ class BatchedTensorSeq:
         return self._data.shape[self._seq_dim]
 
     #################################
+    #     Conversion operations     #
+    #################################
+
+    def contiguous(
+        self, memory_format: torch.memory_format = torch.contiguous_format
+    ) -> BatchedTensorSeq:
+        r"""Creates a batch with a contiguous representation of the data.
+
+        Args:
+            memory_format (``torch.memory_format``, optional):
+                Specifies the desired memory format.
+                Default: ``torch.contiguous_format``
+
+        Returns:
+            ``BatchedTensorSeq``: A new batch with a contiguous
+                representation of the data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.ones(2, 3)).contiguous()
+            >>> batch.data.is_contiguous()
+            True
+        """
+        return BatchedTensorSeq(
+            data=self._data.contiguous(memory_format=memory_format), **self._get_kwargs()
+        )
+
+    def is_contiguous(self, memory_format: torch.memory_format = torch.contiguous_format) -> bool:
+        r"""Indicates if a batch as a contiguous representation of the data.
+
+        Args:
+            memory_format (``torch.memory_format``, optional):
+                Specifies the desired memory format.
+                Default: ``torch.contiguous_format``
+
+        Returns:
+            bool: ``True`` if the data are stored with a contiguous
+                tensor, otherwise ``False``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.ones(2, 3)).is_contiguous()
+            True
+        """
+        return self._data.is_contiguous(memory_format=memory_format)
+
+    def to(self, *args, **kwargs) -> BatchedTensorSeq:
+        r"""Moves and/or casts the data.
+
+        Args:
+            *args: see https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch-tensor-to
+            **kwargs: see https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch-tensor-to
+
+        Returns:
+            ``BatchedTensorSeq``: A new batch with the data after dtype
+                and/or device conversion.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.ones(2, 3))
+            >>> batch_cuda = batch.to(device=torch.device('cuda:0'))
+            >>> batch_bool = batch.to(dtype=torch.bool)
+            >>> batch_bool.data
+            tensor([[True, True, True],
+                    [True, True, True]])
+        """
+        return BatchedTensorSeq(data=self._data.to(*args, **kwargs), **self._get_kwargs())
+
+    #################################
     #     Comparison operations     #
     #################################
 
@@ -91,6 +172,9 @@ class BatchedTensorSeq:
         if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
             return False
         return self._data.equal(other.data)
+
+    def _get_kwargs(self) -> dict:
+        return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
 
 def check_data_and_dims(data: torch.Tensor, batch_dim: int, seq_dim: int) -> None:
