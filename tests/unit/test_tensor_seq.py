@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 import numpy as np
 import torch
@@ -376,6 +376,190 @@ def test_batched_tensor_seq_zeros_like_target_dtype(dtype: torch.dtype) -> None:
     assert (
         BatchedTensorSeq(torch.ones(2, 3))
         .zeros_like(dtype=dtype)
+        .equal(BatchedTensorSeq(torch.zeros(2, 3, dtype=dtype)))
+    )
+
+
+###############################
+#     Creation operations     #
+###############################
+
+
+@mark.parametrize("fill_value", (1, 2.0, True))
+def test_batched_tensor_seq_new_full_fill_value(fill_value: Union[float, int, bool]) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_full(fill_value)
+        .equal(BatchedTensorSeq(torch.full((2, 3), fill_value, dtype=torch.float)))
+    )
+
+
+def test_batched_tensor_seq_new_full_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(3, 2), batch_dim=1, seq_dim=0)
+        .new_full(2.0)
+        .equal(BatchedTensorSeq(torch.full((3, 2), 2.0), batch_dim=1, seq_dim=0))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_new_full_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3, dtype=dtype))
+        .new_full(2.0)
+        .equal(BatchedTensorSeq(torch.full((2, 3), 2.0, dtype=dtype)))
+    )
+
+
+@mark.parametrize("device", get_available_devices())
+def test_batched_tensor_seq_new_full_device(device: str) -> None:
+    device = torch.device(device)
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_full(2.0, device=device)
+        .equal(BatchedTensorSeq(torch.full((2, 3), 2.0, device=device)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_tensor_seq_new_full_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_full(2.0, batch_size=batch_size)
+        .equal(BatchedTensorSeq(torch.full((batch_size, 3), 2.0)))
+    )
+
+
+@mark.parametrize("seq_len", (1, 2))
+def test_batched_tensor_seq_new_full_custom_seq_len(seq_len: int) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_full(2.0, seq_len=seq_len)
+        .equal(BatchedTensorSeq(torch.full((2, seq_len), 2.0)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_new_full_custom_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_full(2.0, dtype=dtype)
+        .equal(BatchedTensorSeq(torch.full((2, 3), 2.0, dtype=dtype)))
+    )
+
+
+def test_batched_tensor_seq_new_ones() -> None:
+    assert BatchedTensorSeq(torch.zeros(2, 3)).new_ones().equal(BatchedTensorSeq(torch.ones(2, 3)))
+
+
+def test_batched_tensor_seq_new_ones_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(3, 2), batch_dim=1, seq_dim=0)
+        .new_ones()
+        .equal(BatchedTensorSeq(torch.ones(3, 2), batch_dim=1, seq_dim=0))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_new_ones_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3, dtype=dtype))
+        .new_ones()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=dtype)))
+    )
+
+
+@mark.parametrize("device", get_available_devices())
+def test_batched_tensor_seq_new_ones_device(device: str) -> None:
+    device = torch.device(device)
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_ones(device=device)
+        .equal(BatchedTensorSeq(torch.ones(2, 3, device=device)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_tensor_seq_new_ones_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_ones(batch_size=batch_size)
+        .equal(BatchedTensorSeq(torch.ones(batch_size, 3)))
+    )
+
+
+@mark.parametrize("seq_len", (1, 2))
+def test_batched_tensor_seq_new_ones_custom_seq_len(seq_len: int) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_ones(seq_len=seq_len)
+        .equal(BatchedTensorSeq(torch.ones(2, seq_len)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_new_ones_custom_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.zeros(2, 3))
+        .new_ones(dtype=dtype)
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=dtype)))
+    )
+
+
+def test_batched_tensor_seq_new_zeros() -> None:
+    assert BatchedTensorSeq(torch.ones(2, 3)).new_zeros().equal(BatchedTensorSeq(torch.zeros(2, 3)))
+
+
+def test_batched_tensor_seq_new_zeros_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(3, 2), batch_dim=1, seq_dim=0)
+        .new_zeros()
+        .equal(BatchedTensorSeq(torch.zeros(3, 2), batch_dim=1, seq_dim=0))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_new_zeros_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3, dtype=dtype))
+        .new_zeros()
+        .equal(BatchedTensorSeq(torch.zeros(2, 3, dtype=dtype)))
+    )
+
+
+@mark.parametrize("device", get_available_devices())
+def test_batched_tensor_seq_new_zeros_device(device: str) -> None:
+    device = torch.device(device)
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .new_zeros(device=device)
+        .equal(BatchedTensorSeq(torch.zeros(2, 3, device=device)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_tensor_seq_new_zeros_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .new_zeros(batch_size=batch_size)
+        .equal(BatchedTensorSeq(torch.zeros(batch_size, 3)))
+    )
+
+
+@mark.parametrize("seq_len", (1, 2))
+def test_batched_tensor_seq_new_zeros_custom_seq_len(seq_len: int) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .new_zeros(seq_len=seq_len)
+        .equal(BatchedTensorSeq(torch.zeros(2, seq_len)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_new_zeros_custom_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .new_zeros(dtype=dtype)
         .equal(BatchedTensorSeq(torch.zeros(2, 3, dtype=dtype)))
     )
 
