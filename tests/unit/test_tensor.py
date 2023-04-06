@@ -216,6 +216,122 @@ def test_batched_tensor_equal_false_different_batch_dim() -> None:
     assert not BatchedTensor(torch.ones(2, 3), batch_dim=1).equal(BatchedTensor(torch.ones(2, 3)))
 
 
+###############################
+#     Creation operations     #
+###############################
+
+
+def test_batched_tensor_clone() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    clone = batch.clone()
+    batch.data.add_(1)
+    assert batch.equal(BatchedTensor(torch.ones(2, 3).mul(2)))
+    assert clone.equal(BatchedTensor(torch.ones(2, 3)))
+
+
+def test_batched_tensor_clone_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .clone()
+        .equal(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+    )
+
+
+@mark.parametrize("fill_value", (1.5, 2.0, -1.0))
+def test_batched_tensor_full_like(fill_value: float) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .full_like(fill_value)
+        .equal(BatchedTensor(torch.full((2, 3), fill_value=fill_value)))
+    )
+
+
+def test_batched_tensor_full_like_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.zeros(3, 2), batch_dim=1)
+        .full_like(fill_value=2.0)
+        .equal(BatchedTensor(torch.full((3, 2), fill_value=2.0), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_full_like_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3, dtype=dtype))
+        .full_like(fill_value=2.0)
+        .equal(BatchedTensor(torch.full((2, 3), fill_value=2.0, dtype=dtype)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_full_like_target_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .full_like(fill_value=2.0, dtype=dtype)
+        .equal(BatchedTensor(torch.full((2, 3), fill_value=2.0, dtype=dtype)))
+    )
+
+
+def test_batched_tensor_ones_like() -> None:
+    assert BatchedTensor(torch.zeros(2, 3)).ones_like().equal(BatchedTensor(torch.ones(2, 3)))
+
+
+def test_batched_tensor_ones_like_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.zeros(3, 2), batch_dim=1)
+        .ones_like()
+        .equal(BatchedTensor(torch.ones(3, 2), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_ones_like_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3, dtype=dtype))
+        .ones_like()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=dtype)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_ones_like_target_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .ones_like(dtype=dtype)
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=dtype)))
+    )
+
+
+def test_batched_tensor_zeros_like() -> None:
+    assert BatchedTensor(torch.ones(2, 3)).zeros_like().equal(BatchedTensor(torch.zeros(2, 3)))
+
+
+def test_batched_tensor_zeros_like_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.ones(3, 2), batch_dim=1)
+        .zeros_like()
+        .equal(BatchedTensor(torch.zeros(3, 2), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_zeros_like_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3, dtype=dtype))
+        .zeros_like()
+        .equal(BatchedTensor(torch.zeros(2, 3, dtype=dtype)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_zeros_like_target_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .zeros_like(dtype=dtype)
+        .equal(BatchedTensor(torch.zeros(2, 3, dtype=dtype)))
+    )
+
+
 ###################################
 #     Arithmetical operations     #
 ###################################
