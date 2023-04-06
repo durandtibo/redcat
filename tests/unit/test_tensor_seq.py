@@ -1,3 +1,6 @@
+from typing import Any
+
+import numpy as np
 import torch
 from pytest import mark, raises
 
@@ -6,24 +9,39 @@ from redcat.tensor_seq import check_data_and_dims
 from redcat.utils import get_available_devices
 
 
-def test_batched_tensor_seq_incorrect_data_dim() -> None:
+@mark.parametrize(
+    "data",
+    (
+        torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=torch.float),
+        np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=np.float32),
+        [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+        ((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)),
+    ),
+)
+def test_batched_tensor_seq_init_data(data: Any) -> None:
+    assert BatchedTensorSeq(data).data.equal(
+        torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=torch.float)
+    )
+
+
+def test_batched_tensor_seq_init_incorrect_data_dim() -> None:
     with raises(RuntimeError):
         BatchedTensorSeq(torch.ones(2))
 
 
 @mark.parametrize("batch_dim", (-1, 3, 4))
-def test_batched_tensor_seq_incorrect_batch_dim(batch_dim: int) -> None:
+def test_batched_tensor_seq_init_incorrect_batch_dim(batch_dim: int) -> None:
     with raises(RuntimeError):
         BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=batch_dim)
 
 
 @mark.parametrize("seq_dim", (-1, 3, 4))
-def test_batched_tensor_seq_incorrect_seq_dim(seq_dim: int) -> None:
+def test_batched_tensor_seq_init_incorrect_seq_dim(seq_dim: int) -> None:
     with raises(RuntimeError):
         BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=0, seq_dim=seq_dim)
 
 
-def test_batched_tensor_seq_incorrect_same_batch_and_seq_dims() -> None:
+def test_batched_tensor_seq_init_incorrect_same_batch_and_seq_dims() -> None:
     with raises(RuntimeError):
         BatchedTensorSeq(torch.ones(2, 3), batch_dim=0, seq_dim=0)
 
@@ -72,6 +90,51 @@ def test_batched_tensor_seq_seq_len(seq_len: int) -> None:
 def test_batched_tensor_seq_device(device: str) -> None:
     device = torch.device(device)
     assert BatchedTensorSeq(torch.ones(2, 3, device=device)).device == device
+
+
+#################################
+#     Conversion operations     #
+#################################
+
+
+def test_batched_tensor_seq_contiguous() -> None:
+    batch = BatchedTensorSeq(torch.ones(3, 2).transpose(0, 1))
+    assert not batch.is_contiguous()
+    cont = batch.contiguous()
+    assert cont.equal(BatchedTensorSeq(torch.ones(2, 3)))
+    assert cont.is_contiguous()
+
+
+def test_batched_tensor_seq_contiguous_custom_dims() -> None:
+    batch = BatchedTensorSeq(torch.ones(3, 2).transpose(0, 1), batch_dim=1, seq_dim=0)
+    assert not batch.is_contiguous()
+    cont = batch.contiguous()
+    assert cont.equal(BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0))
+    assert cont.is_contiguous()
+
+
+def test_batched_tensor_seq_contiguous_memory_format() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 4, 5))
+    assert not batch.data.is_contiguous(memory_format=torch.channels_last)
+    cont = batch.contiguous(memory_format=torch.channels_last)
+    assert cont.equal(BatchedTensorSeq(torch.ones(2, 3, 4, 5)))
+    assert cont.is_contiguous(memory_format=torch.channels_last)
+
+
+def test_batched_tensor_seq_to() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .to(dtype=torch.bool)
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.bool)))
+    )
+
+
+def test_batched_tensor_seq_to_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .to(dtype=torch.bool)
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.bool), batch_dim=1, seq_dim=0))
+    )
 
 
 #################################
