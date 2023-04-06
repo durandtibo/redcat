@@ -9,6 +9,8 @@ from redcat import BatchedTensor
 from redcat.tensor import check_data_and_dim
 from redcat.utils import get_available_devices
 
+DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
+
 
 def test_batched_tensor_is_tensor_like() -> None:
     assert is_tensor_like(BatchedTensor(torch.ones(2, 3)))
@@ -96,6 +98,96 @@ def test_batched_tensor_to_custom_dim() -> None:
         BatchedTensor(torch.ones(2, 3), batch_dim=1)
         .to(dtype=torch.bool)
         .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.bool), batch_dim=1))
+    )
+
+
+#################
+#     dtype     #
+#################
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_dtype(dtype: torch.dtype) -> None:
+    assert BatchedTensor(torch.ones(2, 3, dtype=dtype)).dtype == dtype
+
+
+def test_batched_tensor_bool() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .bool()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.bool)))
+    )
+
+
+def test_batched_tensor_bool_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .bool()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.bool), batch_dim=1))
+    )
+
+
+def test_batched_tensor_double() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .double()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.double)))
+    )
+
+
+def test_batched_tensor_double_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .double()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.double), batch_dim=1))
+    )
+
+
+def test_batched_tensor_float() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3, dtype=torch.long))
+        .float()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.float)))
+    )
+
+
+def test_batched_tensor_float_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3, dtype=torch.long), batch_dim=1)
+        .float()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.float), batch_dim=1))
+    )
+
+
+def test_batched_tensor_int() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .int()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.int)))
+    )
+
+
+def test_batched_tensor_int_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .int()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.int), batch_dim=1))
+    )
+
+
+def test_batched_tensor_long() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .long()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.long)))
+    )
+
+
+def test_batched_tensor_long_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .long()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=torch.long), batch_dim=1))
     )
 
 
