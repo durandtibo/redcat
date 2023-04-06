@@ -100,6 +100,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
         the current batch.
 
         Args:
+            fill_value (float or int or bool): Specifies the number
+                to fill the batch with.
             batch_size (int or ``None``): Specifies the batch size.
                 If ``None``, the batch size of the current batch is
                 used. Default: ``None``.

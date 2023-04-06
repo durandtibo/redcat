@@ -89,6 +89,152 @@ class BatchedTensor(BaseBatchedTensor):
             return False
         return self._data.equal(other.data)
 
+    ###############################
+    #     Creation operations     #
+    ###############################
+
+    def new_full(
+        self,
+        fill_value: float | int | bool,
+        batch_size: int | None = None,
+        **kwargs,
+    ) -> BatchedTensor:
+        r"""Creates a batch filled with a scalar value.
+
+        By default, the tensor in the returned batch has the same
+        shape, ``torch.dtype`` and ``torch.device`` as the tensor in
+        the current batch.
+
+        Args:
+            fill_value (float or int or bool): Specifies the number
+                to fill the batch with.
+            batch_size (int or ``None``): Specifies the batch size.
+                If ``None``, the batch size of the current batch is
+                used. Default: ``None``.
+            **kwargs: See the documentation of
+                ``torch.Tensor.new_full``.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch filled with the scalar value.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.new_full(42)
+            tensor([[42., 42., 42.],
+                    [42., 42., 42.]], batch_dim=0)
+            >>> batch.new_full(42, batch_size=5)
+            tensor([[42., 42., 42.],
+                    [42., 42., 42.],
+                    [42., 42., 42.],
+                    [42., 42., 42.],
+                    [42., 42., 42.]], batch_dim=0)
+        """
+        shape = list(self._data.shape)
+        if batch_size is not None:
+            shape[self._batch_dim] = batch_size
+        kwargs["dtype"] = kwargs.get("dtype", self.dtype)
+        kwargs["device"] = kwargs.get("device", self.device)
+        return BatchedTensor(
+            torch.full(size=shape, fill_value=fill_value, **kwargs), **self._get_kwargs()
+        )
+
+    def new_ones(
+        self,
+        batch_size: int | None = None,
+        **kwargs,
+    ) -> BatchedTensor:
+        r"""Creates a batch filled with the scalar value ``1``.
+
+        By default, the tensor in the returned batch has the same
+        shape, ``torch.dtype`` and ``torch.device`` as the tensor in
+        the current batch.
+
+        Args:
+            batch_size (int or ``None``): Specifies the batch size.
+                If ``None``, the batch size of the current batch is
+                used. Default: ``None``.
+            **kwargs: See the documentation of
+                ``torch.Tensor.new_ones``.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch filled with the scalar
+                value ``1``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.zeros(2, 3))
+            >>> batch.new_ones()
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+            >>> batch.new_ones(batch_size=5)
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.],
+                    [1., 1., 1.],
+                    [1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+        """
+        shape = list(self._data.shape)
+        if batch_size is not None:
+            shape[self._batch_dim] = batch_size
+        kwargs["dtype"] = kwargs.get("dtype", self.dtype)
+        kwargs["device"] = kwargs.get("device", self.device)
+        return BatchedTensor(torch.ones(*shape, **kwargs), **self._get_kwargs())
+
+    def new_zeros(
+        self,
+        batch_size: int | None = None,
+        **kwargs,
+    ) -> BatchedTensor:
+        r"""Creates a batch filled with the scalar value ``0``.
+
+        By default, the tensor in the returned batch has the same
+        shape, ``torch.dtype`` and ``torch.device`` as the tensor
+        in the current batch.
+
+        Args:
+            batch_size (int or ``None``): Specifies the batch size.
+                If ``None``, the batch size of the current batch is
+                used. Default: ``None``.
+            **kwargs: See the documentation of
+                ``torch.Tensor.new_zeros``.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch filled with the scalar
+                value ``0``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.new_zeros()
+            tensor([[0., 0., 0.],
+                    [0., 0., 0.]], batch_dim=0)
+            >>> batch.new_zeros(batch_size=5)
+            tensor([[0., 0., 0.],
+                    [0., 0., 0.],
+                    [0., 0., 0.],
+                    [0., 0., 0.],
+                    [0., 0., 0.]], batch_dim=0)
+        """
+        shape = list(self._data.shape)
+        if batch_size is not None:
+            shape[self._batch_dim] = batch_size
+        kwargs["dtype"] = kwargs.get("dtype", self.dtype)
+        kwargs["device"] = kwargs.get("device", self.device)
+        return BatchedTensor(torch.zeros(*shape, **kwargs), **self._get_kwargs())
+
     ###################################
     #     Arithmetical operations     #
     ###################################

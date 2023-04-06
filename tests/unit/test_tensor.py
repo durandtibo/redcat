@@ -229,7 +229,7 @@ def test_batched_tensor_clone() -> None:
     assert clone.equal(BatchedTensor(torch.ones(2, 3)))
 
 
-def test_batched_tensor_clone_custom_dims() -> None:
+def test_batched_tensor_clone_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.ones(2, 3), batch_dim=1)
         .clone()
@@ -246,7 +246,7 @@ def test_batched_tensor_full_like(fill_value: float) -> None:
     )
 
 
-def test_batched_tensor_full_like_custom_dims() -> None:
+def test_batched_tensor_full_like_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.zeros(3, 2), batch_dim=1)
         .full_like(fill_value=2.0)
@@ -276,7 +276,7 @@ def test_batched_tensor_ones_like() -> None:
     assert BatchedTensor(torch.zeros(2, 3)).ones_like().equal(BatchedTensor(torch.ones(2, 3)))
 
 
-def test_batched_tensor_ones_like_custom_dims() -> None:
+def test_batched_tensor_ones_like_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.zeros(3, 2), batch_dim=1)
         .ones_like()
@@ -306,7 +306,7 @@ def test_batched_tensor_zeros_like() -> None:
     assert BatchedTensor(torch.ones(2, 3)).zeros_like().equal(BatchedTensor(torch.zeros(2, 3)))
 
 
-def test_batched_tensor_zeros_like_custom_dims() -> None:
+def test_batched_tensor_zeros_like_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.ones(3, 2), batch_dim=1)
         .zeros_like()
@@ -328,6 +328,163 @@ def test_batched_tensor_zeros_like_target_dtype(dtype: torch.dtype) -> None:
     assert (
         BatchedTensor(torch.ones(2, 3))
         .zeros_like(dtype=dtype)
+        .equal(BatchedTensor(torch.zeros(2, 3, dtype=dtype)))
+    )
+
+
+###############################
+#     Creation operations     #
+###############################
+
+
+@mark.parametrize("fill_value", (1, 2.0, True))
+def test_batched_tensor_new_full_fill_value(fill_value: Union[float, int, bool]) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .new_full(fill_value)
+        .equal(BatchedTensor(torch.full((2, 3), fill_value, dtype=torch.float)))
+    )
+
+
+def test_batched_tensor_new_full_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.zeros(3, 2), batch_dim=1)
+        .new_full(2.0)
+        .equal(BatchedTensor(torch.full((3, 2), 2.0), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_new_full_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3, dtype=dtype))
+        .new_full(2.0)
+        .equal(BatchedTensor(torch.full((2, 3), 2.0, dtype=dtype)))
+    )
+
+
+@mark.parametrize("device", get_available_devices())
+def test_batched_tensor_new_full_device(device: str) -> None:
+    device = torch.device(device)
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .new_full(2.0, device=device)
+        .equal(BatchedTensor(torch.full((2, 3), 2.0, device=device)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_tensor_new_full_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .new_full(2.0, batch_size=batch_size)
+        .equal(BatchedTensor(torch.full((batch_size, 3), 2.0)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_new_full_custom_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .new_full(2.0, dtype=dtype)
+        .equal(BatchedTensor(torch.full((2, 3), 2.0, dtype=dtype)))
+    )
+
+
+def test_batched_tensor_new_ones() -> None:
+    assert BatchedTensor(torch.zeros(2, 3)).new_ones().equal(BatchedTensor(torch.ones(2, 3)))
+
+
+def test_batched_tensor_new_ones_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.zeros(3, 2), batch_dim=1)
+        .new_ones()
+        .equal(BatchedTensor(torch.ones(3, 2), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_new_ones_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3, dtype=dtype))
+        .new_ones()
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=dtype)))
+    )
+
+
+@mark.parametrize("device", get_available_devices())
+def test_batched_tensor_new_ones_device(device: str) -> None:
+    device = torch.device(device)
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .new_ones(device=device)
+        .equal(BatchedTensor(torch.ones(2, 3, device=device)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_tensor_new_ones_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .new_ones(batch_size=batch_size)
+        .equal(BatchedTensor(torch.ones(batch_size, 3)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_new_ones_custom_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.zeros(2, 3))
+        .new_ones(dtype=dtype)
+        .equal(BatchedTensor(torch.ones(2, 3, dtype=dtype)))
+    )
+
+
+def test_batched_tensor_new_zeros() -> None:
+    assert BatchedTensor(torch.ones(2, 3)).new_zeros().equal(BatchedTensor(torch.zeros(2, 3)))
+
+
+def test_batched_tensor_new_zeros_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.ones(3, 2), batch_dim=1)
+        .new_zeros()
+        .equal(BatchedTensor(torch.zeros(3, 2), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_new_zeros_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3, dtype=dtype))
+        .new_zeros()
+        .equal(BatchedTensor(torch.zeros(2, 3, dtype=dtype)))
+    )
+
+
+@mark.parametrize("device", get_available_devices())
+def test_batched_tensor_new_zeros_device(device: str) -> None:
+    device = torch.device(device)
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .new_zeros(device=device)
+        .equal(BatchedTensor(torch.zeros(2, 3, device=device)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_tensor_new_zeros_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .new_zeros(batch_size=batch_size)
+        .equal(BatchedTensor(torch.zeros(batch_size, 3)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_new_zeros_custom_dtype(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .new_zeros(dtype=dtype)
         .equal(BatchedTensor(torch.zeros(2, 3, dtype=dtype)))
     )
 
