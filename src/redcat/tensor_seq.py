@@ -92,7 +92,7 @@ class BatchedTensorSeq:
             True
         """
         return BatchedTensorSeq(
-            data=self._data.contiguous(memory_format=memory_format), **self._get_kwargs()
+            self._data.contiguous(memory_format=memory_format), **self._get_kwargs()
         )
 
     def is_contiguous(self, memory_format: torch.memory_format = torch.contiguous_format) -> bool:
@@ -142,7 +142,106 @@ class BatchedTensorSeq:
             tensor([[True, True, True],
                     [True, True, True]])
         """
-        return BatchedTensorSeq(data=self._data.to(*args, **kwargs), **self._get_kwargs())
+        return BatchedTensorSeq(self._data.to(*args, **kwargs), **self._get_kwargs())
+
+    #################
+    #     dtype     #
+    #################
+
+    @property
+    def dtype(self) -> torch.dtype:
+        r"""``torch.dtype``: The data type."""
+        return self._data.dtype
+
+    def bool(self) -> BatchedTensorSeq:
+        r"""Converts the current batch to bool data type.
+
+        Returns:
+            ``BatchedTensorSeq``: The current batch to bool data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.ones(2, 3))
+            >>> batch.bool().dtype
+            torch.bool
+        """
+        return BatchedTensorSeq(self._data.bool(), **self._get_kwargs())
+
+    def double(self) -> BatchedTensorSeq:
+        r"""Converts the current batch to double data type.
+
+        Returns:
+            ``BatchedTensorSeq``: The current batch to double data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.ones(2, 3))
+            >>> batch.double().dtype
+            torch.float64
+        """
+        return BatchedTensorSeq(self._data.double(), **self._get_kwargs())
+
+    def float(self) -> BatchedTensorSeq:
+        r"""Converts the current batch to float data type.
+
+        Returns:
+            ``BatchedTensorSeq``: The current batch to float data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.ones(2, 3))
+            >>> batch.float().dtype
+            torch.float32
+        """
+        return BatchedTensorSeq(self._data.float(), **self._get_kwargs())
+
+    def int(self) -> BatchedTensorSeq:
+        r"""Converts the current batch to int data type.
+
+        Returns:
+            ``BatchedTensorSeq``: The current batch to int data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.ones(2, 3))
+            >>> batch.int().dtype
+            torch.int32
+        """
+        return BatchedTensorSeq(self._data.int(), **self._get_kwargs())
+
+    def long(self) -> BatchedTensorSeq:
+        r"""Converts the current batch to long data type.
+
+        Returns:
+            ``BatchedTensorSeq``: The current batch to long data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.ones(2, 3))
+            >>> batch.long().dtype
+            torch.int64
+        """
+        return BatchedTensorSeq(self._data.long(), **self._get_kwargs())
 
     #################################
     #     Comparison operations     #
