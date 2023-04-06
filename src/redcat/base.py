@@ -16,7 +16,12 @@ TBatchedTensor = TypeVar("TBatchedTensor", bound="BaseBatchedTensor")
 class BaseBatchedTensor(ABC):
     @abstractmethod
     def _get_kwargs(self) -> dict:
-        pass
+        r"""Gets the keyword arguments that are specific to the batched tensor
+        implementation.
+
+        Returns:
+            dict: The keyword arguments
+        """
 
     def __init__(self, data: Any, **kwargs) -> None:
         super().__init__()
@@ -57,7 +62,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3)).contiguous()
-            >>> batch.data.is_contiguous()
+            >>> batch.is_contiguous()
             True
         """
         return self.__class__(
@@ -91,8 +96,8 @@ class BaseBatchedTensor(ABC):
         r"""Moves and/or casts the data.
 
         Args:
-            *args: see https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch-tensor-to
-            **kwargs: see https://pytorch.org/docs/stable/generated/torch.Tensor.to.html#torch-tensor-to
+            *args: See the documentation of ``torch.Tensor.to``
+            **kwargs: See the documentation of ``torch.Tensor.to``
 
         Returns:
             ``BatchedTensor``: A new batch with the data after dtype
@@ -109,7 +114,7 @@ class BaseBatchedTensor(ABC):
             >>> batch_bool = batch.to(dtype=torch.bool)
             >>> batch_bool.data
             tensor([[True, True, True],
-                    [True, True, True]])
+                    [True, True, True]], batch_dim=0)
         """
         return self.__class__(self._data.to(*args, **kwargs), **self._get_kwargs())
 
@@ -211,3 +216,111 @@ class BaseBatchedTensor(ABC):
             torch.int64
         """
         return self.__class__(self._data.long(), **self._get_kwargs())
+
+    ###############################
+    #     Creation operations     #
+    ###############################
+
+    def clone(self, *args, **kwargs) -> TBatchedTensor:
+        r"""Creates a copy of the current batch.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.clone``
+            **kwargs: See the documentation of ``torch.Tensor.clone``
+
+        Returns:
+            ``BaseBatchedTensor``: A copy of the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch_copy = batch.clone()
+            >>> batch_copy
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+        """
+        return self.__class__(self._data.clone(*args, **kwargs), **self._get_kwargs())
+
+    def full_like(self, *args, **kwargs) -> TBatchedTensor:
+        r"""Creates a batch filled with a given scalar value, with the same
+        shape as the current batch.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.full_like``
+            **kwargs: See the documentation of
+                ``torch.Tensor.full_like``
+
+        Returns:
+            ``BaseBatchedTensor``: A batch filled with the scalar
+                value, with the same shape as the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.full_like(42)
+            tensor([[42., 42., 42.],
+                    [42., 42., 42.]], batch_dim=0)
+        """
+        return self.__class__(torch.full_like(self._data, *args, **kwargs), **self._get_kwargs())
+
+    def ones_like(self, *args, **kwargs) -> TBatchedTensor:
+        r"""Creates a batch filled with the scalar value ``1``, with the same
+        shape as the current batch.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.ones_like``
+            **kwargs: See the documentation of
+                ``torch.Tensor.ones_like``
+
+        Returns:
+            ``BaseBatchedTensor``: A batch filled with the scalar
+                value ``1``, with the same shape as the current
+                batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.ones_like()
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+        """
+        return self.__class__(torch.ones_like(self._data, *args, **kwargs), **self._get_kwargs())
+
+    def zeros_like(self, *args, **kwargs) -> TBatchedTensor:
+        r"""Creates a batch filled with the scalar value ``0``, with the same
+        shape as the current batch.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.zeros_like``
+            **kwargs: See the documentation of
+                ``torch.Tensor.zeros_like``
+
+        Returns:
+            ``BaseBatchedTensor``: A batch filled with the scalar
+                value ``0``, with the same shape as the current
+                batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.zeros_like()
+            tensor([[0., 0., 0.],
+                    [0., 0., 0.]], batch_dim=0)
+        """
+        return self.__class__(torch.zeros_like(self._data, *args, **kwargs), **self._get_kwargs())
