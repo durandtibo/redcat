@@ -2,8 +2,14 @@ from unittest.mock import patch
 
 import numpy as np
 import torch
+from pytest import raises
 
-from redcat.utils import align_to_batch_first, get_available_devices, swap2
+from redcat.utils import (
+    align_to_batch_first,
+    compute_batch_seq_permutation,
+    get_available_devices,
+    swap2,
+)
 
 ##########################################
 #     Tests for align_to_batch_first     #
@@ -34,6 +40,49 @@ def test_align_to_batch_first_permute_dims_extra_dims() -> None:
             ]
         )
     )
+
+
+###################################################
+#     Tests for compute_batch_seq_permutation     #
+###################################################
+
+
+def test_compute_batch_seq_permutation_batch_seq_to_seq_batch() -> None:
+    assert compute_batch_seq_permutation(5, 0, 1, 1, 0) == [1, 0, 2, 3, 4]
+
+
+def test_compute_batch_seq_permutation_batch_seq_to_seq_batch_dim_2() -> None:
+    assert compute_batch_seq_permutation(2, 0, 1, 1, 0) == [1, 0]
+
+
+def test_compute_batch_seq_permutation_seq_batch_to_batch_seq() -> None:
+    assert compute_batch_seq_permutation(5, 1, 0, 0, 1) == [1, 0, 2, 3, 4]
+
+
+def test_compute_batch_seq_permutation_batch_seq_to_batch_seq() -> None:
+    assert compute_batch_seq_permutation(5, 0, 1, 0, 1) == [0, 1, 2, 3, 4]
+
+
+def test_compute_batch_seq_permutation_batch_dim_2() -> None:
+    assert compute_batch_seq_permutation(5, 0, 1, 2, 0) == [1, 2, 0, 3, 4]
+
+
+def test_compute_batch_seq_permutation_seq_dim_2() -> None:
+    assert compute_batch_seq_permutation(5, 0, 1, 0, 2) == [0, 2, 1, 3, 4]
+
+
+def test_compute_batch_seq_permutation_update_seq_dim() -> None:
+    assert compute_batch_seq_permutation(5, 0, 1, 1, 2) == [2, 0, 1, 3, 4]
+
+
+def test_compute_batch_seq_permutation_incorrect_old_dims() -> None:
+    with raises(RuntimeError, match=r"Incorrect old_batch_dim (.*) and old_seq_dim (.*)."):
+        compute_batch_seq_permutation(5, 1, 1, 0, 1)
+
+
+def test_compute_batch_seq_permutation_incorrect_new_dims() -> None:
+    with raises(RuntimeError, match=r"Incorrect new_batch_dim (.*) and new_seq_dim (.*)."):
+        compute_batch_seq_permutation(5, 0, 1, 1, 1)
 
 
 ###########################################

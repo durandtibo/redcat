@@ -1,4 +1,11 @@
-__all__ = ["DeviceType", "IndexType", "align_to_batch_first", "get_available_devices", "swap2"]
+__all__ = [
+    "DeviceType",
+    "IndexType",
+    "align_to_batch_first",
+    "compute_batch_seq_permutation",
+    "get_available_devices",
+    "swap2",
+]
 
 import copy
 from collections.abc import MutableSequence, Sequence
@@ -42,6 +49,61 @@ def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
     if batch_dim == 0:
         return tensor
     return tensor.transpose(0, batch_dim)
+
+
+def compute_batch_seq_permutation(
+    num_dims: int,
+    old_batch_dim: int,
+    old_seq_dim: int,
+    new_batch_dim: int,
+    new_seq_dim: int,
+) -> list[int]:
+    r"""Computes the permutation to update the batch and sequence dimensions.
+
+    Args:
+        num_dims (int): Specifies the number of dimensions.
+        old_batch_dim (int): Specifies the old batch dimension.
+        old_seq_dim (int): Specifies the old sequence dimension.
+        new_batch_dim (int): Specifies the new batch dimension.
+        new_seq_dim (int): Specifies the new sequence dimension.
+
+    Returns:
+        list: The permutation to update the batch and sequence
+            dimensions.
+
+    Example usage:
+
+    .. code-block:: python
+
+        >>> from redcat.utils import compute_batch_seq_permutation
+        >>> compute_batch_seq_permutation(5, 0, 1, 1, 0)
+        [1, 0, 2, 3, 4]
+        >>> compute_batch_seq_permutation(2, 0, 1, 1, 0)
+        [1, 0]
+        >>> compute_batch_seq_permutation(5, 0, 1, 2, 0)
+        [1, 2, 0, 3, 4]
+        >>> compute_batch_seq_permutation(5, 0, 1, 1, 2)
+        [2, 0, 1, 3, 4]
+    """
+    if old_batch_dim == old_seq_dim:
+        raise RuntimeError(
+            f"Incorrect old_batch_dim ({old_batch_dim}) and old_seq_dim ({old_seq_dim}). "
+            "The dimensions should be different"
+        )
+    if new_batch_dim == new_seq_dim:
+        raise RuntimeError(
+            f"Incorrect new_batch_dim ({new_batch_dim}) and new_seq_dim ({new_seq_dim}). "
+            "The dimensions should be different"
+        )
+    dims = list(range(num_dims))
+    swap2(dims, old_batch_dim, new_batch_dim)  # Swap batch dim
+    if old_batch_dim == new_seq_dim and old_seq_dim == new_batch_dim:
+        return dims  # Swapping batch dims also swaps sequence dims
+    if new_batch_dim == old_seq_dim:
+        # Update the old sequence dim because it changes during the batch dim swap
+        old_seq_dim = old_batch_dim
+    swap2(dims, old_seq_dim, new_seq_dim)  # Swap sequence dim
+    return dims
 
 
 def get_available_devices() -> tuple[str, ...]:
