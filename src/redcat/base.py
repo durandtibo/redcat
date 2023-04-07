@@ -57,7 +57,7 @@ class BaseBatchedTensor(ABC):
                 Default: ``torch.contiguous_format``
 
         Returns:
-            ``BatchedTensor``: A new batch with a contiguous
+            ``BaseBatchedTensor``: A new batch with a contiguous
                 representation of the data.
 
         Example usage:
