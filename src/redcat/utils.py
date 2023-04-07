@@ -1,8 +1,10 @@
-__all__ = ["DeviceType", "IndexType", "align_to_batch_first", "get_available_devices"]
+__all__ = ["DeviceType", "IndexType", "align_to_batch_first", "get_available_devices", "swap2"]
 
-from collections.abc import Sequence
-from typing import Union
+import copy
+from collections.abc import MutableSequence, Sequence
+from typing import Union, overload
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -60,3 +62,49 @@ def get_available_devices() -> tuple[str, ...]:
     if torch.cuda.is_available():
         return ("cpu", "cuda:0")
     return ("cpu",)
+
+
+@overload
+def swap2(sequence: Tensor, index0: int, index1: int) -> Tensor:
+    r"""``swap2`` for a ``torch.Tensor``."""
+
+
+@overload
+def swap2(sequence: np.ndarray, index0: int, index1: int) -> np.ndarray:
+    r"""``swap2`` for a ``numpy.ndarray``."""
+
+
+@overload
+def swap2(sequence: MutableSequence, index0: int, index1: int) -> MutableSequence:
+    r"""``swap2`` for a mutable sequence."""
+
+
+def swap2(
+    sequence: Union[Tensor, np.ndarray, MutableSequence], index0: int, index1: int
+) -> Union[Tensor, np.ndarray, MutableSequence]:
+    r"""Swaps two values in a mutable sequence.
+
+    Args:
+        sequence (``torch.Tensor`` or ``numpy.ndarray`` or
+            ``MutableSequence``): Specifies the sequence to update.
+        index0 (int): Specifies the index of the first value to swap.
+        index1 (int): Specifies the index of the second value to swap.
+
+    Returns:
+        ``torch.Tensor`` or ``numpy.ndarray`` or ``MutableSequence``:
+            The updated sequence.
+
+    Example usage:
+
+    .. code-block:: python
+
+        >>> from redcat.utils import swap2
+        >>> seq = [1, 2, 3, 4, 5]
+        >>> swap2(seq, 2, 0)
+        >>> seq
+        [3, 2, 1, 4, 5]
+    """
+    tmp = copy.deepcopy(sequence[index0])
+    sequence[index0] = sequence[index1]
+    sequence[index1] = tmp
+    return sequence
