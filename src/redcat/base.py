@@ -357,7 +357,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.add(BatchedTensor(torch.ones(2, 3).mul(2)))
+            >>> out = batch.add(BatchedTensor(torch.full((2, 3), 2.0)))
             >>> batch
             tensor([[1., 1., 1.],
                     [1., 1., 1.]], batch_dim=0)
@@ -398,7 +398,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.div(BatchedTensor(torch.ones(2, 3).mul(2)))
+            >>> out = batch.div(BatchedTensor(torch.full((2, 3), 2.0)))
             >>> batch
             tensor([[1., 1., 1.],
                     [1., 1., 1.]], batch_dim=0)
@@ -428,7 +428,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.mul(BatchedTensor(torch.full((2, 3), 2)))
+            >>> out = batch.mul(BatchedTensor(torch.full((2, 3), 2.0)))
             >>> batch
             tensor([[1., 1., 1.],
                     [1., 1., 1.]], batch_dim=0)
@@ -437,3 +437,40 @@ class BaseBatchedTensor(ABC):
                     [2., 2., 2.]], batch_dim=0)
         """
         return torch.mul(self, other)
+
+    def sub(
+        self,
+        other: BaseBatchedTensor | torch.Tensor | int | float,
+        alpha: int | float = 1,
+    ) -> TBatchedTensor:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the ``self``
+        batch.
+
+        Similar to ``out = self - alpha * other``
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
+                float): Specifies the value to subtract.
+            alpha (int or float, optional): Specifies the scale of the
+                batch to substract. Default: ``1``
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch containing the diffence of
+                the two batches.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> out = batch.sub(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+            >>> out
+            tensor([[-1., -1., -1.],
+                    [-1., -1., -1.]], batch_dim=0)
+        """
+        return torch.sub(self, other, alpha=alpha)

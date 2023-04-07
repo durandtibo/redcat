@@ -740,6 +740,58 @@ def test_batched_tensor_seq_mul_incorrect_seq_dim() -> None:
         BatchedTensorSeq(torch.ones(2, 3, 1)).mul(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq_sub(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert BatchedTensorSeq(torch.ones(2, 3)).sub(other).equal(BatchedTensorSeq(-torch.ones(2, 3)))
+
+
+def test_batched_tensor_seq_sub_alpha_2_float() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .sub(BatchedTensorSeq(torch.full((2, 3), 2.0)), alpha=2.0)
+        .equal(BatchedTensorSeq(-torch.ones(2, 3).mul(3)))
+    )
+
+
+def test_batched_tensor_seq_sub_alpha_2_long() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
+        .sub(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long).mul(2)), alpha=2)
+        .equal(BatchedTensorSeq(-torch.ones(2, 3, dtype=torch.long).mul(3)))
+    )
+
+
+def test_batched_tensor_seq_sub_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .sub(BatchedTensorSeq(torch.full((2, 3), 2.0), batch_dim=1, seq_dim=0))
+        .equal(BatchedTensorSeq(-torch.ones(2, 3), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_sub_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedTensorSeq(torch.ones(2, 3, 1)).sub(
+            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
+        )
+
+
+def test_batched_tensor_seq_sub_incorrect_seq_dim() -> None:
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        BatchedTensorSeq(torch.ones(2, 3, 1)).sub(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
