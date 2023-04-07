@@ -147,96 +147,6 @@ def test_batched_tensor_seq_to_custom_dims() -> None:
     )
 
 
-#################
-#     dtype     #
-#################
-
-
-@mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_seq_dtype(dtype: torch.dtype) -> None:
-    assert BatchedTensorSeq(torch.ones(2, 3, dtype=dtype)).dtype == dtype
-
-
-def test_batched_tensor_seq_bool() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3))
-        .bool()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.bool)))
-    )
-
-
-def test_batched_tensor_seq_bool_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
-        .bool()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.bool), batch_dim=1, seq_dim=0))
-    )
-
-
-def test_batched_tensor_seq_double() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3))
-        .double()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.double)))
-    )
-
-
-def test_batched_tensor_seq_double_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
-        .double()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.double), batch_dim=1, seq_dim=0))
-    )
-
-
-def test_batched_tensor_seq_float() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
-        .float()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.float)))
-    )
-
-
-def test_batched_tensor_seq_float_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long), batch_dim=1, seq_dim=0)
-        .float()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.float), batch_dim=1, seq_dim=0))
-    )
-
-
-def test_batched_tensor_seq_int() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3))
-        .int()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.int)))
-    )
-
-
-def test_batched_tensor_seq_int_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
-        .int()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.int), batch_dim=1, seq_dim=0))
-    )
-
-
-def test_batched_tensor_seq_long() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3))
-        .long()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long)))
-    )
-
-
-def test_batched_tensor_seq_long_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
-        .long()
-        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long), batch_dim=1, seq_dim=0))
-    )
-
-
 ###############################
 #     Creation operations     #
 ###############################
@@ -980,6 +890,96 @@ def test_batched_tensor_seq_lt_custom_dims() -> None:
                 seq_dim=0,
             )
         )
+    )
+
+
+#################
+#     dtype     #
+#################
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_dtype(dtype: torch.dtype) -> None:
+    assert BatchedTensorSeq(torch.ones(2, 3, dtype=dtype)).dtype == dtype
+
+
+def test_batched_tensor_seq_bool() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .bool()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.bool)))
+    )
+
+
+def test_batched_tensor_seq_bool_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .bool()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.bool), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_double() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .double()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.double)))
+    )
+
+
+def test_batched_tensor_seq_double_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .double()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.double), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_float() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
+        .float()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.float)))
+    )
+
+
+def test_batched_tensor_seq_float_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long), batch_dim=1, seq_dim=0)
+        .float()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.float), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_int() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .int()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.int)))
+    )
+
+
+def test_batched_tensor_seq_int_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .int()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.int), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_long() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .long()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long)))
+    )
+
+
+def test_batched_tensor_seq_long_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .long()
+        .equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long), batch_dim=1, seq_dim=0))
     )
 
 
