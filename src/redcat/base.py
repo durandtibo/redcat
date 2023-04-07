@@ -416,6 +416,37 @@ class BaseBatchedTensor(ABC):
             False
         """
 
+    def ge(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+        r"""Computes ``self >= other`` element-wise.
+
+        Args:
+            other (``TensorSeqBatch``): Specifies the value to compare
+                with.
+
+        Returns:
+            ``TensorSeqBatch``: A batch containing the element-wise
+                comparison.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(torch.tensor([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedTensor(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.ge(batch2)
+            tensor([[False,  True,  True],
+                    [ True,  True,  True]])
+            >>> batch1.ge(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            tensor([[False,  True,  True],
+                    [ True,  True,  True]])
+            >>> batch1.ge(2)
+            tensor([[False,  True,  True],
+                    [False,  True,  True]])
+        """
+        return torch.ge(self, other)
+
     ###################################
     #     Arithmetical operations     #
     ###################################

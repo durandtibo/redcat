@@ -580,6 +580,48 @@ def test_batched_tensor_equal_false_different_batch_dim() -> None:
     assert not BatchedTensor(torch.ones(2, 3), batch_dim=1).equal(BatchedTensor(torch.ones(2, 3)))
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensor(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_ge(other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .ge(other)
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[False, False, False, False, False], [True, True, True, True, True]],
+                    dtype=torch.bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_tensor_ge_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+        .ge(BatchedTensor(torch.full((2, 5), 5.0), batch_dim=1))
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[False, False, False, False, False], [True, True, True, True, True]],
+                    dtype=torch.bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
 ###################################
 #     Arithmetical operations     #
 ###################################
