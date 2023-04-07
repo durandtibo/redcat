@@ -130,6 +130,29 @@ def test_batched_tensor_clone_custom_batch_dim() -> None:
     )
 
 
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_empty_like(dtype: torch.dtype) -> None:
+    batch = BatchedTensor(torch.zeros(2, 3, dtype=dtype)).empty_like()
+    assert isinstance(batch, BatchedTensor)
+    assert batch.data.shape == (2, 3)
+    assert batch.dtype == dtype
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_empty_like_target_dtype(dtype: torch.dtype) -> None:
+    batch = BatchedTensor(torch.zeros(2, 3)).empty_like(dtype=dtype)
+    assert isinstance(batch, BatchedTensor)
+    assert batch.data.shape == (2, 3)
+    assert batch.dtype == dtype
+
+
+def test_batched_tensor_empty_like_custom_dims() -> None:
+    batch = BatchedTensor(torch.zeros(3, 2), batch_dim=1).empty_like()
+    assert isinstance(batch, BatchedTensor)
+    assert batch.data.shape == (3, 2)
+    assert batch.batch_dim == 1
+
+
 @mark.parametrize("fill_value", (1.5, 2.0, -1.0))
 def test_batched_tensor_full_like(fill_value: float) -> None:
     assert (
@@ -393,7 +416,7 @@ def test_batched_tensor_zeros_like_target_dtype(dtype: torch.dtype) -> None:
         5.0,
     ),
 )
-def test_batched_tensor_seq__eq__(
+def test_batched_tensor__eq__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) == other).equal(
@@ -417,7 +440,7 @@ def test_batched_tensor_seq__eq__(
         5.0,
     ),
 )
-def test_batched_tensor_seq__ge__(
+def test_batched_tensor__ge__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) >= other).equal(
@@ -441,7 +464,7 @@ def test_batched_tensor_seq__ge__(
         5.0,
     ),
 )
-def test_batched_tensor_seq__gt__(
+def test_batched_tensor__gt__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) > other).equal(
@@ -465,7 +488,7 @@ def test_batched_tensor_seq__gt__(
         5.0,
     ),
 )
-def test_batched_tensor_seq__le__(
+def test_batched_tensor__le__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) <= other).equal(
@@ -489,7 +512,7 @@ def test_batched_tensor_seq__le__(
         5.0,
     ),
 )
-def test_batched_tensor_seq__lt__(
+def test_batched_tensor__lt__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) < other).equal(

@@ -151,6 +151,32 @@ class BaseBatchedTensor(ABC):
         """
         return self.__class__(self._data.clone(*args, **kwargs), **self._get_kwargs())
 
+    def empty_like(self, *args, **kwargs) -> TBatchedTensor:
+        r"""Creates an uninitialized batch, with the same shape as the current
+        batch.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.empty_like``
+            **kwargs: See the documentation of
+                ``torch.Tensor.empty_like``
+
+        Returns:
+            ``BaseBatchedTensor``: A uninitialized batch with the same
+                shape as the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.empty_like(42)
+            tensor([[0., 0., 0.],
+                    [0., 0., 0.]], batch_dim=0)
+        """
+        return self.__class__(torch.empty_like(self._data, *args, **kwargs), **self._get_kwargs())
+
     def full_like(self, *args, **kwargs) -> TBatchedTensor:
         r"""Creates a batch filled with a given scalar value, with the same
         shape as the current batch.
