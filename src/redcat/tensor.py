@@ -57,28 +57,6 @@ class BatchedTensor(BaseBatchedTensor):
     def batch_size(self) -> int:
         return self._data.shape[self._batch_dim]
 
-    #################################
-    #     Comparison operations     #
-    #################################
-
-    def allclose(
-        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
-    ) -> bool:
-        if not isinstance(other, BatchedTensor):
-            return False
-        if self._batch_dim != other.batch_dim:
-            return False
-        if self._data.shape != other.data.shape:
-            return False
-        return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
-
-    def equal(self, other: Any) -> bool:
-        if not isinstance(other, BatchedTensor):
-            return False
-        if self._batch_dim != other.batch_dim:
-            return False
-        return self._data.equal(other.data)
-
     ###############################
     #     Creation operations     #
     ###############################
@@ -224,6 +202,28 @@ class BatchedTensor(BaseBatchedTensor):
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
         return BatchedTensor(torch.zeros(*shape, **kwargs), **self._get_kwargs())
+
+    #################################
+    #     Comparison operations     #
+    #################################
+
+    def allclose(
+        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
+    ) -> bool:
+        if not isinstance(other, BatchedTensor):
+            return False
+        if self._batch_dim != other.batch_dim:
+            return False
+        if self._data.shape != other.data.shape:
+            return False
+        return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, BatchedTensor):
+            return False
+        if self._batch_dim != other.batch_dim:
+            return False
+        return self._data.equal(other.data)
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}

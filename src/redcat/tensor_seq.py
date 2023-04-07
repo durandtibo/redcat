@@ -76,28 +76,6 @@ class BatchedTensorSeq(BaseBatchedTensor):
         r"""int: The sequence length."""
         return self._data.shape[self._seq_dim]
 
-    #################################
-    #     Comparison operations     #
-    #################################
-
-    def allclose(
-        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
-    ) -> bool:
-        if not isinstance(other, BatchedTensorSeq):
-            return False
-        if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
-            return False
-        if self._data.shape != other.data.shape:
-            return False
-        return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
-
-    def equal(self, other: Any) -> bool:
-        if not isinstance(other, BatchedTensorSeq):
-            return False
-        if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
-            return False
-        return self._data.equal(other.data)
-
     ###############################
     #     Creation operations     #
     ###############################
@@ -294,6 +272,28 @@ class BatchedTensorSeq(BaseBatchedTensor):
                     [1., 1., 1.]], batch_dim=1, seq_dim=0)
         """
         return cls(data, batch_dim=1, seq_dim=0, **kwargs)
+
+    #################################
+    #     Comparison operations     #
+    #################################
+
+    def allclose(
+        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
+    ) -> bool:
+        if not isinstance(other, BatchedTensorSeq):
+            return False
+        if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
+            return False
+        if self._data.shape != other.data.shape:
+            return False
+        return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, BatchedTensorSeq):
+            return False
+        if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
+            return False
+        return self._data.equal(other.data)
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}

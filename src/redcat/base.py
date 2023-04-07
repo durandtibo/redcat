@@ -123,105 +123,6 @@ class BaseBatchedTensor(ABC):
         """
         return self.__class__(self._data.to(*args, **kwargs), **self._get_kwargs())
 
-    #################
-    #     dtype     #
-    #################
-
-    @property
-    def dtype(self) -> torch.dtype:
-        r"""``torch.dtype``: The data type."""
-        return self._data.dtype
-
-    def bool(self) -> TBatchedTensor:
-        r"""Converts the current batch to bool data type.
-
-        Returns:
-            ``BaseBatchedTensor``: The current batch to bool data type.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.bool().dtype
-            torch.bool
-        """
-        return self.__class__(self._data.bool(), **self._get_kwargs())
-
-    def double(self) -> TBatchedTensor:
-        r"""Converts the current batch to double data type.
-
-        Returns:
-            ``BaseBatchedTensor``: The current batch to double data type.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.double().dtype
-            torch.float64
-        """
-        return self.__class__(self._data.double(), **self._get_kwargs())
-
-    def float(self) -> TBatchedTensor:
-        r"""Converts the current batch to float data type.
-
-        Returns:
-            ``BaseBatchedTensor``: The current batch to float data type.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.float().dtype
-            torch.float32
-        """
-        return self.__class__(self._data.float(), **self._get_kwargs())
-
-    def int(self) -> TBatchedTensor:
-        r"""Converts the current batch to int data type.
-
-        Returns:
-            ``BaseBatchedTensor``: The current batch to int data type.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.int().dtype
-            torch.int32
-        """
-        return self.__class__(self._data.int(), **self._get_kwargs())
-
-    def long(self) -> TBatchedTensor:
-        r"""Converts the current batch to long data type.
-
-        Returns:
-            ``BaseBatchedTensor``: The current batch to long data type.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.long().dtype
-            torch.int64
-        """
-        return self.__class__(self._data.long(), **self._get_kwargs())
-
     ###############################
     #     Creation operations     #
     ###############################
@@ -551,6 +452,105 @@ class BaseBatchedTensor(ABC):
                     [ True, False, False]], batch_dim=0)
         """
         return torch.lt(self, other)
+
+    #################
+    #     dtype     #
+    #################
+
+    @property
+    def dtype(self) -> torch.dtype:
+        r"""``torch.dtype``: The data type."""
+        return self._data.dtype
+
+    def bool(self) -> TBatchedTensor:
+        r"""Converts the current batch to bool data type.
+
+        Returns:
+            ``BaseBatchedTensor``: The current batch to bool data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.bool().dtype
+            torch.bool
+        """
+        return self.__class__(self._data.bool(), **self._get_kwargs())
+
+    def double(self) -> TBatchedTensor:
+        r"""Converts the current batch to double data type.
+
+        Returns:
+            ``BaseBatchedTensor``: The current batch to double data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.double().dtype
+            torch.float64
+        """
+        return self.__class__(self._data.double(), **self._get_kwargs())
+
+    def float(self) -> TBatchedTensor:
+        r"""Converts the current batch to float data type.
+
+        Returns:
+            ``BaseBatchedTensor``: The current batch to float data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.float().dtype
+            torch.float32
+        """
+        return self.__class__(self._data.float(), **self._get_kwargs())
+
+    def int(self) -> TBatchedTensor:
+        r"""Converts the current batch to int data type.
+
+        Returns:
+            ``BaseBatchedTensor``: The current batch to int data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.int().dtype
+            torch.int32
+        """
+        return self.__class__(self._data.int(), **self._get_kwargs())
+
+    def long(self) -> TBatchedTensor:
+        r"""Converts the current batch to long data type.
+
+        Returns:
+            ``BaseBatchedTensor``: The current batch to long data type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.long().dtype
+            torch.int64
+        """
+        return self.__class__(self._data.long(), **self._get_kwargs())
 
     ###################################
     #     Arithmetical operations     #
