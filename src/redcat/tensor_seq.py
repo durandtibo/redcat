@@ -6,8 +6,10 @@ from collections.abc import Callable
 from typing import Any
 
 import torch
+from torch import Tensor
 
 from redcat.base import BaseBatchedTensor
+from redcat.utils import check_batch_dims, check_seq_dims, get_batch_dims, get_seq_dims
 
 
 class BatchedTensorSeq(BaseBatchedTensor):
@@ -42,20 +44,13 @@ class BatchedTensorSeq(BaseBatchedTensor):
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
     ) -> BatchedTensorSeq:
-        batch_dims = {a._batch_dim for a in args if hasattr(a, "_batch_dim")}
-        if len(batch_dims) > 1:
-            raise RuntimeError(
-                f"The batch dimensions do not match. Received multiple values: {batch_dims}"
-            )
-        seq_dims = {a._seq_dim for a in args if hasattr(a, "_seq_dim")}
-        if len(seq_dims) > 1:
-            raise RuntimeError(
-                f"The sequence dimensions do not match. Received multiple values: {seq_dims}"
-            )
+        kwargs = kwargs or {}
+        batch_dims = get_batch_dims(args, kwargs)
+        check_batch_dims(batch_dims)
+        seq_dims = get_seq_dims(args, kwargs)
+        check_seq_dims(seq_dims)
         args = [a._data if hasattr(a, "_data") else a for a in args]
-        return cls(
-            func(*args, **(kwargs or {})), batch_dim=batch_dims.pop(), seq_dim=seq_dims.pop()
-        )
+        return cls(func(*args, **kwargs), batch_dim=batch_dims.pop(), seq_dim=seq_dims.pop())
 
     @property
     def batch_dim(self) -> int:
@@ -294,6 +289,19 @@ class BatchedTensorSeq(BaseBatchedTensor):
         if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
             return False
         return self._data.equal(other.data)
+
+    ##################################################
+    #     Mathematical | arithmetical operations     #
+    ##################################################
+
+    def add_(
+        self,
+        other: BaseBatchedTensor | Tensor | int | float,
+        alpha: int | float = 1.0,
+    ) -> None:
+        check_batch_dims(get_batch_dims((self, other), {}))
+        check_seq_dims(get_seq_dims((self, other), {}))
+        return self._data.add_(other, alpha=alpha)
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}

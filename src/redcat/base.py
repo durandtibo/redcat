@@ -671,9 +671,9 @@ class BaseBatchedTensor(ABC):
         """
         return self.__class__(self._data.long(), **self._get_kwargs())
 
-    ###################################
-    #     Arithmetical operations     #
-    ###################################
+    ##################################################
+    #     Mathematical | arithmetical operations     #
+    ##################################################
 
     def add(
         self,
@@ -712,6 +712,37 @@ class BaseBatchedTensor(ABC):
                     [3., 3., 3.]], batch_dim=0)
         """
         return torch.add(self, other, alpha=alpha)
+
+    @abstractmethod
+    def add_(
+        self,
+        other: BaseBatchedTensor | Tensor | int | float,
+        alpha: int | float = 1.0,
+    ) -> None:
+        r"""Adds the input ``other``, scaled by ``alpha``, to the ``self``
+        batch.
+
+        Similar to ``self += alpha * other`` (in-place)
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
+                float): Specifies the other value to add to the
+                current batch.
+            alpha (int or float, optional): Specifies the scale of the
+                batch to add. Default: ``1.0``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.add_(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch
+            tensor([[3., 3., 3.],
+                    [3., 3., 3.]], batch_dim=0)
+        """
 
     def div(
         self,

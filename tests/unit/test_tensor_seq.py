@@ -1127,9 +1127,9 @@ def test_batched_tensor_seq_long_custom_dims() -> None:
     )
 
 
-###################################
-#     Arithmetical operations     #
-###################################
+##################################################
+#     Mathematical | arithmetical operations     #
+##################################################
 
 
 @mark.parametrize(
@@ -1186,6 +1186,54 @@ def test_batched_tensor_seq_add_incorrect_seq_dim() -> None:
         BatchedTensorSeq(torch.ones(2, 3, 4)).add(
             BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=0, seq_dim=2)
         )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq_add_(
+    other: Union[BatchedTensorSeq, torch.Tensor, bool, int, float]
+) -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch.add_(other)
+    assert batch.equal(BatchedTensorSeq(torch.full((2, 3), 3.0)))
+
+
+def test_batched_tensor_seq_add__alpha_2_float() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch.add_(BatchedTensorSeq(torch.full((2, 3), 2.0)), alpha=2.0)
+    assert batch.equal(BatchedTensorSeq(torch.full((2, 3), 5.0)))
+
+
+def test_batched_tensor_seq_add__alpha_2_long() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
+    batch.add_(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long).mul(2)), alpha=2)
+    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long).mul(5)))
+
+
+def test_batched_tensor_seq_add__custom_dims() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+    batch.add_(BatchedTensorSeq(torch.full((2, 3), 2.0), batch_dim=1, seq_dim=0))
+    assert batch.equal(BatchedTensorSeq(torch.full((2, 3), 3.0), batch_dim=1, seq_dim=0))
+
+
+def test_batched_tensor_seq_add__incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.add_(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+
+
+def test_batched_tensor_seq_add__incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.add_(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1296,7 +1344,7 @@ def test_batched_tensor_seq_sub_alpha_2_float() -> None:
     assert (
         BatchedTensorSeq(torch.ones(2, 3))
         .sub(BatchedTensorSeq(torch.full((2, 3), 2.0)), alpha=2.0)
-        .equal(BatchedTensorSeq(-torch.ones(2, 3).mul(3)))
+        .equal(BatchedTensorSeq(-torch.full((2, 3), 3.0)))
     )
 
 
