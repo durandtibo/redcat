@@ -827,6 +827,36 @@ def test_batched_tensor_seq_gt_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_isnan() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]))
+        .isnan()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[False, False, True], [True, False, False]], dtype=torch.bool)
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_isnan_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .isnan()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[False, False, True], [True, False, False]], dtype=torch.bool),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
 @mark.parametrize(
     "other",
     (

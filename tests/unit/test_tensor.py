@@ -146,7 +146,7 @@ def test_batched_tensor_empty_like_target_dtype(dtype: torch.dtype) -> None:
     assert batch.dtype == dtype
 
 
-def test_batched_tensor_empty_like_custom_dims() -> None:
+def test_batched_tensor_empty_like_custom_batch_dim() -> None:
     batch = BatchedTensor(torch.zeros(3, 2), batch_dim=1).empty_like()
     assert isinstance(batch, BatchedTensor)
     assert batch.data.shape == (3, 2)
@@ -659,7 +659,7 @@ def test_batched_tensor_ge(other: Union[BaseBatchedTensor, torch.Tensor, bool, i
     )
 
 
-def test_batched_tensor_ge_custom_dims() -> None:
+def test_batched_tensor_ge_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
         .ge(BatchedTensor(torch.full((2, 5), 5.0), batch_dim=1))
@@ -701,7 +701,7 @@ def test_batched_tensor_gt(other: Union[BaseBatchedTensor, torch.Tensor, bool, i
     )
 
 
-def test_batched_tensor_gt_custom_dims() -> None:
+def test_batched_tensor_gt_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
         .gt(BatchedTensor(torch.full((2, 5), 5.0), batch_dim=1))
@@ -711,6 +711,34 @@ def test_batched_tensor_gt_custom_dims() -> None:
                     [[False, False, False, False, False], [False, True, True, True, True]],
                     dtype=torch.bool,
                 ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_tensor_isnan() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]))
+        .isnan()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, True], [True, False, False]], dtype=torch.bool)
+            )
+        )
+    )
+
+
+def test_batched_tensor_isnan_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]),
+            batch_dim=1,
+        )
+        .isnan()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, True], [True, False, False]], dtype=torch.bool),
                 batch_dim=1,
             )
         )
@@ -743,7 +771,7 @@ def test_batched_tensor_le(other: Union[BaseBatchedTensor, torch.Tensor, bool, i
     )
 
 
-def test_batched_tensor_le_custom_dims() -> None:
+def test_batched_tensor_le_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
         .le(BatchedTensor(torch.full((2, 5), 5.0), batch_dim=1))
@@ -785,7 +813,7 @@ def test_batched_tensor_lt(other: Union[BatchedTensorSeq, torch.Tensor, bool, in
     )
 
 
-def test_batched_tensor_lt_custom_dims() -> None:
+def test_batched_tensor_lt_custom_batch_dim() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
         .lt(BatchedTensor(torch.full((2, 5), 5.0), batch_dim=1))
