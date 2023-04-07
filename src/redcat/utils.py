@@ -4,14 +4,18 @@ __all__ = [
     "align_to_batch_first",
     "align_to_batch_seq",
     "align_to_seq_batch",
+    "check_batch_dims",
+    "check_seq_dims",
     "compute_batch_seq_permutation",
     "get_available_devices",
+    "get_batch_dims",
+    "get_seq_dims",
     "swap2",
 ]
 
 import copy
 from collections.abc import MutableSequence, Sequence
-from typing import Union, overload
+from typing import Any, Union, overload
 
 import numpy as np
 import torch
@@ -109,6 +113,34 @@ def align_to_seq_batch(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> to
     )
 
 
+def check_batch_dims(dims: set[int]) -> None:
+    r"""Gets the batch dimensions from the inputs.
+
+    Args:
+        dims (set): Specifies the batch dims to check.
+
+    Raises:
+        RuntimeError if there are more than one batch dimension.
+    """
+    if len(dims) != 1:
+        raise RuntimeError(f"The batch dimensions do not match. Received multiple values: {dims}")
+
+
+def check_seq_dims(dims: set[int]) -> None:
+    r"""Gets the sequence dimensions from the inputs.
+
+    Args:
+        dims (set): Specifies the sequence dims to check.
+
+    Raises:
+        RuntimeError if there are more than one sequence dimension.
+    """
+    if len(dims) != 1:
+        raise RuntimeError(
+            f"The sequence dimensions do not match. Received multiple values: {dims}"
+        )
+
+
 def compute_batch_seq_permutation(
     num_dims: int,
     old_batch_dim: int,
@@ -182,6 +214,36 @@ def get_available_devices() -> tuple[str, ...]:
     if torch.cuda.is_available():
         return ("cpu", "cuda:0")
     return ("cpu",)
+
+
+def get_batch_dims(args: tuple[Any, ...], kwargs: dict[str, Any]) -> set[int]:
+    r"""Gets the batch dimensions from the inputs.
+
+    Args:
+        args: Variable length argument list.
+        kwargs: Arbitrary keyword arguments.
+
+    Returns:
+        set: The batch dimensions.
+    """
+    dims = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
+    dims.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
+    return dims
+
+
+def get_seq_dims(args: tuple[Any, ...], kwargs: dict[str, Any]) -> set[int]:
+    r"""Gets the sequence dimensions from the inputs.
+
+    Args:
+        args: Variable length argument list.
+        kwargs: Arbitrary keyword arguments.
+
+    Returns:
+        set: The sequence dimensions.
+    """
+    dims = {val._seq_dim for val in args if hasattr(val, "_seq_dim")}
+    dims.update({val._seq_dim for val in kwargs.values() if hasattr(val, "_seq_dim")})
+    return dims
 
 
 @overload
