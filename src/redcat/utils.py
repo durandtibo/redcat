@@ -2,6 +2,8 @@ __all__ = [
     "DeviceType",
     "IndexType",
     "align_to_batch_first",
+    "align_to_batch_seq",
+    "align_to_seq_batch",
     "compute_batch_seq_permutation",
     "get_available_devices",
     "swap2",
@@ -49,6 +51,62 @@ def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
     if batch_dim == 0:
         return tensor
     return tensor.transpose(0, batch_dim)
+
+
+def align_to_batch_seq(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> torch.Tensor:
+    r"""Aligns the input tensor format to ``(batch_size, sequence_length, *)``
+    where `*` means any number of dimensions.
+
+    Args:
+        tensor (``torch.Tensor``): Specifies the tensor to change
+            format.
+        batch_dim (int): Specifies the batch dimension in the input
+            tensor.
+        seq_dim (int): Specifies the sequence dimension in the input
+            tensor.
+
+    Returns:
+        ``torch.Tensor``: A tensor of shape
+            ``(batch_size, sequence_length, *)`` where `*` means any
+            number of dimensions.
+    """
+    return tensor.permute(
+        *compute_batch_seq_permutation(
+            num_dims=tensor.dim(),
+            old_batch_dim=batch_dim,
+            old_seq_dim=seq_dim,
+            new_batch_dim=0,
+            new_seq_dim=1,
+        )
+    )
+
+
+def align_to_seq_batch(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> torch.Tensor:
+    r"""Aligns the input tensor format to ``(sequence_length, batch_size, *)``
+    where `*` means any number of dimensions.
+
+    Args:
+        tensor (``torch.Tensor``): Specifies the tensor to change
+            format.
+        batch_dim (int): Specifies the batch dimension in the input
+            tensor.
+        seq_dim (int): Specifies the sequence dimension in the input
+            tensor.
+
+    Returns:
+        ``torch.Tensor``: A tensor of shape
+            ``(sequence_length, batch_size, *)`` where `*` means any
+            number of dimensions.
+    """
+    return tensor.permute(
+        *compute_batch_seq_permutation(
+            num_dims=tensor.dim(),
+            old_batch_dim=batch_dim,
+            old_seq_dim=seq_dim,
+            new_batch_dim=1,
+            new_seq_dim=0,
+        )
+    )
 
 
 def compute_batch_seq_permutation(
