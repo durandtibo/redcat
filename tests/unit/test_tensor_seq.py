@@ -168,6 +168,30 @@ def test_batched_tensor_seq_clone_custom_dims() -> None:
     )
 
 
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_empty_like(dtype: torch.dtype) -> None:
+    batch = BatchedTensorSeq(torch.zeros(2, 3, dtype=dtype)).empty_like()
+    assert isinstance(batch, BatchedTensorSeq)
+    assert batch.data.shape == (2, 3)
+    assert batch.dtype == dtype
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_seq_empty_like_target_dtype(dtype: torch.dtype) -> None:
+    batch = BatchedTensorSeq(torch.zeros(2, 3)).empty_like(dtype=dtype)
+    assert isinstance(batch, BatchedTensorSeq)
+    assert batch.data.shape == (2, 3)
+    assert batch.dtype == dtype
+
+
+def test_batched_tensor_seq_empty_like_custom_dims() -> None:
+    batch = BatchedTensorSeq(torch.zeros(3, 2), batch_dim=1, seq_dim=0).empty_like()
+    assert isinstance(batch, BatchedTensorSeq)
+    assert batch.data.shape == (3, 2)
+    assert batch.batch_dim == 1
+    assert batch.seq_dim == 0
+
+
 @mark.parametrize("fill_value", (1.5, 2.0, -1.0))
 def test_batched_tensor_seq_full_like(fill_value: float) -> None:
     assert (
