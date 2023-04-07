@@ -301,7 +301,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ) -> None:
         check_batch_dims(get_batch_dims((self, other), {}))
         check_seq_dims(get_seq_dims((self, other), {}))
-        return self._data.add_(other, alpha=alpha)
+        self._data.add_(other, alpha=alpha)
 
     def div_(
         self,
@@ -310,7 +310,12 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ) -> None:
         check_batch_dims(get_batch_dims((self, other), {}))
         check_seq_dims(get_seq_dims((self, other), {}))
-        return self._data.div_(other, rounding_mode=rounding_mode)
+        self._data.div_(other, rounding_mode=rounding_mode)
+
+    def mul_(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+        check_batch_dims(get_batch_dims((self, other), {}))
+        check_seq_dims(get_seq_dims((self, other), {}))
+        self._data.mul_(other)
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}

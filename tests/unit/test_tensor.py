@@ -1202,6 +1202,36 @@ def test_batched_tensor_mul_incorrect_batch_dim() -> None:
 @mark.parametrize(
     "other",
     (
+        BatchedTensor(torch.ones(2, 3).mul(2)),
+        BatchedTensorSeq(torch.ones(2, 3).mul(2)),
+        torch.ones(2, 3).mul(2),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_mul_(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    batch.mul_(other)
+    assert batch.equal(BatchedTensor(torch.ones(2, 3).mul(2)))
+
+
+def test_batched_tensor_mul__custom_dims() -> None:
+    batch = BatchedTensor(torch.ones(2, 3), batch_dim=1)
+    batch.mul_(BatchedTensor(torch.ones(2, 3).mul(2), batch_dim=1))
+    assert batch.equal(BatchedTensor(torch.ones(2, 3).mul(2), batch_dim=1))
+
+
+def test_batched_tensor_mul__incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 3, 1))
+    with raises(RuntimeError):
+        batch.mul_(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+
+
+@mark.parametrize(
+    "other",
+    (
         BatchedTensor(torch.full((2, 3), 2.0)),
         BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
