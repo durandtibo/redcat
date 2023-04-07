@@ -325,6 +325,62 @@ class BaseBatchedTensor(ABC):
         """
         return self.__class__(torch.zeros_like(self._data, *args, **kwargs), **self._get_kwargs())
 
+    #################################
+    #     Comparison operations     #
+    #################################
+
+    @abstractmethod
+    def allclose(
+        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
+    ) -> bool:
+        r"""Indicates if two batches are equal within a tolerance or not.
+
+        Args:
+            other: Specifies the value to compare.
+            rtol (float, optional): Specifies the relative tolerance
+                parameter. Default: ``1e-5``
+            atol (float, optional): Specifies the absolute tolerance
+                parameter. Default: ``1e-8``
+            equal_nan (bool, optional): If ``True``, then two ``NaN``s
+                will be considered equal. Default: ``False``
+
+        Returns:
+            bool: ``True`` if the batches are equal within a tolerance,
+                ``False`` otherwise.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(torch.ones(2, 3))
+            >>> batch2 = BatchedTensor(torch.full((2, 3), 1.5))
+            >>> batch1.allclose(batch2, atol=1, rtol=0)
+            True
+        """
+
+    @abstractmethod
+    def equal(self, other: Any) -> bool:
+        r"""Indicates if two batches are equal or not.
+
+        Args:
+            other: Specifies the value to compare.
+
+        Returns:
+            bool: ``True`` if the batches have the same size,
+                elements and same batch dimension, ``False`` otherwise.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.ones(2, 3)).equal(BatchedTensor(torch.zeros(2, 3)))
+            False
+        """
+
     ###################################
     #     Arithmetical operations     #
     ###################################
