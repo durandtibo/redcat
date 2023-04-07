@@ -1127,9 +1127,9 @@ def test_batched_tensor_seq_long_custom_dims() -> None:
     )
 
 
-###################################
-#     Arithmetical operations     #
-###################################
+##################################################
+#     Mathematical | arithmetical operations     #
+##################################################
 
 
 @mark.parametrize(
