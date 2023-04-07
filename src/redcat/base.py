@@ -419,6 +419,29 @@ class BaseBatchedTensor(ABC):
         """
         return torch.gt(self, other)
 
+    def isnan(self) -> TBatchedTensor:
+        r"""Indicates if each element in the batch is NaN or not.
+
+        Returns:
+            BaseBatchedTensor:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is infinite
+                and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[1.0, 0.0, float('nan')], [float('nan'), -2.0, -1.0]])
+            ... )
+            >>> batch.isnan()
+            tensor([[False, False,  True],
+                    [ True, False, False]], batch_dim=0)
+        """
+        return self.__class__(self._data.isnan(), **self._get_kwargs())
+
     def le(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self <= other`` element-wise.
 
