@@ -849,6 +849,33 @@ class BaseBatchedTensor(ABC):
         """
         return torch.mul(self, other)
 
+    @abstractmethod
+    def mul_(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+        r"""Multiplies the ``self`` batch by the input ``other`.
+
+        Similar to ``self *= other`` (in-place)
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
+                float): Specifies the value to multiply.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch containing the
+                multiplication of the two batches.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.mul(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch
+            tensor([[2., 2., 2.],
+                    [2., 2., 2.]], batch_dim=0)
+        """
+
     def sub(
         self,
         other: BaseBatchedTensor | torch.Tensor | int | float,
