@@ -55,7 +55,6 @@ class BatchedTensor(BaseBatchedTensor):
 
     @property
     def batch_size(self) -> int:
-        r"""int: The batch size."""
         return self._data.shape[self._batch_dim]
 
     #################################
