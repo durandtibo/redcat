@@ -57,7 +57,7 @@ class BaseBatchedTensor(ABC):
                 Default: ``torch.contiguous_format``
 
         Returns:
-            ``BatchedTensor``: A new batch with a contiguous
+            ``BaseBatchedTensor``: A new batch with a contiguous
                 representation of the data.
 
         Example usage:
@@ -105,8 +105,8 @@ class BaseBatchedTensor(ABC):
             **kwargs: See the documentation of ``torch.Tensor.to``
 
         Returns:
-            ``BatchedTensor``: A new batch with the data after dtype
-                and/or device conversion.
+            ``BaseBatchedTensor``: A new batch with the data after
+                dtype and/or device conversion.
 
         Example usage:
 
@@ -424,7 +424,7 @@ class BaseBatchedTensor(ABC):
                 with.
 
         Returns:
-            ``TensorSeqBatch``: A batch containing the element-wise
+            ``BaseBatchedTensor``: A batch containing the element-wise
                 comparison.
 
         Example usage:
@@ -476,6 +476,66 @@ class BaseBatchedTensor(ABC):
                     [False, False, False]], batch_dim=0)
         """
         return torch.gt(self, other)
+
+    def le(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+        r"""Computes ``self <= other`` element-wise.
+
+        Args:
+            other: Specifies the batch to compare.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch containing the element-wise
+                comparison.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(torch.tensor([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedTensor(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.le(batch2)
+            tensor([[ True,  True, False],
+                    [ True, False,  True]], batch_dim=0)
+            >>> batch1.le(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            tensor([[ True,  True, False],
+                    [ True, False,  True]], batch_dim=0)
+            >>> batch1.le(2)
+            tensor([[ True, False, False],
+                    [ True,  True,  True]], batch_dim=0)
+        """
+        return torch.le(self, other)
+
+    def lt(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+        r"""Computes ``self < other`` element-wise.
+
+        Args:
+            other: Specifies the batch to compare.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch containing the element-wise
+                comparison.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(torch.tensor([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedTensor(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.lt(batch2)
+            tensor([[ True, False, False],
+                    [False, False, False]], batch_dim=0)
+            >>> batch1.lt(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            tensor([[ True, False, False],
+                    [False, False, False]], batch_dim=0)
+            >>> batch1.lt(2)
+            tensor([[ True, False, False],
+                    [ True, False, False]], batch_dim=0)
+        """
+        return torch.lt(self, other)
 
     ###################################
     #     Arithmetical operations     #

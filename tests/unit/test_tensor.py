@@ -664,6 +664,90 @@ def test_batched_tensor_gt_custom_dims() -> None:
     )
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_le(other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .le(other)
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[True, True, True, True, True], [True, False, False, False, False]],
+                    dtype=torch.bool,
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_le_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+        .le(BatchedTensor(torch.full((2, 5), 5.0), batch_dim=1))
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[True, True, True, True, True], [True, False, False, False, False]],
+                    dtype=torch.bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensor(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_lt(other: Union[BatchedTensorSeq, torch.Tensor, bool, int, float]) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .lt(other)
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[True, True, True, True, True], [False, False, False, False, False]],
+                    dtype=torch.bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_tensor_lt_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+        .lt(BatchedTensor(torch.full((2, 5), 5.0), batch_dim=1))
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[True, True, True, True, True], [False, False, False, False, False]],
+                    dtype=torch.bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
 ###################################
 #     Arithmetical operations     #
 ###################################
