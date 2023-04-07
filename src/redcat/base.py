@@ -334,6 +334,21 @@ class BaseBatchedTensor(ABC):
     #     Comparison operations     #
     #################################
 
+    def __eq__(self, other: Any) -> TBatchedTensor:
+        return self.eq(other)
+
+    def __ge__(self, other: Any) -> TBatchedTensor:
+        return self.ge(other)
+
+    def __gt__(self, other: Any) -> TBatchedTensor:
+        return self.gt(other)
+
+    def __le__(self, other: Any) -> TBatchedTensor:
+        return self.le(other)
+
+    def __lt__(self, other: Any) -> TBatchedTensor:
+        return self.lt(other)
+
     @abstractmethod
     def allclose(
         self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
