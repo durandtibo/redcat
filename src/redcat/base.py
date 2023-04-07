@@ -105,8 +105,8 @@ class BaseBatchedTensor(ABC):
             **kwargs: See the documentation of ``torch.Tensor.to``
 
         Returns:
-            ``BatchedTensor``: A new batch with the data after dtype
-                and/or device conversion.
+            ``BaseBatchedTensor``: A new batch with the data after
+                dtype and/or device conversion.
 
         Example usage:
 
@@ -424,7 +424,7 @@ class BaseBatchedTensor(ABC):
                 with.
 
         Returns:
-            ``BatchedTensor``: A batch containing the element-wise
+            ``BaseBatchedTensor``: A batch containing the element-wise
                 comparison.
 
         Example usage:
