@@ -572,6 +572,25 @@ def test_batched_tensor_seq_new_zeros_custom_dtype(dtype: torch.dtype) -> None:
     )
 
 
+@mark.parametrize(
+    "data",
+    (
+        torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=torch.float),
+        np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=np.float32),
+        [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+        ((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)),
+    ),
+)
+def test_batched_tensor_seq_from_seq_batch(data: Any) -> None:
+    assert BatchedTensorSeq.from_seq_batch(data).equal(
+        BatchedTensorSeq(
+            torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 ###################################
 #     Arithmetical operations     #
 ###################################

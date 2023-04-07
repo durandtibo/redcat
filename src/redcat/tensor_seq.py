@@ -279,6 +279,30 @@ class BatchedTensorSeq(BaseBatchedTensor):
         kwargs["device"] = kwargs.get("device", self.device)
         return BatchedTensorSeq(torch.zeros(*shape, **kwargs), **self._get_kwargs())
 
+    @classmethod
+    def from_seq_batch(cls, data: Any, **kwargs) -> BatchedTensorSeq:
+        r"""Creates a batch where the first dimension is the sequence dimension
+        and the second dimension is the batch dimension.
+
+        Args:
+            data (array_like): Specifies the data for the tensor. It can
+                be a torch.Tensor, list, tuple, NumPy ndarray, scalar,
+                and other types.
+            kwargs: Keyword arguments that are passed to
+                ``torch.as_tensor``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=1, seq_dim=0)
+        """
+        return cls(data, batch_dim=1, seq_dim=0, **kwargs)
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
