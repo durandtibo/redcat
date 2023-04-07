@@ -717,6 +717,90 @@ def test_batched_tensor_gt_custom_batch_dim() -> None:
     )
 
 
+def test_batched_tensor_isinf() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isinf()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, True], [False, False, True]], dtype=torch.bool)
+            )
+        )
+    )
+
+
+def test_batched_tensor_isinf_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_dim=1,
+        )
+        .isinf()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, True], [False, False, True]], dtype=torch.bool),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_tensor_isneginf() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isneginf()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, False], [False, False, True]], dtype=torch.bool)
+            )
+        )
+    )
+
+
+def test_batched_tensor_isneginf_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_dim=1,
+        )
+        .isneginf()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, False], [False, False, True]], dtype=torch.bool),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_tensor_isposinf() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isposinf()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, True], [False, False, False]], dtype=torch.bool)
+            )
+        )
+    )
+
+
+def test_batched_tensor_isposinf_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_dim=1,
+        )
+        .isposinf()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, True], [False, False, False]], dtype=torch.bool),
+                batch_dim=1,
+            )
+        )
+    )
+
+
 def test_batched_tensor_isnan() -> None:
     assert (
         BatchedTensor(torch.tensor([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]))
