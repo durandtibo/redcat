@@ -31,9 +31,16 @@ def test_batched_tensor_init_data(data: Any) -> None:
     )
 
 
+def test_batched_tensor_init_incorrect_data_dim() -> None:
+    with raises(RuntimeError, match=r"data needs at least 1 dimensions \(received: 0\)"):
+        BatchedTensor(torch.tensor(2))
+
+
 @mark.parametrize("batch_dim", (-1, 1, 2))
 def test_batched_tensor_init_incorrect_batch_dim(batch_dim: int) -> None:
-    with raises(RuntimeError):
+    with raises(
+        RuntimeError, match=r"Incorrect batch_dim \(.*\) but the value should be in \[0, 0\]"
+    ):
         BatchedTensor(torch.ones(2), batch_dim=batch_dim)
 
 
@@ -526,7 +533,7 @@ def test_batched_tensor_add_batch_dim_1() -> None:
 
 
 def test_batched_tensor_add_incorrect_batch_dim() -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
         BatchedTensor(torch.ones(2, 3)).add(BatchedTensor(torch.ones(2, 3), batch_dim=1))
 
 
@@ -541,11 +548,13 @@ def test_check_data_and_dim_correct() -> None:
 
 
 def test_check_data_and_dim_incorrect_data_dim() -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"data needs at least 1 dimensions \(received: 0\)"):
         check_data_and_dim(torch.tensor(2), batch_dim=0)
 
 
 @mark.parametrize("batch_dim", (-1, 2, 3))
 def test_check_data_and_dim_incorrect_batch_dim(batch_dim: int) -> None:
-    with raises(RuntimeError):
+    with raises(
+        RuntimeError, match=r"Incorrect batch_dim \(.*\) but the value should be in \[0, 1\]"
+    ):
         check_data_and_dim(torch.ones(2, 3), batch_dim=batch_dim)

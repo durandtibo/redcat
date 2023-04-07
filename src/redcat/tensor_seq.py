@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ["BatchedTensorSeq", "check_data_and_dims"]
 
+from collections.abc import Callable
 from typing import Any
 
 import torch
@@ -32,6 +33,29 @@ class BatchedTensorSeq(BaseBatchedTensor):
 
     def __repr__(self) -> str:
         return repr(self._data)[:-1] + f", batch_dim={self._batch_dim}, seq_dim={self._seq_dim})"
+
+    @classmethod
+    def __torch_function__(
+        cls,
+        func: Callable,
+        types: tuple[type, ...],
+        args: tuple[Any, ...] = (),
+        kwargs: dict[str, Any] | None = None,
+    ) -> BatchedTensorSeq:
+        if kwargs is None:
+            kwargs = {}
+        batch_dims = {a._batch_dim for a in args if hasattr(a, "_batch_dim")}
+        if len(batch_dims) > 1:
+            raise RuntimeError(
+                f"The batch dimensions do not match. Received multiple values: {batch_dims}"
+            )
+        seq_dims = {a._seq_dim for a in args if hasattr(a, "_seq_dim")}
+        if len(seq_dims) > 1:
+            raise RuntimeError(
+                f"The sequence dimensions do not match. Received multiple values: {seq_dims}"
+            )
+        args = [a._data if hasattr(a, "_data") else a for a in args]
+        return cls(func(*args, **kwargs), batch_dim=batch_dims.pop(), seq_dim=seq_dims.pop())
 
     @property
     def batch_dim(self) -> int:

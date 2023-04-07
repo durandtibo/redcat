@@ -3,12 +3,17 @@ from typing import Any, Union
 import numpy as np
 import torch
 from pytest import mark, raises
+from torch.overrides import is_tensor_like
 
 from redcat import BatchedTensorSeq
 from redcat.tensor_seq import check_data_and_dims
 from redcat.utils import get_available_devices
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
+
+
+def test_batched_tensor_seq_is_tensor_like() -> None:
+    assert is_tensor_like(BatchedTensorSeq(torch.ones(2, 3)))
 
 
 @mark.parametrize(
@@ -27,24 +32,26 @@ def test_batched_tensor_seq_init_data(data: Any) -> None:
 
 
 def test_batched_tensor_seq_init_incorrect_data_dim() -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"data needs at least 2 dimensions"):
         BatchedTensorSeq(torch.ones(2))
 
 
 @mark.parametrize("batch_dim", (-1, 3, 4))
 def test_batched_tensor_seq_init_incorrect_batch_dim(batch_dim: int) -> None:
-    with raises(RuntimeError):
+    with raises(
+        RuntimeError, match=r"Incorrect batch_dim (.*) but the value should be in \[0, 2\]"
+    ):
         BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=batch_dim)
 
 
 @mark.parametrize("seq_dim", (-1, 3, 4))
 def test_batched_tensor_seq_init_incorrect_seq_dim(seq_dim: int) -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"Incorrect seq_dim (.*) but the value should be in \[0, 2\]"):
         BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=0, seq_dim=seq_dim)
 
 
 def test_batched_tensor_seq_init_incorrect_same_batch_and_seq_dims() -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"batch_dim \(0\) and seq_dim \(0\) have to be different"):
         BatchedTensorSeq(torch.ones(2, 3), batch_dim=0, seq_dim=0)
 
 
@@ -564,6 +571,60 @@ def test_batched_tensor_seq_new_zeros_custom_dtype(dtype: torch.dtype) -> None:
     )
 
 
+###################################
+#     Arithmetical operations     #
+###################################
+
+
+@mark.parametrize(
+    "other", (BatchedTensorSeq(torch.ones(2, 3).mul(2)), torch.ones(2, 3).mul(2), 2, 2.0)
+)
+def test_batched_tensor_seq_add(
+    other: Union[BatchedTensorSeq, torch.Tensor, bool, int, float]
+) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .add(other)
+        .equal(BatchedTensorSeq(torch.ones(2, 3).mul(3)))
+    )
+
+
+def test_batched_tensor_seq_add_alpha_2_float() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .add(BatchedTensorSeq(torch.full((2, 3), 2.0, dtype=torch.float)), alpha=2.0)
+        .equal(BatchedTensorSeq(torch.full((2, 3), 5.0, dtype=torch.float)))
+    )
+
+
+def test_batched_tensor_seq_add_alpha_2_long() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
+        .add(BatchedTensorSeq(torch.full((2, 3), 2.0, dtype=torch.long)), alpha=2)
+        .equal(BatchedTensorSeq(torch.full((2, 3), 5.0, dtype=torch.long)))
+    )
+
+
+def test_batched_tensor_seq_add_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .add(BatchedTensorSeq(torch.full((2, 3), 2.0, dtype=torch.float), batch_dim=1, seq_dim=0))
+        .equal(BatchedTensorSeq(torch.full((2, 3), 3.0, dtype=torch.float), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_add_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedTensorSeq(torch.ones(2, 3)).add(BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=2))
+
+
+def test_batched_tensor_seq_add_incorrect_seq_dim() -> None:
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        BatchedTensorSeq(torch.ones(2, 3, 4)).add(
+            BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=0, seq_dim=2)
+        )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
@@ -575,22 +636,24 @@ def test_check_data_and_dims_correct() -> None:
 
 
 def test_check_data_and_dims_incorrect_data_dim() -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"data needs at least 2 dimensions"):
         check_data_and_dims(torch.ones(2), batch_dim=0, seq_dim=1)
 
 
 @mark.parametrize("batch_dim", (-1, 3, 4))
 def test_check_data_and_dims_incorrect_batch_dim(batch_dim: int) -> None:
-    with raises(RuntimeError):
+    with raises(
+        RuntimeError, match=r"Incorrect batch_dim (.*) but the value should be in \[0, 2\]"
+    ):
         check_data_and_dims(torch.ones(2, 3, 4), batch_dim=batch_dim, seq_dim=1)
 
 
 @mark.parametrize("seq_dim", (-1, 3, 4))
 def test_check_data_and_dims_incorrect_seq_dim(seq_dim: int) -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"Incorrect seq_dim (.*) but the value should be in \[0, 2\]"):
         check_data_and_dims(torch.ones(2, 3, 4), batch_dim=0, seq_dim=seq_dim)
 
 
 def test_check_data_and_dims_same_batch_and_seq_dims() -> None:
-    with raises(RuntimeError):
+    with raises(RuntimeError, match=r"batch_dim \(0\) and seq_dim \(0\) have to be different"):
         check_data_and_dims(torch.ones(2, 3), batch_dim=0, seq_dim=0)
