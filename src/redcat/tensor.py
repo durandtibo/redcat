@@ -9,6 +9,7 @@ import torch
 from torch import Tensor
 
 from redcat.base import BaseBatchedTensor
+from redcat.utils import check_batch_dims, get_batch_dims
 
 
 class BatchedTensor(BaseBatchedTensor):
@@ -40,13 +41,11 @@ class BatchedTensor(BaseBatchedTensor):
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
     ) -> BatchedTensor:
-        batch_dims = {a._batch_dim for a in args if hasattr(a, "_batch_dim")}
-        if len(batch_dims) > 1:
-            raise RuntimeError(
-                f"The batch dimensions do not match. Received multiple values: {batch_dims}"
-            )
+        kwargs = kwargs or {}
+        batch_dims = get_batch_dims(args, kwargs)
+        check_batch_dims(batch_dims)
         args = [a._data if hasattr(a, "_data") else a for a in args]
-        return cls(func(*args, **(kwargs or {})), batch_dim=batch_dims.pop())
+        return cls(func(*args, **kwargs), batch_dim=batch_dims.pop())
 
     @property
     def batch_dim(self) -> int:
@@ -224,6 +223,18 @@ class BatchedTensor(BaseBatchedTensor):
         if self._batch_dim != other.batch_dim:
             return False
         return self._data.equal(other.data)
+
+    ##################################################
+    #     Mathematical | arithmetical operations     #
+    ##################################################
+
+    def add_(
+        self,
+        other: BaseBatchedTensor | Tensor | int | float,
+        alpha: int | float = 1.0,
+    ) -> None:
+        check_batch_dims(get_batch_dims((self, other), {}))
+        return self._data.add_(other, alpha=alpha)
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
