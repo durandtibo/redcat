@@ -236,6 +236,14 @@ class BatchedTensor(BaseBatchedTensor):
         check_batch_dims(get_batch_dims((self, other), {}))
         return self._data.add_(other, alpha=alpha)
 
+    def div_(
+        self,
+        other: BaseBatchedTensor | torch.Tensor | int | float,
+        rounding_mode: str | None = None,
+    ) -> None:
+        check_batch_dims(get_batch_dims((self, other), {}))
+        return self._data.div_(other, rounding_mode=rounding_mode)
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
 
