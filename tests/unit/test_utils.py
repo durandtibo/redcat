@@ -1,8 +1,9 @@
 from unittest.mock import patch
 
+import numpy as np
 import torch
 
-from redcat.utils import align_to_batch_first, get_available_devices
+from redcat.utils import align_to_batch_first, get_available_devices, swap2
 
 ##########################################
 #     Tests for align_to_batch_first     #
@@ -49,3 +50,38 @@ def test_get_available_devices_cpu() -> None:
 @patch("torch.cuda.device_count", lambda *args, **kwargs: 1)
 def test_get_available_devices_cpu_and_gpu() -> None:
     assert get_available_devices() == ("cpu", "cuda:0")
+
+
+###########################
+#     Tests for swap2     #
+###########################
+
+
+def test_swap2_list() -> None:
+    seq = [1, 2, 3, 4, 5]
+    swap2(seq, 0, 2)
+    assert seq == [3, 2, 1, 4, 5]
+
+
+def test_swap2_tensor_1d() -> None:
+    tensor = torch.tensor([1, 2, 3, 4, 5])
+    swap2(tensor, 0, 2)
+    assert tensor.equal(torch.tensor([3, 2, 1, 4, 5]))
+
+
+def test_swap2_tensor_2d() -> None:
+    tensor = torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    swap2(tensor, 0, 2)
+    assert tensor.equal(torch.tensor([[4, 5], [2, 3], [0, 1], [6, 7], [8, 9]]))
+
+
+def test_swap2_ndarray_1d() -> None:
+    array = np.array([1, 2, 3, 4, 5])
+    swap2(array, 0, 2)
+    assert np.array_equal(array, np.array([3, 2, 1, 4, 5]))
+
+
+def test_swap2_ndarray_2d() -> None:
+    array = np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    swap2(array, 0, 2)
+    assert np.array_equal(array, np.array([[4, 5], [2, 3], [0, 1], [6, 7], [8, 9]]))
