@@ -558,6 +558,126 @@ def test_batched_tensor_seq_from_seq_batch(data: Any) -> None:
 #################################
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_seq__eq__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.arange(10).view(2, 5)) == other).equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[False, False, False, False, False], [True, False, False, False, False]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_seq__ge__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.arange(10).view(2, 5)) >= other).equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_seq__gt__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.arange(10).view(2, 5)) > other).equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_seq__le__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.arange(10).view(2, 5)) <= other).equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[True, True, True, True, True], [True, False, False, False, False]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_seq__lt__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.arange(10).view(2, 5)) < other).equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[True, True, True, True, True], [False, False, False, False, False]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
 def test_batched_tensor_seq_allclose_true() -> None:
     assert BatchedTensorSeq(torch.ones(2, 3)).allclose(BatchedTensorSeq(torch.ones(2, 3)))
 
