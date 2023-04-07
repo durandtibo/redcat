@@ -751,7 +751,7 @@ class BaseBatchedTensor(ABC):
     ) -> TBatchedTensor:
         r"""Divides the ``self`` batch by the input ``other`.
 
-        Similar to ``out = self / other`` (in-place)
+        Similar to ``out = self / other``
 
         Args:
             other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
@@ -784,6 +784,40 @@ class BaseBatchedTensor(ABC):
                     [0.5000, 0.5000, 0.5000]], batch_dim=0)
         """
         return torch.div(self, other, rounding_mode=rounding_mode)
+
+    @abstractmethod
+    def div_(
+        self,
+        other: BaseBatchedTensor | torch.Tensor | int | float,
+        rounding_mode: str | None = None,
+    ) -> None:
+        r"""Divides the ``self`` batch by the input ``other`.
+
+        Similar to ``self /= other`` (in-place)
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
+                float): Specifies the dividend.
+            rounding_mode (str or ``None``, optional): Specifies the
+                type of rounding applied to the result.
+                - ``None``: true division.
+                - ``"trunc"``: rounds the results of the division
+                    towards zero.
+                - ``"floor"``: floor division.
+                Default: ``None``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.div_(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch
+            tensor([[0.5000, 0.5000, 0.5000],
+                    [0.5000, 0.5000, 0.5000]], batch_dim=0)
+        """
 
     def mul(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> TBatchedTensor:
         r"""Multiplies the ``self`` batch by the input ``other`.
