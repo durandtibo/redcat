@@ -518,6 +518,48 @@ def test_batched_tensor_allclose_true_rtol(batch: BatchedTensor, rtol: float) ->
     assert BatchedTensor(torch.ones(2, 3)).allclose(batch, rtol=rtol)
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensor(torch.full((2, 1), 5.0)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_tensor_eq(other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .eq(other)
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[False, False, False, False, False], [True, False, False, False, False]],
+                    dtype=torch.bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_tensor_eq_custom_batch_dim() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+        .eq(BatchedTensor(torch.ones(2, 5).mul(5), batch_dim=1))
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[False, False, False, False, False], [True, False, False, False, False]],
+                    dtype=torch.bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
 def test_batched_tensor_equal_true() -> None:
     assert BatchedTensor(torch.ones(2, 3)).equal(BatchedTensor(torch.ones(2, 3)))
 

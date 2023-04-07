@@ -28,6 +28,11 @@ class BaseBatchedTensor(ABC):
         self._data = torch.as_tensor(data, **kwargs)
 
     @property
+    @abstractmethod
+    def batch_size(self) -> int:
+        r"""int: The batch size."""
+
+    @property
     def data(self) -> Tensor:
         r"""``torch.Tensor``: The data in the batch."""
         return self._data
@@ -359,6 +364,36 @@ class BaseBatchedTensor(ABC):
             >>> batch1.allclose(batch2, atol=1, rtol=0)
             True
         """
+
+    def eq(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+        r"""Computes element-wise equality.
+
+        Args:
+            other: Specifies the batch to compare.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch containing the element-wise
+                equality.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(torch.tensor([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedTensor(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.eq(batch2)
+            tensor([[False,  True, False],
+                    [ True, False,  True]], batch_dim=0)
+            >>> batch1.eq(torch.tensor([[5, 3, 2], [0, 1, 2]]))
+            tensor([[False,  True, False],
+                    [ True, False,  True]], batch_dim=0)
+            >>> batch1.eq(2)
+            tensor([[False, False, False],
+                    [False,  True,  True]], batch_dim=0)
+        """
+        return torch.eq(self, other)
 
     @abstractmethod
     def equal(self, other: Any) -> bool:
