@@ -81,25 +81,18 @@ class BatchedTensorSeq(BaseBatchedTensor):
     #     Comparison operations     #
     #################################
 
+    def allclose(
+        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
+    ) -> bool:
+        if not isinstance(other, BatchedTensorSeq):
+            return False
+        if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
+            return False
+        if self._data.shape != other.data.shape:
+            return False
+        return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
+
     def equal(self, other: Any) -> bool:
-        r"""Indicates if two batches are equal or not.
-
-        Args:
-            other: Specifies the value to compare.
-
-        Returns:
-            bool: ``True`` if the batches have the same size,
-                elements and same batch dimension, ``False`` otherwise.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.ones(2, 3)).equal(BatchedTensorSeq(torch.zeros(2, 3)))
-            False
-        """
         if not isinstance(other, BatchedTensorSeq):
             return False
         if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
