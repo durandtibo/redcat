@@ -331,7 +331,7 @@ class BaseBatchedTensor(ABC):
 
     def add(
         self,
-        other: TBatchedTensor | Tensor | int | float,
+        other: BaseBatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> TBatchedTensor:
         r"""Adds the input ``other``, scaled by ``alpha``, to the ``self``
@@ -340,14 +340,14 @@ class BaseBatchedTensor(ABC):
         Similar to ``out = self + alpha * other``
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the other value to add to the
                 current batch.
             alpha (int or float, optional): Specifies the scale of the
                 batch to add. Default: ``1.0``
 
         Returns:
-            ``BatchedTensor``: A new batch containing the addition of
+            ``BaseBatchedTensor``: A new batch containing the addition of
                 the two batches.
 
         Example usage:
@@ -366,3 +366,44 @@ class BaseBatchedTensor(ABC):
                     [3., 3., 3.]], batch_dim=0)
         """
         return torch.add(self, other, alpha=alpha)
+
+    def div(
+        self,
+        other: BaseBatchedTensor | torch.Tensor | int | float,
+        rounding_mode: str | None = None,
+    ) -> TBatchedTensor:
+        r"""Divides the ``self`` batch by the input ``other`.
+
+        Similar to ``out = self / other`` (in-place)
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
+                float): Specifies the dividend.
+            rounding_mode (str or ``None``, optional): Specifies the
+                type of rounding applied to the result.
+                - ``None``: true division.
+                - ``"trunc"``: rounds the results of the division
+                    towards zero.
+                - ``"floor"``: floor division.
+                Default: ``None``
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch containing the division
+                of the two batches.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> out = batch.div(BatchedTensor(torch.ones(2, 3).mul(2)))
+            >>> batch
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+            >>> out
+            tensor([[0.5000, 0.5000, 0.5000],
+                    [0.5000, 0.5000, 0.5000]], batch_dim=0)
+        """
+        return torch.div(self, other, rounding_mode=rounding_mode)

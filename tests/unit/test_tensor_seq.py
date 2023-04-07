@@ -5,7 +5,8 @@ import torch
 from pytest import mark, raises
 from torch.overrides import is_tensor_like
 
-from redcat import BatchedTensorSeq
+from redcat import BatchedTensor, BatchedTensorSeq
+from redcat.base import BaseBatchedTensor
 from redcat.tensor_seq import check_data_and_dims
 from redcat.utils import get_available_devices
 
@@ -577,10 +578,17 @@ def test_batched_tensor_seq_new_zeros_custom_dtype(dtype: torch.dtype) -> None:
 
 
 @mark.parametrize(
-    "other", (BatchedTensorSeq(torch.ones(2, 3).mul(2)), torch.ones(2, 3).mul(2), 2, 2.0)
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
 )
 def test_batched_tensor_seq_add(
-    other: Union[BatchedTensorSeq, torch.Tensor, bool, int, float]
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (
         BatchedTensorSeq(torch.ones(2, 3))
@@ -623,6 +631,54 @@ def test_batched_tensor_seq_add_incorrect_seq_dim() -> None:
         BatchedTensorSeq(torch.ones(2, 3, 4)).add(
             BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=0, seq_dim=2)
         )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq_div(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .div(other)
+        .equal(BatchedTensorSeq(torch.ones(2, 3).mul(0.5)))
+    )
+
+
+def test_batched_tensor_seq_div_rounding_mode_floor() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .div(BatchedTensorSeq(torch.ones(2, 3).mul(2)), rounding_mode="floor")
+        .equal(BatchedTensorSeq(torch.zeros(2, 3)))
+    )
+
+
+def test_batched_tensor_seq_div_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .div(BatchedTensorSeq(torch.ones(2, 3).mul(2), batch_dim=1, seq_dim=0))
+        .equal(BatchedTensorSeq(torch.ones(2, 3).mul(0.5), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_div_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedTensorSeq(torch.ones(2, 3, 1)).div(
+            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
+        )
+
+
+def test_batched_tensor_seq_div_incorrect_seq_dim() -> None:
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        BatchedTensorSeq(torch.ones(2, 3, 1)).div(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
 #########################################

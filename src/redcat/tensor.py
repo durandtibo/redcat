@@ -40,15 +40,13 @@ class BatchedTensor(BaseBatchedTensor):
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
     ) -> BatchedTensor:
-        if kwargs is None:
-            kwargs = {}
         batch_dims = {a._batch_dim for a in args if hasattr(a, "_batch_dim")}
         if len(batch_dims) > 1:
             raise RuntimeError(
                 f"The batch dimensions do not match. Received multiple values: {batch_dims}"
             )
         args = [a._data if hasattr(a, "_data") else a for a in args]
-        return cls(func(*args, **kwargs), batch_dim=batch_dims.pop())
+        return cls(func(*args, **(kwargs or {})), batch_dim=batch_dims.pop())
 
     @property
     def batch_dim(self) -> int:
