@@ -419,6 +419,76 @@ class BaseBatchedTensor(ABC):
         """
         return torch.gt(self, other)
 
+    def isinf(self) -> TBatchedTensor:
+        r"""Indicates if each element of the batch is infinite (positive or
+        negative infinity) or not.
+
+        Returns:
+            BaseBatchedTensor:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is infinite
+                and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[1.0, 0.0, float('inf')], [-1.0, -2.0, float('-inf')]])
+            ... )
+            >>> batch.isinf()
+            tensor([[False, False, True],
+                    [False, False, True]], batch_dim=0)
+        """
+        return torch.isinf(self)
+
+    def isneginf(self) -> TBatchedTensor:
+        r"""Indicates if each element of the batch is negative infinity or not.
+
+        Returns:
+            BaseBatchedTensor:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is negative
+                infinity and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[1.0, 0.0, float('inf')], [-1.0, -2.0, float('-inf')]])
+            ... )
+            >>> batch.isneginf()
+            tensor([[False, False, False],
+                    [False, False,  True]], batch_dim=0)
+        """
+        return torch.isneginf(self)
+
+    def isposinf(self) -> TBatchedTensor:
+        r"""Indicates if each element of the batch is positive infinity or not.
+
+        Returns:
+            BaseBatchedTensor:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is positive
+                infinity and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[1.0, 0.0, float('inf')], [-1.0, -2.0, float('-inf')]])
+            ... )
+            >>> batch.isposinf()
+            tensor([[False, False,   True],
+                    [False, False,  False]], batch_dim=0)
+        """
+        return torch.isposinf(self)
+
     def isnan(self) -> TBatchedTensor:
         r"""Indicates if each element in the batch is NaN or not.
 
@@ -440,7 +510,7 @@ class BaseBatchedTensor(ABC):
             tensor([[False, False,  True],
                     [ True, False, False]], batch_dim=0)
         """
-        return self.__class__(self._data.isnan(), **self._get_kwargs())
+        return torch.isnan(self)
 
     def le(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self <= other`` element-wise.
