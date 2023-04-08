@@ -1011,6 +1011,150 @@ def test_batched_tensor_long_custom_batch_dim() -> None:
 @mark.parametrize(
     "other",
     (
+        BatchedTensorSeq(torch.ones(2, 3)),
+        BatchedTensor(torch.ones(2, 3)),
+        torch.ones(2, 3),
+        1,
+        1.0,
+    ),
+)
+def test_batched_tensor_seq__add__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.zeros(2, 3)) + other).equal(BatchedTensorSeq(torch.ones(2, 3)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.ones(2, 3)),
+        BatchedTensor(torch.ones(2, 3)),
+        torch.ones(2, 3),
+        1,
+        1.0,
+    ),
+)
+def test_batched_tensor_seq__iadd__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    batch = BatchedTensorSeq(torch.zeros(2, 3))
+    batch += other
+    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq__mul__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.ones(2, 3)) * other).equal(
+        BatchedTensorSeq(torch.full((2, 3), 2.0))
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq__imul__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch *= other
+    assert batch.equal(BatchedTensorSeq(torch.full((2, 3), 2.0)))
+
+
+def test_batched_tensor_seq__neg__() -> None:
+    assert (-BatchedTensorSeq(torch.ones(2, 3))).equal(BatchedTensorSeq(-torch.ones(2, 3)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq__sub__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.ones(2, 3)) - other).equal(BatchedTensorSeq(-torch.ones(2, 3)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq__isub__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch -= other
+    assert batch.equal(BatchedTensorSeq(-torch.ones(2, 3)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq__truediv__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    assert (BatchedTensorSeq(torch.ones(2, 3)) / other).equal(
+        BatchedTensorSeq(torch.ones(2, 3).mul(0.5))
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_seq__itruediv__(
+    other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
+) -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch /= other
+    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3).mul(0.5)))
+
+
+@mark.parametrize(
+    "other",
+    (
         BatchedTensor(torch.full((2, 3), 2.0)),
         BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
