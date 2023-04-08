@@ -1517,6 +1517,62 @@ def test_batched_tensor_abs__custom_batch_dim() -> None:
     )
 
 
+def test_batched_tensor_clamp() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .clamp(min_value=2, max_value=5)
+        .equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]])))
+    )
+
+
+def test_batched_tensor_clamp_only_max_value() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .clamp(max_value=5)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 5, 5, 5, 5]])))
+    )
+
+
+def test_batched_tensor_clamp_only_min_value() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .clamp(min_value=2)
+        .equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 6, 7, 8, 9]])))
+    )
+
+
+def test_batched_tensor_clamp_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+        .clamp(min_value=2, max_value=5)
+        .equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]), batch_dim=1))
+    )
+
+
+def test_batched_tensor_clamp_() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch.clamp_(min_value=2, max_value=5)
+    assert batch.equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]])))
+
+
+def test_batched_tensor_clamp__only_max_value() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch.clamp_(max_value=5)
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 5, 5, 5, 5]])))
+
+
+def test_batched_tensor_clamp__only_min_value() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch.clamp_(min_value=2)
+    assert batch.equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 6, 7, 8, 9]])))
+
+
+def test_batched_tensor_clamp__custom_dims() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+    batch.clamp_(min_value=2, max_value=5)
+    assert batch.equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]), batch_dim=1))
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################

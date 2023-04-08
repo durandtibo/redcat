@@ -1040,3 +1040,87 @@ class BaseBatchedTensor(ABC):
                     [1., 1., 3.]], batch_dim=0)
         """
         self._data.abs_()
+
+    def clamp(
+        self,
+        min_value: int | float | None = None,
+        max_value: int | float | None = None,
+    ) -> TBatchedTensor:
+        r"""Clamps all elements in ``self`` into the range ``[min_value,
+        max_value]``.
+
+        Note: ``min_value`` and ``max_value`` cannot be both ``None``.
+
+        Args:
+            min_value (int, float or ``None``, optional): Specifies
+                the lower bound. If ``min_value`` is ``None``,
+                there is no lower bound. Default: ``None``
+            max_value (int, float or ``None``, optional): Specifies
+                the upper bound. If ``max_value`` is ``None``,
+                there is no upper bound. Default: ``None``
+
+        Returns:
+            ``BaseBatchedTensor``: A batch with clamped values.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.clamp(min_value=2, max_value=5)
+            tensor([[2, 2, 2, 3, 4],
+                    [5, 5, 5, 5, 5]], batch_dim=0)
+            >>> batch.clamp(min_value=2)
+            tensor([[2, 2, 2, 3, 4],
+                    [5, 6, 7, 8, 9]])
+            >>> batch.clamp(max_value=7)
+            tensor([[0, 1, 2, 3, 4],
+                    [5, 6, 7, 7, 7]], batch_dim=0)
+        """
+        return torch.clamp(self, min=min_value, max=max_value)
+
+    def clamp_(
+        self,
+        min_value: int | float | None = None,
+        max_value: int | float | None = None,
+    ) -> None:
+        r"""Clamps all elements in ``self`` into the range ``[min_value,
+        max_value]``.
+
+        Inplace version of ``clamp``.
+
+        Note: ``min_value`` and ``max_value`` cannot be both ``None``.
+
+        Args:
+            min_value (int, float or ``None``, optional): Specifies
+                the lower bound.  If ``min_value`` is ``None``,
+                there is no lower bound. Default: ``None``
+            max_value (int, float or ``None``, optional): Specifies
+                the upper bound. If ``max_value`` is ``None``,
+                there is no upper bound. Default: ``None``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.clamp_(min_value=2, max_value=5)
+            >>> batch
+            tensor([[2, 2, 2, 3, 4],
+                    [5, 5, 5, 5, 5]], batch_dim=0)
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.clamp_(min_value=2)
+            >>> batch
+            tensor([[2, 2, 2, 3, 4],
+                    [5, 6, 7, 8, 9]], batch_dim=0)
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.clamp_(max_value=7)
+            >>> batch
+            tensor([[0, 1, 2, 3, 4],
+                    [5, 6, 7, 7, 7]], batch_dim=0)
+        """
+        self._data.clamp_(min=min_value, max=max_value)
