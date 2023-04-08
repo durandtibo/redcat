@@ -1219,3 +1219,46 @@ class BaseBatchedTensor(ABC):
                     [ 54.5981, 148.4132, 403.4288]], batch_dim=0)
         """
         self._data.exp_()
+
+    def log(self) -> BaseBatchedTensor:
+        r"""Computes the natural logarithm of the elements.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the natural
+                logarithm of the elements of the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0, 9.0]])
+            ... )
+            >>> batch.log()
+            tensor([[  -inf, 0.0000, 0.6931, 1.0986, 1.3863],
+                    [1.6094, 1.7918, 1.9459, 2.0794, 2.1972]], batch_dim=0)
+        """
+        return torch.log(self)
+
+    def log_(self) -> None:
+        r"""Computes the natural logarithm of the elements.
+
+        In-place version of ``log()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0, 9.0]])
+            ... )
+            >>> batch.log_()
+            >>> batch
+            tensor([[  -inf, 0.0000, 0.6931, 1.0986, 1.3863],
+                    [1.6094, 1.7918, 1.9459, 2.0794, 2.1972]], batch_dim=0)
+        """
+        self._data.log_()

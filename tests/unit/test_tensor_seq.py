@@ -1473,9 +1473,9 @@ def test_batched_tensor_seq_div__incorrect_seq_dim() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.ones(2, 3).mul(2)),
-        BatchedTensor(torch.ones(2, 3).mul(2)),
-        torch.ones(2, 3).mul(2),
+        BatchedTensorSeq(torch.full((2, 3), 2.0)),
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
         2,
         2.0,
     ),
@@ -1489,7 +1489,7 @@ def test_batched_tensor_seq_fmod(
 def test_batched_tensor_seq_fmod_custom_dims() -> None:
     assert (
         BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
-        .fmod(BatchedTensorSeq(torch.ones(2, 3).mul(2), batch_dim=1, seq_dim=0))
+        .fmod(BatchedTensorSeq(torch.full((2, 3), 2.0), batch_dim=1, seq_dim=0))
         .equal(BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0))
     )
 
@@ -1509,7 +1509,7 @@ def test_batched_tensor_seq_fmod_incorrect_seq_dim() -> None:
 
 
 @mark.parametrize(
-    "other", (BatchedTensorSeq(torch.ones(2, 3).mul(2)), torch.ones(2, 3).mul(2), 2, 2.0)
+    "other", (BatchedTensorSeq(torch.full((2, 3), 2.0)), torch.full((2, 3), 2.0), 2, 2.0)
 )
 def test_batched_tensor_seq_fmod_(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
@@ -1521,7 +1521,7 @@ def test_batched_tensor_seq_fmod_(
 
 def test_batched_tensor_seq_fmod__custom_dims() -> None:
     batch = BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
-    batch.fmod_(BatchedTensorSeq(torch.ones(2, 3).mul(2), batch_dim=1, seq_dim=0))
+    batch.fmod_(BatchedTensorSeq(torch.full((2, 3), 2.0), batch_dim=1, seq_dim=0))
     assert batch.equal(BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0))
 
 
@@ -1910,6 +1910,80 @@ def test_batched_tensor_seq_exp__custom_dims() -> None:
                 [
                     [2.7182817459106445, 7.389056205749512, 20.08553695678711],
                     [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                ]
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
+def test_batched_tensor_seq_log() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+        .log()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 0.6931471824645996, 1.0986123085021973],
+                        [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                    ]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float), batch_dim=1, seq_dim=0
+        )
+        .log()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 0.6931471824645996, 1.0986123085021973],
+                        [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                    ]
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+    batch.log_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                ]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.log_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
                 ]
             ),
             batch_dim=1,
