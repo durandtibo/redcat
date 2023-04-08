@@ -675,6 +675,37 @@ class BaseBatchedTensor(ABC):
     #     Mathematical | arithmetical operations     #
     ##################################################
 
+    def __add__(self, other: Any) -> TBatchedTensor:
+        return self.add(other)
+
+    def __iadd__(self, other: Any) -> TBatchedTensor:
+        self.add_(other)
+        return self
+
+    def __mul__(self, other: Any) -> TBatchedTensor:
+        return self.mul(other)
+
+    def __imul__(self, other: Any) -> TBatchedTensor:
+        self.mul_(other)
+        return self
+
+    def __neg__(self) -> TBatchedTensor:
+        return self.neg()
+
+    def __sub__(self, other: Any) -> TBatchedTensor:
+        return self.sub(other)
+
+    def __isub__(self, other: Any) -> TBatchedTensor:
+        self.sub_(other)
+        return self
+
+    def __truediv__(self, other: Any) -> TBatchedTensor:
+        return self.div(other)
+
+    def __itruediv__(self, other: Any) -> TBatchedTensor:
+        self.div_(other)
+        return self
+
     def add(
         self,
         other: BaseBatchedTensor | Tensor | int | float,
