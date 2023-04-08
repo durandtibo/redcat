@@ -1777,6 +1777,80 @@ def test_batched_tensor_seq_clamp__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_exp() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+        .exp()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [2.7182817459106445, 7.389056205749512, 20.08553695678711],
+                        [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                    ]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_exp_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float), batch_dim=1, seq_dim=0
+        )
+        .exp()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [2.7182817459106445, 7.389056205749512, 20.08553695678711],
+                        [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                    ]
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_exp_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+    batch.exp_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [2.7182817459106445, 7.389056205749512, 20.08553695678711],
+                    [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                ]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_exp__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.exp_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [2.7182817459106445, 7.389056205749512, 20.08553695678711],
+                    [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                ]
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
