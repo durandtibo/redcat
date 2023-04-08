@@ -1402,6 +1402,18 @@ def test_batched_tensor_seq_mul__incorrect_seq_dim() -> None:
         batch.mul_(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
+def test_batched_tensor_seq_neg() -> None:
+    assert BatchedTensorSeq(torch.ones(2, 3)).neg().equal(BatchedTensorSeq(-torch.ones(2, 3)))
+
+
+def test_batched_tensor_seq_neg_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .neg()
+        .equal(BatchedTensorSeq(-torch.ones(2, 3), batch_dim=1, seq_dim=0))
+    )
+
+
 @mark.parametrize(
     "other",
     (
