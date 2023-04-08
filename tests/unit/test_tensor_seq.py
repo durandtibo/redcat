@@ -1658,6 +1658,63 @@ def test_batched_tensor_seq_sub__incorrect_seq_dim() -> None:
         batch.sub_(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
+################################################
+#     Mathematical | point-wise operations     #
+################################################
+
+
+def test_batched_tensor_seq_abs() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float))
+        .abs()
+        .equal(
+            BatchedTensorSeq(torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float))
+        )
+    )
+
+
+def test_batched_tensor_seq_abs_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .abs()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_abs_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float))
+    batch.abs_()
+    assert batch.equal(
+        BatchedTensorSeq(torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float))
+    )
+
+
+def test_batched_tensor_seq_abs__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.abs_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################

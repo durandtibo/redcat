@@ -1018,7 +1018,7 @@ def test_batched_tensor_long_custom_batch_dim() -> None:
         1.0,
     ),
 )
-def test_batched_tensor_seq__add__(
+def test_batched_tensor__add__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensorSeq(torch.zeros(2, 3)) + other).equal(BatchedTensorSeq(torch.ones(2, 3)))
@@ -1034,7 +1034,7 @@ def test_batched_tensor_seq__add__(
         1.0,
     ),
 )
-def test_batched_tensor_seq__iadd__(
+def test_batched_tensor__iadd__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     batch = BatchedTensorSeq(torch.zeros(2, 3))
@@ -1052,7 +1052,7 @@ def test_batched_tensor_seq__iadd__(
         2.0,
     ),
 )
-def test_batched_tensor_seq__mul__(
+def test_batched_tensor__mul__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensorSeq(torch.ones(2, 3)) * other).equal(
@@ -1070,7 +1070,7 @@ def test_batched_tensor_seq__mul__(
         2.0,
     ),
 )
-def test_batched_tensor_seq__imul__(
+def test_batched_tensor__imul__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     batch = BatchedTensorSeq(torch.ones(2, 3))
@@ -1078,7 +1078,7 @@ def test_batched_tensor_seq__imul__(
     assert batch.equal(BatchedTensorSeq(torch.full((2, 3), 2.0)))
 
 
-def test_batched_tensor_seq__neg__() -> None:
+def test_batched_tensor__neg__() -> None:
     assert (-BatchedTensorSeq(torch.ones(2, 3))).equal(BatchedTensorSeq(-torch.ones(2, 3)))
 
 
@@ -1092,7 +1092,7 @@ def test_batched_tensor_seq__neg__() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_seq__sub__(
+def test_batched_tensor__sub__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensorSeq(torch.ones(2, 3)) - other).equal(BatchedTensorSeq(-torch.ones(2, 3)))
@@ -1108,7 +1108,7 @@ def test_batched_tensor_seq__sub__(
         2.0,
     ),
 )
-def test_batched_tensor_seq__isub__(
+def test_batched_tensor__isub__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     batch = BatchedTensorSeq(torch.ones(2, 3))
@@ -1126,7 +1126,7 @@ def test_batched_tensor_seq__isub__(
         2.0,
     ),
 )
-def test_batched_tensor_seq__truediv__(
+def test_batched_tensor__truediv__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     assert (BatchedTensorSeq(torch.ones(2, 3)) / other).equal(
@@ -1144,7 +1144,7 @@ def test_batched_tensor_seq__truediv__(
         2.0,
     ),
 )
-def test_batched_tensor_seq__itruediv__(
+def test_batched_tensor__itruediv__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
     batch = BatchedTensorSeq(torch.ones(2, 3))
@@ -1468,6 +1468,53 @@ def test_batched_tensor_sub__incorrect_batch_dim() -> None:
     batch = BatchedTensor(torch.ones(2, 3, 1))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.sub_(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+
+
+################################################
+#     Mathematical | point-wise operations     #
+################################################
+
+
+def test_batched_tensor_abs() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float))
+        .abs()
+        .equal(BatchedTensor(torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float)))
+    )
+
+
+def test_batched_tensor_abs_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float), batch_dim=1
+        )
+        .abs()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float), batch_dim=1
+            )
+        )
+    )
+
+
+def test_batched_tensor_abs_() -> None:
+    batch = BatchedTensor(torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float))
+    batch.abs_()
+    assert batch.equal(
+        BatchedTensor(torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float))
+    )
+
+
+def test_batched_tensor_abs__custom_batch_dim() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]], dtype=torch.float), batch_dim=1
+    )
+    batch.abs_()
+    assert batch.equal(
+        BatchedTensor(
+            torch.tensor([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]], dtype=torch.float), batch_dim=1
+        )
+    )
 
 
 ########################################
