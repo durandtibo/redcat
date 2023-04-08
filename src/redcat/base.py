@@ -1124,3 +1124,42 @@ class BaseBatchedTensor(ABC):
                     [5, 6, 7, 7, 7]], batch_dim=0)
         """
         self._data.clamp_(min=min_value, max=max_value)
+
+    def exp(self) -> TBatchedTensor:
+        r"""Computes the exponential of the elements.
+
+        Return:
+            ``TensorSeqBatch``: A batch with the exponential of the
+                elements of the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]))
+            >>> batch.exp()
+            tensor([[  2.7183,   7.3891,  20.0855],
+                    [ 54.5981, 148.4132, 403.4288]], batch_dim=0)
+        """
+        return torch.exp(self)
+
+    def exp_(self) -> None:
+        r"""Computes the exponential of the elements.
+
+        In-place version of ``exp()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]))
+            >>> batch.exp_()
+            >>> batch
+            tensor([[  2.7183,   7.3891,  20.0855],
+                    [ 54.5981, 148.4132, 403.4288]], batch_dim=0)
+        """
+        self._data.exp_()
