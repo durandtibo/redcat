@@ -876,6 +876,30 @@ class BaseBatchedTensor(ABC):
                     [2., 2., 2.]], batch_dim=0)
         """
 
+    def neg(self) -> TBatchedTensor:
+        r"""Returns a new batch with the negative of the elements.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch with the negative of
+                the elements.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> out = batch.neg()
+            >>> batch
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+            >>> out
+            tensor([[-1., -1., -1.],
+                    [-1., -1., -1.]], batch_dim=0)
+        """
+        return torch.neg(self)
+
     def sub(
         self,
         other: BaseBatchedTensor | torch.Tensor | int | float,
