@@ -317,6 +317,15 @@ class BatchedTensorSeq(BaseBatchedTensor):
         check_seq_dims(get_seq_dims((self, other), {}))
         self._data.mul_(other)
 
+    def sub_(
+        self,
+        other: BaseBatchedTensor | Tensor | int | float,
+        alpha: int | float = 1.0,
+    ) -> None:
+        check_batch_dims(get_batch_dims((self, other), {}))
+        check_seq_dims(get_seq_dims((self, other), {}))
+        self._data.sub_(other, alpha=alpha)
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
