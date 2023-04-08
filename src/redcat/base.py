@@ -997,3 +997,46 @@ class BaseBatchedTensor(ABC):
             tensor([[-1., -1., -1.],
                     [-1., -1., -1.]], batch_dim=0)
         """
+
+    ################################################
+    #     Mathematical | point-wise operations     #
+    ################################################
+
+    def abs(self) -> TBatchedTensor:
+        r"""Computes the absolute value of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the absolute value of
+                each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]))
+            >>> batch.abs()
+            tensor([[2., 0., 2.],
+                    [1., 1., 3.]], batch_dim=0)
+        """
+        return torch.abs(self)
+
+    def abs_(self) -> None:
+        r"""Computes the absolute value of each element.
+
+        In-place version of ``abs()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]))
+            >>> batch.abs_()
+            >>> batch
+            tensor([[2., 0., 2.],
+                    [1., 1., 3.]], batch_dim=0)
+        """
+        self._data.abs_()
