@@ -870,7 +870,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.mul(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch.mul_(BatchedTensor(torch.full((2, 3), 2.0)))
             >>> batch
             tensor([[2., 2., 2.],
                     [2., 2., 2.]], batch_dim=0)
@@ -912,3 +912,33 @@ class BaseBatchedTensor(ABC):
                     [-1., -1., -1.]], batch_dim=0)
         """
         return torch.sub(self, other, alpha=alpha)
+
+    @abstractmethod
+    def sub_(
+        self,
+        other: BaseBatchedTensor | torch.Tensor | int | float,
+        alpha: int | float = 1,
+    ) -> None:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the ``self``
+        batch.
+
+        Similar to ``self -= alpha * other`` (in-place)
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or int or
+                float): Specifies the value to subtract.
+            alpha (int or float, optional): Specifies the scale of the
+                batch to substract. Default: ``1``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.sub_(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch
+            tensor([[-1., -1., -1.],
+                    [-1., -1., -1.]], batch_dim=0)
+        """
