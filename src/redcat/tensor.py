@@ -244,6 +244,10 @@ class BatchedTensor(BaseBatchedTensor):
         check_batch_dims(get_batch_dims((self, other), {}))
         self._data.div_(other, rounding_mode=rounding_mode)
 
+    def fmod_(self, divisor: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+        check_batch_dims(get_batch_dims((self, divisor), {}))
+        self._data.fmod_(divisor)
+
     def mul_(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> None:
         check_batch_dims(get_batch_dims((self, other), {}))
         self._data.mul_(other)

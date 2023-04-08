@@ -850,6 +850,62 @@ class BaseBatchedTensor(ABC):
                     [0.5000, 0.5000, 0.5000]], batch_dim=0)
         """
 
+    def fmod(
+        self,
+        divisor: BaseBatchedTensor | torch.Tensor | int | float,
+    ) -> TBatchedTensor:
+        r"""Computes the element-wise remainder of division.
+
+        The current batch is the dividend.
+
+        Args:
+            divisor (``BaseBatchedTensor`` or ``torch.Tensor`` or int
+                or float): Specifies the divisor.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch containing the
+                element-wise remainder of division.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> out = batch.fmod(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+            >>> out
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+        """
+        return torch.fmod(self, divisor)
+
+    @abstractmethod
+    def fmod_(self, divisor: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+        r"""Computes the element-wise remainder of division.
+
+        The current batch is the dividend.
+
+        Args:
+            divisor (``BaseBatchedTensor`` or ``torch.Tensor`` or int
+                or float): Specifies the divisor.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.fmod_(BatchedTensor(torch.full((2, 3), 2.0)))
+            >>> batch
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.]], batch_dim=0)
+        """
+
     def mul(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> TBatchedTensor:
         r"""Multiplies the ``self`` batch by the input ``other`.
 
