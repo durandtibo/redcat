@@ -2322,6 +2322,90 @@ def test_batched_tensor_seq_acos__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_acosh() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+        .acosh()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 1.3169578969248166, 1.762747174039086],
+                        [2.0634370688955608, 2.2924316695611777, 2.477888730288475],
+                    ],
+                    dtype=torch.float,
+                )
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_acosh_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .acosh()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 1.3169578969248166, 1.762747174039086],
+                        [2.0634370688955608, 2.2924316695611777, 2.477888730288475],
+                    ],
+                    dtype=torch.float,
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_acosh_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+    batch.acosh_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 1.3169578969248166, 1.762747174039086],
+                    [2.0634370688955608, 2.2924316695611777, 2.477888730288475],
+                ],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_seq_acosh__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.acosh_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 1.3169578969248166, 1.762747174039086],
+                    [2.0634370688955608, 2.2924316695611777, 2.477888730288475],
+                ],
+                dtype=torch.float,
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        ),
+        atol=1e-6,
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
