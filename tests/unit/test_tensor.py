@@ -2131,6 +2131,74 @@ def test_batched_tensor_acosh__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_asin() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+        .asin()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[-math.pi / 2, 0.0, math.pi / 2], [-math.pi / 6, 0.0, math.pi / 6]],
+                    dtype=torch.float,
+                )
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_asin_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+            batch_dim=1,
+        )
+        .asin()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[-math.pi / 2, 0.0, math.pi / 2], [-math.pi / 6, 0.0, math.pi / 6]],
+                    dtype=torch.float,
+                ),
+                batch_dim=1,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_asin_() -> None:
+    batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+    batch.asin_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[-math.pi / 2, 0.0, math.pi / 2], [-math.pi / 6, 0.0, math.pi / 6]],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_asin__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+        batch_dim=1,
+    )
+    batch.asin_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[-math.pi / 2, 0.0, math.pi / 2], [-math.pi / 6, 0.0, math.pi / 6]],
+                dtype=torch.float,
+            ),
+            batch_dim=1,
+        ),
+        atol=1e-6,
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
