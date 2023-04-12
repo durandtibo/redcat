@@ -117,7 +117,7 @@ class BaseBatchedTensor(ABC):
             >>> batch = BatchedTensor(torch.ones(2, 3))
             >>> batch_cuda = batch.to(device=torch.device('cuda:0'))
             >>> batch_bool = batch.to(dtype=torch.bool)
-            >>> batch_bool.data
+            >>> batch_bool
             tensor([[True, True, True],
                     [True, True, True]], batch_dim=0)
         """
@@ -1436,3 +1436,44 @@ class BaseBatchedTensor(ABC):
                     [-0.5236,  0.0000,  0.5236]], batch_dim=0)
         """
         self._data.acos_()
+
+    def acosh(self) -> TBatchedTensor:
+        r"""Computes the inverse hyperbolic cosine (arccosh) of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the inverse hyperbolic
+                cosine (arccosh) of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch.acosh()
+            tensor([[0.0000, 1.3170, 1.7627],
+                    [2.0634, 2.2924, 2.4779]], batch_dim=0)
+        """
+        return torch.acosh(self)
+
+    def acosh_(self) -> None:
+        r"""Computes the inverse hyperbolic cosine (arccosh) of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the inverse hyperbolic
+                cosine (arccosh) of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch.acosh_()
+            >>> batch
+            tensor([[0.0000, 1.3170, 1.7627],
+                    [2.0634, 2.2924, 2.4779]], batch_dim=0)
+        """
+        self._data.acosh_()
