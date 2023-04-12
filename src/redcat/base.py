@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["BaseBatchedTensor"]
 
 from abc import ABC, abstractmethod
-from typing import Any, TypeVar
+from typing import Any, TypeVar, overload
 
 import torch
 from torch import Tensor
@@ -1303,6 +1303,82 @@ class BaseBatchedTensor(ABC):
                     [1.7918, 1.9459, 2.0794, 2.1972, 2.3026]], batch_dim=0)
         """
         self._data.log1p_()
+
+    @overload
+    def max(self) -> bool | int | float:
+        r"""Finds the maximum value in the batch.
+
+        Returns:
+            The maximum value in the batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
+            >>> batch.max()
+            5
+            >>> batch = BatchedTensor(torch.tensor([[False, True, True], [True, False, True]]))
+            >>> batch.max()
+            True
+        """
+
+    @overload
+    def max(self, other: BaseBatchedTensor) -> TBatchedTensor:
+        r"""Computes the element-wise maximum of ``self`` and ``other``.
+
+        Args:
+            other (``BaseBatchedTensor``): Specifies a batch.
+
+        Returns:
+            ``BaseBatchedTensor``: The batch with the element-wise
+                maximum of ``self`` and ``other``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
+            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            tensor([[1, 1, 2],
+                    [4, 5, 5]], batch_dim=0)
+        """
+
+    def max(
+        self, other: BaseBatchedTensor | Tensor | None = None
+    ) -> bool | int | float | TBatchedTensor:
+        r"""If ``other`` is None, this method finds the maximum value in the
+        batch, otherwise it computes the element-wise maximum of ``self`` and
+        ``other``.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``None``, optional):
+                Specifies a batch. Default: ``None``
+
+        Returns:
+            The maximum value in the batch or the element-wise maximum
+                of ``self`` and ``other``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
+            >>> batch.max()
+            5
+            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            tensor([[1, 1, 2],
+                    [4, 5, 5]], batch_dim=0)
+        """
+        if other is None:
+            return torch.max(self._data)
+        return torch.max(self, other)
 
     def pow(self, exponent: int | float | BaseBatchedTensor) -> TBatchedTensor:
         r"""Computes the power of each element with the given exponent.
