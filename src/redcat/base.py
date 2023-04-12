@@ -1185,7 +1185,7 @@ class BaseBatchedTensor(ABC):
         r"""Computes the exponential of the elements.
 
         Return:
-            ``TensorSeqBatch``: A batch with the exponential of the
+            ``BaseBatchedTensor``: A batch with the exponential of the
                 elements of the current batch.
 
         Example usage:
@@ -1303,3 +1303,54 @@ class BaseBatchedTensor(ABC):
                     [1.7918, 1.9459, 2.0794, 2.1972, 2.3026]], batch_dim=0)
         """
         self._data.log1p_()
+
+    def pow(self, exponent: int | float | BaseBatchedTensor) -> TBatchedTensor:
+        r"""Computes the power of each element with the given exponent.
+
+        Args:
+            exponent (int or float or ``BaseBatchedTensor``): Specifies
+                the exponent value. ``exponent`` can be either a single
+                numeric number or a ``BaseBatchedTensor`` with the same
+                number of elements.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the power of each
+                element with the given exponent.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]))
+            >>> batch.pow(2).data
+            tensor([[ 0.,  1.,  4.],
+                    [ 9., 16., 25.]], batch_dim=0)
+        """
+        return torch.pow(self, exponent)
+
+    @abstractmethod
+    def pow_(self, exponent: int | float | BaseBatchedTensor) -> None:
+        r"""Computes the power of each element with the given exponent.
+
+        In-place version of ``pow(exponent)``.
+
+        Args:
+            exponent (int or float or ``BaseBatchedTensor``): Specifies
+                the exponent value. ``exponent`` can be either a
+                single numeric number or a ``BaseBatchedTensor``
+                with the same number of elements.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]))
+            >>> batch.pow_(2)
+            >>> batch.data
+            tensor([[ 0.,  1.,  4.],
+                    [ 9., 16., 25.]], batch_dim=0)
+        """

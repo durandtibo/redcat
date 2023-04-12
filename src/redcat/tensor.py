@@ -260,6 +260,14 @@ class BatchedTensor(BaseBatchedTensor):
         check_batch_dims(get_batch_dims((self, other), {}))
         self._data.sub_(other, alpha=alpha)
 
+    ################################################
+    #     Mathematical | point-wise operations     #
+    ################################################
+
+    def pow_(self, exponent: int | float | BaseBatchedTensor) -> None:
+        check_batch_dims(get_batch_dims((self, exponent), {}))
+        self._data.pow_(exponent)
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
 
