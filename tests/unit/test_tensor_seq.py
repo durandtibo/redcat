@@ -1992,6 +1992,80 @@ def test_batched_tensor_seq_log__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_log1p() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.float))
+        .log1p()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 0.6931471824645996, 1.0986123085021973],
+                        [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                    ]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log1p_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.float), batch_dim=1, seq_dim=0
+        )
+        .log1p()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 0.6931471824645996, 1.0986123085021973],
+                        [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                    ]
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log1p_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.float))
+    batch.log1p_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                ]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log1p__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.log1p_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                ]
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
