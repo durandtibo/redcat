@@ -1477,3 +1477,44 @@ class BaseBatchedTensor(ABC):
                     [2.0634, 2.2924, 2.4779]], batch_dim=0)
         """
         self._data.acosh_()
+
+    def asin(self) -> TBatchedTensor:
+        r"""Computes the inverse cosine (arcsin) of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the inverse sine
+                (arcsin) of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.asin()
+            tensor([[-1.5708,  0.0000,  1.5708],
+                    [-0.5236,  0.0000,  0.5236]], batch_dim=0)
+        """
+        return torch.asin(self)
+
+    def asin_(self) -> None:
+        r"""Computes the inverse sine (arcsin) of each element.
+
+        In-place version of ``asin()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.asin_()
+            >>> batch.data
+            tensor([[3.1416, 1.5708, 0.0000],
+                    [2.0944, 1.5708, 1.0472]], batch_dim=0)
+        """
+        self._data.asin_()
