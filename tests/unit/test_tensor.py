@@ -2199,6 +2199,86 @@ def test_batched_tensor_asin__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_asinh() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+        .asinh()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [-0.8813735842704773, 0.0, 0.8813735842704773],
+                        [-0.4812118113040924, 0.0, 0.4812118113040924],
+                    ],
+                    dtype=torch.float,
+                )
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_asinh_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+            batch_dim=1,
+        )
+        .asinh()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [-0.8813735842704773, 0.0, 0.8813735842704773],
+                        [-0.4812118113040924, 0.0, 0.4812118113040924],
+                    ],
+                    dtype=torch.float,
+                ),
+                batch_dim=1,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_asinh_() -> None:
+    batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+    batch.asinh_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [-0.8813735842704773, 0.0, 0.8813735842704773],
+                    [-0.4812118113040924, 0.0, 0.4812118113040924],
+                ],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_asinh__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+        batch_dim=1,
+    )
+    batch.asinh_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [-0.8813735842704773, 0.0, 0.8813735842704773],
+                    [-0.4812118113040924, 0.0, 0.4812118113040924],
+                ],
+                dtype=torch.float,
+            ),
+            batch_dim=1,
+        ),
+        atol=1e-6,
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################

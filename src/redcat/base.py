@@ -1513,8 +1513,49 @@ class BaseBatchedTensor(ABC):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
             >>> batch.asin_()
-            >>> batch.data
+            >>> batch
             tensor([[3.1416, 1.5708, 0.0000],
                     [2.0944, 1.5708, 1.0472]], batch_dim=0)
         """
         self._data.asin_()
+
+    def asinh(self) -> TBatchedTensor:
+        r"""Computes the inverse hyperbolic sine (arcsinh) of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the inverse hyperbolic
+                sine (arcsinh) of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.asinh()
+            tensor([[-0.8814,  0.0000,  0.8814],
+                    [-0.4812,  0.0000,  0.4812]], batch_dim=0)
+        """
+        return torch.asinh(self)
+
+    def asinh_(self) -> None:
+        r"""Computes the inverse hyperbolic sine (arcsinh) of each element.
+
+        In-place version of ``asinh()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.asinh_()
+            >>> batch
+            tensor([[-0.8814,  0.0000,  0.8814],
+                    [-0.4812,  0.0000,  0.4812]], batch_dim=0)
+        """
+        self._data.asinh_()
