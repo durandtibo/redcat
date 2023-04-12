@@ -4,6 +4,7 @@ from typing import Any, Union
 import numpy as np
 import torch
 from pytest import mark, raises
+from torch import Tensor
 from torch.overrides import is_tensor_like
 
 from redcat import BatchedTensor, BatchedTensorSeq
@@ -2277,6 +2278,54 @@ def test_batched_tensor_asinh__custom_dims() -> None:
         ),
         atol=1e-6,
     )
+
+
+@mark.parametrize(
+    "data,max_value",
+    (
+        (torch.tensor([[False, True, True], [True, False, True]], dtype=torch.bool), True),  # bool
+        (torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.long), 5),  # long
+        (torch.tensor([[4.0, 1.0, 7.0], [3.0, 2.0, 5.0]], dtype=torch.float), 7.0),  # float
+    ),
+)
+def test_batched_tensor_max_global(data: torch.Tensor, max_value: Union[bool, int, float]) -> None:
+    assert BatchedTensorSeq(data).max() == max_value
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        torch.tensor([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_batched_tensor_max(other: BaseBatchedTensor | Tensor) -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]]))
+        .max(other)
+        .equal(BatchedTensorSeq(torch.tensor([[2, 1, 2], [0, 1, 0]])))
+    )
+
+
+def test_batched_tensor_max_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1, seq_dim=0)
+        .max(BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1, seq_dim=0))
+        .equal(BatchedTensorSeq(torch.tensor([[2, 1, 2], [0, 1, 0]]), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_max_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.max(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+
+
+def test_batched_tensor_max_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.max(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
 ########################################
