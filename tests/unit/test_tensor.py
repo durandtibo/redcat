@@ -1,3 +1,4 @@
+import math
 from typing import Any, Union
 
 import numpy as np
@@ -1974,6 +1975,79 @@ def test_batched_tensor_sqrt__custom_dims() -> None:
             torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]], dtype=torch.float),
             batch_dim=1,
         )
+    )
+
+
+###########################################
+#     Mathematical | trigo operations     #
+###########################################
+
+
+def test_batched_tensor_acos() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+        .acos()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                    dtype=torch.float,
+                )
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_acos_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+            batch_dim=1,
+        )
+        .acos()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                    dtype=torch.float,
+                ),
+                batch_dim=1,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_acos_() -> None:
+    batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+    batch.acos_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_acos__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+        batch_dim=1,
+    )
+    batch.acos_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                dtype=torch.float,
+            ),
+            batch_dim=1,
+        ),
+        atol=1e-6,
     )
 
 

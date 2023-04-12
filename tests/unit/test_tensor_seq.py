@@ -1,3 +1,4 @@
+import math
 from typing import Any, Union
 
 import numpy as np
@@ -2241,6 +2242,83 @@ def test_batched_tensor_seq_sqrt__custom_dims() -> None:
             batch_dim=1,
             seq_dim=0,
         )
+    )
+
+
+###########################################
+#     Mathematical | trigo operations     #
+###########################################
+
+
+def test_batched_tensor_seq_acos() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+        .acos()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                    dtype=torch.float,
+                )
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_acos_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .acos()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                    dtype=torch.float,
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_acos_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+    batch.acos_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_seq_acos__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.acos_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
+                dtype=torch.float,
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        ),
+        atol=1e-6,
     )
 
 

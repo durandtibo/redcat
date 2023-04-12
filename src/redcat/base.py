@@ -1393,3 +1393,46 @@ class BaseBatchedTensor(ABC):
                     [3., 4., 5.]], batch_dim=0)
         """
         self._data.sqrt_()
+
+    ###########################################
+    #     Mathematical | trigo operations     #
+    ###########################################
+
+    def acos(self) -> TBatchedTensor:
+        r"""Computes the inverse cosine (arccos) of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the inverse cosine
+                (arccos) of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.acos()
+            tensor([[3.1416, 1.5708, 0.0000],
+                    [2.0944, 1.5708, 1.0472]], batch_dim=0)
+        """
+        return torch.acos(self)
+
+    def acos_(self) -> None:
+        r"""Computes the inverse cosine (arccos) of each element.
+
+        In-place version of ``acos()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.acos_()
+            >>> batch
+            tensor([[-1.5708,  0.0000,  1.5708],
+                    [-0.5236,  0.0000,  0.5236]], batch_dim=0)
+        """
+        self._data.acos_()
