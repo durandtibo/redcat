@@ -1324,7 +1324,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]))
-            >>> batch.pow(2).data
+            >>> batch.pow(2)
             tensor([[ 0.,  1.,  4.],
                     [ 9., 16., 25.]], batch_dim=0)
         """
@@ -1350,7 +1350,46 @@ class BaseBatchedTensor(ABC):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]))
             >>> batch.pow_(2)
-            >>> batch.data
+            >>> batch
             tensor([[ 0.,  1.,  4.],
                     [ 9., 16., 25.]], batch_dim=0)
         """
+
+    def sqrt(self) -> TBatchedTensor:
+        r"""Computes the square-root of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the square-root of
+                each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]]))
+            >>> batch.sqrt()
+            tensor([[0., 1., 2.],
+                    [3., 4., 5.]], batch_dim=0)
+        """
+        return torch.sqrt(self)
+
+    def sqrt_(self) -> None:
+        r"""Computes the square-root of each element.
+
+        In-place version of ``sqrt()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]]))
+            >>> batch.sqrt_()
+            >>> batch
+            tensor([[0., 1., 2.],
+                    [3., 4., 5.]], batch_dim=0)
+        """
+        self._data.sqrt_()

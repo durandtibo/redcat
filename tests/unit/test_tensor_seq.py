@@ -2192,6 +2192,58 @@ def test_batched_tensor_seq_pow__incorrect_seq_dim() -> None:
         )
 
 
+def test_batched_tensor_seq_sqrt() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]], dtype=torch.float))
+        .sqrt()
+        .equal(
+            BatchedTensorSeq(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]], dtype=torch.float))
+        )
+    )
+
+
+def test_batched_tensor_seq_sqrt_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .sqrt()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]], dtype=torch.float),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_sqrt_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]], dtype=torch.float))
+    batch.sqrt_()
+    assert batch.equal(
+        BatchedTensorSeq(torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]], dtype=torch.float))
+    )
+
+
+def test_batched_tensor_seq_sqrt__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.sqrt_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
