@@ -1711,3 +1711,44 @@ class BaseBatchedTensor(ABC):
                     [-0.4812,  0.0000,  0.4812]], batch_dim=0)
         """
         self._data.asinh_()
+
+    def atan(self) -> TBatchedTensor:
+        r"""Computes the arctangent of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the arctangent of each
+                element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch.atan()
+            tensor([[ 0.0000,  0.7854,  1.1071],
+                    [-1.1071, -0.7854,  0.0000]], batch_dim=0)
+        """
+        return torch.atan(self)
+
+    def atan_(self) -> None:
+        r"""Computes the arctangent of each element.
+
+        In-place version of ``atan()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch.atan_()
+            >>> batch.data
+            tensor([[ 0.0000,  0.7854,  1.1071],
+                    [-1.1071, -0.7854,  0.0000]], batch_dim=0)
+        """
+        self._data.atan_()
