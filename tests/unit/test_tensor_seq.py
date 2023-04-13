@@ -2822,6 +2822,66 @@ def test_batched_tensor_seq_atanh__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_cos() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
+        )
+        .cos()
+        .allclose(
+            BatchedTensorSeq(torch.tensor([[1.0, 0.0, -1.0], [1.0, 0.0, 1.0]], dtype=torch.float)),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_cos_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]]),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .cos()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor([[1.0, 0.0, -1.0], [1.0, 0.0, 1.0]], dtype=torch.float),
+                batch_dim=1,
+                seq_dim=0,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_cos_() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
+    )
+    batch.cos_()
+    assert batch.allclose(
+        BatchedTensorSeq(torch.tensor([[1.0, 0.0, -1.0], [1.0, 0.0, 1.0]], dtype=torch.float)),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_seq_cos__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]]),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.cos_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor([[1.0, 0.0, -1.0], [1.0, 0.0, 1.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        ),
+        atol=1e-6,
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################

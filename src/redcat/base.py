@@ -1642,7 +1642,6 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
             >>> batch.asin()
@@ -1661,7 +1660,6 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
             >>> batch.asin_()
@@ -1683,7 +1681,6 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
             >>> batch.asinh()
@@ -1702,7 +1699,6 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
             >>> batch.asinh_()
@@ -1724,7 +1720,6 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
             >>> batch.atan()
@@ -1743,7 +1738,6 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
             >>> batch.atan_()
@@ -1765,10 +1759,11 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch = BatchedTensor(torch.tensor([[-0.5, 0.0, 0.5], [-0.1, 0.0, 0.1]]))
             >>> batch.atanh()
+            tensor([[-0.5493,  0.0000,  0.5493],
+                    [-0.1003,  0.0000,  0.1003]], batch_dim=0)
         """
         return torch.atanh(self)
 
@@ -1782,10 +1777,56 @@ class BaseBatchedTensor(ABC):
         .. code-block:: python
 
             >>> import torch
-            >>> import math
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch = BatchedTensor(torch.tensor([[-0.5, 0.0, 0.5], [-0.1, 0.0, 0.1]]))
             >>> batch.atanh_()
             >>> batch
+            tensor([[-0.5493,  0.0000,  0.5493],
+                    [-0.1003,  0.0000,  0.1003]], batch_dim=0)
         """
         self._data.atanh_()
+
+    def cos(self) -> TBatchedTensor:
+        r"""Computes the cosine of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the cosine of each
+                element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
+            ... )
+            >>> batch.cos().data
+            tensor([[ 1.0000e+00, -4.3711e-08, -1.0000e+00],
+                    [ 1.0000e+00,  1.1925e-08,  1.0000e+00]], batch_dim=0)
+        """
+        return torch.cos(self)
+
+    def cos_(self) -> None:
+        r"""Computes the cosine of each element.
+
+        In-place version of ``cos()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
+            ... )
+            >>> batch.cos()
+            >>> batch.data
+            tensor([[ 1.0000e+00, -4.3711e-08, -1.0000e+00],
+                    [ 1.0000e+00,  1.1925e-08,  1.0000e+00]], batch_dim=0)
+        """
+        self._data.cos_()
