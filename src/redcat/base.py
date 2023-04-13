@@ -1343,7 +1343,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
             tensor([[1, 1, 2],
                     [4, 5, 5]], batch_dim=0)
         """
@@ -1372,7 +1372,7 @@ class BaseBatchedTensor(ABC):
             >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
             >>> batch.max()
             5
-            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
             tensor([[1, 1, 2],
                     [4, 5, 5]], batch_dim=0)
         """
@@ -1419,7 +1419,7 @@ class BaseBatchedTensor(ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
             tensor([[0, 0, 2],
                     [3, 4, 3]], batch_dim=0)
         """
@@ -1448,7 +1448,7 @@ class BaseBatchedTensor(ABC):
             >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
             >>> batch.min()
             0
-            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
             tensor([[0, 0, 2],
                     [3, 4, 3]], batch_dim=0)
         """
@@ -1803,7 +1803,7 @@ class BaseBatchedTensor(ABC):
             >>> batch = BatchedTensor(
             ...     torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
             ... )
-            >>> batch.cos().data
+            >>> batch.cos()
             tensor([[ 1.0000e+00, -4.3711e-08, -1.0000e+00],
                     [ 1.0000e+00,  1.1925e-08,  1.0000e+00]], batch_dim=0)
         """
@@ -1830,3 +1830,42 @@ class BaseBatchedTensor(ABC):
                     [ 1.0000e+00,  1.1925e-08,  1.0000e+00]], batch_dim=0)
         """
         self._data.cos_()
+
+    def cosh(self) -> TBatchedTensor:
+        r"""Computes the hyperbolic cosine (cosh) of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the hyperbolic
+                cosine (arccosh) of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch.cosh()
+            tensor([[0.0000, 1.3170, 1.7627],
+                    [2.0634, 2.2924, 2.4779]], batch_dim=0)
+        """
+        return torch.cosh(self)
+
+    def cosh_(self) -> None:
+        r"""Computes the hyperbolic cosine (arccosh) of each element.
+
+        In-place version of ``cosh()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch.cosh_()
+            >>> batch.data
+            tensor([[0.0000, 1.3170, 1.7627],
+                    [2.0634, 2.2924, 2.4779]], batch_dim=0)
+        """
+        self._data.cosh_()
