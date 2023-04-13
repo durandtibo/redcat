@@ -1380,6 +1380,82 @@ class BaseBatchedTensor(ABC):
             return torch.max(self._data)
         return torch.max(self, other)
 
+    @overload
+    def min(self) -> bool | int | float:
+        r"""Finds the minimum value in the batch.
+
+        Returns:
+            The minimum value in the batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
+            >>> batch.min()
+            0
+            >>> batch = BatchedTensor(torch.tensor([[False, True, True], [True, False, True]]))
+            >>> batch.min()
+            False
+        """
+
+    @overload
+    def min(self, other: BaseBatchedTensor) -> TBatchedTensor:
+        r"""Computes the element-wise minimum of ``self`` and ``other``.
+
+        Args:
+            other (``BaseBatchedTensor``): Specifies a batch.
+
+        Returns:
+            ``BaseBatchedTensor``: The batch with the element-wise
+                minimum of ``self`` and ``other``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
+            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            tensor([[0, 0, 2],
+                    [3, 4, 3]], batch_dim=0)
+        """
+
+    def min(
+        self, other: BaseBatchedTensor | Tensor | None = None
+    ) -> bool | int | float | TBatchedTensor:
+        r"""If ``other`` is None, this method finds the minimum value in the
+        batch, otherwise it computes the element-wise minimum of ``self`` and
+        ``other``.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``None``, optional):
+                Specifies a batch. Default: ``None``
+
+        Returns:
+            The minimum value in the batch or the element-wise minimum
+                of ``self`` and ``other``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
+            >>> batch.min()
+            0
+            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]]))).data
+            tensor([[0, 0, 2],
+                    [3, 4, 3]], batch_dim=0)
+        """
+        if other is None:
+            return torch.min(self._data)
+        return torch.min(self, other)
+
     def pow(self, exponent: int | float | BaseBatchedTensor) -> TBatchedTensor:
         r"""Computes the power of each element with the given exponent.
 

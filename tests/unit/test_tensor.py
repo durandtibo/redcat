@@ -2289,7 +2289,50 @@ def test_batched_tensor_asinh__custom_dims() -> None:
     ),
 )
 def test_batched_tensor_max_global(data: torch.Tensor, max_value: Union[bool, int, float]) -> None:
-    assert BatchedTensorSeq(data).max() == max_value
+    assert BatchedTensor(data).max() == max_value
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        torch.tensor([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_batched_tensor_max(other: BaseBatchedTensor | Tensor) -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]))
+        .max(other)
+        .equal(BatchedTensor(torch.tensor([[2, 1, 2], [0, 1, 0]])))
+    )
+
+
+def test_batched_tensor_max_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1)
+        .max(BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1))
+        .equal(BatchedTensor(torch.tensor([[2, 1, 2], [0, 1, 0]]), batch_dim=1))
+    )
+
+
+def test_batched_tensor_max_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.max(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+
+
+@mark.parametrize(
+    "data,min_value",
+    (
+        (torch.tensor([[False, True, True], [True, False, True]], dtype=torch.bool), False),
+        # bool
+        (torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.long), 0),  # long
+        (torch.tensor([[4.0, 1.0, 7.0], [3.0, 2.0, 5.0]], dtype=torch.float), 1.0),  # float
+    ),
+)
+def test_batched_tensor_min_global(data: torch.Tensor, min_value: Union[bool, int, float]) -> None:
+    assert BatchedTensor(data).min() == min_value
 
 
 @mark.parametrize(
@@ -2300,32 +2343,26 @@ def test_batched_tensor_max_global(data: torch.Tensor, max_value: Union[bool, in
         torch.tensor([[2, 0, 1], [0, 1, 0]]),
     ),
 )
-def test_batched_tensor_max(other: BaseBatchedTensor | Tensor) -> None:
+def test_batched_tensor_min(other: BaseBatchedTensor | Tensor) -> None:
     assert (
-        BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]]))
-        .max(other)
-        .equal(BatchedTensorSeq(torch.tensor([[2, 1, 2], [0, 1, 0]])))
+        BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]))
+        .min(other)
+        .equal(BatchedTensor(torch.tensor([[0, 0, 1], [-2, -1, 0]])))
     )
 
 
-def test_batched_tensor_max_custom_dims() -> None:
+def test_batched_tensor_min_custom_dims() -> None:
     assert (
-        BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1, seq_dim=0)
-        .max(BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1, seq_dim=0))
-        .equal(BatchedTensorSeq(torch.tensor([[2, 1, 2], [0, 1, 0]]), batch_dim=1, seq_dim=0))
+        BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1)
+        .min(BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1))
+        .equal(BatchedTensor(torch.tensor([[0, 0, 1], [-2, -1, 0]]), batch_dim=1))
     )
 
 
-def test_batched_tensor_max_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+def test_batched_tensor_min_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 3, 1))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.max(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
-
-
-def test_batched_tensor_max_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
-    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.max(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.min(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
 
 
 ########################################
