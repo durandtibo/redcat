@@ -2649,6 +2649,62 @@ def test_batched_tensor_cosh__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_sin() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
+        )
+        .sin()
+        .allclose(
+            BatchedTensor(torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, 0.0]], dtype=torch.float)),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_sin_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]]),
+            batch_dim=1,
+        )
+        .sin()
+        .allclose(
+            BatchedTensor(
+                torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, 0.0]], dtype=torch.float),
+                batch_dim=1,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_sin_() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
+    )
+    batch.sin_()
+    assert batch.allclose(
+        BatchedTensor(torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, 0.0]], dtype=torch.float)),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_sin__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]]),
+        batch_dim=1,
+    )
+    batch.sin_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, 0.0]], dtype=torch.float),
+            batch_dim=1,
+        ),
+        atol=1e-6,
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
