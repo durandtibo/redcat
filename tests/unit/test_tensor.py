@@ -2365,6 +2365,74 @@ def test_batched_tensor_min_incorrect_batch_dim() -> None:
         batch.min(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
 
 
+def test_batched_tensor_atan() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0.0, 1.0, math.sqrt(3.0)], [-math.sqrt(3.0), -1.0, 0.0]]))
+        .atan()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[0.0, math.pi / 4, math.pi / 3], [-math.pi / 3, -math.pi / 4, 0.0]],
+                    dtype=torch.float,
+                )
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_atan_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[0.0, 1.0, math.sqrt(3.0)], [-math.sqrt(3.0), -1.0, 0.0]]),
+            batch_dim=1,
+        )
+        .atan()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[0.0, math.pi / 4, math.pi / 3], [-math.pi / 3, -math.pi / 4, 0.0]],
+                    dtype=torch.float,
+                ),
+                batch_dim=1,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_atan_() -> None:
+    batch = BatchedTensor(torch.tensor([[0.0, 1.0, math.sqrt(3.0)], [-math.sqrt(3.0), -1.0, 0.0]]))
+    batch.atan_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[0.0, math.pi / 4, math.pi / 3], [-math.pi / 3, -math.pi / 4, 0.0]],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_atan__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[0.0, 1.0, math.sqrt(3.0)], [-math.sqrt(3.0), -1.0, 0.0]]),
+        batch_dim=1,
+    )
+    batch.atan_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[0.0, math.pi / 4, math.pi / 3], [-math.pi / 3, -math.pi / 4, 0.0]],
+                dtype=torch.float,
+            ),
+            batch_dim=1,
+        ),
+        atol=1e-6,
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
