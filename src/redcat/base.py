@@ -1830,3 +1830,42 @@ class BaseBatchedTensor(ABC):
                     [ 1.0000e+00,  1.1925e-08,  1.0000e+00]], batch_dim=0)
         """
         self._data.cos_()
+
+    def cosh(self) -> TBatchedTensor:
+        r"""Computes the hyperbolic cosine (cosh) of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the hyperbolic
+                cosine (arccosh) of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch.cosh().data
+            tensor([[0.0000, 1.3170, 1.7627],
+                    [2.0634, 2.2924, 2.4779]], batch_dim=0)
+        """
+        return torch.cosh(self)
+
+    def cosh_(self) -> None:
+        r"""Computes the hyperbolic cosine (arccosh) of each element.
+
+        In-place version of ``cosh()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch.cosh_()
+            >>> batch.data
+            tensor([[0.0000, 1.3170, 1.7627],
+                    [2.0634, 2.2924, 2.4779]], batch_dim=0)
+        """
+        self._data.cosh_()
