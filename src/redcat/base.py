@@ -1713,11 +1713,11 @@ class BaseBatchedTensor(ABC):
         self._data.asinh_()
 
     def atan(self) -> TBatchedTensor:
-        r"""Computes the arctangent of each element.
+        r"""Computes the inverse tangent of each element.
 
         Return:
-            ``BaseBatchedTensor``: A batch with the arctangent of each
-                element.
+            ``BaseBatchedTensor``: A batch with the inverse tangent
+                of each element.
 
         Example usage:
 
@@ -1734,7 +1734,7 @@ class BaseBatchedTensor(ABC):
         return torch.atan(self)
 
     def atan_(self) -> None:
-        r"""Computes the arctangent of each element.
+        r"""Computes the inverse tangent of each element.
 
         In-place version of ``atan()``.
 
@@ -1752,3 +1752,40 @@ class BaseBatchedTensor(ABC):
                     [-1.1071, -0.7854,  0.0000]], batch_dim=0)
         """
         self._data.atan_()
+
+    def atanh(self) -> TBatchedTensor:
+        r"""Computes the inverse hyperbolic tangent of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the inverse hyperbolic
+                tangent of each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch.atanh()
+        """
+        return torch.atanh(self)
+
+    def atanh_(self) -> None:
+        r"""Computes the inverse hyperbolic tangent of each element.
+
+        In-place version of ``atanh()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch.atanh_()
+            >>> batch
+        """
+        self._data.atanh_()
