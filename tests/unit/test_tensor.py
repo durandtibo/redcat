@@ -2934,32 +2934,28 @@ def test_batched_tensor_tanh__custom_dims() -> None:
 #############################################
 
 
-def test_batched_tensor_logical_and_bool() -> None:
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
+        ),
+        BatchedTensorSeq(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
+        ),
+        torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
+        BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
+    ),
+)
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_logical_and(other: BaseBatchedTensor | Tensor, dtype: torch.dtype) -> None:
     assert (
         BatchedTensor(
-            torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=torch.bool)
+            torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
         )
-        .logical_and(
-            BatchedTensor(
-                torch.tensor(
-                    [[True, False, True, False], [True, True, True, True]], dtype=torch.bool
-                )
-            )
-        )
-        .equal(
-            BatchedTensor(
-                torch.tensor(
-                    [[True, False, False, False], [True, False, True, False]], dtype=torch.bool
-                )
-            )
-        )
-    )
-
-
-def test_batched_tensor_logical_and_float() -> None:
-    assert (
-        BatchedTensor(torch.tensor([[1, 1, 0, 0], [1, 0, 1, 0]], dtype=torch.bool))
-        .logical_and(BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.bool)))
+        .logical_and(other)
         .equal(
             BatchedTensor(
                 torch.tensor(
@@ -2977,7 +2973,6 @@ def test_batched_tensor_logical_and_custom_dims() -> None:
                 [[True, True, False, False], [True, False, True, False]], dtype=torch.bool
             ),
             batch_dim=1,
-            
         )
         .logical_and(
             BatchedTensor(
@@ -2985,7 +2980,6 @@ def test_batched_tensor_logical_and_custom_dims() -> None:
                     [[True, False, True, False], [True, True, True, True]], dtype=torch.bool
                 ),
                 batch_dim=1,
-                
             )
         )
         .equal(
@@ -2994,7 +2988,6 @@ def test_batched_tensor_logical_and_custom_dims() -> None:
                     [[True, False, False, False], [True, False, True, False]], dtype=torch.bool
                 ),
                 batch_dim=1,
-                
             )
         )
     )
@@ -3011,30 +3004,27 @@ def test_batched_tensor_logical_and_incorrect_batch_dim() -> None:
         )
 
 
-
-def test_batched_tensor_logical_and__bool() -> None:
-    batch = BatchedTensor(
-        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=torch.bool)
-    )
-    batch.logical_and_(
+@mark.parametrize(
+    "other",
+    (
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
-        )
+        ),
+        BatchedTensorSeq(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
+        ),
+        torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
+        BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
+    ),
+)
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_logical_and_(other: BaseBatchedTensor | Tensor, dtype: torch.dtype) -> None:
+    batch = BatchedTensor(
+        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
     )
-    assert batch.equal(
-        BatchedTensor(
-            torch.tensor(
-                [[True, False, False, False], [True, False, True, False]], dtype=torch.bool
-            )
-        )
-    )
-
-
-def test_batched_tensor_logical_and__float() -> None:
-    batch = BatchedTensor(torch.tensor([[1, 1, 0, 0], [1, 0, 1, 0]], dtype=torch.bool))
-    batch.logical_and_(
-        BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.bool))
-    )
+    batch.logical_and_(other)
     assert batch.equal(
         BatchedTensor(
             torch.tensor(
@@ -3048,13 +3038,11 @@ def test_batched_tensor_logical_and__custom_dims() -> None:
     batch = BatchedTensor(
         torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=torch.bool),
         batch_dim=1,
-        
     )
     batch.logical_and_(
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
             batch_dim=1,
-            
         )
     )
     assert batch.equal(
@@ -3063,7 +3051,6 @@ def test_batched_tensor_logical_and__custom_dims() -> None:
                 [[True, False, False, False], [True, False, True, False]], dtype=torch.bool
             ),
             batch_dim=1,
-            
         )
     )
 
@@ -3077,7 +3064,6 @@ def test_batched_tensor_logical_and__incorrect_batch_dim() -> None:
                 batch_dim=1,
             )
         )
-
 
 
 ########################################
