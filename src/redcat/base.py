@@ -2047,3 +2047,70 @@ class BaseBatchedTensor(ABC):
                     [-0.9640, -0.7616,  0.0000]], batch_dim=0)
         """
         self._data.tanh_()
+
+    #############################################
+    #     Mathematical | logical operations     #
+    #############################################
+
+    def logical_and(self, other: BaseBatchedTensor | Tensor) -> TBatchedTensor:
+        r"""Computes the element-wise logical AND.
+
+        Zeros are treated as ``False`` and non-zeros are treated as
+        ``True``.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor``):
+                Specifies the batch or tensor to compute
+                logical AND with.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch containing the element-wise
+                logical AND.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(
+            ...     torch.tensor([[True, True, False, False], [True, False, True, False]])
+            ... )
+            >>> batch2 = BatchedTensor(
+            ...     torch.tensor([[True, False, True, False], [True, True, True, True]])
+            ... )
+            >>> batch1.logical_and(batch2)
+            tensor([[ True, False, False, False],
+                    [ True, False,  True, False]], batch_dim=0)
+        """
+        return torch.logical_and(self, other)
+
+    @abstractmethod
+    def logical_and_(self, other: BaseBatchedTensor | Tensor) -> None:
+        r"""Computes the element-wise logical AND.
+
+        Zeros are treated as ``False`` and non-zeros are treated as
+        ``True``.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor``):
+                Specifies the batch or tensor to compute
+                logical AND with.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(
+            ...     torch.tensor([[True, True, False, False], [True, False, True, False]])
+            ... )
+            >>> batch2 = BatchedTensor(
+            ...     torch.tensor([[True, False, True, False], [True, True, True, True]])
+            ... )
+            >>> batch1.logical_and_(batch2)
+            >>> batch1
+            tensor([[ True, False, False, False],
+                    [ True, False,  True, False]], batch_dim=0)
+        """
