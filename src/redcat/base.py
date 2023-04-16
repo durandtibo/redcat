@@ -2008,3 +2008,42 @@ class BaseBatchedTensor(ABC):
                     [ 1.7485e-07, -1.0000e+00, -1.0000e+00]], batch_dim=0)
         """
         self._data.tan_()
+
+    def tanh(self) -> TBatchedTensor:
+        r"""Computes the tangent of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the tangent of each
+                element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch.tanh()
+            tensor([[ 0.0000,  0.7616,  0.9640],
+                    [-0.9640, -0.7616,  0.0000]], batch_dim=0)
+        """
+        return torch.tanh(self)
+
+    def tanh_(self) -> None:
+        r"""Computes the tangent of each element.
+
+        In-place version of ``tanh()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
+            >>> batch.tanh_()
+            >>> batch
+            tensor([[ 0.0000,  0.7616,  0.9640],
+                    [-0.9640, -0.7616,  0.0000]], batch_dim=0)
+        """
+        self._data.tanh_()
