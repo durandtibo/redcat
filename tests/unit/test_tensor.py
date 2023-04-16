@@ -2785,6 +2785,70 @@ def test_batched_tensor_sinh__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_tan() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor(
+                [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+            )
+        )
+        .tan()
+        .allclose(
+            BatchedTensor(torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float)),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_tan_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor(
+                [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+            ),
+            batch_dim=1,
+        )
+        .tan()
+        .allclose(
+            BatchedTensor(
+                torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float),
+                batch_dim=1,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_tan_() -> None:
+    batch = BatchedTensor(
+        torch.tensor(
+            [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+        )
+    )
+    batch.tan_()
+    assert batch.allclose(
+        BatchedTensor(torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float)),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_tan__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor(
+            [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+        ),
+        batch_dim=1,
+    )
+    batch.tan_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float),
+            batch_dim=1,
+        ),
+        atol=1e-6,
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################

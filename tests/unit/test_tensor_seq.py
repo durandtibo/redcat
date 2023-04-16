@@ -3110,6 +3110,74 @@ def test_batched_tensor_seq_sinh__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_tan() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor(
+                [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+            )
+        )
+        .tan()
+        .allclose(
+            BatchedTensorSeq(torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float)),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_tan_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor(
+                [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .tan()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float),
+                batch_dim=1,
+                seq_dim=0,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_seq_tan_() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor(
+            [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+        )
+    )
+    batch.tan_()
+    assert batch.allclose(
+        BatchedTensorSeq(torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float)),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_seq_tan__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor(
+            [[0.0, 0.25 * math.pi, math.pi], [2 * math.pi, 1.75 * math.pi, -0.25 * math.pi]]
+        ),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.tan_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor([[0.0, 1.0, 0.0], [0.0, -1.0, -1.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        ),
+        atol=1e-6,
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
