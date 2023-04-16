@@ -1741,7 +1741,7 @@ class BaseBatchedTensor(ABC):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]))
             >>> batch.atan_()
-            >>> batch.data
+            >>> batch
             tensor([[ 0.0000,  0.7854,  1.1071],
                     [-1.1071, -0.7854,  0.0000]], batch_dim=0)
         """
@@ -1825,7 +1825,7 @@ class BaseBatchedTensor(ABC):
             ...     torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
             ... )
             >>> batch.cos()
-            >>> batch.data
+            >>> batch
             tensor([[ 1.0000e+00, -4.3711e-08, -1.0000e+00],
                     [ 1.0000e+00,  1.1925e-08,  1.0000e+00]], batch_dim=0)
         """
@@ -1864,7 +1864,7 @@ class BaseBatchedTensor(ABC):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
             >>> batch.cosh_()
-            >>> batch.data
+            >>> batch
             tensor([[0.0000, 1.3170, 1.7627],
                     [2.0634, 2.2924, 2.4779]], batch_dim=0)
         """
@@ -1887,7 +1887,7 @@ class BaseBatchedTensor(ABC):
             >>> batch = BatchedTensor(
             ...     torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
             ... )
-            >>> batch.sin().data
+            >>> batch.sin()
             tensor([[ 0.0000e+00,  1.0000e+00, -8.7423e-08],
                     [ 1.7485e-07, -1.0000e+00,  0.0000e+00]], batch_dim=0)
         """
@@ -1909,8 +1909,49 @@ class BaseBatchedTensor(ABC):
             ...     torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
             ... )
             >>> batch.sin_()
-            >>> batch.data
+            >>> batch
             tensor([[ 0.0000e+00,  1.0000e+00, -8.7423e-08],
                     [ 1.7485e-07, -1.0000e+00,  0.0000e+00]], batch_dim=0)
         """
         self._data.sin_()
+
+    def sinh(self) -> TBatchedTensor:
+        r"""Computes the hyperbolic sine of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the hyperbolic sine of
+                each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.sinh()
+            tensor([[-1.1752,  0.0000,  1.1752],
+                    [-0.5211,  0.0000,  0.5211]], batch_dim=0)
+        """
+        return torch.sinh(self)
+
+    def sinh_(self) -> None:
+        r"""Computes the hyperbolic sine of each element.
+
+        In-place version of ``sinh()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> import math
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))
+            >>> batch.sinh_()
+            >>> batch
+            tensor([[-1.1752,  0.0000,  1.1752],
+                    [-0.5211,  0.0000,  0.5211]], batch_dim=0)
+        """
+        self._data.sinh_()
