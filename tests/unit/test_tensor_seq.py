@@ -3421,6 +3421,74 @@ def test_batched_tensor_seq_logical_and__incorrect_seq_dim() -> None:
         batch.logical_and_(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
 
 
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_seq_logical_not(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
+        )
+        .logical_not()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[False, False, True, True], [False, True, False, True]], dtype=dtype)
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_logical_not_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor(
+                [[True, True, False, False], [True, False, True, False]], dtype=torch.bool
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .logical_not()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[False, False, True, True], [False, True, False, True]], dtype=torch.bool
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_seq_logical_not_(dtype: torch.dtype) -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
+    )
+    batch.logical_not_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[False, False, True, True], [False, True, False, True]], dtype=dtype)
+        )
+    )
+
+
+def test_batched_tensor_seq_logical_not__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=torch.bool),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.logical_not_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[False, False, True, True], [False, True, False, True]], dtype=torch.bool
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################

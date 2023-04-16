@@ -2114,3 +2114,50 @@ class BaseBatchedTensor(ABC):
             tensor([[ True, False, False, False],
                     [ True, False,  True, False]], batch_dim=0)
         """
+
+    def logical_not(self) -> TBatchedTensor:
+        r"""Computes the element-wise logical NOT of the current batch.
+
+        Zeros are treated as ``False`` and non-zeros are treated as
+        ``True``.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch containing the element-wise
+                logical NOT of the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[True, True, False, False], [True, False, True, False]])
+            ... )
+            >>> batch.logical_not()
+            tensor([[False, False,  True,  True],
+                    [False,  True, False,  True]], batch_dim=0)
+        """
+        return torch.logical_not(self)
+
+    def logical_not_(self) -> None:
+        r"""Computes the element-wise logical NOT of the current batch.
+
+        Zeros are treated as ``False`` and non-zeros are treated as
+        ``True``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[True, True, False, False], [True, False, True, False]])
+            ... )
+            >>> batch.logical_not_()
+            >>> batch
+            tensor([[False, False,  True,  True],
+                    [False,  True, False,  True]], batch_dim=0)
+        """
+        self._data.logical_not_()
