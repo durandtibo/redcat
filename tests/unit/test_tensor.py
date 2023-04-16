@@ -3066,6 +3066,70 @@ def test_batched_tensor_logical_and__incorrect_batch_dim() -> None:
         )
 
 
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_logical_not(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
+        )
+        .logical_not()
+        .equal(
+            BatchedTensor(
+                torch.tensor([[False, False, True, True], [False, True, False, True]], dtype=dtype)
+            )
+        )
+    )
+
+
+def test_batched_tensor_logical_not_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor(
+                [[True, True, False, False], [True, False, True, False]], dtype=torch.bool
+            ),
+            batch_dim=1,
+        )
+        .logical_not()
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[False, False, True, True], [False, True, False, True]], dtype=torch.bool
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_logical_not_(dtype: torch.dtype) -> None:
+    batch = BatchedTensor(
+        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
+    )
+    batch.logical_not_()
+    assert batch.equal(
+        BatchedTensor(
+            torch.tensor([[False, False, True, True], [False, True, False, True]], dtype=dtype)
+        )
+    )
+
+
+def test_batched_tensor_logical_not__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=torch.bool),
+        batch_dim=1,
+    )
+    batch.logical_not_()
+    assert batch.equal(
+        BatchedTensor(
+            torch.tensor(
+                [[False, False, True, True], [False, True, False, True]], dtype=torch.bool
+            ),
+            batch_dim=1,
+        )
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
