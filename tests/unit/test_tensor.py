@@ -2873,7 +2873,6 @@ def test_batched_tensor_tanh_custom_dims() -> None:
         BatchedTensor(
             torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]),
             batch_dim=1,
-            seq_dim=0,
         )
         .tanh()
         .allclose(
@@ -2886,7 +2885,6 @@ def test_batched_tensor_tanh_custom_dims() -> None:
                     dtype=torch.float,
                 ),
                 batch_dim=1,
-                seq_dim=0,
             ),
             atol=1e-6,
         )
@@ -2914,7 +2912,6 @@ def test_batched_tensor_tanh__custom_dims() -> None:
     batch = BatchedTensor(
         torch.tensor([[0.0, 1.0, 2.0], [-2.0, -1.0, 0.0]]),
         batch_dim=1,
-        seq_dim=0,
     )
     batch.tanh_()
     assert batch.allclose(
@@ -2927,7 +2924,6 @@ def test_batched_tensor_tanh__custom_dims() -> None:
                 dtype=torch.float,
             ),
             batch_dim=1,
-            seq_dim=0,
         ),
         atol=1e-6,
     )
