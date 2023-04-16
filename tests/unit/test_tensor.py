@@ -2705,6 +2705,86 @@ def test_batched_tensor_sin__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_sinh() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]], dtype=torch.float))
+        .sinh()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [-1.175201177597046, 0.0, 1.175201177597046],
+                        [-0.5210952758789062, 0.0, 0.5210952758789062],
+                    ],
+                    dtype=torch.float,
+                )
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_sinh_custom_dims() -> None:
+    assert (
+        BatchedTensor(
+            torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]], dtype=torch.float),
+            batch_dim=1,
+        )
+        .sinh()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [-1.175201177597046, 0.0, 1.175201177597046],
+                        [-0.5210952758789062, 0.0, 0.5210952758789062],
+                    ],
+                    dtype=torch.float,
+                ),
+                batch_dim=1,
+            ),
+            atol=1e-6,
+        )
+    )
+
+
+def test_batched_tensor_sinh_() -> None:
+    batch = BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]], dtype=torch.float))
+    batch.sinh_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [-1.175201177597046, 0.0, 1.175201177597046],
+                    [-0.5210952758789062, 0.0, 0.5210952758789062],
+                ],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_batched_tensor_sinh__custom_dims() -> None:
+    batch = BatchedTensor(
+        torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]], dtype=torch.float),
+        batch_dim=1,
+    )
+    batch.sinh_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [-1.175201177597046, 0.0, 1.175201177597046],
+                    [-0.5210952758789062, 0.0, 0.5210952758789062],
+                ],
+                dtype=torch.float,
+            ),
+            batch_dim=1,
+        ),
+        atol=1e-6,
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
