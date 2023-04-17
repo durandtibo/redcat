@@ -1560,6 +1560,44 @@ def test_batched_tensor_cumsum_dtype() -> None:
     )
 
 
+def test_batched_tensor_cumsum_along_batch() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumsum_along_batch()
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+    )
+
+
+def test_batched_tensor_cumsum_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
+        .cumsum_along_batch()
+        .equal(BatchedTensor(torch.tensor([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1))
+    )
+
+
+def test_batched_tensor_cumsum_along_batch_dtype() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumsum_along_batch(dtype=torch.int)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]], dtype=torch.int)))
+    )
+
+
+def test_batched_tensor_cumsum_along_batch_() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch.cumsum_along_batch_()
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+
+
+def test_batched_tensor_cumsum_along_batch__custom_dims() -> None:
+    batch = BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
+    batch.cumsum_along_batch_()
+    assert batch.equal(
+        BatchedTensor(torch.tensor([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1)
+    )
+
+
 ################################################
 #     Mathematical | point-wise operations     #
 ################################################

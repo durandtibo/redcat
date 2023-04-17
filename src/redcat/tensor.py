@@ -260,6 +260,16 @@ class BatchedTensor(BaseBatchedTensor):
         check_batch_dims(get_batch_dims((self, other), {}))
         self._data.sub_(other, alpha=alpha)
 
+    ###########################################################
+    #     Mathematical | advanced arithmetical operations     #
+    ###########################################################
+
+    def cumsum_along_batch(self, **kwargs) -> BatchedTensor:
+        return torch.cumsum(self, dim=self._batch_dim, **kwargs)
+
+    def cumsum_along_batch_(self) -> None:
+        self._data.cumsum_(dim=self._batch_dim)
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
