@@ -280,6 +280,10 @@ class BatchedTensor(BaseBatchedTensor):
         check_batch_dims(get_batch_dims((self, other), {}))
         self._data.logical_or_(other)
 
+    def logical_xor_(self, other: BaseBatchedTensor | Tensor) -> None:
+        check_batch_dims(get_batch_dims((self, other), {}))
+        self._data.logical_xor_(other)
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
 
