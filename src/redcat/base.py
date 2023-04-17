@@ -1058,11 +1058,12 @@ class BaseBatchedTensor(ABC):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def cumsum(self, **kwargs) -> TBatchedTensor:
+    def cumsum(self, dim: int, **kwargs) -> TBatchedTensor:
         r"""Computes the cumulative sum of elements of the current batch in a
         given dimension.
 
         Args:
+            dim (int): Specifies the dimmenison of the cumulative sum.
             **kwargs: see ``torch.cumsum`` documentation
 
         Returns:
@@ -1080,7 +1081,29 @@ class BaseBatchedTensor(ABC):
             tensor([[ 0,  1,  2,  3,  4],
                     [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
-        return torch.cumsum(self, **kwargs)
+        return torch.cumsum(self, dim=dim, **kwargs)
+
+    def cumsum_(self, dim: int, **kwargs) -> None:
+        r"""Computes the cumulative sum of elements of the current batch in a
+        given dimension.
+
+        Args:
+            dim (int): Specifies the dimmenison of the cumulative sum.
+            **kwargs: see ``torch.cumsum_`` documentation
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.cumsum_(dim=1)
+            >>> batch
+            tensor([[ 0,  1,  2,  3,  4],
+                    [ 5,  7,  9, 11, 13]], batch_dim=0)
+        """
+        self._data.cumsum_(dim=dim, **kwargs)
 
     @abstractmethod
     def cumsum_along_batch(self, **kwargs) -> TBatchedTensor:
