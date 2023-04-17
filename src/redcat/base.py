@@ -2222,3 +2222,64 @@ class BaseBatchedTensor(ABC):
             tensor([[ True,  True,  True, False],
                     [ True,  True,  True,  True]], batch_dim=0)
         """
+
+    def logical_xor(self, other: BaseBatchedTensor | Tensor) -> TBatchedTensor:
+        r"""Computes the element-wise logical XOR.
+
+        Zeros are treated as ``False`` and non-zeros are treated as
+        ``True``.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor``):
+                Specifies the batch to compute logical XOR with.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch containing the element-wise
+                logical XOR.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(
+            ...     torch.tensor([[True, True, False, False], [True, False, True, False]])
+            ... )
+            >>> batch2 = BatchedTensor(
+            ...     torch.tensor([[True, False, True, False], [True, True, True, True]])
+            ... )
+            >>> batch1.logical_xor(batch2)
+            tensor([[False,  True,  True, False],
+                    [False,  True, False,  True]], batch_dim=0)
+        """
+        return torch.logical_xor(self, other)
+
+    @abstractmethod
+    def logical_xor_(self, other: BaseBatchedTensor | Tensor) -> None:
+        r"""Computes the element-wise logical XOR.
+
+        Zeros are treated as ``False`` and non-zeros are treated as
+        ``True``.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor``):
+                Specifies the batch to compute logical XOR with.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(
+            ...     torch.tensor([[True, True, False, False], [True, False, True, False]])
+            ... )
+            >>> batch2 = BatchedTensor(
+            ...     torch.tensor([[True, False, True, False], [True, True, True, True]])
+            ... )
+            >>> batch1.logical_xor_(batch2)
+            >>> batch1
+            tensor([[False,  True,  True, False],
+                    [False,  True, False,  True]], batch_dim=0)
+        """
