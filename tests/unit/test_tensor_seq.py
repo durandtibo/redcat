@@ -4043,6 +4043,48 @@ def test_batched_tensor_seq_max_along_seq_extra_dims() -> None:
 
 
 @mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_median_along_seq(dtype: torch.dtype) -> None:
+    values, indices = BatchedTensorSeq(
+        torch.arange(10).view(2, 5).to(dtype=dtype)
+    ).median_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([2, 7], dtype=dtype)))
+    assert indices.equal(BatchedTensor(torch.tensor([2, 2])))
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_median_along_seq_keepdim_true(dtype: torch.dtype) -> None:
+    values, indices = BatchedTensorSeq(
+        torch.arange(10).view(2, 5).to(dtype=dtype)
+    ).median_along_seq(keepdim=True)
+    assert values.equal(BatchedTensorSeq(torch.tensor([[2], [7]], dtype=dtype)))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[2], [2]])))
+
+
+def test_batched_tensor_seq_median_along_seq_custom_dims() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[2, 4], [1, 5], [0, 2]]), batch_dim=1, seq_dim=0
+    ).median_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([1, 4])))
+    assert indices.equal(BatchedTensor(torch.tensor([1, 0])))
+
+
+def test_batched_tensor_seq_median_along_seq_keepdim_true_custom_dims() -> None:
+    values, indices = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2)).median_along_seq(
+        keepdim=True
+    )
+    assert values.equal(BatchedTensorSeq(torch.tensor([[4, 5]]), batch_dim=1, seq_dim=0))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[2, 2]]), batch_dim=1, seq_dim=0))
+
+
+def test_batched_tensor_seq_median_along_seq_extra_dims() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1
+    ).median_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([[4, 5], [14, 15]]), batch_dim=1))
+    assert indices.equal(BatchedTensor(torch.tensor([[2, 2], [2, 2]]), batch_dim=1))
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_min_along_seq(dtype: torch.dtype) -> None:
     values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).min_along_seq()
     assert values.equal(BatchedTensor(torch.tensor([0, 5], dtype=dtype)))
