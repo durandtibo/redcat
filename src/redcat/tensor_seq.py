@@ -375,6 +375,41 @@ class BatchedTensorSeq(BaseBatchedTensor):
         """
         self._data.cumsum_(dim=self._seq_dim)
 
+    def sort_along_seq(self, descending: bool = False) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
+        r"""Sorts the elements of the batch along the sequence dimension in
+        monotonic order by value.
+
+        Args:
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+
+        Returns:
+            (``BatchedTensorSeq``, ``BatchedTensorSeq``): A tuple with
+                two values:
+                    - The first batch contains the batch values sorted
+                        along the sequence dimension.
+                    - The second batch contains the indices that sort
+                        the batch along the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.rand(2, 5))
+            >>> batch.sort_along_seq()
+            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
+                        [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0, seq_dim=1),
+             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0, seq_dim=1))
+        """
+        values, indices = self._data.sort(dim=self._seq_dim, descending=descending)
+        return (
+            BatchedTensorSeq(data=values, **self._get_kwargs()),
+            BatchedTensorSeq(data=indices, **self._get_kwargs()),
+        )
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
