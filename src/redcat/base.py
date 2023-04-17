@@ -1054,6 +1054,34 @@ class BaseBatchedTensor(ABC):
                     [-1., -1., -1.]], batch_dim=0)
         """
 
+    ###########################################################
+    #     Mathematical | advanced arithmetical operations     #
+    ###########################################################
+
+    def cumsum(self, **kwargs) -> TBatchedTensor:
+        r"""Computes the cumulative sum of elements of the current batch in a
+        given dimension.
+
+        Args:
+            **kwargs: see ``torch.cumsum`` documentation
+
+        Returns:
+            ``BaseBatchedTensor``: A batch with the cumulative sum of
+                elements of the current batch in a given dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5)).cumsum(dim=1)
+            >>> batch
+            tensor([[ 0,  1,  2,  3,  4],
+                    [ 5,  7,  9, 11, 13]], batch_dim=0)
+        """
+        return torch.cumsum(self, **kwargs)
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################

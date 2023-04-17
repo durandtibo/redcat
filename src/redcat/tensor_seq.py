@@ -344,8 +344,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
 
         Returns:
             ``BatchedTensorSeq``: A batch with the cumulative sum of
-                elements of the current batch in the batch
-                dimension.
+                elements of the current batch in the batch dimension.
 
         Example usage:
 
@@ -387,8 +386,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
 
         Returns:
             ``BatchedTensorSeq``: A batch with the cumulative sum of
-                elements of the current batch in the sequence
-                dimension.
+                elements of the current batch in the sequence dimension.
 
         Example usage:
 
