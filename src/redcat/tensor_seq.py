@@ -451,7 +451,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
     #     Reduction operations     #
     ################################
 
-    def max_along_seq(self, keepdim: bool = False) -> BatchedTensor | BatchedTensorSeq:
+    def max_along_seq(
+        self, keepdim: bool = False
+    ) -> tuple[BatchedTensor | BatchedTensorSeq, BatchedTensor | BatchedTensorSeq]:
         r"""Computes the maximum values along the sequence dimension.
 
         Args:
@@ -472,7 +474,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).max_along_seq()
             (tensor([4, 9], batch_dim=0), tensor([4, 4], batch_dim=0))
-            >>> BatchedTensorSeq(torch.arange(30).view(2, 5, 3)).max_along_seq()
+            >>> BatchedTensorSeq(torch.arange(30).view(2, 5, 3)).max_along_seq(keepdim=True)
             (tensor([[[12, 13, 14]], [[27, 28, 29]]], batch_dim=0, seq_dim=1),
              tensor([[[4, 4, 4]], [[4, 4, 4]]], batch_dim=0, seq_dim=1))
         """
@@ -488,7 +490,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
             BatchedTensor(data=indices, batch_dim=batch_dim),
         )
 
-    def min_along_seq(self, keepdim: bool = False) -> BatchedTensor | BatchedTensorSeq:
+    def min_along_seq(
+        self, keepdim: bool = False
+    ) -> tuple[BatchedTensor | BatchedTensorSeq, BatchedTensor | BatchedTensorSeq]:
         r"""Computes the minimum values along the sequence dimension.
 
         Args:
@@ -509,9 +513,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).min_along_seq()
             (tensor([0, 5], batch_dim=0), tensor([0, 0], batch_dim=0))
-            >>> BatchedTensorSeq(torch.arange(30).view(2, 5, 3)).min_along_seq()
-            (tensor([[ 0,  1,  2], [15, 16, 17]], batch_dim=0),
-             tensor([[0, 0, 0], [0, 0, 0]], batch_dim=0))
+            >>> BatchedTensorSeq(torch.arange(30).view(2, 5, 3)).min_along_seq(keepdim=True)
+            (tensor([[[ 0,  1,  2]], [[15, 16, 17]]], batch_dim=0, seq_dim=1),
+             tensor([[[0, 0, 0]], [[0, 0, 0]]], batch_dim=0, seq_dim=1))
         """
         values, indices = torch.min(self._data, dim=self._seq_dim, keepdim=keepdim)
         if keepdim:
@@ -523,6 +527,36 @@ class BatchedTensorSeq(BaseBatchedTensor):
         return (
             BatchedTensor(data=values, batch_dim=batch_dim),
             BatchedTensor(data=indices, batch_dim=batch_dim),
+        )
+
+    def sum_along_seq(self, keepdim: bool = False) -> BatchedTensor | BatchedTensorSeq:
+        r"""Computes the sum values along the sequence dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the sequence dimension retained or not. If ``False``
+                the returned type is ``BatchedTensor``, otherwise it
+                is ``BatchedTensorSeq``. Default: ``False``
+
+        Returns:
+            ``TensorBatch``: A batch with the sum values along the
+                sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).sum_along_seq()
+            tensor([10, 35])
+        """
+        values = torch.sum(self._data, dim=self._seq_dim, keepdim=keepdim)
+        if keepdim:
+            return BatchedTensorSeq(data=values, **self._get_kwargs())
+        return BatchedTensor(
+            data=values,
+            batch_dim=self._batch_dim if self._seq_dim > self._batch_dim else self._batch_dim - 1,
         )
 
     def _get_kwargs(self) -> dict:
