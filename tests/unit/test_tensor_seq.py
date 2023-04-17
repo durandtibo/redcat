@@ -4002,6 +4002,38 @@ def test_batched_tensor_seq_logical_xor__incorrect_seq_dim() -> None:
 ################################
 
 
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_tensor_seq_batch_max_along_seq(dtype: torch.dtype) -> None:
+    values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).max_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([4, 9], dtype=dtype)))
+    assert indices.equal(BatchedTensor(torch.tensor([4, 4])))
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_tensor_seq_batch_max_along_seq_keepdim_true(dtype: torch.dtype) -> None:
+    values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).max_along_seq(
+        keepdim=True
+    )
+    assert values.equal(BatchedTensorSeq(torch.tensor([[4], [9]], dtype=dtype)))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[4], [4]])))
+
+
+def test_tensor_seq_batch_max_along_seq_custom_dims() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[2, 4], [1, 5], [0, 2]]), batch_dim=1, seq_dim=0
+    ).max_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([2, 5])))
+    assert indices.equal(BatchedTensor(torch.tensor([0, 1])))
+
+
+def test_tensor_seq_batch_max_along_seq_extra_dims() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1
+    ).max_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([[8, 9], [18, 19]]), batch_dim=1))
+    assert indices.equal(BatchedTensor(torch.tensor([[4, 4], [4, 4]]), batch_dim=1))
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
