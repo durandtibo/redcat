@@ -490,6 +490,45 @@ class BatchedTensorSeq(BaseBatchedTensor):
             BatchedTensor(data=indices, batch_dim=batch_dim),
         )
 
+    def median_along_seq(
+        self, keepdim: bool = False
+    ) -> tuple[BatchedTensor | BatchedTensorSeq, BatchedTensor | BatchedTensorSeq]:
+        r"""Computes the median values along the sequence dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the sequence dimension retained or not. If ``False``
+                the returned type is ``BatchedTensor``, otherwise it
+                is ``BatchedTensorSeq``. Default: ``False``
+
+        Returns:
+            ``BatchedTensor``: A batch with the median values along the
+                sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).median_along_seq()
+            (tensor([2, 7], batch_dim=0), tensor([2, 2], batch_dim=0))
+            >>> BatchedTensorSeq(torch.arange(30).view(2, 5, 3)).median_along_seq(keepdim=True)
+            (tensor([[[12, 13, 14]], [[27, 28, 29]]], batch_dim=0, seq_dim=1),
+             tensor([[[4, 4, 4]], [[4, 4, 4]]], batch_dim=0, seq_dim=1))
+        """
+        values, indices = torch.median(self._data, dim=self._seq_dim, keepdim=keepdim)
+        if keepdim:
+            return (
+                BatchedTensorSeq(data=values, **self._get_kwargs()),
+                BatchedTensorSeq(data=indices, **self._get_kwargs()),
+            )
+        batch_dim = self._batch_dim if self._seq_dim > self._batch_dim else self._batch_dim - 1
+        return (
+            BatchedTensor(data=values, batch_dim=batch_dim),
+            BatchedTensor(data=indices, batch_dim=batch_dim),
+        )
+
     def min_along_seq(
         self, keepdim: bool = False
     ) -> tuple[BatchedTensor | BatchedTensorSeq, BatchedTensor | BatchedTensorSeq]:
