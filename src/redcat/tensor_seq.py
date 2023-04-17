@@ -331,6 +331,50 @@ class BatchedTensorSeq(BaseBatchedTensor):
         check_seq_dims(get_seq_dims((self, other), {}))
         self._data.sub_(other, alpha=alpha)
 
+    ###########################################################
+    #     Mathematical | advanced arithmetical operations     #
+    ###########################################################
+
+    def cumsum_along_seq(self) -> BatchedTensorSeq:
+        r"""Computes the cumulative sum of elements of the current batch in the
+        sequence dimension.
+
+        Returns:
+            ``BatchedTensorSeq``: A batch with the cumulative sum of
+                elements of the current batch in the sequence
+                dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5)).cumsum_along_seq()
+            >>> batch
+            tensor([[ 0,  1,  3,  6, 10],
+                    [ 5, 11, 18, 26, 35]], batch_dim=0, seq_dim=1)
+        """
+        return torch.cumsum(self, dim=self._seq_dim)
+
+    def cumsum_along_seq_(self) -> None:
+        r"""Computes the cumulative sum of elements of the current batch in the
+        sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.cumsum_along_seq_()
+            >>> batch
+            tensor([[ 0,  1,  3,  6, 10],
+                    [ 5, 11, 18, 26, 35]], batch_dim=0, seq_dim=1)
+        """
+        self._data.cumsum_(dim=self._seq_dim)
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
@@ -358,6 +402,10 @@ class BatchedTensorSeq(BaseBatchedTensor):
         check_batch_dims(get_batch_dims((self, other), {}))
         check_seq_dims(get_seq_dims((self, other), {}))
         self._data.logical_xor_(other)
+
+    ################################
+    #     Reduction operations     #
+    ################################
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
