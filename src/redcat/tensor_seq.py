@@ -488,6 +488,43 @@ class BatchedTensorSeq(BaseBatchedTensor):
             BatchedTensor(data=indices, batch_dim=batch_dim),
         )
 
+    def min_along_seq(self, keepdim: bool = False) -> BatchedTensor | BatchedTensorSeq:
+        r"""Computes the minimum values along the sequence dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the sequence dimension retained or not. If ``False``
+                the returned type is ``BatchedTensor``, otherwise it
+                is ``BatchedTensorSeq``. Default: ``False``
+
+        Returns:
+            ``BatchedTensor``: A batch with the minimum values along the
+                sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).min_along_seq()
+            (tensor([0, 5], batch_dim=0), tensor([0, 0], batch_dim=0))
+            >>> BatchedTensorSeq(torch.arange(30).view(2, 5, 3)).min_along_seq()
+            (tensor([[ 0,  1,  2], [15, 16, 17]], batch_dim=0),
+             tensor([[0, 0, 0], [0, 0, 0]], batch_dim=0))
+        """
+        values, indices = torch.min(self._data, dim=self._seq_dim, keepdim=keepdim)
+        if keepdim:
+            return (
+                BatchedTensorSeq(data=values, **self._get_kwargs()),
+                BatchedTensorSeq(data=indices, **self._get_kwargs()),
+            )
+        batch_dim = self._batch_dim if self._seq_dim > self._batch_dim else self._batch_dim - 1
+        return (
+            BatchedTensor(data=values, batch_dim=batch_dim),
+            BatchedTensor(data=indices, batch_dim=batch_dim),
+        )
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 

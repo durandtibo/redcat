@@ -4003,14 +4003,14 @@ def test_batched_tensor_seq_logical_xor__incorrect_seq_dim() -> None:
 
 
 @mark.parametrize("dtype", (torch.float, torch.long))
-def test_tensor_seq_batch_max_along_seq(dtype: torch.dtype) -> None:
+def test_batched_tensor_seq_max_along_seq(dtype: torch.dtype) -> None:
     values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).max_along_seq()
     assert values.equal(BatchedTensor(torch.tensor([4, 9], dtype=dtype)))
     assert indices.equal(BatchedTensor(torch.tensor([4, 4])))
 
 
 @mark.parametrize("dtype", (torch.float, torch.long))
-def test_tensor_seq_batch_max_along_seq_keepdim_true(dtype: torch.dtype) -> None:
+def test_batched_tensor_seq_max_along_seq_keepdim_true(dtype: torch.dtype) -> None:
     values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).max_along_seq(
         keepdim=True
     )
@@ -4018,7 +4018,7 @@ def test_tensor_seq_batch_max_along_seq_keepdim_true(dtype: torch.dtype) -> None
     assert indices.equal(BatchedTensorSeq(torch.tensor([[4], [4]])))
 
 
-def test_tensor_seq_batch_max_along_seq_custom_dims() -> None:
+def test_batched_tensor_seq_max_along_seq_custom_dims() -> None:
     values, indices = BatchedTensorSeq(
         torch.tensor([[2, 4], [1, 5], [0, 2]]), batch_dim=1, seq_dim=0
     ).max_along_seq()
@@ -4026,12 +4026,60 @@ def test_tensor_seq_batch_max_along_seq_custom_dims() -> None:
     assert indices.equal(BatchedTensor(torch.tensor([0, 1])))
 
 
-def test_tensor_seq_batch_max_along_seq_extra_dims() -> None:
+def test_batched_tensor_seq_max_along_seq_keepdim_true_custom_dims() -> None:
+    values, indices = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2)).max_along_seq(
+        keepdim=True
+    )
+    assert values.equal(BatchedTensorSeq(torch.tensor([[8, 9]]), batch_dim=1, seq_dim=0))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[4, 4]]), batch_dim=1, seq_dim=0))
+
+
+def test_batched_tensor_seq_max_along_seq_extra_dims() -> None:
     values, indices = BatchedTensorSeq(
         torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1
     ).max_along_seq()
     assert values.equal(BatchedTensor(torch.tensor([[8, 9], [18, 19]]), batch_dim=1))
     assert indices.equal(BatchedTensor(torch.tensor([[4, 4], [4, 4]]), batch_dim=1))
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_min_along_seq(dtype: torch.dtype) -> None:
+    values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).min_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([0, 5], dtype=dtype)))
+    assert indices.equal(BatchedTensor(torch.tensor([0, 0])))
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_min_along_seq_keepdim_true(dtype: torch.dtype) -> None:
+    values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).min_along_seq(
+        keepdim=True
+    )
+    assert values.equal(BatchedTensorSeq(torch.tensor([[0], [5]], dtype=dtype)))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[0], [0]])))
+
+
+def test_batched_tensor_seq_min_along_seq_custom_dims() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[0, 4], [1, 2], [2, 5]]), batch_dim=1, seq_dim=0
+    ).min_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([0, 2])))
+    assert indices.equal(BatchedTensor(torch.tensor([0, 1])))
+
+
+def test_batched_tensor_seq_min_along_seq_keepdim_true_custom_dims() -> None:
+    values, indices = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2)).min_along_seq(
+        keepdim=True
+    )
+    assert values.equal(BatchedTensorSeq(torch.tensor([[0, 1]]), batch_dim=1, seq_dim=0))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[0, 0]]), batch_dim=1, seq_dim=0))
+
+
+def test_batched_tensor_seq_min_along_seq_extra_dims() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1
+    ).min_along_seq()
+    assert values.equal(BatchedTensor(torch.tensor([[0, 1], [10, 11]]), batch_dim=1))
+    assert indices.equal(BatchedTensor(torch.tensor([[0, 0], [0, 0]]), batch_dim=1))
 
 
 #########################################
