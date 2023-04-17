@@ -1768,6 +1768,69 @@ def test_batched_tensor_seq_cumsum_along_seq__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_sort_along_seq_descending_false() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])
+    ).sort_along_seq()
+    assert values.equal(BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])))
+
+
+def test_batched_tensor_seq_sort_along_seq_descending_true() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])
+    ).sort_along_seq(descending=True)
+    assert values.equal(BatchedTensorSeq(torch.tensor([[5, 4, 3, 2, 1], [9, 8, 7, 6, 5]])))
+    assert indices.equal(BatchedTensorSeq(torch.tensor([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])))
+
+
+def test_batched_tensor_seq_sort_along_seq_dim_3() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor(
+            [
+                [[0, 1], [-2, 3], [-4, 5], [-6, 7], [-8, 9]],
+                [[10, -11], [12, -13], [14, -15], [16, -17], [18, -19]],
+            ]
+        )
+    ).sort_along_seq()
+    assert values.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
+                    [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
+                ]
+            )
+        )
+    )
+    assert indices.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
+                    [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                ]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_sort_along_seq_seq_dim_0() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), seq_dim=0, batch_dim=1
+    ).sort_along_seq()
+    assert values.equal(
+        BatchedTensorSeq(
+            torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), seq_dim=0, batch_dim=1
+        )
+    )
+    assert indices.equal(
+        BatchedTensorSeq(
+            torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), seq_dim=0, batch_dim=1
+        )
+    )
+
+
 ################################################
 #     Mathematical | point-wise operations     #
 ################################################
