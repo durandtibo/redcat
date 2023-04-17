@@ -3489,6 +3489,156 @@ def test_batched_tensor_seq_logical_not__custom_dims() -> None:
     )
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
+        ),
+        BatchedTensor(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
+        ),
+        torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
+        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
+    ),
+)
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_seq_logical_or(
+    other: BaseBatchedTensor | Tensor, dtype: torch.dtype
+) -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
+        )
+        .logical_or(other)
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[True, True, True, False], [True, True, True, True]], dtype=torch.bool
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_logical_or_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor(
+                [[True, True, False, False], [True, False, True, False]], dtype=torch.bool
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .logical_or(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[True, False, True, False], [True, True, True, True]], dtype=torch.bool
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[True, True, True, False], [True, True, True, True]], dtype=torch.bool
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_logical_or_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.logical_or(
+            BatchedTensorSeq(
+                torch.zeros(2, 3, 1, dtype=torch.bool),
+                batch_dim=2,
+            )
+        )
+
+
+def test_batched_tensor_seq_logical_or_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.logical_or(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
+        ),
+        BatchedTensor(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
+        ),
+        torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
+        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
+        torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
+    ),
+)
+@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+def test_batched_tensor_seq_logical_or_(
+    other: BaseBatchedTensor | Tensor, dtype: torch.dtype
+) -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
+    )
+    batch.logical_or_(other)
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[True, True, True, False], [True, True, True, True]], dtype=torch.bool)
+        )
+    )
+
+
+def test_batched_tensor_seq_logical_or__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=torch.bool),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.logical_or_(
+        BatchedTensorSeq(
+            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[True, True, True, False], [True, True, True, True]], dtype=torch.bool),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
+def test_batched_tensor_seq_logical_or__incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.logical_or_(
+            BatchedTensorSeq(
+                torch.zeros(2, 3, 1, dtype=torch.bool),
+                batch_dim=2,
+            )
+        )
+
+
+def test_batched_tensor_seq_logical_or__incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.logical_or_(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
