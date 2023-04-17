@@ -1727,6 +1727,47 @@ def test_batched_tensor_seq_sub__incorrect_seq_dim() -> None:
         batch.sub_(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
+###########################################################
+#     Mathematical | advanced arithmetical operations     #
+###########################################################
+
+
+def test_batched_tensor_seq_cumsum_along_seq() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumsum_along_seq()
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]])))
+    )
+
+
+def test_batched_tensor_seq_cumsum_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+        .cumsum_along_seq()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]), seq_dim=0, batch_dim=1
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cumsum_along_seq_() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch.cumsum_along_seq_()
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]])))
+
+
+def test_batched_tensor_seq_cumsum_along_seq__custom_dims() -> None:
+    batch = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+    batch.cumsum_along_seq_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]), seq_dim=0, batch_dim=1
+        )
+    )
+
+
 ################################################
 #     Mathematical | point-wise operations     #
 ################################################
@@ -3789,6 +3830,11 @@ def test_batched_tensor_seq_logical_xor__incorrect_seq_dim() -> None:
     batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
         batch.logical_xor_(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+
+
+################################
+#     Reduction operations     #
+################################
 
 
 #########################################
