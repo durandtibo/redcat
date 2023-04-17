@@ -1752,6 +1752,16 @@ def test_batched_tensor_seq_cumsum_along_seq_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_cumsum_along_seq_dtype() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumsum_along_seq(dtype=torch.int)
+        .equal(
+            BatchedTensorSeq(torch.tensor([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]], dtype=torch.int))
+        )
+    )
+
+
 def test_batched_tensor_seq_cumsum_along_seq_() -> None:
     batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
     batch.cumsum_along_seq_()

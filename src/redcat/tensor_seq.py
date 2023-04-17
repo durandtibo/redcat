@@ -335,9 +335,12 @@ class BatchedTensorSeq(BaseBatchedTensor):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def cumsum_along_seq(self) -> BatchedTensorSeq:
+    def cumsum_along_seq(self, **kwargs) -> BatchedTensorSeq:
         r"""Computes the cumulative sum of elements of the current batch in the
         sequence dimension.
+
+        Args:
+            **kwargs: see ``torch.cumsum`` documentation
 
         Returns:
             ``BatchedTensorSeq``: A batch with the cumulative sum of
@@ -355,7 +358,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[ 0,  1,  3,  6, 10],
                     [ 5, 11, 18, 26, 35]], batch_dim=0, seq_dim=1)
         """
-        return torch.cumsum(self, dim=self._seq_dim)
+        return torch.cumsum(self, dim=self._seq_dim, **kwargs)
 
     def cumsum_along_seq_(self) -> None:
         r"""Computes the cumulative sum of elements of the current batch in the
