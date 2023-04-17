@@ -1732,6 +1732,36 @@ def test_batched_tensor_seq_sub__incorrect_seq_dim() -> None:
 ###########################################################
 
 
+def test_batched_tensor_seq_cumsum() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumsum(dim=0)
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+    )
+
+
+def test_batched_tensor_seq_cumsum_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+        .cumsum(dim=1)
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), seq_dim=0, batch_dim=1
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cumsum_dtype() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumsum(dim=0, dtype=torch.int)
+        .equal(
+            BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]], dtype=torch.int))
+        )
+    )
+
+
 def test_batched_tensor_seq_cumsum_along_batch() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))

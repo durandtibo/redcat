@@ -1531,6 +1531,35 @@ def test_batched_tensor_sub__incorrect_batch_dim() -> None:
         batch.sub_(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
 
 
+###########################################################
+#     Mathematical | advanced arithmetical operations     #
+###########################################################
+
+
+def test_batched_tensor_cumsum() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumsum(dim=0)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+    )
+
+
+def test_batched_tensor_cumsum_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
+        .cumsum(dim=1)
+        .equal(BatchedTensor(torch.tensor([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1))
+    )
+
+
+def test_batched_tensor_cumsum_dtype() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumsum(dim=0, dtype=torch.int)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]], dtype=torch.int)))
+    )
+
+
 ################################################
 #     Mathematical | point-wise operations     #
 ################################################
