@@ -336,45 +336,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ###########################################################
 
     def cumsum_along_batch(self, **kwargs) -> BatchedTensorSeq:
-        r"""Computes the cumulative sum of elements of the current batch in the
-        batch dimension.
-
-        Args:
-            **kwargs: see ``torch.cumsum`` documentation
-
-        Returns:
-            ``BatchedTensorSeq``: A batch with the cumulative sum of
-                elements of the current batch in the batch dimension.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensorSeq
-            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5)).cumsum_along_batch()
-            >>> batch
-            tensor([[ 0,  1,  2,  3,  4],
-                    [ 5,  7,  9, 11, 13]], batch_dim=0, seq_dim=1)
-        """
         return torch.cumsum(self, dim=self._batch_dim, **kwargs)
 
     def cumsum_along_batch_(self) -> None:
-        r"""Computes the cumulative sum of elements of the current batch in the
-        batch dimension.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensorSeq
-            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
-            >>> batch.cumsum_along_batch_()
-            >>> batch
-            tensor([[ 0,  1,  2,  3,  4],
-                    [ 5,  7,  9, 11, 13]], batch_dim=0, seq_dim=1)
-        """
         self._data.cumsum_(dim=self._batch_dim)
 
     def cumsum_along_seq(self, **kwargs) -> BatchedTensorSeq:
