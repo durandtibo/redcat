@@ -10,6 +10,7 @@ __all__ = [
     "get_available_devices",
     "get_batch_dims",
     "get_seq_dims",
+    "permute_along_dim",
     "swap2",
 ]
 
@@ -244,6 +245,57 @@ def get_seq_dims(args: tuple[Any, ...], kwargs: dict[str, Any]) -> set[int]:
     dims = {val._seq_dim for val in args if hasattr(val, "_seq_dim")}
     dims.update({val._seq_dim for val in kwargs.values() if hasattr(val, "_seq_dim")})
     return dims
+
+
+def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tensor:
+    r"""Permutes the values of a tensor along a given dimension.
+
+    Args:
+    ----
+        tensor (``torch.Tensor``): Specifies the tensor to permute.
+        permutation (``torch.Tensor`` of type long and shape
+            ``(dimension,)``): Specifies the permutation to use on the
+            tensor. The dimension of this tensor should be compatible
+            with the shape of the tensor to permute.
+        dim (int, optional): Specifies the dimension used to permute the
+            tensor. Default: ``0``
+
+    Returns:
+    -------
+        ``torch.Tensor``: The permuted tensor.
+
+    Example usage:
+
+    .. code-block:: python
+
+        >>> from redcat.utils import permute_along_dim
+        >>> permute_along_dim(tensor=torch.arange(4), permutation=torch.tensor([0, 2, 1, 3]))
+        tensor([0, 2, 1, 3])
+        >>> permute_along_dim(
+        ...     tensor=torch.arange(20).view(4, 5),
+        ...     permutation=torch.tensor([0, 2, 1, 3]),
+        ... )
+        tensor([[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]])
+        >>> permute_along_dim(
+        ...     tensor=torch.arange(20).view(4, 5),
+        ...     permutation=torch.tensor([0, 4, 2, 1, 3]),
+        ...     dim=1,
+        ... )
+        tensor([[ 0,  4,  2,  1,  3],
+                [ 5,  9,  7,  6,  8],
+                [10, 14, 12, 11, 13],
+                [15, 19, 17, 16, 18]])
+        >>> permute_along_dim(
+        ...     tensor=torch.arange(20).view(2, 2, 5),
+        ...     permutation=torch.tensor([0, 4, 2, 1, 3]),
+        ...     dim=2,
+        ... )
+        tensor([[[ 0,  4,  2,  1,  3],
+                 [ 5,  9,  7,  6,  8]],
+                [[10, 14, 12, 11, 13],
+                 [15, 19, 17, 16, 18]]])
+    """
+    return tensor.transpose(0, dim)[permutation].transpose(0, dim).contiguous()
 
 
 @overload
