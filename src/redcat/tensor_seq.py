@@ -398,6 +398,34 @@ class BatchedTensorSeq(BaseBatchedTensor):
             **self._get_kwargs(),
         )
 
+    def permute_along_seq(self, permutation: Sequence[int] | torch.Tensor) -> BatchedTensorSeq:
+        r"""Permutes the data along the sequence dimension.
+
+        Args:
+            permutation (sequence or ``torch.Tensor`` of type long
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch with permuted data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.permute_along_seq([2, 1, 3, 0, 4])
+        """
+        if not torch.is_tensor(permutation):
+            permutation = torch.tensor(permutation)
+        return self.__class__(
+            data=permute_along_dim(tensor=self._data, permutation=permutation, dim=self._seq_dim),
+            **self._get_kwargs(),
+        )
+
     def sort_along_seq(self, descending: bool = False) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
         r"""Sorts the elements of the batch along the sequence dimension in
         monotonic order by value.
