@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["BaseBatchedTensor"]
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import Any, TypeVar, overload
 
 import torch
@@ -1162,6 +1163,34 @@ class BaseBatchedTensor(ABC):
             >>> batch
             tensor([[ 0,  1,  2,  3,  4],
                     [ 5,  7,  9, 11, 13]], batch_dim=0)
+        """
+
+    @abstractmethod
+    def permute_along_batch(self, permutation: Sequence[int] | torch.Tensor) -> TBatchedTensor:
+        r"""Permutes the data/batch along the batch dimension.
+
+        Args:
+            permutation (sequence or ``torch.Tensor`` of type long
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch with permuted data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.permute_along_batch([2, 1, 3, 0, 4])
+            tensor([[4, 5],
+                    [2, 3],
+                    [6, 7],
+                    [0, 1],
+                    [8, 9]])
         """
 
     ################################################

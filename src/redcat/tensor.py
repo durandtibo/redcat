@@ -2,14 +2,14 @@ from __future__ import annotations
 
 __all__ = ["BatchedTensor", "check_data_and_dim"]
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from typing import Any
 
 import torch
 from torch import Tensor
 
 from redcat.base_tensor import BaseBatchedTensor
-from redcat.utils import check_batch_dims, get_batch_dims
+from redcat.utils import check_batch_dims, get_batch_dims, permute_along_dim
 
 
 class BatchedTensor(BaseBatchedTensor):
@@ -269,6 +269,14 @@ class BatchedTensor(BaseBatchedTensor):
 
     def cumsum_along_batch_(self) -> None:
         self._data.cumsum_(dim=self._batch_dim)
+
+    def permute_along_batch(self, permutation: Sequence[int] | torch.Tensor) -> BatchedTensor:
+        if not torch.is_tensor(permutation):
+            permutation = torch.tensor(permutation)
+        return self.__class__(
+            data=permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
+            **self._get_kwargs(),
+        )
 
     ################################################
     #     Mathematical | point-wise operations     #
