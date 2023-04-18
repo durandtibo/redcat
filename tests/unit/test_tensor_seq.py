@@ -104,6 +104,10 @@ def test_batched_tensor_seq_device(device: str) -> None:
     assert BatchedTensorSeq(torch.ones(2, 3, device=device)).device == device
 
 
+def test_batched_tensor_seq_numel() -> None:
+    assert BatchedTensorSeq(torch.ones(2, 3)).numel() == 6
+
+
 #################################
 #     Conversion operations     #
 #################################
