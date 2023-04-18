@@ -1894,6 +1894,29 @@ def test_batched_tensor_seq_permute_along_batch_custom_dims() -> None:
     )
 
 
+@mark.parametrize("permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+def test_batched_tensor_seq_permute_along_seq(
+    permutation: Union[Sequence[int], torch.Tensor]
+) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .permute_along_seq(permutation)
+        .equal(BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+    )
+
+
+def test_batched_tensor_seq_permute_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0)
+        .permute_along_seq(torch.tensor([2, 4, 1, 3, 0]))
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[4, 5], [8, 9], [2, 3], [6, 7], [0, 1]]), batch_dim=1, seq_dim=0
+            )
+        )
+    )
+
+
 def test_batched_tensor_seq_sort_along_seq_descending_false() -> None:
     values, indices = BatchedTensorSeq(
         torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])
