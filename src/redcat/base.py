@@ -42,6 +42,23 @@ class BaseBatchedTensor(ABC):
         r"""``torch.device``: The device where the batch data/tensor is."""
         return self._data.device
 
+    def numel(self) -> int:
+        r"""Gets the total number of elements in the tensor.
+
+        Returns:
+            int: The total number of elements
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.ones(2, 3)).numel()
+            6
+        """
+        return self._data.numel()
+
     #################################
     #     Conversion operations     #
     #################################
