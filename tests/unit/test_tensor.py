@@ -1,4 +1,5 @@
 import math
+from collections.abc import Sequence
 from typing import Any, Union
 
 import numpy as np
@@ -1613,6 +1614,25 @@ def test_batched_tensor_cumsum_along_batch__custom_dims() -> None:
     batch.cumsum_along_batch_()
     assert batch.equal(
         BatchedTensor(torch.tensor([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1)
+    )
+
+
+@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_tensor_permute_along_batch(
+    permutation: Union[Sequence[int], torch.Tensor]
+) -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        .permute_along_batch(permutation)
+        .equal(BatchedTensor(torch.tensor([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+    )
+
+
+def test_batched_tensor_permute_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_dim=1)
+        .permute_along_batch(torch.tensor([2, 1, 3, 0]))
+        .equal(BatchedTensor(torch.tensor([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
     )
 
 
