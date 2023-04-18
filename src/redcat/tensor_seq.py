@@ -8,7 +8,7 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from redcat.base import BaseBatchedTensor
+from redcat.base_tensor import BaseBatchedTensor
 from redcat.tensor import BatchedTensor
 from redcat.utils import check_batch_dims, check_seq_dims, get_batch_dims, get_seq_dims
 

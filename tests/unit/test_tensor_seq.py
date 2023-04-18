@@ -8,7 +8,7 @@ from torch import Tensor
 from torch.overrides import is_tensor_like
 
 from redcat import BatchedTensor, BatchedTensorSeq
-from redcat.base import BaseBatchedTensor
+from redcat.base_tensor import BaseBatchedTensor
 from redcat.tensor_seq import check_data_and_dims
 from redcat.utils import get_available_devices
 
