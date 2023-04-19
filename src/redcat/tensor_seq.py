@@ -307,8 +307,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
         other: BaseBatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> None:
-        check_batch_dims(get_batch_dims((self, other), {}))
-        check_seq_dims(get_seq_dims((self, other), {}))
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
         self._data.add_(other, alpha=alpha)
 
     def div_(
@@ -316,18 +316,18 @@ class BatchedTensorSeq(BaseBatchedTensor):
         other: BaseBatchedTensor | torch.Tensor | int | float,
         rounding_mode: str | None = None,
     ) -> None:
-        check_batch_dims(get_batch_dims((self, other), {}))
-        check_seq_dims(get_seq_dims((self, other), {}))
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
         self._data.div_(other, rounding_mode=rounding_mode)
 
     def fmod_(self, divisor: BaseBatchedTensor | torch.Tensor | int | float) -> None:
-        check_batch_dims(get_batch_dims((self, divisor), {}))
-        check_seq_dims(get_seq_dims((self, divisor), {}))
+        check_batch_dims(get_batch_dims((self, divisor)))
+        check_seq_dims(get_seq_dims((self, divisor)))
         self._data.fmod_(divisor)
 
     def mul_(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> None:
-        check_batch_dims(get_batch_dims((self, other), {}))
-        check_seq_dims(get_seq_dims((self, other), {}))
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
         self._data.mul_(other)
 
     def sub_(
@@ -335,8 +335,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
         other: BaseBatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> None:
-        check_batch_dims(get_batch_dims((self, other), {}))
-        check_seq_dims(get_seq_dims((self, other), {}))
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
         self._data.sub_(other, alpha=alpha)
 
     ###########################################################
@@ -467,8 +467,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ################################################
 
     def pow_(self, exponent: int | float | BaseBatchedTensor) -> None:
-        check_batch_dims(get_batch_dims((self, exponent), {}))
-        check_seq_dims(get_seq_dims((self, exponent), {}))
+        check_batch_dims(get_batch_dims((self, exponent)))
+        check_seq_dims(get_seq_dims((self, exponent)))
         self._data.pow_(exponent)
 
     #############################################
@@ -476,18 +476,18 @@ class BatchedTensorSeq(BaseBatchedTensor):
     #############################################
 
     def logical_and_(self, other: BaseBatchedTensor | Tensor) -> None:
-        check_batch_dims(get_batch_dims((self, other), {}))
-        check_seq_dims(get_seq_dims((self, other), {}))
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
         self._data.logical_and_(other)
 
     def logical_or_(self, other: BaseBatchedTensor | Tensor) -> None:
-        check_batch_dims(get_batch_dims((self, other), {}))
-        check_seq_dims(get_seq_dims((self, other), {}))
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
         self._data.logical_or_(other)
 
     def logical_xor_(self, other: BaseBatchedTensor | Tensor) -> None:
-        check_batch_dims(get_batch_dims((self, other), {}))
-        check_seq_dims(get_seq_dims((self, other), {}))
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
         self._data.logical_xor_(other)
 
     ################################
