@@ -10,6 +10,7 @@ __all__ = [
     "get_available_devices",
     "get_batch_dims",
     "get_seq_dims",
+    "get_torch_generator",
     "permute_along_dim",
     "swap2",
 ]
@@ -249,6 +250,43 @@ def get_seq_dims(
     dims = {val._seq_dim for val in args if hasattr(val, "_seq_dim")}
     dims.update({val._seq_dim for val in kwargs.values() if hasattr(val, "_seq_dim")})
     return dims
+
+
+def get_torch_generator(
+    random_seed: int = 1, device: Union[torch.device, str, None] = "cpu"
+) -> torch.Generator:
+    r"""Creates a ``torch.Generator`` initialized with a given seed.
+
+    Args:
+    ----
+        random_seed (int, optional): Specifies a random seed.
+            Default: ``1``
+        device (``torch.device`` or str or ``None``, optional):
+            Specifies the desired device for the generator.
+            Default: ``'cpu'``
+
+    Returns:
+    -------
+        ``torch.Generator``
+
+    Example usage:
+
+    .. code-block:: python
+
+        >>> import torch
+        >>> from redcat.utils import get_torch_generator
+        >>> generator = get_torch_generator(42)
+        >>> torch.rand(2, 4, generator=generator)
+        tensor([[0.8823, 0.9150, 0.3829, 0.9593],
+                [0.3904, 0.6009, 0.2566, 0.7936]])
+        >>> generator = get_torch_generator(42)
+        >>> torch.rand(2, 4, generator=generator)
+        tensor([[0.8823, 0.9150, 0.3829, 0.9593],
+                [0.3904, 0.6009, 0.2566, 0.7936]])
+    """
+    generator = torch.Generator(device)
+    generator.manual_seed(random_seed)
+    return generator
 
 
 def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tensor:

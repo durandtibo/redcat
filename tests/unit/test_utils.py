@@ -15,6 +15,7 @@ from redcat.utils import (
     get_available_devices,
     get_batch_dims,
     get_seq_dims,
+    get_torch_generator,
     permute_along_dim,
     swap2,
 )
@@ -240,6 +241,23 @@ def test_get_seq_dims_2() -> None:
 
 def test_get_seq_dims_empty() -> None:
     assert get_seq_dims(tuple()) == set()
+
+
+#########################################
+#     Tests for get_torch_generator     #
+#########################################
+
+
+def test_get_torch_generator_same_seed() -> None:
+    assert torch.randn(4, 6, generator=get_torch_generator(1)).equal(
+        torch.randn(4, 6, generator=get_torch_generator(1))
+    )
+
+
+def test_get_torch_generator_different_seeds() -> None:
+    assert not torch.randn(4, 6, generator=get_torch_generator(1)).equal(
+        torch.randn(4, 6, generator=get_torch_generator(2))
+    )
 
 
 #######################################
