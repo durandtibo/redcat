@@ -52,16 +52,10 @@ class BatchedTensorSeq(BaseBatchedTensor):
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
     ) -> BatchedTensorSeq:
-        print("func", func)
-        print("types", types)
-        print("args", args)
-        print("kwargs", kwargs)
         kwargs = kwargs or {}
         batch_dims = get_batch_dims(args, kwargs)
-        print("batch_dims", batch_dims)
         check_batch_dims(batch_dims)
         seq_dims = get_seq_dims(args, kwargs)
-        print("seq_dims", seq_dims)
         check_seq_dims(seq_dims)
         args = [a._data if hasattr(a, "_data") else a for a in args]
         return cls(func(*args, **kwargs), batch_dim=batch_dims.pop(), seq_dim=seq_dims.pop())
