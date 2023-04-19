@@ -9,6 +9,8 @@ from typing import Any, TypeVar, overload
 import torch
 from torch import Tensor
 
+from redcat.utils import IndexType
+
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchedTensor = TypeVar("TBatchedTensor", bound="BaseBatchedTensor")
@@ -2453,3 +2455,13 @@ class BaseBatchedTensor(ABC):
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
+
+    def __getitem__(self, index: IndexType) -> Tensor:
+        return self._data[index]
+
+    def __setitem__(
+        self, index: IndexType, value: bool | int | float | Tensor | BaseBatchedTensor
+    ) -> None:
+        if isinstance(value, BaseBatchedTensor):
+            value = value.data
+        self._data[index] = value
