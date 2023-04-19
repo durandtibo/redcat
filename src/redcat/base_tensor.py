@@ -2422,3 +2422,7 @@ class BaseBatchedTensor(ABC):
             tensor([[False,  True,  True, False],
                     [False,  True, False,  True]], batch_dim=0)
         """
+
+    ##########################################################
+    #    Indexing, slicing, joining, mutating operations     #
+    ##########################################################
