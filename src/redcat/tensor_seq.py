@@ -13,6 +13,7 @@ from redcat.base_tensor import BaseBatchedTensor
 from redcat.tensor import BatchedTensor
 from redcat.utils import (
     align_to_batch_seq,
+    align_to_seq_batch,
     check_batch_dims,
     check_seq_dims,
     get_batch_dims,
@@ -697,9 +698,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
             >>> import torch
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0)
-            >>> batch.align_to_batch_seq().data
+            >>> batch.align_to_batch_seq()
             tensor([[0, 2, 4, 6, 8],
-                    [1, 3, 5, 7, 9]], batch_dim=0)
+                    [1, 3, 5, 7, 9]], batch_dim=0, seq_dim=1)
         """
         return self.__class__(
             data=align_to_batch_seq(
@@ -707,6 +708,34 @@ class BatchedTensorSeq(BaseBatchedTensor):
             ),
             batch_dim=0,
             seq_dim=1,
+        )
+
+    def align_to_seq_batch(self) -> BatchedTensorSeq:
+        r"""Aligns the current batch to the sequence-batch format.
+
+        Returns:
+            ``BatchedTensorSeq``: The batch in the sequence-batch format.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=0, seq_dim=1)
+            >>> batch.align_to_seq_batch()
+            tensor([[0, 5],
+                    [1, 6],
+                    [2, 7],
+                    [3, 8],
+                    [4, 9]], batch_dim=1, seq_dim=0)
+        """
+        return self.__class__(
+            data=align_to_seq_batch(
+                tensor=self._data, batch_dim=self._batch_dim, seq_dim=self._seq_dim
+            ),
+            batch_dim=1,
+            seq_dim=0,
         )
 
     def cat_along_seq(
