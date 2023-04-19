@@ -2,7 +2,8 @@ from __future__ import annotations
 
 __all__ = ["BatchedTensorSeq", "check_data_and_dims"]
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
+from itertools import chain
 from typing import Any
 
 import torch
@@ -667,7 +668,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             >>> import torch
             >>> from redcat import BatchedTensorSeq
             >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).sum_along_seq()
-            tensor([10, 35])
+            tensor([10, 35], batch_dim=0)
         """
         values = torch.sum(self._data, dim=self._seq_dim, keepdim=keepdim)
         if keepdim:
@@ -675,6 +676,64 @@ class BatchedTensorSeq(BaseBatchedTensor):
         return BatchedTensor(
             data=values,
             batch_dim=self._batch_dim if self._seq_dim > self._batch_dim else self._batch_dim - 1,
+        )
+
+    ##########################################################
+    #    Indexing, slicing, joining, mutating operations     #
+    ##########################################################
+
+    def cat_along_seq(
+        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+    ) -> BatchedTensorSeq:
+        r"""Concatenates the data of the batch(es) to the current batch along
+        the sequence dimension and creates a new batch.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Returns:
+            ``BatchedTensorSeq``: A batch with the concatenated data
+                in the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]])).cat_along_seq(
+            ...     BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]]))
+            ... )
+            tensor([[ 0,  1,  2, 10, 11],
+                    [ 4,  5,  6, 12, 13]], batch_dim=0, seq_dim=1)
+            >>> BatchedTensorSeq(
+            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0,
+            ... ).cat_along_seq(
+            ...     [
+            ...         BatchedTensorSeq(torch.tensor([[10, 12], [11, 13]]), batch_dim=1, seq_dim=0),
+            ...         BatchedTensorSeq(torch.tensor([[20, 22], [21, 23]]), batch_dim=1, seq_dim=0),
+            ...     ]
+            ... )
+            tensor([[ 0,  4],
+                    [ 1,  5],
+                    [ 2,  6],
+                    [10, 12],
+                    [11, 13],
+                    [20, 22],
+                    [21, 23]], batch_dim=0, seq_dim=1)
+        """
+        if isinstance(other, (BaseBatchedTensor, Tensor)):
+            other = [other]
+        batches = list(chain([self], other))
+        check_batch_dims(get_batch_dims(batches))
+        check_seq_dims(get_seq_dims(batches))
+        return self.__class__(
+            data=torch.cat(
+                [batch.data if hasattr(batch, "data") else batch for batch in batches],
+                dim=self._seq_dim,
+            ),
+            **self._get_kwargs(),
         )
 
     def _get_kwargs(self) -> dict:

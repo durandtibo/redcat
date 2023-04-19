@@ -1,5 +1,5 @@
 import math
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Any, Union
 
 import numpy as np
@@ -4257,6 +4257,86 @@ def test_batched_tensor_seq_sum_along_seq_extra_dims() -> None:
         .sum_along_seq()
         .equal(BatchedTensor(torch.tensor([[20, 25], [70, 75]]), batch_dim=1))
     )
+
+
+##########################################################
+#    Indexing, slicing, joining, mutating operations     #
+##########################################################
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
+        BatchedTensor(torch.tensor([[10, 11], [12, 13]])),
+        torch.tensor([[10, 11], [12, 13]]),
+        [BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]]))],
+        (BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),),
+    ),
+)
+def test_batched_tensor_seq_cat_along_seq(
+    other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
+) -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        .cat_along_seq(other)
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]])))
+    )
+
+
+def test_batched_tensor_seq_cat_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0)
+        .cat_along_seq(BatchedTensorSeq(torch.tensor([[10, 12], [11, 13]]), batch_dim=1, seq_dim=0))
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[0, 4], [1, 5], [2, 6], [10, 12], [11, 13]]), batch_dim=1, seq_dim=0
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cat_along_seq_custom_dims_seq_dim_2() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3, 4), seq_dim=2)
+        .cat_along_seq(BatchedTensorSeq(torch.ones(2, 3, 1), seq_dim=2))
+        .equal(BatchedTensorSeq(torch.ones(2, 3, 5), seq_dim=2))
+    )
+
+
+def test_batched_tensor_seq_cat_along_seq_multiple() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        .cat_along_seq(
+            [
+                BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
+                BatchedTensorSeq(torch.tensor([[20, 21], [22, 23]])),
+            ]
+        )
+        .equal(
+            BatchedTensorSeq(torch.tensor([[0, 1, 2, 10, 11, 20, 21], [4, 5, 6, 12, 13, 22, 23]]))
+        )
+    )
+
+
+def test_batched_tensor_seq_cat_along_seq_empty() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .cat_along_seq([])
+        .equal(BatchedTensorSeq(torch.ones(2, 3)))
+    )
+
+
+def test_batched_tensor_seq_cat_along_seq_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.cat_along_seq([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+
+
+def test_batched_tensor_seq_cat_along_seq_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.cat_along_seq([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
 
 
 #########################################
