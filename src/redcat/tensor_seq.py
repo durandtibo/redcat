@@ -736,6 +736,59 @@ class BatchedTensorSeq(BaseBatchedTensor):
             **self._get_kwargs(),
         )
 
+    def cat_along_seq_(
+        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+    ) -> None:
+        r"""Concatenates the data of the batch(es) to the current batch along
+        the sequence dimension.
+
+        In-place version of ``cat_along_seq()``.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.cat_along_seq_(
+            ...     BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]]))
+            ... )
+            >>> batch
+            tensor([[ 0,  1,  2, 10, 11],
+                    [ 4,  5,  6, 12, 13]], batch_dim=0, seq_dim=1)
+            >>> batch = BatchedTensorSeq(
+            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0,
+            ... )
+            >>> batch.cat_along_seq(
+            ...     [
+            ...         BatchedTensorSeq(torch.tensor([[10, 12], [11, 13]]), batch_dim=1, seq_dim=0),
+            ...         BatchedTensorSeq(torch.tensor([[20, 22], [21, 23]]), batch_dim=1, seq_dim=0),
+            ...     ]
+            ... )
+            >>> batch
+            tensor([[ 0,  4],
+                    [ 1,  5],
+                    [ 2,  6],
+                    [10, 12],
+                    [11, 13],
+                    [20, 22],
+                    [21, 23]], batch_dim=0, seq_dim=1)
+        """
+        if isinstance(other, (BaseBatchedTensor, Tensor)):
+            other = [other]
+        batches = list(chain([self], other))
+        check_batch_dims(get_batch_dims(batches))
+        check_seq_dims(get_seq_dims(batches))
+        self._data = torch.cat(
+            [batch.data if hasattr(batch, "data") else batch for batch in batches],
+            dim=self._seq_dim,
+        )
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 

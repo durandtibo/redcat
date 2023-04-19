@@ -216,7 +216,7 @@ def test_get_batch_dims_2() -> None:
 
 
 def test_get_batch_dims_empty() -> None:
-    assert get_batch_dims(tuple(), dict()) == set()
+    assert get_batch_dims(tuple()) == set()
 
 
 ##################################
@@ -239,7 +239,7 @@ def test_get_seq_dims_2() -> None:
 
 
 def test_get_seq_dims_empty() -> None:
-    assert get_seq_dims(tuple(), dict()) == set()
+    assert get_seq_dims(tuple()) == set()
 
 
 #######################################
