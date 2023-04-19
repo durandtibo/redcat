@@ -4307,6 +4307,42 @@ def test_batched_tensor_seq_sum_along_seq_extra_dims() -> None:
 ##########################################################
 
 
+def test_batched_tensor_seq_align_to_batch_seq_no_permutation() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .align_to_batch_seq()
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
+    )
+
+
+def test_batched_tensor_seq_align_to_batch_seq_permute_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0)
+        .align_to_batch_seq()
+        .equal(BatchedTensorSeq(torch.tensor([[0, 2, 4, 6, 8], [1, 3, 5, 7, 9]])))
+    )
+
+
+def test_batched_tensor_seq_align_to_batch_seq_permute_dims_extra_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(20).view(2, 5, 2), batch_dim=1, seq_dim=2)
+        .align_to_batch_seq()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [[0, 10], [1, 11]],
+                        [[2, 12], [3, 13]],
+                        [[4, 14], [5, 15]],
+                        [[6, 16], [7, 17]],
+                        [[8, 18], [9, 19]],
+                    ]
+                )
+            )
+        )
+    )
+
+
 @mark.parametrize(
     "other",
     (
