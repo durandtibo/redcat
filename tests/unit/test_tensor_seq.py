@@ -1,6 +1,7 @@
 import math
 from collections.abc import Iterable, Sequence
 from typing import Any, Union
+from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -11,7 +12,7 @@ from torch.overrides import is_tensor_like
 from redcat import BatchedTensor, BatchedTensorSeq
 from redcat.base_tensor import BaseBatchedTensor
 from redcat.tensor_seq import check_data_and_dims
-from redcat.utils import get_available_devices
+from redcat.utils import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
 
@@ -1915,6 +1916,48 @@ def test_batched_tensor_seq_permute_along_seq_custom_dims() -> None:
             )
         )
     )
+
+
+@patch("redcat.base_tensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_batch() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        .shuffle_along_batch()
+        .equal(BatchedTensorSeq(torch.tensor([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+    )
+
+
+@patch("redcat.base_tensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]))
+        .shuffle_along_batch()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_dim=1, seq_dim=0
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_batch_same_random_seed() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert batch.shuffle_along_batch(get_torch_generator(1)).equal(
+        batch.shuffle_along_batch(get_torch_generator(1))
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_batch_different_random_seeds() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert not batch.shuffle_along_batch(get_torch_generator(1)).equal(
+        batch.shuffle_along_batch(get_torch_generator(2))
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_batch_multiple_shuffle() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    generator = get_torch_generator(1)
+    assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
 
 
 def test_batched_tensor_seq_sort_along_seq_descending_false() -> None:
