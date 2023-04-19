@@ -15,7 +15,7 @@ __all__ = [
 ]
 
 import copy
-from collections.abc import MutableSequence, Sequence
+from collections.abc import Iterable, Mapping, MutableSequence, Sequence
 from typing import Any, Union, overload
 
 import numpy as np
@@ -217,7 +217,7 @@ def get_available_devices() -> tuple[str, ...]:
     return ("cpu",)
 
 
-def get_batch_dims(args: tuple[Any, ...], kwargs: dict[str, Any]) -> set[int]:
+def get_batch_dims(args: Iterable[Any], kwargs: Union[Mapping[str, Any], None] = None) -> set[int]:
     r"""Gets the batch dimensions from the inputs.
 
     Args:
@@ -227,12 +227,15 @@ def get_batch_dims(args: tuple[Any, ...], kwargs: dict[str, Any]) -> set[int]:
     Returns:
         set: The batch dimensions.
     """
+    kwargs = kwargs or {}
     dims = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
     dims.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
     return dims
 
 
-def get_seq_dims(args: tuple[Any, ...], kwargs: dict[str, Any]) -> set[int]:
+def get_seq_dims(
+    args: Iterable[Any, ...], kwargs: Union[Mapping[str, Any], None] = None
+) -> set[int]:
     r"""Gets the sequence dimensions from the inputs.
 
     Args:
@@ -242,6 +245,7 @@ def get_seq_dims(args: tuple[Any, ...], kwargs: dict[str, Any]) -> set[int]:
     Returns:
         set: The sequence dimensions.
     """
+    kwargs = kwargs or {}
     dims = {val._seq_dim for val in args if hasattr(val, "_seq_dim")}
     dims.update({val._seq_dim for val in kwargs.values() if hasattr(val, "_seq_dim")})
     return dims
