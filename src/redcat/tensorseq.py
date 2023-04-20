@@ -16,6 +16,7 @@ from redcat.utils import (
     align_to_seq_batch,
     check_batch_dims,
     check_seq_dims,
+    compute_batch_seq_permutation,
     get_batch_dims,
     get_seq_dims,
     permute_along_dim,
@@ -719,6 +720,60 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
+
+    def align_as(self, other: BatchedTensorSeq) -> BatchedTensorSeq:
+        r"""Aligns the current batch with the batch ``other``.
+
+        This method makes sure the batch and sequence dimensions
+        are aligned.
+
+        Args:
+            other (``BatchedTensorSeq``): Specifies the batch to use to
+                align the current batch.
+
+        Returns:
+            ``BatchedTensorSeq``: The aligned batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            # batch-sequence -> sequence-batch
+            >>> seq_batch = BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).align_as(seq_batch)
+            tensor([[0, 5],
+                    [1, 6],
+                    [2, 7],
+                    [3, 8],
+                    [4, 9]], batch_dim=0, seq_dim=1)
+            # sequence-batch -> batch-sequence
+            >>> batch_seq = BatchedTensorSeq(torch.ones(2, 3))
+            >>> BatchedTensorSeq.from_seq_batch(
+            ...     torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0
+            ... ).align_as(batch_seq)
+            tensor([[0, 2, 4, 6, 8],
+                    [1, 3, 5, 7, 9]], batch_dim=1, seq_dim=0)
+        """
+        if not isinstance(other, BatchedTensorSeq):
+            raise TypeError(
+                f"Incorrect type {type(other)}. No implementation available to `align_as` "
+                f"{type(self)} with {type(other)}"
+            )
+        return self.__class__(
+            data=self._data.permute(  # Align only the batch and sequence dims
+                *compute_batch_seq_permutation(
+                    num_dims=self._data.dim(),
+                    old_batch_dim=self.batch_dim,
+                    old_seq_dim=self.seq_dim,
+                    new_batch_dim=other.batch_dim,
+                    new_seq_dim=other.seq_dim,
+                )
+            ),
+            batch_dim=other.batch_dim,
+            seq_dim=other.seq_dim,
+        )
 
     def align_to_batch_seq(self) -> BatchedTensorSeq:
         r"""Aligns the current batch to the batch-sequence format.
