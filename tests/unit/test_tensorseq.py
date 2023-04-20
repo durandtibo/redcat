@@ -2025,7 +2025,7 @@ def test_batched_tensor_seq_shuffle_along_batch__same_random_seed() -> None:
     batch1.shuffle_along_batch_(get_torch_generator(1))
     batch2 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     batch2.shuffle_along_batch_(get_torch_generator(1))
-    assert not batch1.equal(batch2)
+    assert batch1.equal(batch2)
 
 
 def test_batched_tensor_seq_shuffle_along_batch__different_random_seeds() -> None:
