@@ -1937,6 +1937,25 @@ def test_batched_tensor_seq_permute_along_seq_custom_dims() -> None:
     )
 
 
+@mark.parametrize("permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+def test_batched_tensor_seq_permute_along_seq_(
+    permutation: Union[Sequence[int], torch.Tensor]
+) -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch.permute_along_seq_(permutation)
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+
+
+def test_batched_tensor_seq_permute_along_seq__custom_dims() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0)
+    batch.permute_along_seq_(torch.tensor([2, 4, 1, 3, 0]))
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[4, 5], [8, 9], [2, 3], [6, 7], [0, 1]]), batch_dim=1, seq_dim=0
+        )
+    )
+
+
 @patch("redcat.basetensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
 def test_batched_tensor_seq_shuffle_along_batch() -> None:
     assert (

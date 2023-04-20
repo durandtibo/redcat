@@ -428,12 +428,41 @@ class BatchedTensorSeq(BaseBatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.permute_along_seq([2, 1, 3, 0, 4])
+            tensor([[2, 1, 3, 0, 4],
+                    [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
         """
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
             data=permute_along_dim(tensor=self._data, permutation=permutation, dim=self._seq_dim),
             **self._get_kwargs(),
+        )
+
+    def permute_along_seq_(self, permutation: Sequence[int] | torch.Tensor) -> None:
+        r"""Permutes the data along the sequence dimension.
+
+        Args:
+            permutation (sequence or ``torch.Tensor`` of type long
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.permute_along_seq_([2, 1, 3, 0, 4])
+            >>> batch
+            tensor([[2, 1, 3, 0, 4],
+                    [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
+        """
+        if not torch.is_tensor(permutation):
+            permutation = torch.tensor(permutation)
+        self._data = permute_along_dim(
+            tensor=self._data, permutation=permutation, dim=self._seq_dim
         )
 
     def sort_along_seq(self, descending: bool = False) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
