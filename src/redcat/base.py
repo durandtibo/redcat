@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["BaseBatch"]
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Any, Generic, TypeVar
 
 import torch
@@ -196,6 +196,42 @@ class BaseBatch(Generic[T], ABC):
             >>> batch.append(BatchedTensor(torch.zeros(1, 3)))
             >>> batch.append(BatchedTensor(torch.full((1, 3), 2.0)))
             >>> batch
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.],
+                    [0., 0., 0.],
+                    [2., 2., 2.]], batch_dim=0)
+        """
+
+    @abstractmethod
+    def extend(self, other: Iterable[BaseBatch]) -> None:
+        r"""Extends the current batch by appending all the batches from the
+        iterable.
+
+        This method should be used with batches of similar nature.
+        For example, it is possible to extend a batch representing
+        data as ``torch.Tensor`` by another batch representing data
+        as ``torch.Tensor``, but it is usually not possible to extend
+        a batch representing data ``torch.Tensor`` by a batch
+        representing data with a dictionary. Please check each
+        implementation to know the supported batch implementations.
+
+        Args:
+            other (iterable): Specifies the batches to append to the
+                current batch.
+
+        Raises:
+            TypeError: if there is no available implementation for the
+                input batch type.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.extend([BatchedTensor(torch.zeros(1, 3)), BatchedTensor(torch.full((1, 3), 2.0))])
+            >>> batch.data
             tensor([[1., 1., 1.],
                     [1., 1., 1.],
                     [0., 0., 0.],

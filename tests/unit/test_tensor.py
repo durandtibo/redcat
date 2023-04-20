@@ -3590,9 +3590,7 @@ def test_batched_tensor__setitem___range(value: Union[Tensor, BaseBatchedTensor]
         torch.tensor([[10, 11, 12], [13, 14, 15]]),
     ),
 )
-def test_batched_tensor_append(
-    other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
-) -> None:
+def test_batched_tensor_append(other: BaseBatchedTensor | Tensor) -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
     batch.append(other)
     assert batch.equal(
@@ -3761,6 +3759,72 @@ def test_batched_tensor_cat_along_batch__incorrect_batch_dim() -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.cat_along_batch_([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
+
+
+@mark.parametrize(
+    "other",
+    (
+        [BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]]))],
+        [
+            BatchedTensorSeq(torch.tensor([[10, 11, 12]])),
+            BatchedTensorSeq(torch.tensor([[13, 14, 15]])),
+        ],
+        (BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),),
+    ),
+)
+def test_batched_tensor_extend(other: Iterable[BaseBatchedTensor | Tensor]) -> None:
+    batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+    batch.extend(other)
+    assert batch.equal(
+        BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+    )
+
+
+def test_batched_tensor_extend_custom_dims() -> None:
+    batch = BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
+    batch.extend(BatchedTensor(torch.tensor([[10, 12], [11, 13], [14, 15]]), batch_dim=1))
+    assert batch.equal(
+        BatchedTensor(
+            torch.tensor([[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]]),
+            batch_dim=1,
+        )
+    )
+
+
+def test_batched_tensor_extend_custom_dims_seq_dim_2() -> None:
+    batch = BatchedTensor(torch.ones(2, 3, 4), batch_dim=2)
+    batch.extend(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+    assert batch.equal(BatchedTensor(torch.ones(2, 3, 5), batch_dim=2))
+
+
+def test_batched_tensor_extend_multiple() -> None:
+    batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+    batch.extend(
+        [
+            BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
+            BatchedTensorSeq(torch.tensor([[20, 21, 22]])),
+            torch.tensor([[30, 31, 32]]),
+        ]
+    )
+    assert batch.equal(
+        BatchedTensor(
+            torch.tensor(
+                [[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15], [20, 21, 22], [30, 31, 32]]
+            )
+        )
+    )
+
+
+def test_batched_tensor_extend_empty() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    batch.extend([])
+    assert batch.equal(BatchedTensor(torch.ones(2, 3)))
+
+
+def test_batched_tensor_extend_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.extend([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
 
 
 ########################################
