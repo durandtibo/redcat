@@ -754,6 +754,19 @@ class BatchedTensorSeq(BaseBatchedTensor):
             **self._get_kwargs(),
         )
 
+    def cat_along_batch_(
+        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+    ) -> None:
+        if isinstance(other, (BaseBatchedTensor, Tensor)):
+            other = [other]
+        batches = list(chain([self], other))
+        check_batch_dims(get_batch_dims(batches))
+        check_seq_dims(get_seq_dims(batches))
+        self._data = torch.cat(
+            [batch.data if hasattr(batch, "data") else batch for batch in batches],
+            dim=self._batch_dim,
+        )
+
     def cat_along_seq(
         self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> BatchedTensorSeq:
