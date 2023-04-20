@@ -4559,11 +4559,16 @@ def test_batched_tensor_seq_cat_along_seq_multiple() -> None:
         .cat_along_seq(
             [
                 BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
-                BatchedTensorSeq(torch.tensor([[20, 21], [22, 23]])),
+                BatchedTensor(torch.tensor([[20, 21], [22, 23]])),
+                torch.tensor([[30, 31, 32], [33, 34, 35]]),
             ]
         )
         .equal(
-            BatchedTensorSeq(torch.tensor([[0, 1, 2, 10, 11, 20, 21], [4, 5, 6, 12, 13, 22, 23]]))
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[0, 1, 2, 10, 11, 20, 21, 30, 31, 32], [4, 5, 6, 12, 13, 22, 23, 33, 34, 35]]
+                )
+            )
         )
     )
 
@@ -4627,11 +4632,16 @@ def test_batched_tensor_seq_cat_along_seq__multiple() -> None:
     batch.cat_along_seq_(
         [
             BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
-            BatchedTensorSeq(torch.tensor([[20, 21], [22, 23]])),
+            BatchedTensor(torch.tensor([[20, 21], [22, 23]])),
+            torch.tensor([[30, 31, 32], [33, 34, 35]]),
         ]
     )
     assert batch.equal(
-        BatchedTensorSeq(torch.tensor([[0, 1, 2, 10, 11, 20, 21], [4, 5, 6, 12, 13, 22, 23]]))
+        BatchedTensorSeq(
+            torch.tensor(
+                [[0, 1, 2, 10, 11, 20, 21, 30, 31, 32], [4, 5, 6, 12, 13, 22, 23, 33, 34, 35]]
+            )
+        )
     )
 
 
