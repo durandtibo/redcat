@@ -10,8 +10,8 @@ from torch import Tensor
 from torch.overrides import is_tensor_like
 
 from redcat import BatchedTensor, BatchedTensorSeq
-from redcat.base_tensor import BaseBatchedTensor
-from redcat.tensor_seq import check_data_and_dims
+from redcat.basetensor import BaseBatchedTensor
+from redcat.tensorseq import check_data_and_dims
 from redcat.utils import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
@@ -1918,7 +1918,7 @@ def test_batched_tensor_seq_permute_along_seq_custom_dims() -> None:
     )
 
 
-@patch("redcat.base_tensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch("redcat.basetensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
 def test_batched_tensor_seq_shuffle_along_batch() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
@@ -1927,7 +1927,7 @@ def test_batched_tensor_seq_shuffle_along_batch() -> None:
     )
 
 
-@patch("redcat.base_tensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch("redcat.basetensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
 def test_batched_tensor_seq_shuffle_along_batch_custom_dims() -> None:
     assert (
         BatchedTensorSeq.from_seq_batch(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]))

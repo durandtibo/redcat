@@ -9,7 +9,7 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from redcat.base_tensor import BaseBatchedTensor
+from redcat.basetensor import BaseBatchedTensor
 from redcat.utils import check_batch_dims, get_batch_dims, permute_along_dim
 
 
