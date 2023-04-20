@@ -4307,6 +4307,49 @@ def test_batched_tensor_seq_sum_along_seq_extra_dims() -> None:
 ##########################################################
 
 
+def test_batched_tensor_seq__getitem___int() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    assert batch[0].equal(torch.tensor([0, 1, 2, 3, 4]))
+
+
+def test_batched_tensor_seq__range___range() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    assert batch[0:2, 2:4].equal(torch.tensor([[2, 3], [7, 8]]))
+
+
+@mark.parametrize(
+    "index",
+    (
+        torch.tensor([[1, 3], [0, 4]]),
+        BatchedTensor(torch.tensor([[1, 3], [0, 4]])),
+        BatchedTensorSeq(torch.tensor([[1, 3], [0, 4]])),
+    ),
+)
+def test_batched_tensor_seq__getitem___tensor_like(index: Union[Tensor, BaseBatchedTensor]) -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    assert batch[0].equal(torch.tensor([0, 1, 2, 3, 4]))
+
+
+def test_batched_tensor_seq__setitem___int() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch[0] = 7
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[7, 7, 7, 7, 7], [5, 6, 7, 8, 9]])))
+
+
+@mark.parametrize(
+    "value",
+    (
+        torch.tensor([[0, -4]]),
+        BatchedTensor(torch.tensor([[0, -4]])),
+        BatchedTensorSeq(torch.tensor([[0, -4]])),
+    ),
+)
+def test_batched_tensor_seq__setitem___range(value: Union[Tensor, BaseBatchedTensor]) -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch[1:2, 2:4] = value
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 0, -4, 9]])))
+
+
 def test_batched_tensor_seq_align_to_batch_seq_no_permutation() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(5, 2))
