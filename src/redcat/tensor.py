@@ -279,6 +279,13 @@ class BatchedTensor(BaseBatchedTensor):
             **self._get_kwargs(),
         )
 
+    def permute_along_batch_(self, permutation: Sequence[int] | torch.Tensor) -> None:
+        if not torch.is_tensor(permutation):
+            permutation = torch.tensor(permutation)
+        self._data = permute_along_dim(
+            tensor=self._data, permutation=permutation, dim=self._batch_dim
+        )
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
