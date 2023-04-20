@@ -738,6 +738,22 @@ class BatchedTensorSeq(BaseBatchedTensor):
             seq_dim=0,
         )
 
+    def cat_along_batch(
+        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+    ) -> BatchedTensorSeq:
+        if isinstance(other, (BaseBatchedTensor, Tensor)):
+            other = [other]
+        batches = list(chain([self], other))
+        check_batch_dims(get_batch_dims(batches))
+        check_seq_dims(get_seq_dims(batches))
+        return self.__class__(
+            data=torch.cat(
+                [batch.data if hasattr(batch, "data") else batch for batch in batches],
+                dim=self._batch_dim,
+            ),
+            **self._get_kwargs(),
+        )
+
     def cat_along_seq(
         self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> BatchedTensorSeq:

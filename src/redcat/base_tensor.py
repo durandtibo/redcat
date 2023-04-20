@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["BaseBatchedTensor"]
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Any, TypeVar, overload
 
 import torch
@@ -2465,3 +2465,38 @@ class BaseBatchedTensor(ABC):
         if isinstance(value, BaseBatchedTensor):
             value = value.data
         self._data[index] = value
+
+    @abstractmethod
+    def cat_along_batch(
+        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+    ) -> TBatchedTensor:
+        r"""Concatenates the data of the batch(es) to the current batch along
+        the batch dimension and creates a new batch.
+
+        Args:
+            other (``BaseBatchedTensor`` or ``torch.Tensor`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch with the concatenated data
+                in the batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]])).cat_along_batch(
+            ...     BatchedTensor(torch.tensor([[10, 11], [12, 13]]))
+            ... )
+
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0,
+            ... ).cat_along_batch(
+            ...     [
+            ...         BatchedTensor(torch.tensor([[10, 12], [11, 13]]), batch_dim=1, seq_dim=0),
+            ...         BatchedTensor(torch.tensor([[20, 22], [21, 23]]), batch_dim=1, seq_dim=0),
+            ...     ]
+            ... )
+        """

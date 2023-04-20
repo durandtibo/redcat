@@ -1,5 +1,5 @@
 import math
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Any, Union
 from unittest.mock import patch
 
@@ -1638,7 +1638,7 @@ def test_batched_tensor_permute_along_batch_custom_dims() -> None:
 
 
 @patch("redcat.base_tensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
-def test_batched_tensor_seq_shuffle_along_batch() -> None:
+def test_batched_tensor_shuffle_along_batch() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
         .shuffle_along_batch()
@@ -1647,7 +1647,7 @@ def test_batched_tensor_seq_shuffle_along_batch() -> None:
 
 
 @patch("redcat.base_tensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
-def test_batched_tensor_seq_shuffle_along_batch_custom_dims() -> None:
+def test_batched_tensor_shuffle_along_batch_custom_dims() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
         .shuffle_along_batch()
@@ -1657,21 +1657,21 @@ def test_batched_tensor_seq_shuffle_along_batch_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_seq_shuffle_along_batch_same_random_seed() -> None:
+def test_batched_tensor_shuffle_along_batch_same_random_seed() -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     assert batch.shuffle_along_batch(get_torch_generator(1)).equal(
         batch.shuffle_along_batch(get_torch_generator(1))
     )
 
 
-def test_batched_tensor_seq_shuffle_along_batch_different_random_seeds() -> None:
+def test_batched_tensor_shuffle_along_batch_different_random_seeds() -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     assert not batch.shuffle_along_batch(get_torch_generator(1)).equal(
         batch.shuffle_along_batch(get_torch_generator(2))
     )
 
 
-def test_batched_tensor_seq_shuffle_along_batch_multiple_shuffle() -> None:
+def test_batched_tensor_shuffle_along_batch_multiple_shuffle() -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     generator = get_torch_generator(1)
     assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
@@ -3540,12 +3540,12 @@ def test_batched_tensor_logical_xor__incorrect_batch_dim() -> None:
 
 
 def test_batched_tensor__getitem___int() -> None:
-    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
     assert batch[0].equal(torch.tensor([0, 1, 2, 3, 4]))
 
 
 def test_batched_tensor__range___range() -> None:
-    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
     assert batch[0:2, 2:4].equal(torch.tensor([[2, 3], [7, 8]]))
 
 
@@ -3554,18 +3554,18 @@ def test_batched_tensor__range___range() -> None:
     (
         torch.tensor([[1, 3], [0, 4]]),
         BatchedTensor(torch.tensor([[1, 3], [0, 4]])),
-        BatchedTensorSeq(torch.tensor([[1, 3], [0, 4]])),
+        BatchedTensor(torch.tensor([[1, 3], [0, 4]])),
     ),
 )
 def test_batched_tensor__getitem___tensor_like(index: Union[Tensor, BaseBatchedTensor]) -> None:
-    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
     assert batch[0].equal(torch.tensor([0, 1, 2, 3, 4]))
 
 
 def test_batched_tensor__setitem___int() -> None:
-    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
     batch[0] = 7
-    assert batch.equal(BatchedTensorSeq(torch.tensor([[7, 7, 7, 7, 7], [5, 6, 7, 8, 9]])))
+    assert batch.equal(BatchedTensor(torch.tensor([[7, 7, 7, 7, 7], [5, 6, 7, 8, 9]])))
 
 
 @mark.parametrize(
@@ -3577,9 +3577,82 @@ def test_batched_tensor__setitem___int() -> None:
     ),
 )
 def test_batched_tensor__setitem___range(value: Union[Tensor, BaseBatchedTensor]) -> None:
-    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
     batch[1:2, 2:4] = value
-    assert batch.equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 0, -4, 9]])))
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 0, -4, 9]])))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
+        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
+        torch.tensor([[10, 11, 12], [13, 14, 15]]),
+        [BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))],
+        (BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),),
+    ),
+)
+def test_batched_tensor_cat_along_batch(
+    other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
+) -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        .cat_along_batch(other)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])))
+    )
+
+
+def test_batched_tensor_cat_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
+        .cat_along_batch(BatchedTensor(torch.tensor([[10, 12], [11, 13], [14, 15]]), batch_dim=1))
+        .equal(
+            BatchedTensor(
+                torch.tensor([[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]]),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_tensor_cat_along_batch_custom_dims_seq_dim_2() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3, 4), batch_dim=2)
+        .cat_along_batch(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+        .equal(BatchedTensor(torch.ones(2, 3, 5), batch_dim=2))
+    )
+
+
+def test_batched_tensor_cat_along_batch_multiple() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        .cat_along_batch(
+            [
+                BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
+                BatchedTensorSeq(torch.tensor([[20, 21, 22]])),
+                torch.tensor([[30, 31, 32]]),
+            ]
+        )
+        .equal(
+            BatchedTensor(
+                torch.tensor(
+                    [[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15], [20, 21, 22], [30, 31, 32]]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_cat_along_batch_empty() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3)).cat_along_batch([]).equal(BatchedTensor(torch.ones(2, 3)))
+    )
+
+
+def test_batched_tensor_cat_along_batch_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.cat_along_batch([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
 
 
 ########################################
