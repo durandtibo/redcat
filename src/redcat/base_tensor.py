@@ -2466,6 +2466,30 @@ class BaseBatchedTensor(ABC):
             value = value.data
         self._data[index] = value
 
+    def append(self, other: BaseBatchedTensor) -> None:
+        r"""Appends a new batch to the current batch along the batch dimension.
+
+        Args:
+            other (``TensorSeqBatch``): Specifies the batch to append
+                at the end of current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> batch.append(BatchedTensor(torch.zeros(1, 3)))
+            >>> batch.append(BatchedTensor(torch.full((1, 3), 2.0)))
+            >>> batch
+            tensor([[1., 1., 1.],
+                    [1., 1., 1.],
+                    [0., 0., 0.],
+                    [2., 2., 2.]], batch_dim=0)
+        """
+        self.cat_along_batch_(other)
+
     @abstractmethod
     def cat_along_batch(
         self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
