@@ -2,7 +2,8 @@ from __future__ import annotations
 
 __all__ = ["BatchedTensor", "check_data_and_dim"]
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
+from itertools import chain
 from typing import Any
 
 import torch
@@ -301,6 +302,25 @@ class BatchedTensor(BaseBatchedTensor):
     def logical_xor_(self, other: BaseBatchedTensor | Tensor) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         self._data.logical_xor_(other)
+
+    ##########################################################
+    #    Indexing, slicing, joining, mutating operations     #
+    ##########################################################
+
+    def cat_along_batch(
+        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+    ) -> BatchedTensor:
+        if isinstance(other, (BaseBatchedTensor, Tensor)):
+            other = [other]
+        batches = list(chain([self], other))
+        check_batch_dims(get_batch_dims(batches))
+        return self.__class__(
+            data=torch.cat(
+                [batch.data if hasattr(batch, "data") else batch for batch in batches],
+                dim=self._batch_dim,
+            ),
+            **self._get_kwargs(),
+        )
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
