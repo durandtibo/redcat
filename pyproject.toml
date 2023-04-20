@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "redcat"
-version = "0.0.1a92"
+version = "0.0.1a93"
 description = "A library to manipulate batches of examples"
 readme = "README.md"
 authors = ["Thibaut Durand <durand.tibo+gh@gmail.com>"]
@@ -22,9 +22,9 @@ numpy = "^1.24"  # make optional
 [tool.poetry.group.dev.dependencies]
 black = "^23.3"
 coverage = { extras = ["toml"], version = "^6.5" }
-pre-commit = "^2.20"
-pylint = "^2.15"
-pytest = "^7.2"
+pre-commit = "^2.21"
+pylint = "^2.17"
+pytest = "^7.3"
 pytest-cov = "^4.0"
 pytest-timeout = "^2.1"
 ruff = "^0.0.262"
