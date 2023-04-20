@@ -316,19 +316,19 @@ class BatchedTensorSeq(BaseBatchedTensor):
 
     def div_(
         self,
-        other: BaseBatchedTensor | torch.Tensor | int | float,
+        other: BaseBatchedTensor | Tensor | int | float,
         rounding_mode: str | None = None,
     ) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         check_seq_dims(get_seq_dims((self, other)))
         self._data.div_(other, rounding_mode=rounding_mode)
 
-    def fmod_(self, divisor: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+    def fmod_(self, divisor: BaseBatchedTensor | Tensor | int | float) -> None:
         check_batch_dims(get_batch_dims((self, divisor)))
         check_seq_dims(get_seq_dims((self, divisor)))
         self._data.fmod_(divisor)
 
-    def mul_(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+    def mul_(self, other: BaseBatchedTensor | Tensor | int | float) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         check_seq_dims(get_seq_dims((self, other)))
         self._data.mul_(other)
@@ -394,7 +394,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         """
         self._data.cumsum_(dim=self._seq_dim)
 
-    def permute_along_batch(self, permutation: Sequence[int] | torch.Tensor) -> BatchedTensorSeq:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> BatchedTensorSeq:
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
@@ -402,14 +402,14 @@ class BatchedTensorSeq(BaseBatchedTensor):
             **self._get_kwargs(),
         )
 
-    def permute_along_batch_(self, permutation: Sequence[int] | torch.Tensor) -> None:
+    def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         self._data = permute_along_dim(
             tensor=self._data, permutation=permutation, dim=self._batch_dim
         )
 
-    def permute_along_seq(self, permutation: Sequence[int] | torch.Tensor) -> BatchedTensorSeq:
+    def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> BatchedTensorSeq:
         r"""Permutes the data along the sequence dimension.
 
         Args:
@@ -439,7 +439,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             **self._get_kwargs(),
         )
 
-    def permute_along_seq_(self, permutation: Sequence[int] | torch.Tensor) -> None:
+    def permute_along_seq_(self, permutation: Sequence[int] | Tensor) -> None:
         r"""Permutes the data along the sequence dimension.
 
         Args:
@@ -965,11 +965,18 @@ class BatchedTensorSeq(BaseBatchedTensor):
             dim=self._seq_dim,
         )
 
+    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
+        if not torch.is_tensor(index):
+            index = torch.as_tensor(index)
+        return self.__class__(
+            data=self._data.index_select(self._batch_dim, index), **self._get_kwargs()
+        )
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
 
-def check_data_and_dims(data: torch.Tensor, batch_dim: int, seq_dim: int) -> None:
+def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
     r"""Checks if the tensor ``data``, ``batch_dim`` and ``seq_dim`` are
     correct.
 

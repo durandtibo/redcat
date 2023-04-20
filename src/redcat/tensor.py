@@ -341,6 +341,13 @@ class BatchedTensor(BaseBatchedTensor):
             dim=self._batch_dim,
         )
 
+    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
+        if not torch.is_tensor(index):
+            index = torch.tensor(index)
+        return self.__class__(
+            data=self._data.index_select(self._batch_dim, index), **self._get_kwargs()
+        )
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
 

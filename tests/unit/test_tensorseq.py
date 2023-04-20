@@ -4976,6 +4976,37 @@ def test_batched_tensor_seq_extend_incorrect_seq_dim() -> None:
         batch.extend([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
 
 
+@mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
+def test_batched_tensor_seq_index_select_along_batch(
+    index: Union[torch.Tensor, Sequence[int]]
+) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .index_select_along_batch(index)
+        .equal(BatchedTensorSeq(torch.tensor([[4, 5], [0, 1]])))
+    )
+
+
+def test_batched_tensor_seq_index_select_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0)
+        .index_select_along_batch((2, 0))
+        .equal(BatchedTensorSeq(torch.tensor([[2, 0], [7, 5]]), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_index_select_along_batch_extra_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(20).view(2, 2, 5), batch_dim=2, seq_dim=1)
+        .index_select_along_batch((2, 0))
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[[2, 0], [7, 5]], [[12, 10], [17, 15]]]), batch_dim=2, seq_dim=1
+            )
+        )
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
