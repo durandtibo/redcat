@@ -1998,6 +1998,44 @@ def test_batched_tensor_seq_shuffle_along_batch_multiple_shuffle() -> None:
     assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
 
 
+@patch("redcat.basetensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_batch_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch.shuffle_along_batch_()
+    assert batch.equal(
+        BatchedTensorSeq(torch.tensor([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    )
+
+
+@patch("redcat.basetensor.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_batch__custom_dims() -> None:
+    batch = BatchedTensorSeq.from_seq_batch(
+        torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]])
+    )
+    batch.shuffle_along_batch_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_dim=1, seq_dim=0
+        )
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_batch__same_random_seed() -> None:
+    batch1 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch1.shuffle_along_batch_(get_torch_generator(1))
+    batch2 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch2.shuffle_along_batch_(get_torch_generator(1))
+    assert batch1.equal(batch2)
+
+
+def test_batched_tensor_seq_shuffle_along_batch__different_random_seeds() -> None:
+    batch1 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch1.shuffle_along_batch_(get_torch_generator(1))
+    batch2 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch2.shuffle_along_batch_(get_torch_generator(2))
+    assert not batch1.equal(batch2)
+
+
 def test_batched_tensor_seq_sort_along_seq_descending_false() -> None:
     values, indices = BatchedTensorSeq(
         torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])

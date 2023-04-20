@@ -192,6 +192,31 @@ class BaseBatch(Generic[T], ABC):
         """
         return self.permute_along_batch(torch.randperm(self.batch_size, generator=generator))
 
+    def shuffle_along_batch_(self, generator: torch.Generator | None = None) -> None:
+        r"""Shuffles the data/batch along the batch dimension.
+
+        Args:
+            generator (``torch.Generator`` or ``None``, optional):
+                Specifies an optional random generator.
+                Default: ``None``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.shuffle_along_batch_()
+            >>> batch
+            tensor([[4, 5],
+                    [2, 3],
+                    [6, 7],
+                    [0, 1],
+                    [8, 9]], batch_dim=0)
+        """
+        self.permute_along_batch_(torch.randperm(self.batch_size, generator=generator))
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
