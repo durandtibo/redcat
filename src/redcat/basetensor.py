@@ -2464,3 +2464,6 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [20, 22],
                     [21, 23]], batch_dim=0)
         """
+
+    def extend(self, other: Iterable[BaseBatch]) -> None:
+        self.cat_along_batch_(other)
