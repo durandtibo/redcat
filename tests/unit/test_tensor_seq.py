@@ -4516,6 +4516,82 @@ def test_batched_tensor_seq_cat_along_batch_incorrect_seq_dim() -> None:
 @mark.parametrize(
     "other",
     (
+        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
+        BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
+        torch.tensor([[10, 11, 12], [13, 14, 15]]),
+        [BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]]))],
+        (BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),),
+    ),
+)
+def test_batched_tensor_seq_cat_along_batch_(
+    other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
+) -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+    batch.cat_along_batch_(other)
+    assert batch.equal(
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+    )
+
+
+def test_batched_tensor_seq_cat_along_batch__custom_dims() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0)
+    batch.cat_along_batch_(
+        BatchedTensorSeq(torch.tensor([[10, 12], [11, 13], [14, 15]]), batch_dim=1, seq_dim=0)
+    )
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]]),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
+def test_batched_tensor_seq_cat_along_batch__custom_dims_seq_dim_2() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=2)
+    batch.cat_along_batch_(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3, 5), batch_dim=2))
+
+
+def test_batched_tensor_seq_cat_along_batch__multiple() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+    batch.cat_along_batch_(
+        [
+            BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
+            BatchedTensor(torch.tensor([[20, 21, 22]])),
+            torch.tensor([[30, 31, 32]]),
+        ]
+    )
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15], [20, 21, 22], [30, 31, 32]]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cat_along_batch__empty() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch.cat_along_batch_([])
+    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3)))
+
+
+def test_batched_tensor_seq_cat_along_batch__incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.cat_along_batch_([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+
+
+def test_batched_tensor_seq_cat_along_batch__incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.cat_along_batch_([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+
+
+@mark.parametrize(
+    "other",
+    (
         BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
         BatchedTensor(torch.tensor([[10, 11], [12, 13]])),
         torch.tensor([[10, 11], [12, 13]]),
