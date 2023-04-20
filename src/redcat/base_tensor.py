@@ -2,13 +2,14 @@ from __future__ import annotations
 
 __all__ = ["BaseBatchedTensor"]
 
-from abc import ABC, abstractmethod
-from collections.abc import Iterable, Sequence
+from abc import abstractmethod
+from collections.abc import Iterable
 from typing import Any, TypeVar, overload
 
 import torch
 from torch import Tensor
 
+from redcat.base import BaseBatch
 from redcat.utils import IndexType
 
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -16,7 +17,7 @@ from redcat.utils import IndexType
 TBatchedTensor = TypeVar("TBatchedTensor", bound="BaseBatchedTensor")
 
 
-class BaseBatchedTensor(ABC):
+class BaseBatchedTensor(BaseBatch[Tensor]):
     @abstractmethod
     def _get_kwargs(self) -> dict:
         r"""Gets the keyword arguments that are specific to the batched tensor
@@ -29,11 +30,6 @@ class BaseBatchedTensor(ABC):
     def __init__(self, data: Any, **kwargs) -> None:
         super().__init__()
         self._data = torch.as_tensor(data, **kwargs)
-
-    @property
-    @abstractmethod
-    def batch_size(self) -> int:
-        r"""int: The batch size."""
 
     @property
     def data(self) -> Tensor:
@@ -296,37 +292,6 @@ class BaseBatchedTensor(ABC):
     def __lt__(self, other: Any) -> TBatchedTensor:
         return self.lt(other)
 
-    @abstractmethod
-    def allclose(
-        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
-    ) -> bool:
-        r"""Indicates if two batches are equal within a tolerance or not.
-
-        Args:
-            other: Specifies the value to compare.
-            rtol (float, optional): Specifies the relative tolerance
-                parameter. Default: ``1e-5``
-            atol (float, optional): Specifies the absolute tolerance
-                parameter. Default: ``1e-8``
-            equal_nan (bool, optional): If ``True``, then two ``NaN``s
-                will be considered equal. Default: ``False``
-
-        Returns:
-            bool: ``True`` if the batches are equal within a tolerance,
-                ``False`` otherwise.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch1 = BatchedTensor(torch.ones(2, 3))
-            >>> batch2 = BatchedTensor(torch.full((2, 3), 1.5))
-            >>> batch1.allclose(batch2, atol=1, rtol=0)
-            True
-        """
-
     def eq(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes element-wise equality.
 
@@ -356,27 +321,6 @@ class BaseBatchedTensor(ABC):
                     [False,  True,  True]], batch_dim=0)
         """
         return torch.eq(self, other)
-
-    @abstractmethod
-    def equal(self, other: Any) -> bool:
-        r"""Indicates if two batches are equal or not.
-
-        Args:
-            other: Specifies the value to compare.
-
-        Returns:
-            bool: ``True`` if the batches have the same size,
-                elements and same batch dimension, ``False`` otherwise.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.ones(2, 3)).equal(BatchedTensor(torch.zeros(2, 3)))
-            False
-        """
 
     def ge(self, other: BaseBatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self >= other`` element-wise.
@@ -1166,61 +1110,6 @@ class BaseBatchedTensor(ABC):
             tensor([[ 0,  1,  2,  3,  4],
                     [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
-
-    @abstractmethod
-    def permute_along_batch(self, permutation: Sequence[int] | torch.Tensor) -> TBatchedTensor:
-        r"""Permutes the data/batch along the batch dimension.
-
-        Args:
-            permutation (sequence or ``torch.Tensor`` of type long
-                and shape ``(dimension,)``): Specifies the permutation
-                to use on the data. The dimension of the permutation
-                input should be compatible with the shape of the data.
-
-        Returns:
-            ``BaseBatchedTensor``: A new batch with permuted data.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.permute_along_batch([2, 1, 3, 0, 4])
-            tensor([[4, 5],
-                    [2, 3],
-                    [6, 7],
-                    [0, 1],
-                    [8, 9]], batch_dim=0)
-        """
-
-    def shuffle_along_batch(self, generator: torch.Generator | None = None) -> TBatchedTensor:
-        r"""Shuffles the data/batch along the batch dimension.
-
-        Args:
-            generator (``torch.Generator`` or ``None``, optional):
-                Specifies an optional random generator.
-                Default: ``None``
-
-        Returns:
-            ``BaseBatchedTensor``:  A new batch with shuffled data.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_batch()
-            tensor([[4, 5],
-                    [2, 3],
-                    [6, 7],
-                    [0, 1],
-                    [8, 9]], batch_dim=0)
-        """
-        return self.permute_along_batch(torch.randperm(self.batch_size, generator=generator))
 
     ################################################
     #     Mathematical | point-wise operations     #
