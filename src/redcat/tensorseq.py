@@ -9,7 +9,7 @@ from typing import Any
 import torch
 from torch import Tensor
 
-from redcat.base_tensor import BaseBatchedTensor
+from redcat.basetensor import BaseBatchedTensor
 from redcat.tensor import BatchedTensor
 from redcat.utils import (
     align_to_batch_seq,
