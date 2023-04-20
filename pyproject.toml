@@ -14,21 +14,20 @@ packages = [
 
 [tool.poetry.dependencies]
 # Core dependencies
-coola = "^0.0"
+coola = "^0.0.6"
 python = "^3.9"
 torch = "^2.0"
 numpy = "^1.24"  # make optional
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.10"
-codecov = "^2.1"
+black = "^23.3"
 coverage = { extras = ["toml"], version = "^6.5" }
 pre-commit = "^2.20"
 pylint = "^2.15"
 pytest = "^7.2"
 pytest-cov = "^4.0"
 pytest-timeout = "^2.1"
-ruff = "^0.0.257"
+ruff = "^0.0.262"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
