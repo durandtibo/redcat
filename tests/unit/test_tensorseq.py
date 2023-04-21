@@ -5089,7 +5089,7 @@ def test_batched_tensor_seq_masked_fill_incorrect_seq_dim() -> None:
         batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2), 0)
 
 
-def test_batched_tensor_seq_repeat_along_seq_repeats_1():
+def test_batched_tensor_seq_repeat_along_seq_repeats_1() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))
         .repeat_along_seq(repeats=1)
@@ -5097,7 +5097,7 @@ def test_batched_tensor_seq_repeat_along_seq_repeats_1():
     )
 
 
-def test_batched_tensor_seq_repeat_along_seq_repeats_2():
+def test_batched_tensor_seq_repeat_along_seq_repeats_2() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))
         .repeat_along_seq(repeats=2)
@@ -5109,7 +5109,7 @@ def test_batched_tensor_seq_repeat_along_seq_repeats_2():
     )
 
 
-def test_batched_tensor_seq_repeat_along_seq_custom_dims():
+def test_batched_tensor_seq_repeat_along_seq_custom_dims() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0)
         .repeat_along_seq(repeats=2)
@@ -5125,7 +5125,7 @@ def test_batched_tensor_seq_repeat_along_seq_custom_dims():
     )
 
 
-def test_batched_tensor_seq_repeat_along_seq_extra_dims():
+def test_batched_tensor_seq_repeat_along_seq_extra_dims() -> None:
     assert (
         BatchedTensorSeq(torch.arange(20).view(2, 5, 2))
         .repeat_along_seq(repeats=2)
