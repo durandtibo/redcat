@@ -348,6 +348,14 @@ class BatchedTensor(BaseBatchedTensor):
             data=self._data.index_select(self._batch_dim, index), **self._get_kwargs()
         )
 
+    def masked_fill(
+        self, mask: BaseBatchedTensor | Tensor, value: bool | int | float
+    ) -> BatchedTensor:
+        check_batch_dims(get_batch_dims((self, mask)))
+        if isinstance(mask, BaseBatchedTensor):
+            mask = mask.data
+        return self.__class__(data=self._data.masked_fill(mask.data, value), **self._get_kwargs())
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
 
