@@ -9,6 +9,7 @@ from typing import Any
 import torch
 from torch import Tensor
 
+from redcat.base import BaseBatch
 from redcat.basetensor import BaseBatchedTensor
 from redcat.utils import check_batch_dims, get_batch_dims, permute_along_dim
 
@@ -376,6 +377,16 @@ class BatchedTensor(BaseBatchedTensor):
             data = data.clone()
         for chunk in data.split(split_size, dim=self._batch_dim):
             yield self.__class__(chunk, **self._get_kwargs())
+
+    def take_along_batch(self, indices: BaseBatch | Tensor | Sequence) -> BatchedTensor:
+        check_batch_dims(get_batch_dims((self, indices)))
+        if isinstance(indices, BaseBatch):
+            indices = indices.data
+        if not torch.is_tensor(indices):
+            indices = torch.as_tensor(indices)
+        return self.__class__(
+            self._data.take_along_dim(dim=self._batch_dim, indices=indices), **self._get_kwargs()
+        )
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
