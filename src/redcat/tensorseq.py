@@ -398,7 +398,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
-            data=permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
+            permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
             **self._get_kwargs(),
         )
 
@@ -435,7 +435,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
-            data=permute_along_dim(tensor=self._data, permutation=permutation, dim=self._seq_dim),
+            permute_along_dim(tensor=self._data, permutation=permutation, dim=self._seq_dim),
             **self._get_kwargs(),
         )
 
@@ -762,7 +762,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
                 f"{type(self)} with {type(other)}"
             )
         return self.__class__(
-            data=self._data.permute(  # Align only the batch and sequence dims
+            self._data.permute(  # Align only the batch and sequence dims
                 *compute_batch_seq_permutation(
                     num_dims=self._data.dim(),
                     old_batch_dim=self.batch_dim,
@@ -794,9 +794,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
                     [1, 3, 5, 7, 9]], batch_dim=0, seq_dim=1)
         """
         return self.__class__(
-            data=align_to_batch_seq(
-                tensor=self._data, batch_dim=self._batch_dim, seq_dim=self._seq_dim
-            ),
+            align_to_batch_seq(tensor=self._data, batch_dim=self._batch_dim, seq_dim=self._seq_dim),
             batch_dim=0,
             seq_dim=1,
         )
@@ -822,9 +820,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
                     [4, 9]], batch_dim=1, seq_dim=0)
         """
         return self.__class__(
-            data=align_to_seq_batch(
-                tensor=self._data, batch_dim=self._batch_dim, seq_dim=self._seq_dim
-            ),
+            align_to_seq_batch(tensor=self._data, batch_dim=self._batch_dim, seq_dim=self._seq_dim),
             batch_dim=1,
             seq_dim=0,
         )
@@ -838,7 +834,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         check_batch_dims(get_batch_dims(batches))
         check_seq_dims(get_seq_dims(batches))
         return self.__class__(
-            data=torch.cat(
+            torch.cat(
                 [batch.data if hasattr(batch, "data") else batch for batch in batches],
                 dim=self._batch_dim,
             ),
@@ -905,7 +901,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         check_batch_dims(get_batch_dims(batches))
         check_seq_dims(get_seq_dims(batches))
         return self.__class__(
-            data=torch.cat(
+            torch.cat(
                 [batch.data if hasattr(batch, "data") else batch for batch in batches],
                 dim=self._seq_dim,
             ),
@@ -968,9 +964,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
         if not torch.is_tensor(index):
             index = torch.as_tensor(index)
-        return self.__class__(
-            data=self._data.index_select(self._batch_dim, index), **self._get_kwargs()
-        )
+        return self.__class__(self._data.index_select(self._batch_dim, index), **self._get_kwargs())
 
     def index_select_along_seq(self, index: torch.Tensor | Sequence[int]) -> BatchedTensorSeq:
         r"""Slices the batch along the sequence dimension at the given indices.
@@ -999,9 +993,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         """
         if not torch.is_tensor(index):
             index = torch.tensor(index)
-        return self.__class__(
-            data=self._data.index_select(self._seq_dim, index), **self._get_kwargs()
-        )
+        return self.__class__(self._data.index_select(self._seq_dim, index), **self._get_kwargs())
 
     def masked_fill(
         self, mask: BaseBatchedTensor | Tensor, value: bool | int | float

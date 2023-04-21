@@ -275,7 +275,7 @@ class BatchedTensor(BaseBatchedTensor):
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
-            data=permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
+            permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
             **self._get_kwargs(),
         )
 
@@ -322,7 +322,7 @@ class BatchedTensor(BaseBatchedTensor):
         batches = list(chain([self], other))
         check_batch_dims(get_batch_dims(batches))
         return self.__class__(
-            data=torch.cat(
+            torch.cat(
                 [batch.data if hasattr(batch, "data") else batch for batch in batches],
                 dim=self._batch_dim,
             ),
@@ -344,9 +344,7 @@ class BatchedTensor(BaseBatchedTensor):
     def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
         if not torch.is_tensor(index):
             index = torch.tensor(index)
-        return self.__class__(
-            data=self._data.index_select(self._batch_dim, index), **self._get_kwargs()
-        )
+        return self.__class__(self._data.index_select(self._batch_dim, index), **self._get_kwargs())
 
     def masked_fill(
         self, mask: BaseBatchedTensor | Tensor, value: bool | int | float
