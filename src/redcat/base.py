@@ -7,6 +7,7 @@ from collections.abc import Iterable, Sequence
 from typing import Any, Generic, TypeVar
 
 import torch
+from torch import Tensor
 
 T = TypeVar("T")
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -403,4 +404,29 @@ class BaseBatch(Generic[T], ABC):
             [tensor([[0, 1], [2, 3]], batch_dim=0),
              tensor([[4, 5], [6, 7]], batch_dim=0),
              tensor([[8, 9]], batch_dim=0)]
+        """
+
+    def take_along_batch(self, indices: BaseBatch | Tensor | Sequence) -> TBatch:
+        r"""Takes values along the batch dimension.
+
+        Args:
+            indices (``BaseBatch`` or ``Tensor`` or sequence):
+                Specifies the indices to take along the batch
+                dimension.
+
+        Returns:
+            ``BaseBatch``: The batch with the selected data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).take_along_batch(
+            ...     BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]]))
+            ... )
+            tensor([[6, 5],
+                    [0, 7],
+                    [2, 9]], batch_dim=0)
         """
