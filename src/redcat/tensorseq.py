@@ -1036,6 +1036,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
         sizes[self._seq_dim] = repeats
         return self.__class__(data=self._data.repeat(*sizes), **self._get_kwargs())
 
+    def select_along_batch(self, index: int) -> Tensor:
+        return self._data.select(self._batch_dim, index)
+
     def select_along_seq(self, index: int) -> BatchedTensor:
         r"""Slices the batch along the sequence dimension at the given index.
 

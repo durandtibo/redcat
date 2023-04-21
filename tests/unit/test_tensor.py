@@ -3938,7 +3938,7 @@ def test_batched_tensor_select_along_batch() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]))
         .select_along_batch(2)
-        .equal(BatchedTensor(torch.tensor([[2, 7]])))
+        .equal(torch.tensor([2, 7]))
     )
 
 
@@ -3946,7 +3946,7 @@ def test_batched_tensor_select_along_batch_custom_dims() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
         .select_along_batch(2)
-        .equal(BatchedTensor(torch.tensor([[2], [7]]), batch_dim=1))
+        .equal(torch.tensor([2, 7]))
     )
 
 
