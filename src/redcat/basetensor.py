@@ -2467,3 +2467,43 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     def extend(self, other: Iterable[BaseBatch]) -> None:
         self.cat_along_batch_(other)
+
+    def masked_fill(
+        self, mask: BaseBatchedTensor | Tensor, value: bool | int | float
+    ) -> TBatchedTensor:
+        r"""Fills elements of ``self`` batch with ``value`` where ``mask`` is
+        ``True``.
+
+        Args:
+            mask (``BaseBatchedTensor`` or ``torch.Tensor``):
+                Specifies the batch of boolean masks.
+            value (number): Specifies the value to fill in with.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch with the updated values.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> mask = BatchedTensor(
+            ...     torch.tensor(
+            ...         [
+            ...             [False, False],
+            ...             [False, True],
+            ...             [True, False],
+            ...             [True, True],
+            ...             [False, False],
+            ...         ]
+            ...     )
+            ... )
+            >>> batch.masked_fill(mask, 42)
+            tensor([[ 0,  1],
+                    [ 2, 42],
+                    [42,  5],
+                    [42, 42],
+                    [ 8,  9]], batch_dim=0)
+        """

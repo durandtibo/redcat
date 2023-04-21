@@ -5038,6 +5038,57 @@ def test_batched_tensor_seq_index_select_along_seq_extra_dims() -> None:
     )
 
 
+@mark.parametrize(
+    "mask",
+    (
+        BatchedTensorSeq(
+            torch.tensor([[True, False, True, False, True], [False, False, False, False, False]])
+        ),
+        BatchedTensor(
+            torch.tensor([[True, False, True, False, True], [False, False, False, False, False]])
+        ),
+        torch.tensor([[True, False, True, False, True], [False, False, False, False, False]]),
+    ),
+)
+def test_batched_tensor_seq_masked_fill(mask: BaseBatchedTensor | Tensor) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .masked_fill(mask, -1)
+        .equal(BatchedTensorSeq(torch.tensor([[-1, 1, -1, 3, -1], [5, 6, 7, 8, 9]])))
+    )
+
+
+def test_batched_tensor_seq_masked_fill_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+        .masked_fill(
+            BatchedTensorSeq.from_seq_batch(
+                torch.tensor(
+                    [[True, False], [False, True], [True, False], [False, True], [True, False]]
+                )
+            ),
+            -1,
+        )
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[-1, 1], [2, -1], [-1, 5], [6, -1], [-1, 9]]), batch_dim=1, seq_dim=0
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_masked_fill_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2), 0)
+
+
+def test_batched_tensor_seq_masked_fill_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2), 0)
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
