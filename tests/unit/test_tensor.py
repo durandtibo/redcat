@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import numpy as np
 import torch
+from coola import objects_are_equal
 from pytest import mark, raises
 from torch import Tensor
 from torch.overrides import is_tensor_like
@@ -4029,6 +4030,55 @@ def test_batched_tensor_slice_along_batch_batch_dim_2() -> None:
             )
         )
     )
+
+
+def test_batched_tensor_split_along_batch_split_size_1() -> None:
+    assert objects_are_equal(
+        list(BatchedTensor(torch.arange(10).view(5, 2)).split_along_batch(1)),
+        [
+            BatchedTensor(torch.tensor([[0, 1]])),
+            BatchedTensor(torch.tensor([[2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5]])),
+            BatchedTensor(torch.tensor([[6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ],
+    )
+
+
+def test_batched_tensor_split_along_batch_split_size_2() -> None:
+    assert objects_are_equal(
+        list(BatchedTensor(torch.arange(10).view(5, 2)).split_along_batch(2)),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ],
+    )
+
+
+def test_batched_tensor_split_along_batch_custom_dims() -> None:
+    assert objects_are_equal(
+        list(BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).split_along_batch(2)),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [5, 6]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[2, 3], [7, 8]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[4], [9]]), batch_dim=1),
+        ],
+    )
+
+
+def test_batched_tensor_split_along_batch_deepcopy_true() -> None:
+    batch = BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    for item in batch.split_along_batch(split_size=1, deepcopy=True):
+        item[0, 0] = 42
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
+
+
+def test_batched_tensor_split_along_batch_deepcopy_false() -> None:
+    batch = BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    for item in batch.split_along_batch(split_size=1):
+        item[0, 0] = 42
+    assert batch.equal(BatchedTensor(torch.tensor([[42, 1], [42, 3], [42, 5], [42, 7], [42, 9]])))
 
 
 ########################################
