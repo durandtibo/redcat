@@ -1012,6 +1012,30 @@ class BatchedTensorSeq(BaseBatchedTensor):
             mask = mask.data
         return self.__class__(data=self._data.masked_fill(mask.data, value), **self._get_kwargs())
 
+    def repeat_along_seq(self, repeats: int) -> BatchedTensorSeq:
+        r"""Repeats the batch along the sequence dimension.
+
+        Args:
+            repeats (int): Specifies the number of times to repeat
+                the batch along the sequence dimension.
+
+        Returns:
+            ``BatchedTensorSeq``: A repeated version of the input batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).repeat_along_seq(2)
+            tensor([[0, 1, 2, 3, 4, 0, 1, 2, 3, 4],
+                    [5, 6, 7, 8, 9, 5, 6, 7, 8, 9]], batch_dim=0, seq_dim=1)
+        """
+        sizes = [1] * self._data.dim()
+        sizes[self._seq_dim] = repeats
+        return self.__class__(data=self._data.repeat(*sizes), **self._get_kwargs())
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
