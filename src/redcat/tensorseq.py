@@ -1036,6 +1036,19 @@ class BatchedTensorSeq(BaseBatchedTensor):
         sizes[self._seq_dim] = repeats
         return self.__class__(data=self._data.repeat(*sizes), **self._get_kwargs())
 
+    def slice_along_batch(
+        self, start: int = 0, stop: int | None = None, step: int = 1
+    ) -> BatchedTensorSeq:
+        if self._batch_dim == 0:
+            data = self._data[start:stop:step]
+        elif self._batch_dim == 1:
+            data = self._data[:, start:stop:step]
+        else:
+            data = self._data.transpose(0, self._batch_dim)[start:stop:step].transpose(
+                0, self._batch_dim
+            )
+        return self.__class__(data=data, **self._get_kwargs())
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 

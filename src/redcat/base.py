@@ -319,3 +319,39 @@ class BaseBatch(Generic[T], ABC):
                     [2, 3],
                     [0, 1]], batch_dim=0)
         """
+
+    @abstractmethod
+    def slice_along_batch(self, start: int = 0, stop: int | None = None, step: int = 1) -> TBatch:
+        r"""Slices the batch in the batch dimension.
+
+        Args:
+            start (int, optional): Specifies the index where the
+                slicing of object starts. Default: ``0``
+            stop (int, optional): Specifies the index where the
+                slicing of object stops. ``None`` means last.
+                Default: ``None``
+            step (int, optional): Specifies the increment between
+                each index for slicing. Default: ``1``
+
+        Returns:
+            ``BaseBatch``: A slice of the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(start=2)
+            tensor([[4, 5],
+                    [6, 7],
+                    [8, 9]], batch_dim=0)
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(stop=3)
+            tensor([[0, 1],
+                    [2, 3],
+                    [4, 5]], batch_dim=0)
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(step=2)
+            tensor([[0, 1],
+                    [4, 5],
+                    [8, 9]], batch_dim=0)
+        """
