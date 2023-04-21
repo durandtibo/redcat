@@ -376,7 +376,8 @@ class BatchedTensor(BaseBatchedTensor):
         data = self._data
         if deepcopy:
             data = data.clone()
-        return data.split(split_size, dim=self._batch_dim)
+        for chunk in data.split(split_size, dim=self._batch_dim):
+            yield self.__class__(data=chunk, **self._get_kwargs())
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
