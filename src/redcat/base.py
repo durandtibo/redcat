@@ -288,3 +288,34 @@ class BaseBatch(Generic[T], ABC):
                     [0., 0., 0.],
                     [2., 2., 2.]], batch_dim=0)
         """
+
+    @abstractmethod
+    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BaseBatch:
+        r"""Selects data at the given indices along the batch dimension.
+
+        Args:
+            index (``torch.Tensor`` or list or tuple): Specifies the
+                indices to select.
+
+        Returns:
+            ``BaseBatch``: A new batch which indexes ``self``
+                along the batch dimension using the entries in
+                ``index``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.index_select_along_batch([2, 4])
+            tensor([[4, 5],
+                    [8, 9]], batch_dim=0)
+            >>> batch.index_select_along_batch(torch.tensor([4, 3, 2, 1, 0]))
+            tensor([[8, 9],
+                    [6, 7],
+                    [4, 5],
+                    [2, 3],
+                    [0, 1]], batch_dim=0)
+        """
