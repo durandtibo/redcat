@@ -275,7 +275,7 @@ class BatchedTensor(BaseBatchedTensor):
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
-            data=permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
+            permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
             **self._get_kwargs(),
         )
 
@@ -322,7 +322,7 @@ class BatchedTensor(BaseBatchedTensor):
         batches = list(chain([self], other))
         check_batch_dims(get_batch_dims(batches))
         return self.__class__(
-            data=torch.cat(
+            torch.cat(
                 [batch.data if hasattr(batch, "data") else batch for batch in batches],
                 dim=self._batch_dim,
             ),
@@ -344,9 +344,7 @@ class BatchedTensor(BaseBatchedTensor):
     def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
         if not torch.is_tensor(index):
             index = torch.tensor(index)
-        return self.__class__(
-            data=self._data.index_select(self._batch_dim, index), **self._get_kwargs()
-        )
+        return self.__class__(self._data.index_select(self._batch_dim, index), **self._get_kwargs())
 
     def masked_fill(
         self, mask: BaseBatchedTensor | Tensor, value: bool | int | float
@@ -354,7 +352,7 @@ class BatchedTensor(BaseBatchedTensor):
         check_batch_dims(get_batch_dims((self, mask)))
         if isinstance(mask, BaseBatchedTensor):
             mask = mask.data
-        return self.__class__(data=self._data.masked_fill(mask.data, value), **self._get_kwargs())
+        return self.__class__(self._data.masked_fill(mask.data, value), **self._get_kwargs())
 
     def select_along_batch(self, index: int) -> Tensor:
         return self._data.select(self._batch_dim, index)
@@ -370,14 +368,14 @@ class BatchedTensor(BaseBatchedTensor):
             data = self._data.transpose(0, self._batch_dim)[start:stop:step].transpose(
                 0, self._batch_dim
             )
-        return self.__class__(data=data, **self._get_kwargs())
+        return self.__class__(data, **self._get_kwargs())
 
     def split_along_batch(self, split_size: int, deepcopy: bool = False) -> Iterable[BatchedTensor]:
         data = self._data
         if deepcopy:
             data = data.clone()
         for chunk in data.split(split_size, dim=self._batch_dim):
-            yield self.__class__(data=chunk, **self._get_kwargs())
+            yield self.__class__(chunk, **self._get_kwargs())
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
