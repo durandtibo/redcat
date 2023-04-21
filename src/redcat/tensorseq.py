@@ -1049,6 +1049,50 @@ class BatchedTensorSeq(BaseBatchedTensor):
             )
         return self.__class__(data=data, **self._get_kwargs())
 
+    def slice_along_seq(
+        self, start: int = 0, stop: int | None = None, step: int = 1
+    ) -> BatchedTensorSeq:
+        r"""Slices the batch in the sequence dimension.
+
+        Args:
+            start (int, optional): Specifies the index where the
+                slicing of object starts. Default: ``0``
+            stop (int, optional): Specifies the index where the
+                slicing of object stops. ``None`` means last.
+                Default: ``None``
+            step (int, optional): Specifies the increment between
+                each index for slicing. Default: ``1``
+
+        Returns:
+            ``BatchedTensorSeq``: A slice of the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [9, 8, 7, 6, 5]]))
+            >>> batch.slice_along_seq(start=2)
+            tensor([[2, 3, 4],
+                    [7, 6, 5]], batch_dim=0, seq_dim=1)
+            >>> batch.slice_along_seq(stop=3)
+            tensor([[0, 1, 2],
+                    [9, 8, 7]], batch_dim=0, seq_dim=1)
+            >>> batch.slice_along_seq(step=2)
+            tensor([[0, 2, 4],
+                    [9, 7, 5]], batch_dim=0, seq_dim=1)
+        """
+        if self._seq_dim == 1:
+            data = self._data[:, start:stop:step]
+        elif self._seq_dim == 0:
+            data = self._data[start:stop:step]
+        else:
+            data = self._data.transpose(0, self._seq_dim)[start:stop:step].transpose(
+                0, self._seq_dim
+            )
+        return self.__class__(data=data, **self._get_kwargs())
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
