@@ -972,6 +972,37 @@ class BatchedTensorSeq(BaseBatchedTensor):
             data=self._data.index_select(self._batch_dim, index), **self._get_kwargs()
         )
 
+    def index_select_along_seq(self, index: torch.Tensor | Sequence[int]) -> BatchedTensorSeq:
+        r"""Slices the batch along the sequence dimension at the given indices.
+
+        Args:
+            index (``torch.Tensor`` or list or tuple): Specifies the
+                indices to select.
+
+        Returns:
+            ``BatchedTensorSeq``: A new batch sliced along the sequence
+                dimension at the given indices.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.index_select_along_seq([2, 4])
+            tensor([[2, 4],
+                    [7, 9]], batch_dim=0, seq_dim=1)
+            >>> batch.index_select_along_seq(torch.tensor([4, 3, 2, 1, 0]))
+            tensor([[4, 3, 2, 1, 0],
+                    [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1)
+        """
+        if not torch.is_tensor(index):
+            index = torch.tensor(index)
+        return self.__class__(
+            data=self._data.index_select(self._seq_dim, index), **self._get_kwargs()
+        )
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
