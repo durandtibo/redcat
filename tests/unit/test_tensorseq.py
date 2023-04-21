@@ -5180,6 +5180,30 @@ def test_batched_tensor_seq_select_along_batch_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_select_along_seq() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [9, 8, 7, 6, 5]]))
+        .select_along_seq(2)
+        .equal(BatchedTensor(torch.tensor([2, 7])))
+    )
+
+
+def test_batched_tensor_seq_select_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0)
+        .select_along_seq(2)
+        .equal(BatchedTensor(torch.tensor([4, 5])))
+    )
+
+
+def test_batched_tensor_seq_select_along_seq_extra_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1)
+        .select_along_seq(2)
+        .equal(BatchedTensor(torch.tensor([[4, 5], [14, 15]]), batch_dim=1))
+    )
+
+
 def test_batched_tensor_seq_slice_along_batch() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(5, 2))
