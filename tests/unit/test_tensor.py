@@ -3934,6 +3934,87 @@ def test_batched_tensor_masked_fill_incorrect_batch_dim() -> None:
         batch.masked_fill(BatchedTensor(torch.zeros(2, 3), batch_dim=1), 0)
 
 
+def test_batched_tensor_slice_along_batch() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2))
+        .slice_along_batch()
+        .equal(BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
+    )
+
+
+def test_batched_tensor_slice_along_batch_start_2() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2))
+        .slice_along_batch(start=2)
+        .equal(BatchedTensor(torch.tensor([[4, 5], [6, 7], [8, 9]])))
+    )
+
+
+def test_batched_tensor_slice_along_batch_stop_3() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2))
+        .slice_along_batch(stop=3)
+        .equal(BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5]])))
+    )
+
+
+def test_batched_tensor_slice_along_batch_stop_100() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2))
+        .slice_along_batch(stop=100)
+        .equal(BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
+    )
+
+
+def test_batched_tensor_slice_along_batch_step_2() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2))
+        .slice_along_batch(step=2)
+        .equal(BatchedTensor(torch.tensor([[0, 1], [4, 5], [8, 9]])))
+    )
+
+
+def test_batched_tensor_slice_along_batch_start_1_stop_4_step_2() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2))
+        .slice_along_batch(start=1, stop=4, step=2)
+        .equal(BatchedTensor(torch.tensor([[2, 3], [6, 7]])))
+    )
+
+
+def test_batched_tensor_slice_along_batch_custom_dim() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+        .slice_along_batch(start=2)
+        .equal(BatchedTensor(torch.tensor([[2, 3, 4], [7, 8, 9]]), batch_dim=1))
+    )
+
+
+def test_batched_tensor_slice_along_batch_batch_dim_1() -> None:
+    assert (
+        BatchedTensor(torch.arange(20).view(2, 5, 2), batch_dim=1)
+        .slice_along_batch(start=2)
+        .equal(
+            BatchedTensor(
+                torch.tensor([[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]]),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_tensor_slice_along_batch_batch_dim_2() -> None:
+    assert (
+        BatchedTensor(torch.arange(20).view(2, 2, 5), batch_dim=2)
+        .slice_along_batch(start=2)
+        .equal(
+            BatchedTensor(
+                torch.tensor([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]]), batch_dim=2
+            )
+        )
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
