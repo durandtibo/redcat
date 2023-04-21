@@ -5168,7 +5168,7 @@ def test_batched_tensor_seq_select_along_batch() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]))
         .select_along_batch(2)
-        .equal(BatchedTensorSeq(torch.tensor([[2, 7]])))
+        .equal(torch.tensor([2, 7]))
     )
 
 
@@ -5176,7 +5176,7 @@ def test_batched_tensor_seq_select_along_batch_custom_dims() -> None:
     assert (
         BatchedTensorSeq.from_seq_batch(torch.arange(10).view(2, 5))
         .select_along_batch(2)
-        .equal(BatchedTensorSeq(torch.tensor([[2], [7]]), batch_dim=1, seq_dim=0))
+        .equal(torch.tensor([2, 7]))
     )
 
 

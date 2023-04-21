@@ -356,6 +356,9 @@ class BatchedTensor(BaseBatchedTensor):
             mask = mask.data
         return self.__class__(data=self._data.masked_fill(mask.data, value), **self._get_kwargs())
 
+    def select_along_batch(self, index: int) -> Tensor:
+        return self._data.select(self._batch_dim, index)
+
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
     ) -> BatchedTensor:
