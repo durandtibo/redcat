@@ -3934,6 +3934,22 @@ def test_batched_tensor_masked_fill_incorrect_batch_dim() -> None:
         batch.masked_fill(BatchedTensor(torch.zeros(2, 3), batch_dim=1), 0)
 
 
+def test_batched_tensor_select_along_batch() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]))
+        .select_along_batch(2)
+        .equal(BatchedTensor(torch.tensor([[2, 7]])))
+    )
+
+
+def test_batched_tensor_select_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+        .select_along_batch(2)
+        .equal(BatchedTensor(torch.tensor([[2], [7]]), batch_dim=1))
+    )
+
+
 def test_batched_tensor_slice_along_batch() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(5, 2))
