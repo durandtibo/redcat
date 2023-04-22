@@ -2544,3 +2544,41 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                      [1.],
                      [1.]]], batch_dim=0)
         """
+
+    @abstractmethod
+    def view_as(self, other: BaseBatchedTensor) -> TBatchedTensor:
+        r"""Creates a new batch with the same data as the ``self`` batch but the
+        shape of ``other``.
+
+        The returned batch shares the same data and must have the
+        same number of elements, but the data may have a different
+        size.
+
+        Args:
+            other (``BaseBatchedTensor``): Specifies the batch with
+                the target shape.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch with the shape of
+                ``other``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch1 = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch2 = BatchedTensor(torch.zeros(2, 5, 1))
+            >>> batch1.view_as(batch2)
+            tensor([[[0],
+                     [1],
+                     [2],
+                     [3],
+                     [4]],
+                    [[5],
+                     [6],
+                     [7],
+                     [8],
+                     [9]]], batch_dim=0)
+        """

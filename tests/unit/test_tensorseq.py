@@ -5578,6 +5578,42 @@ def test_batched_tensor_seq_unsqueeze_custom_dims() -> None:
     )
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.zeros(2, 3, 1)),
+        BatchedTensor(torch.zeros(2, 3, 1)),
+        torch.zeros(2, 3, 1),
+    ),
+)
+def test_batched_tensor_seq_view_as(other: BaseBatchedTensor | Tensor) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .view_as(other)
+        .equal(BatchedTensorSeq(torch.ones(2, 3, 1)))
+    )
+
+
+def test_batched_tensor_seq_view_as_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .view_as(BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=1, seq_dim=0))
+        .equal(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_view_as_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.view_as(BatchedTensorSeq(torch.zeros(2, 1), batch_dim=1, seq_dim=0))
+
+
+def test_batched_tensor_seq_view_as_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.view_as(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################
