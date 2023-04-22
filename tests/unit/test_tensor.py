@@ -4218,6 +4218,108 @@ def test_batched_tensor_get_num_minibatches_drop_last_true(
     )
 
 
+def test_batched_tensor_to_minibatches_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        list(BatchedTensor(torch.arange(20).view(10, 2)).to_minibatches(batch_size=2)),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9], [10, 11]])),
+            BatchedTensor(torch.tensor([[12, 13], [14, 15]])),
+            BatchedTensor(torch.tensor([[16, 17], [18, 19]])),
+        ],
+    )
+
+
+def test_batched_tensor_to_minibatches_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        list(BatchedTensor(torch.arange(20).view(10, 2)).to_minibatches(batch_size=3)),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5]])),
+            BatchedTensor(torch.tensor([[6, 7], [8, 9], [10, 11]])),
+            BatchedTensor(torch.tensor([[12, 13], [14, 15], [16, 17]])),
+            BatchedTensor(torch.tensor([[18, 19]])),
+        ],
+    )
+
+
+def test_batched_tensor_to_minibatches_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        list(BatchedTensor(torch.arange(20).view(10, 2)).to_minibatches(batch_size=4)),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9], [10, 11], [12, 13], [14, 15]])),
+            BatchedTensor(torch.tensor([[16, 17], [18, 19]])),
+        ],
+    )
+
+
+def test_batched_tensor_to_minibatches_drop_last_true_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedTensor(torch.arange(20).view(10, 2)).to_minibatches(batch_size=2, drop_last=True)
+        ),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9], [10, 11]])),
+            BatchedTensor(torch.tensor([[12, 13], [14, 15]])),
+            BatchedTensor(torch.tensor([[16, 17], [18, 19]])),
+        ],
+    )
+
+
+def test_batched_tensor_to_minibatches_drop_last_true_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedTensor(torch.arange(20).view(10, 2)).to_minibatches(batch_size=3, drop_last=True)
+        ),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5]])),
+            BatchedTensor(torch.tensor([[6, 7], [8, 9], [10, 11]])),
+            BatchedTensor(torch.tensor([[12, 13], [14, 15], [16, 17]])),
+        ],
+    )
+
+
+def test_batched_tensor_to_minibatches_drop_last_true_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedTensor(torch.arange(20).view(10, 2)).to_minibatches(batch_size=4, drop_last=True)
+        ),
+        [
+            BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9], [10, 11], [12, 13], [14, 15]])),
+        ],
+    )
+
+
+def test_batched_tensor_to_minibatches_custom_dims() -> None:
+    assert objects_are_equal(
+        list(BatchedTensor(torch.arange(20).view(2, 10), batch_dim=1).to_minibatches(batch_size=3)),
+        [
+            BatchedTensor(torch.tensor([[0, 1, 2], [10, 11, 12]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[3, 4, 5], [13, 14, 15]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[6, 7, 8], [16, 17, 18]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[9], [19]]), batch_dim=1),
+        ],
+    )
+
+
+def test_batched_tensor_to_minibatches_deepcopy_true() -> None:
+    batch = BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    for item in batch.to_minibatches(batch_size=2, deepcopy=True):
+        item.data[0, 0] = 42
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
+
+
+def test_batched_tensor_to_minibatches_deepcopy_false() -> None:
+    batch = BatchedTensor(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    for item in batch.to_minibatches(batch_size=2):
+        item.data[0, 0] = 42
+    assert batch.equal(BatchedTensor(torch.tensor([[42, 1], [2, 3], [42, 5], [6, 7], [42, 9]])))
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################

@@ -463,3 +463,62 @@ class BaseBatch(Generic[T], ABC):
         if drop_last:
             return self.batch_size // batch_size
         return (self.batch_size + batch_size - 1) // batch_size
+
+    def to_minibatches(
+        self,
+        batch_size: int,
+        drop_last: bool = False,
+        deepcopy: bool = False,
+    ) -> Iterable[TBatch]:
+        r"""Gets the mini-batches of the current batch.
+
+        Args:
+            batch_size (int): Specifies the target batch size of the
+                mini-batches.
+            drop_last (bool, optional): If ``True``, the last batch is
+                dropped if it is not full, otherwise it is returned.
+                Default: ``False``
+            deepcopy (bool, optional): If ``True``, a deepcopy of the
+                batch is performed before to return the mini-batches.
+                If ``False``, each chunk is a view of the original
+                batch/tensor. Using deepcopy allows a deterministic
+                behavior when in-place operations are performed on the
+                data. Default: ``False``
+
+        Returns:
+            iterable: The mini-batches.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(20).view(10, 2))
+            >>> list(batch.to_minibatches(batch_size=4))
+            [tensor([[0, 1],
+                     [2, 3],
+                     [4, 5],
+                     [6, 7]], batch_dim=0),
+             tensor([[ 8,  9],
+                     [10, 11],
+                     [12, 13],
+                     [14, 15]], batch_dim=0),
+             tensor([[16, 17],
+                     [18, 19]], batch_dim=0)]
+            >>> list(batch.to_minibatches(batch_size=4, drop_last=True))
+            [tensor([[0, 1],
+                     [2, 3],
+                     [4, 5],
+                     [6, 7]], batch_dim=0),
+             tensor([[ 8,  9],
+                     [10, 11],
+                     [12, 13],
+                     [14, 15]], batch_dim=0)]
+        """
+        batch = self
+        if drop_last:
+            batch = self.slice_along_batch(
+                stop=int(self.get_num_minibatches(batch_size, drop_last) * batch_size)
+            )
+        return batch.split_along_batch(batch_size, deepcopy=deepcopy)
