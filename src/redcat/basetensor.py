@@ -2507,3 +2507,40 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [42, 42],
                     [ 8,  9]], batch_dim=0)
         """
+
+    @abstractmethod
+    def unsqueeze(self, dim: int) -> TBatchedTensor:
+        r"""Returns a new batch with a dimension of size one inserted at the
+        specified position.
+
+        The returned tensor shares the same underlying data with this
+        batch.
+
+        Args:
+            dim (int): Specifies the dimension at which to insert the
+                singleton dimension.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch with an added singleton
+                dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.ones(2, 3)).unsqueeze(dim=0)
+            tensor([[[1., 1., 1.],
+                    [1., 1., 1.]]], batch_dim=1)
+            >>> BatchedTensor(torch.ones(2, 3)).unsqueeze(dim=1)
+            tensor([[[1., 1., 1.]],
+                    [[1., 1., 1.]]], batch_dim=0)
+            >>> BatchedTensor(torch.ones(2, 3)).unsqueeze(dim=-1)
+            tensor([[[1.],
+                     [1.],
+                     [1.]],
+                    [[1.],
+                     [1.],
+                     [1.]]], batch_dim=0)
+        """

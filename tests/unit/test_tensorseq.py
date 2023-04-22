@@ -5538,6 +5538,46 @@ def test_batched_tensor_seq_take_along_seq_incorrect_seq_dim() -> None:
         batch.take_along_seq(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
 
 
+def test_batched_tensor_seq_unsqueeze_dim_0() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .unsqueeze(dim=0)
+        .equal(BatchedTensorSeq(torch.ones(1, 2, 3), batch_dim=1, seq_dim=2))
+    )
+
+
+def test_batched_tensor_seq_unsqueeze_dim_1() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .unsqueeze(dim=1)
+        .equal(BatchedTensorSeq(torch.ones(2, 1, 3), batch_dim=0, seq_dim=2))
+    )
+
+
+def test_batched_tensor_seq_unsqueeze_dim_2() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .unsqueeze(dim=2)
+        .equal(BatchedTensorSeq(torch.ones(2, 3, 1)))
+    )
+
+
+def test_batched_tensor_seq_unsqueeze_dim_last() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3))
+        .unsqueeze(dim=-1)
+        .equal(BatchedTensorSeq(torch.ones(2, 3, 1)))
+    )
+
+
+def test_batched_tensor_seq_unsqueeze_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
+        .unsqueeze(dim=0)
+        .equal(BatchedTensorSeq(torch.ones(1, 2, 3), batch_dim=2, seq_dim=1))
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################

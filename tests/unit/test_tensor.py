@@ -4136,6 +4136,40 @@ def test_batched_tensor_take_along_batch_incorrect_batch_dim() -> None:
         batch.take_along_batch(BatchedTensor(torch.zeros(1, 3), batch_dim=1))
 
 
+def test_batched_tensor_unsqueeze_dim_0() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3))
+        .unsqueeze(dim=0)
+        .equal(BatchedTensor(torch.ones(1, 2, 3), batch_dim=1))
+    )
+
+
+def test_batched_tensor_unsqueeze_dim_1() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3)).unsqueeze(dim=1).equal(BatchedTensor(torch.ones(2, 1, 3)))
+    )
+
+
+def test_batched_tensor_unsqueeze_dim_2() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3)).unsqueeze(dim=2).equal(BatchedTensor(torch.ones(2, 3, 1)))
+    )
+
+
+def test_batched_tensor_unsqueeze_dim_last() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3)).unsqueeze(dim=-1).equal(BatchedTensor(torch.ones(2, 3, 1)))
+    )
+
+
+def test_batched_tensor_unsqueeze_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .unsqueeze(dim=0)
+        .equal(BatchedTensor(torch.ones(1, 2, 3), batch_dim=2))
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
