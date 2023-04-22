@@ -5614,6 +5614,28 @@ def test_batched_tensor_seq_view_as_incorrect_seq_dim() -> None:
         batch.view_as(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
+########################
+#     mini-batches     #
+########################
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+def test_batched_tensor_seq_get_num_minibatches_drop_last_false(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert BatchedTensorSeq(torch.ones(10, 2)).get_num_minibatches(batch_size) == num_minibatches
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+def test_batched_tensor_seq_get_num_minibatches_drop_last_true(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert (
+        BatchedTensorSeq(torch.ones(10, 2)).get_num_minibatches(batch_size, drop_last=True)
+        == num_minibatches
+    )
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################

@@ -4178,11 +4178,11 @@ def test_batched_tensor_unsqueeze_custom_dims() -> None:
         torch.zeros(2, 3, 1),
     ),
 )
-def test_batched_tensor_seq_view_as(other: BaseBatchedTensor | Tensor) -> None:
+def test_batched_tensor_view_as(other: BaseBatchedTensor | Tensor) -> None:
     assert BatchedTensor(torch.ones(2, 3)).view_as(other).equal(BatchedTensor(torch.ones(2, 3, 1)))
 
 
-def test_batched_tensor_seq_view_as_custom_dims() -> None:
+def test_batched_tensor_view_as_custom_dims() -> None:
     assert (
         BatchedTensor(torch.ones(2, 3), batch_dim=1)
         .view_as(BatchedTensor(torch.zeros(2, 3, 1), batch_dim=1))
@@ -4190,10 +4190,32 @@ def test_batched_tensor_seq_view_as_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_seq_view_as_incorrect_batch_dim() -> None:
+def test_batched_tensor_view_as_incorrect_batch_dim() -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.view_as(BatchedTensor(torch.zeros(2, 1), batch_dim=1))
+
+
+########################
+#     mini-batches     #
+########################
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+def test_batched_tensor_get_num_minibatches_drop_last_false(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert BatchedTensor(torch.ones(10, 2)).get_num_minibatches(batch_size) == num_minibatches
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+def test_batched_tensor_get_num_minibatches_drop_last_true(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert (
+        BatchedTensor(torch.ones(10, 2)).get_num_minibatches(batch_size, drop_last=True)
+        == num_minibatches
+    )
 
 
 ########################################
