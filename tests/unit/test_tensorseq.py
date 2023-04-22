@@ -5473,6 +5473,71 @@ def test_batched_tensor_seq_take_along_batch_incorrect_seq_dim() -> None:
         batch.take_along_batch(BatchedTensorSeq(torch.zeros(2, 1, 4), seq_dim=2))
 
 
+@mark.parametrize(
+    "indices",
+    (
+        BatchedTensorSeq(torch.tensor([[3, 0, 1], [2, 3, 4]])),
+        BatchedTensor(torch.tensor([[3, 0, 1], [2, 3, 4]])),
+        torch.tensor([[3, 0, 1], [2, 3, 4]]),
+        [[3, 0, 1], [2, 3, 4]],
+    ),
+)
+def test_batched_tensor_seq_take_along_seq(indices: BaseBatch | Tensor | Sequence) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .take_along_seq(indices)
+        .equal(BatchedTensorSeq(torch.tensor([[3, 0, 1], [7, 8, 9]])))
+    )
+
+
+def test_batched_tensor_seq_take_along_seq_empty_indices() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .take_along_seq(BatchedTensorSeq(torch.tensor([[], []], dtype=torch.long)))
+        .equal(BatchedTensorSeq(torch.tensor([[], []], dtype=torch.long)))
+    )
+
+
+def test_batched_tensor_seq_take_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0)
+        .take_along_seq(
+            BatchedTensorSeq(torch.tensor([[3, 2], [0, 3], [1, 4]]), batch_dim=1, seq_dim=0)
+        )
+        .equal(BatchedTensorSeq(torch.tensor([[6, 5], [0, 7], [2, 9]]), batch_dim=1, seq_dim=0))
+    )
+
+
+def test_batched_tensor_seq_take_along_seq_extra_dim_end() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5, 1))
+        .take_along_seq(BatchedTensorSeq(torch.tensor([[[3], [0], [1]], [[2], [3], [4]]])))
+        .equal(BatchedTensorSeq(torch.tensor([[[3], [0], [1]], [[7], [8], [9]]])))
+    )
+
+
+def test_batched_tensor_seq_take_along_seq_extra_dim_first() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(1, 2, 5), batch_dim=1, seq_dim=2)
+        .take_along_seq(
+            BatchedTensorSeq(torch.tensor([[[3, 0, 1], [2, 3, 4]]]), batch_dim=1, seq_dim=2)
+        )
+        .equal(BatchedTensorSeq(torch.tensor([[[3, 0, 1], [7, 8, 9]]]), batch_dim=1, seq_dim=2))
+    )
+
+
+def test_batched_tensor_seq_take_along_seq_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.take_along_seq(BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2))
+
+
+def test_batched_tensor_seq_take_along_seq_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.take_along_seq(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
+
+
 #########################################
 #     Tests for check_data_and_dims     #
 #########################################

@@ -1133,6 +1133,39 @@ class BatchedTensorSeq(BaseBatchedTensor):
             self._data.take_along_dim(dim=self._batch_dim, indices=indices), **self._get_kwargs()
         )
 
+    def take_along_seq(self, indices: BaseBatch | Tensor | Sequence) -> BatchedTensorSeq:
+        r"""Takes values along the sequence dimension.
+
+        Args:
+            indices (``BaseBatch`` or ``Tensor`` or sequence):
+                Specifies the indices to take along the sequence
+                dimension.
+
+        Returns:
+            ``BaseBatch``: The sequence with the selected data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).take_along_seq(
+            ...     BatchedTensorSeq(torch.tensor([[3, 0, 1], [2, 3, 4]]))
+            ... )
+            tensor([[3, 0, 1],
+                    [7, 8, 9]], batch_dim=0, seq_dim=1)
+        """
+        check_batch_dims(get_batch_dims((self, indices)))
+        check_seq_dims(get_seq_dims((self, indices)))
+        if isinstance(indices, BaseBatch):
+            indices = indices.data
+        if not torch.is_tensor(indices):
+            indices = torch.as_tensor(indices)
+        return self.__class__(
+            self._data.take_along_dim(dim=self._seq_dim, indices=indices), **self._get_kwargs()
+        )
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
