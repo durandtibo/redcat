@@ -1175,6 +1175,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
             seq_dim=self._seq_dim + 1 if self._seq_dim >= dim and dim >= 0 else self._seq_dim,
         )
 
+    def view(self, *shape: tuple[int, ...]) -> Tensor:
+        return self._data.view(*shape)
+
     def view_as(self, other: BaseBatchedTensor | Tensor) -> BatchedTensorSeq:
         check_batch_dims(get_batch_dims((self, other)))
         check_seq_dims(get_seq_dims((self, other)))
