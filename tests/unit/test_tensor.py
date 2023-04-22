@@ -4170,6 +4170,32 @@ def test_batched_tensor_unsqueeze_custom_dims() -> None:
     )
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.zeros(2, 3, 1)),
+        BatchedTensor(torch.zeros(2, 3, 1)),
+        torch.zeros(2, 3, 1),
+    ),
+)
+def test_batched_tensor_seq_view_as(other: BaseBatchedTensor | Tensor) -> None:
+    assert BatchedTensor(torch.ones(2, 3)).view_as(other).equal(BatchedTensor(torch.ones(2, 3, 1)))
+
+
+def test_batched_tensor_seq_view_as_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.ones(2, 3), batch_dim=1)
+        .view_as(BatchedTensor(torch.zeros(2, 3, 1), batch_dim=1))
+        .equal(BatchedTensor(torch.ones(2, 3, 1), batch_dim=1))
+    )
+
+
+def test_batched_tensor_seq_view_as_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.view_as(BatchedTensor(torch.zeros(2, 1), batch_dim=1))
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################

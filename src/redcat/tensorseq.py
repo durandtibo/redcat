@@ -1175,6 +1175,11 @@ class BatchedTensorSeq(BaseBatchedTensor):
             seq_dim=self._seq_dim + 1 if self._seq_dim >= dim and dim >= 0 else self._seq_dim,
         )
 
+    def view_as(self, other: BaseBatchedTensor | Tensor) -> BatchedTensorSeq:
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
+        return self.__class__(self._data.view_as(other.data), **self._get_kwargs())
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
 
