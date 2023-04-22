@@ -396,6 +396,9 @@ class BatchedTensor(BaseBatchedTensor):
             else self._batch_dim,
         )
 
+    def view(self, *shape: tuple[int, ...]) -> Tensor:
+        return self._data.view(*shape)
+
     def view_as(self, other: BaseBatchedTensor | Tensor) -> BatchedTensor:
         check_batch_dims(get_batch_dims((self, other)))
         return self.__class__(self._data.view_as(other.data), **self._get_kwargs())

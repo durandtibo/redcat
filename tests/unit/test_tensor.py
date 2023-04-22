@@ -4170,6 +4170,18 @@ def test_batched_tensor_unsqueeze_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_view() -> None:
+    assert BatchedTensor(torch.ones(2, 6)).view(2, 3, 2).equal(torch.ones(2, 3, 2))
+
+
+def test_batched_tensor_view_first() -> None:
+    assert BatchedTensor(torch.ones(2, 6)).view(1, 2, 6).equal(torch.ones(1, 2, 6))
+
+
+def test_batched_tensor_view_last() -> None:
+    assert BatchedTensor(torch.ones(2, 6)).view(2, 6, 1).equal(torch.ones(2, 6, 1))
+
+
 @mark.parametrize(
     "other",
     (

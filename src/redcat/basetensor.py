@@ -2546,6 +2546,32 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         """
 
     @abstractmethod
+    def view(self, *shape: tuple[int, ...]) -> Tensor:
+        r"""Creates a new tensor with the same data as the ``self`` batch but
+        with a new shape.
+
+        Args:
+            shape (tuple): Specifies the desired shape.
+
+        Retunrs:
+            ``torch.Tensor``: A new view of the tensor in the batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.ones(2, 6)).view(2, 3, 2)
+            tensor([[[1., 1.],
+                     [1., 1.],
+                     [1., 1.]],
+                    [[1., 1.],
+                     [1., 1.],
+                     [1., 1.]]])
+        """
+
+    @abstractmethod
     def view_as(self, other: BaseBatchedTensor) -> TBatchedTensor:
         r"""Creates a new batch with the same data as the ``self`` batch but the
         shape of ``other``.
