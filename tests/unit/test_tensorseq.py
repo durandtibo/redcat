@@ -5583,7 +5583,7 @@ def test_batched_tensor_seq_view() -> None:
 
 
 def test_batched_tensor_seq_view_first() -> None:
-    assert BatchedTensorSeq(torch.ones(2, 6)).view(2, 2, 6).equal(torch.ones(1, 2, 6))
+    assert BatchedTensorSeq(torch.ones(2, 6)).view(1, 2, 6).equal(torch.ones(1, 2, 6))
 
 
 def test_batched_tensor_seq_view_last() -> None:

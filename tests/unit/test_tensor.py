@@ -4175,7 +4175,7 @@ def test_batched_tensor_view() -> None:
 
 
 def test_batched_tensor_view_first() -> None:
-    assert BatchedTensor(torch.ones(2, 6)).view(2, 2, 6).equal(torch.ones(1, 2, 6))
+    assert BatchedTensor(torch.ones(2, 6)).view(1, 2, 6).equal(torch.ones(1, 2, 6))
 
 
 def test_batched_tensor_view_last() -> None:
