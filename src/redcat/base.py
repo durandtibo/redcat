@@ -430,3 +430,36 @@ class BaseBatch(Generic[T], ABC):
                     [0, 7],
                     [2, 9]], batch_dim=0)
         """
+
+    ########################
+    #     mini-batches     #
+    ########################
+
+    def get_num_minibatches(self, batch_size: int, drop_last: bool = False) -> int:
+        r"""Gets the number of mini-batches for a given batch size.
+
+        Args:
+            batch_size (int): Specifies the target batch size of the
+                mini-batches.
+            drop_last (bool, optional): If ``True``, the last batch is
+                dropped if it is not full, otherwise it is returned.
+                Default: ``False``
+
+        Returns:
+            int: The number of mini-batches.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10))
+            >>> batch.get_num_minibatches(batch_size=4)
+            3
+            >>> batch.get_num_minibatches(batch_size=4, drop_last=True)
+            2
+        """
+        if drop_last:
+            return self.batch_size // batch_size
+        return (self.batch_size + batch_size - 1) // batch_size
