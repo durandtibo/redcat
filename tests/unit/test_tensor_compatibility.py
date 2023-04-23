@@ -1,4 +1,6 @@
 import math
+from collections.abc import Callable
+from functools import partial
 from typing import Union
 
 import torch
@@ -6,18 +8,83 @@ from pytest import mark
 
 from redcat import BaseBatchedTensor, BatchedTensor, BatchedTensorSeq
 
+UNARY_FUNCTIONS = (
+    partial(torch.clamp, min=0.1, max=0.5),
+    partial(torch.cumsum, dim=0),
+    partial(torch.cumsum, dim=1),
+    partial(torch.unsqueeze, dim=-1),
+    partial(torch.unsqueeze, dim=0),
+    torch.abs,
+    torch.acos,
+    torch.acosh,
+    torch.asin,
+    torch.asinh,
+    torch.atan,
+    torch.atanh,
+    torch.cos,
+    torch.cosh,
+    torch.exp,
+    torch.isinf,
+    torch.isnan,
+    torch.isneginf,
+    torch.isposinf,
+    torch.log,
+    torch.log1p,
+    torch.logical_not,
+    # torch.max,
+    # torch.min,
+    torch.neg,
+    torch.sin,
+    torch.sinh,
+    torch.sqrt,
+    torch.tan,
+    torch.tanh,
+)
+
+PAIRWISE_FUNCTIONS = (
+    # partial(torch.max, dim=0),
+    # partial(torch.max, dim=1),
+    # partial(torch.min, dim=0),
+    # partial(torch.min, dim=1),
+    torch.add,
+    torch.div,
+    torch.eq,
+    torch.fmod,
+    torch.ge,
+    torch.gt,
+    torch.le,
+    torch.logical_and,
+    torch.logical_or,
+    torch.logical_xor,
+    torch.lt,
+    torch.mul,
+    torch.sub,
+)
+
+
+@mark.parametrize("func", UNARY_FUNCTIONS)
+def test_same_behaviour_unary(func: Callable) -> None:
+    tensor = torch.rand(2, 3)
+    assert func(BatchedTensor(tensor)).data.allclose(func(tensor), equal_nan=True)
+
+
+@mark.parametrize("func", PAIRWISE_FUNCTIONS)
+def test_same_behaviour_pairwise(func: Callable) -> None:
+    tensor1 = torch.rand(2, 3)
+    tensor2 = torch.rand(2, 3) + 1.0
+    assert func(BatchedTensor(tensor1), BatchedTensor(tensor2)).data.allclose(
+        func(tensor1, tensor2), equal_nan=True
+    )
+
 
 def test_torch_abs() -> None:
-    tensor = torch.tensor([[0.0, 1.0, 2.0], [0.0, -1.0, -2.0]])
-    output = torch.abs(BatchedTensor(tensor))
-    assert output.equal(BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]])))
-    assert output.data.equal(torch.abs(tensor))
+    assert torch.abs(BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [0.0, -1.0, -2.0]]))).equal(
+        BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]]))
+    )
 
 
 def test_torch_acos() -> None:
-    tensor = torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]])
-    output = torch.acos(BatchedTensor(tensor))
-    assert output.allclose(
+    assert torch.acos(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
         BatchedTensor(
             torch.tensor(
                 [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
@@ -26,13 +93,10 @@ def test_torch_acos() -> None:
         ),
         atol=1e-6,
     )
-    assert output.data.allclose(torch.acos(tensor), atol=1e-6)
 
 
 def test_torch_acosh() -> None:
-    tensor = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-    output = torch.acosh(BatchedTensor(tensor))
-    assert output.allclose(
+    assert torch.acosh(BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))).allclose(
         BatchedTensor(
             torch.tensor(
                 [
@@ -44,7 +108,6 @@ def test_torch_acosh() -> None:
         ),
         atol=1e-6,
     )
-    assert output.data.allclose(torch.acosh(tensor), atol=1e-6)
 
 
 @mark.parametrize(
@@ -84,9 +147,7 @@ def test_torch_add_tensor() -> None:
 
 
 def test_torch_asin() -> None:
-    tensor = torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]])
-    output = torch.asin(BatchedTensor(tensor))
-    assert output.allclose(
+    assert torch.asin(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
         BatchedTensor(
             torch.tensor(
                 [[-math.pi / 2, 0.0, math.pi / 2], [-math.pi / 6, 0.0, math.pi / 6]],
@@ -95,13 +156,10 @@ def test_torch_asin() -> None:
         ),
         atol=1e-6,
     )
-    assert output.data.allclose(torch.asin(tensor), atol=1e-6)
 
 
 def test_torch_asinh() -> None:
-    tensor = torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]])
-    output = torch.asinh(BatchedTensor(tensor))
-    assert output.allclose(
+    assert torch.asinh(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
         BatchedTensor(
             torch.tensor(
                 [
@@ -113,13 +171,12 @@ def test_torch_asinh() -> None:
         ),
         atol=1e-6,
     )
-    assert output.data.allclose(torch.asinh(tensor), atol=1e-6)
 
 
 def test_torch_atan() -> None:
-    tensor = torch.tensor([[0.0, 1.0, math.sqrt(3.0)], [-math.sqrt(3.0), -1.0, 0.0]])
-    output = torch.atan(BatchedTensor(tensor))
-    assert output.allclose(
+    assert torch.atan(
+        BatchedTensor(torch.tensor([[0.0, 1.0, math.sqrt(3.0)], [-math.sqrt(3.0), -1.0, 0.0]]))
+    ).allclose(
         BatchedTensor(
             torch.tensor(
                 [[0.0, math.pi / 4, math.pi / 3], [-math.pi / 3, -math.pi / 4, 0.0]],
@@ -128,13 +185,10 @@ def test_torch_atan() -> None:
         ),
         atol=1e-6,
     )
-    assert output.data.allclose(torch.atan(tensor), atol=1e-6)
 
 
 def test_torch_atanh() -> None:
-    tensor = torch.tensor([[-0.5, 0.0, 0.5], [-0.1, 0.0, 0.1]])
-    output = torch.atanh(BatchedTensor(tensor))
-    assert output.allclose(
+    assert torch.atanh(BatchedTensor(torch.tensor([[-0.5, 0.0, 0.5], [-0.1, 0.0, 0.1]]))).allclose(
         BatchedTensor(
             torch.tensor(
                 [
@@ -146,21 +200,24 @@ def test_torch_atanh() -> None:
         ),
         atol=1e-6,
     )
-    assert output.data.allclose(torch.atanh(tensor), atol=1e-6)
+
+
+def test_torch_clamp() -> None:
+    assert torch.clamp(BatchedTensor(torch.arange(10).view(2, 5)), min=2, max=5).equal(
+        BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]))
+    )
 
 
 def test_torch_cumsum_dim_0() -> None:
-    tensor = torch.ones(2, 3)
-    output = torch.cumsum(BatchedTensor(tensor), dim=0)
-    assert output.equal(BatchedTensor(torch.tensor([[1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])))
-    assert output.data.equal(torch.cumsum(tensor, dim=0))
+    assert torch.cumsum(BatchedTensor(torch.ones(2, 3)), dim=0).equal(
+        BatchedTensor(torch.tensor([[1.0, 1.0, 1.0], [2.0, 2.0, 2.0]]))
+    )
 
 
 def test_torch_cumsum_dim_1() -> None:
-    tensor = torch.ones(2, 3)
-    output = torch.cumsum(BatchedTensor(tensor), dim=1)
-    assert output.equal(BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]])))
-    assert output.data.equal(torch.cumsum(tensor, dim=1))
+    assert torch.cumsum(BatchedTensor(torch.ones(2, 3)), dim=1).equal(
+        BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]]))
+    )
 
 
 @mark.parametrize(
