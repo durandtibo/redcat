@@ -1029,7 +1029,7 @@ def test_batched_tensor_long_custom_batch_dim() -> None:
 def test_batched_tensor__add__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    assert (BatchedTensorSeq(torch.zeros(2, 3)) + other).equal(BatchedTensorSeq(torch.ones(2, 3)))
+    assert (BatchedTensor(torch.zeros(2, 3)) + other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
 @mark.parametrize(
@@ -1045,9 +1045,9 @@ def test_batched_tensor__add__(
 def test_batched_tensor__iadd__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    batch = BatchedTensorSeq(torch.zeros(2, 3))
+    batch = BatchedTensor(torch.zeros(2, 3))
     batch += other
-    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3)))
+    assert batch.equal(BatchedTensor(torch.ones(2, 3)))
 
 
 @mark.parametrize(
@@ -1063,9 +1063,7 @@ def test_batched_tensor__iadd__(
 def test_batched_tensor__mul__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    assert (BatchedTensorSeq(torch.ones(2, 3)) * other).equal(
-        BatchedTensorSeq(torch.full((2, 3), 2.0))
-    )
+    assert (BatchedTensor(torch.ones(2, 3)) * other).equal(BatchedTensor(torch.full((2, 3), 2.0)))
 
 
 @mark.parametrize(
@@ -1081,13 +1079,13 @@ def test_batched_tensor__mul__(
 def test_batched_tensor__imul__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 3))
     batch *= other
-    assert batch.equal(BatchedTensorSeq(torch.full((2, 3), 2.0)))
+    assert batch.equal(BatchedTensor(torch.full((2, 3), 2.0)))
 
 
 def test_batched_tensor__neg__() -> None:
-    assert (-BatchedTensorSeq(torch.ones(2, 3))).equal(BatchedTensorSeq(-torch.ones(2, 3)))
+    assert (-BatchedTensor(torch.ones(2, 3))).equal(BatchedTensor(-torch.ones(2, 3)))
 
 
 @mark.parametrize(
@@ -1103,7 +1101,7 @@ def test_batched_tensor__neg__() -> None:
 def test_batched_tensor__sub__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    assert (BatchedTensorSeq(torch.ones(2, 3)) - other).equal(BatchedTensorSeq(-torch.ones(2, 3)))
+    assert (BatchedTensor(torch.ones(2, 3)) - other).equal(BatchedTensor(-torch.ones(2, 3)))
 
 
 @mark.parametrize(
@@ -1119,9 +1117,9 @@ def test_batched_tensor__sub__(
 def test_batched_tensor__isub__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 3))
     batch -= other
-    assert batch.equal(BatchedTensorSeq(-torch.ones(2, 3)))
+    assert batch.equal(BatchedTensor(-torch.ones(2, 3)))
 
 
 @mark.parametrize(
@@ -1137,9 +1135,7 @@ def test_batched_tensor__isub__(
 def test_batched_tensor__truediv__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    assert (BatchedTensorSeq(torch.ones(2, 3)) / other).equal(
-        BatchedTensorSeq(torch.ones(2, 3).mul(0.5))
-    )
+    assert (BatchedTensor(torch.ones(2, 3)) / other).equal(BatchedTensor(torch.ones(2, 3).mul(0.5)))
 
 
 @mark.parametrize(
@@ -1155,9 +1151,9 @@ def test_batched_tensor__truediv__(
 def test_batched_tensor__itruediv__(
     other: Union[BaseBatchedTensor, torch.Tensor, bool, int, float]
 ) -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 3))
     batch /= other
-    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3).mul(0.5)))
+    assert batch.equal(BatchedTensor(torch.ones(2, 3).mul(0.5)))
 
 
 @mark.parametrize(
