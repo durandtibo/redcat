@@ -1,12 +1,8 @@
-name: CI
+name: Nightly Tests
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
-  workflow_dispatch:  # to trigger manually
+  schedule:
+    - cron: '0 5 * * *' # run at 5 AM UTC
+  workflow_dispatch:  # manual trigger
 
 jobs:
   test:
@@ -51,20 +47,8 @@ jobs:
 
       - name: Run unit tests
         run: |
-          poetry run make unit-test-cov
+          poetry run make unit-test
 
-#      - name: Run integration tests
-#        run: |
-#          poetry run make integration-test-cov
-
-      - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10' && github.repository == 'durandtibo/redcat' && (github.event_name == 'push' || github.event_name == 'pull_request')
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          files: ./coverage.xml
-          # Ignore codecov failures as the codecov server is not
-          # very reliable but we don't want to report a failure
-          # in the github UI just because the coverage report failed to
-          # be published.
-          fail_ci_if_error: false
+      - name: Run integration tests
+        run: |
+          poetry run make integration-test
