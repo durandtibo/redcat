@@ -208,6 +208,32 @@ def test_torch_clamp() -> None:
     )
 
 
+def test_torch_cos() -> None:
+    assert torch.cos(
+        BatchedTensor(
+            torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
+        )
+    ).allclose(
+        BatchedTensor(torch.tensor([[1.0, 0.0, -1.0], [1.0, 0.0, 1.0]], dtype=torch.float)),
+        atol=1e-6,
+    )
+
+
+def test_torch_cosh() -> None:
+    assert torch.cosh(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [1.5430806348152437, 1.0, 1.5430806348152437],
+                    [1.1276259652063807, 1.0, 1.1276259652063807],
+                ],
+                dtype=torch.float,
+            )
+        ),
+        atol=1e-6,
+    )
+
+
 def test_torch_cumsum_dim_0() -> None:
     assert torch.cumsum(BatchedTensor(torch.ones(2, 3)), dim=0).equal(
         BatchedTensor(torch.tensor([[1.0, 1.0, 1.0], [2.0, 2.0, 2.0]]))
@@ -245,6 +271,55 @@ def test_torch_div_tensor() -> None:
 @mark.parametrize(
     "other",
     (
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensor(torch.full((2, 1), 5.0)),
+        5,
+        5.0,
+    ),
+)
+def test_torch_eq(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+    assert torch.eq(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
+        BatchedTensor(
+            torch.tensor(
+                [[False, False, False, False, False], [True, False, False, False, False]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+def test_torch_eq_tensor() -> None:
+    assert torch.eq(torch.arange(10).view(2, 5), BatchedTensor(torch.full((2, 5), 5.0))).equal(
+        BatchedTensor(
+            torch.tensor(
+                [[False, False, False, False, False], [True, False, False, False, False]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+def test_torch_exp() -> None:
+    assert torch.exp(
+        BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+    ).allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [2.7182817459106445, 7.389056205749512, 20.08553695678711],
+                    [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                ]
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
         BatchedTensor(torch.full((2, 3), 2.0)),
         BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
@@ -259,6 +334,72 @@ def test_torch_fmod(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -
 def test_torch_fmod_tensor() -> None:
     assert torch.fmod(torch.ones(2, 3), BatchedTensor(torch.full((2, 3), 2.0))).equal(
         BatchedTensor(torch.ones(2, 3))
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensor(torch.full((2, 1), 5.0)),
+        5,
+        5.0,
+    ),
+)
+def test_torch_ge(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+    assert torch.ge(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
+        BatchedTensor(
+            torch.tensor(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+def test_torch_ge_tensor() -> None:
+    assert torch.ge(torch.arange(10).view(2, 5), BatchedTensor(torch.full((2, 5), 5.0))).equal(
+        BatchedTensor(
+            torch.tensor(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 5), 5.0)),
+        BatchedTensorSeq(torch.full((2, 5), 5.0)),
+        torch.full((2, 5), 5.0),
+        BatchedTensor(torch.full((2, 1), 5.0)),
+        5,
+        5.0,
+    ),
+)
+def test_torch_gt(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+    assert torch.gt(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
+        BatchedTensor(
+            torch.tensor(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=torch.bool,
+            ),
+        )
+    )
+
+
+def test_torch_gt_tensor() -> None:
+    assert torch.gt(torch.arange(10).view(2, 5), BatchedTensor(torch.full((2, 5), 5.0))).equal(
+        BatchedTensor(
+            torch.tensor(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=torch.bool,
+            ),
+        )
     )
 
 
