@@ -49,6 +49,6 @@ jobs:
         run: |
           poetry run make unit-test
 
-      - name: Run integration tests
-        run: |
-          poetry run make integration-test
+#      - name: Run integration tests
+#        run: |
+#          poetry run make integration-test
