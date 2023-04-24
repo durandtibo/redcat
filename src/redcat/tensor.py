@@ -4,7 +4,6 @@ __all__ = ["BatchedTensor", "check_data_and_dim"]
 
 import functools
 from collections.abc import Callable, Iterable, Sequence
-from itertools import chain
 from typing import Any
 
 import torch
@@ -322,48 +321,15 @@ class BatchedTensor(BaseBatchedTensor):
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
 
-    def cat(
-        self,
-        tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
-        dim: int = 0,
-    ) -> BatchedTensor:
-        if isinstance(tensors, (BaseBatchedTensor, Tensor)):
-            tensors = [tensors]
-        return torch.cat(list(chain([self], tensors)), dim=dim)
-
-    def cat_(
-        self,
-        tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
-        dim: int = 0,
-    ) -> None:
-        self._data = self.cat(tensors, dim=dim).data
-
     def cat_along_batch(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> BatchedTensor:
-        if isinstance(other, (BaseBatchedTensor, Tensor)):
-            other = [other]
-        batches = list(chain([self], other))
-        check_batch_dims(get_batch_dims(batches))
-        return self.__class__(
-            torch.cat(
-                [batch.data if hasattr(batch, "data") else batch for batch in batches],
-                dim=self._batch_dim,
-            ),
-            **self._get_kwargs(),
-        )
+        return self.cat(tensors, dim=self._batch_dim)
 
     def cat_along_batch_(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> None:
-        if isinstance(other, (BaseBatchedTensor, Tensor)):
-            other = [other]
-        batches = list(chain([self], other))
-        check_batch_dims(get_batch_dims(batches))
-        self._data = torch.cat(
-            [batch.data if hasattr(batch, "data") else batch for batch in batches],
-            dim=self._batch_dim,
-        )
+        self.cat_(tensors, dim=self._batch_dim)
 
     def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
         if not torch.is_tensor(index):

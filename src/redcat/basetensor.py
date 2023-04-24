@@ -4,6 +4,7 @@ __all__ = ["BaseBatchedTensor"]
 
 from abc import abstractmethod
 from collections.abc import Iterable
+from itertools import chain
 from typing import Any, TypeVar, overload
 
 import torch
@@ -2369,6 +2370,70 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [2., 2., 2.]], batch_dim=0)
         """
         self.cat_along_batch_(other)
+
+    def cat(
+        self,
+        tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
+        dim: int = 0,
+    ) -> TBatchedTensor:
+        r"""Concatenates the data of the batch(es) to the current batch along a
+        given dimension and creates a new batch.
+
+        Args:
+            tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Returns:
+            ``BaseBatchedTensor``: A batch with the concatenated data
+                in the batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]])).cat(
+            ...     BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))
+            ... )
+            tensor([[ 0,  1,  2],
+                    [ 4,  5,  6],
+                    [10, 11, 12],
+                    [13, 14, 15]], batch_dim=0)
+        """
+        if isinstance(tensors, (BaseBatchedTensor, Tensor)):
+            tensors = [tensors]
+        return torch.cat(list(chain([self], tensors)), dim=dim)
+
+    def cat_(
+        self,
+        tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
+        dim: int = 0,
+    ) -> None:
+        r"""Concatenates the data of the batch(es) to the current batch along a
+        given dimension and creates a new batch.
+
+        Args:
+            tensor (``BaseBatchedTensor`` or ``torch.Tensor`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.cat_(
+            ...     BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))
+            ... )
+            >>> batch
+            tensor([[ 0,  1,  2],
+                    [ 4,  5,  6],
+                    [10, 11, 12],
+                    [13, 14, 15]], batch_dim=0)
+        """
+        self._data = self.cat(tensors, dim=dim).data
 
     @abstractmethod
     def cat_along_batch(

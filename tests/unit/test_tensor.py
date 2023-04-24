@@ -3648,8 +3648,8 @@ def test_batched_tensor_cat_dim_0(
         BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
         BatchedTensor(torch.tensor([[10, 11], [12, 13]])),
         torch.tensor([[10, 11], [12, 13]]),
-        [BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]]))],
-        (BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),),
+        [BatchedTensor(torch.tensor([[10, 11], [12, 13]]))],
+        (BatchedTensor(torch.tensor([[10, 11], [12, 13]])),),
     ),
 )
 def test_batched_tensor_cat_dim_1(
@@ -3711,8 +3711,8 @@ def test_batched_tensor_cat__dim_0(
         BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
         BatchedTensor(torch.tensor([[10, 11], [12, 13]])),
         torch.tensor([[10, 11], [12, 13]]),
-        [BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]]))],
-        (BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),),
+        [BatchedTensor(torch.tensor([[10, 11], [12, 13]]))],
+        (BatchedTensor(torch.tensor([[10, 11], [12, 13]])),),
     ),
 )
 def test_batched_tensor_cat__dim_1(
