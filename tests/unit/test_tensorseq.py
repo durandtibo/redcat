@@ -506,7 +506,7 @@ def test_batched_tensor_seq_from_seq_batch(data: Any) -> None:
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -530,7 +530,7 @@ def test_batched_tensor_seq__eq__(
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -554,7 +554,7 @@ def test_batched_tensor_seq__ge__(
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -578,7 +578,7 @@ def test_batched_tensor_seq__gt__(
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -602,7 +602,7 @@ def test_batched_tensor_seq__le__(
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -749,7 +749,7 @@ def test_batched_tensor_seq_equal_false_different_seq_dim() -> None:
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -792,7 +792,7 @@ def test_batched_tensor_seq_ge_custom_dims() -> None:
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -955,7 +955,7 @@ def test_batched_tensor_seq_isnan_custom_dims() -> None:
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -998,7 +998,7 @@ def test_batched_tensor_seq_le_custom_dims() -> None:
         BatchedTensorSeq(torch.full((2, 5), 5.0)),
         BatchedTensor(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.ones(2, 1).mul(5)),
+        BatchedTensorSeq(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -1352,8 +1352,8 @@ def test_batched_tensor_seq_add__alpha_2_float() -> None:
 
 def test_batched_tensor_seq_add__alpha_2_long() -> None:
     batch = BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
-    batch.add_(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long).mul(2)), alpha=2)
-    assert batch.equal(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long).mul(5)))
+    batch.add_(BatchedTensorSeq(torch.full((2, 3), 2, dtype=torch.long)), alpha=2)
+    assert batch.equal(BatchedTensorSeq(torch.full((2, 3), 5, dtype=torch.long)))
 
 
 def test_batched_tensor_seq_add__custom_dims() -> None:
@@ -1634,8 +1634,8 @@ def test_batched_tensor_seq_sub_alpha_2_float() -> None:
 def test_batched_tensor_seq_sub_alpha_2_long() -> None:
     assert (
         BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
-        .sub(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long).mul(2)), alpha=2)
-        .equal(BatchedTensorSeq(-torch.ones(2, 3, dtype=torch.long).mul(3)))
+        .sub(BatchedTensorSeq(torch.full((2, 3), 2, dtype=torch.long)), alpha=2)
+        .equal(BatchedTensorSeq(-torch.full((2, 3), 3, dtype=torch.long)))
     )
 
 
@@ -1683,8 +1683,8 @@ def test_batched_tensor_seq_sub__alpha_2_float() -> None:
 
 def test_batched_tensor_seq_sub__alpha_2_long() -> None:
     batch = BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long))
-    batch.sub_(BatchedTensorSeq(torch.ones(2, 3, dtype=torch.long).mul(2)), alpha=2)
-    assert batch.equal(BatchedTensorSeq(-torch.ones(2, 3, dtype=torch.long).mul(3)))
+    batch.sub_(BatchedTensorSeq(torch.full((2, 3), 2, dtype=torch.long)), alpha=2)
+    assert batch.equal(BatchedTensorSeq(-torch.full((2, 3), 3, dtype=torch.long)))
 
 
 def test_batched_tensor_seq_sub__custom_dims() -> None:

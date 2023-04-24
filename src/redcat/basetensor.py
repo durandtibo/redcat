@@ -18,15 +18,6 @@ TBatchedTensor = TypeVar("TBatchedTensor", bound="BaseBatchedTensor")
 
 
 class BaseBatchedTensor(BaseBatch[Tensor]):
-    @abstractmethod
-    def _get_kwargs(self) -> dict:
-        r"""Gets the keyword arguments that are specific to the batched tensor
-        implementation.
-
-        Returns:
-            dict: The keyword arguments
-        """
-
     def __init__(self, data: Any, **kwargs) -> None:
         super().__init__()
         self._data = torch.as_tensor(data, **kwargs)
@@ -2607,4 +2598,13 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                      [7],
                      [8],
                      [9]]], batch_dim=0)
+        """
+
+    @abstractmethod
+    def _get_kwargs(self) -> dict:
+        r"""Gets the keyword arguments that are specific to the batched tensor
+        implementation.
+
+        Returns:
+            dict: The keyword arguments
         """
