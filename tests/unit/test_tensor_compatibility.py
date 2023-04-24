@@ -5,6 +5,7 @@ from typing import Union
 
 import torch
 from pytest import mark
+from torch import Tensor
 
 from redcat import BaseBatchedTensor, BatchedTensor, BatchedTensorSeq
 
@@ -120,7 +121,7 @@ def test_torch_acosh() -> None:
         1.0,
     ),
 )
-def test_torch_add(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_add(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.add(BatchedTensor(torch.zeros(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -134,7 +135,7 @@ def test_torch_add(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) ->
         1.0,
     ),
 )
-def test_torch_add_alpha(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_add_alpha(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.add(BatchedTensor(torch.ones(2, 3)), other, alpha=2.0).equal(
         BatchedTensor(torch.full((2, 3), 3.0))
     )
@@ -202,6 +203,30 @@ def test_torch_atanh() -> None:
     )
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.tensor([[4, 5], [14, 15]])),
+        BatchedTensor(torch.tensor([[4, 5], [14, 15]])),
+        torch.tensor([[4, 5], [14, 15]]),
+    ),
+)
+def test_torch_cat(other: Union[BaseBatchedTensor, Tensor]) -> None:
+    assert torch.cat(
+        tensors=[
+            BatchedTensor(torch.tensor([[0, 1, 2], [10, 11, 12]])),
+            other,
+        ],
+        dim=1,
+    ).equal(
+        BatchedTensor(
+            torch.tensor(
+                [[0, 1, 2, 4, 5], [10, 11, 12, 14, 15]],
+            )
+        ),
+    )
+
+
 def test_torch_clamp() -> None:
     assert torch.clamp(BatchedTensor(torch.arange(10).view(2, 5)), min=2, max=5).equal(
         BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]))
@@ -256,7 +281,7 @@ def test_torch_cumsum_dim_1() -> None:
         2.0,
     ),
 )
-def test_torch_div(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_div(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.div(BatchedTensor(torch.ones(2, 3)), other).equal(
         BatchedTensor(torch.full((2, 3), 0.5))
     )
@@ -279,7 +304,7 @@ def test_torch_div_tensor() -> None:
         5.0,
     ),
 )
-def test_torch_eq(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_eq(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.eq(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
         BatchedTensor(
             torch.tensor(
@@ -327,7 +352,7 @@ def test_torch_exp() -> None:
         2.0,
     ),
 )
-def test_torch_fmod(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_fmod(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.fmod(BatchedTensor(torch.ones(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -348,7 +373,7 @@ def test_torch_fmod_tensor() -> None:
         5.0,
     ),
 )
-def test_torch_ge(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_ge(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.ge(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
         BatchedTensor(
             torch.tensor(
@@ -381,7 +406,7 @@ def test_torch_ge_tensor() -> None:
         5.0,
     ),
 )
-def test_torch_gt(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_gt(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.gt(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
         BatchedTensor(
             torch.tensor(
@@ -413,7 +438,7 @@ def test_torch_gt_tensor() -> None:
         1.0,
     ),
 )
-def test_torch_mul(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_mul(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.mul(BatchedTensor(torch.ones(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -439,7 +464,7 @@ def test_torch_neg() -> None:
         1.0,
     ),
 )
-def test_torch_sub(other: Union[BaseBatchedTensor, torch.Tensor, int, float]) -> None:
+def test_torch_sub(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
     assert torch.sub(BatchedTensor(torch.full((2, 3), 2.0)), other).equal(
         BatchedTensor(torch.ones(2, 3))
     )

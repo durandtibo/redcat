@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ["BatchedTensor", "check_data_and_dim"]
 
+import functools
 from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
 from typing import Any
@@ -12,6 +13,8 @@ from torch import Tensor
 from redcat.base import BaseBatch
 from redcat.basetensor import BaseBatchedTensor
 from redcat.utils import check_batch_dims, get_batch_dims, permute_along_dim
+
+HANDLED_FUNCTIONS = {}
 
 
 class BatchedTensor(BaseBatchedTensor):
@@ -45,6 +48,9 @@ class BatchedTensor(BaseBatchedTensor):
     ) -> BatchedTensor:
         # print(func, types, args, kwargs)
         kwargs = kwargs or {}
+        if handled_func := HANDLED_FUNCTIONS.get(func, None):
+            return handled_func(*args, **kwargs)
+
         batch_dims = get_batch_dims(args, kwargs)
         check_batch_dims(batch_dims)
         args = [a._data if hasattr(a, "_data") else a for a in args]
@@ -316,6 +322,22 @@ class BatchedTensor(BaseBatchedTensor):
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
 
+    def cat(
+        self,
+        tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
+        dim: int = 0,
+    ) -> BatchedTensor:
+        if isinstance(tensors, (BaseBatchedTensor, Tensor)):
+            tensors = [tensors]
+        return torch.cat(list(chain([self], tensors)), dim=dim)
+
+    def cat_(
+        self,
+        tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
+        dim: int = 0,
+    ) -> None:
+        self._data = self.cat(tensors, dim=dim).data
+
     def cat_along_batch(
         self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> BatchedTensor:
@@ -425,3 +447,30 @@ def check_data_and_dim(data: Tensor, batch_dim: int) -> None:
         raise RuntimeError(
             f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {data.dim() - 1}]"
         )
+
+
+def implements(torch_function: Callable) -> Callable:
+    """Register a torch function override for BatchedTensor."""
+
+    def decorator(func: Callable) -> Callable:
+        functools.update_wrapper(func, torch_function)
+        HANDLED_FUNCTIONS[torch_function] = func
+        return func
+
+    return decorator
+
+
+@implements(torch.cat)
+def cat(
+    tensors: tuple[BaseBatchedTensor | Tensor, ...] | list[BaseBatchedTensor | Tensor],
+    dim: int = 0,
+) -> BatchedTensor:
+    r"""See ``torch.cat`` documentation."""
+    batch_dims = get_batch_dims(tensors)
+    check_batch_dims(batch_dims)
+    return BatchedTensor(
+        torch.cat(
+            [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors], dim=dim
+        ),
+        batch_dim=batch_dims.pop(),
+    )
