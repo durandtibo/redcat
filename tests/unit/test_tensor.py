@@ -1728,7 +1728,7 @@ def test_batched_tensor_abs__custom_batch_dim() -> None:
 def test_batched_tensor_clamp() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
-        .clamp(min_value=2, max_value=5)
+        .clamp(min=2, max=5)
         .equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]])))
     )
 
@@ -1736,7 +1736,7 @@ def test_batched_tensor_clamp() -> None:
 def test_batched_tensor_clamp_only_max_value() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
-        .clamp(max_value=5)
+        .clamp(max=5)
         .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 5, 5, 5, 5]])))
     )
 
@@ -1744,7 +1744,7 @@ def test_batched_tensor_clamp_only_max_value() -> None:
 def test_batched_tensor_clamp_only_min_value() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
-        .clamp(min_value=2)
+        .clamp(min=2)
         .equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 6, 7, 8, 9]])))
     )
 
@@ -1752,7 +1752,7 @@ def test_batched_tensor_clamp_only_min_value() -> None:
 def test_batched_tensor_clamp_custom_dims() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
-        .clamp(min_value=2, max_value=5)
+        .clamp(min=2, max=5)
         .equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]), batch_dim=1))
     )
 
