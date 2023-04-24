@@ -1147,8 +1147,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     def clamp(
         self,
-        min_value: int | float | None = None,
-        max_value: int | float | None = None,
+        min: int | float | None = None,  # noqa: A002
+        max: int | float | None = None,  # noqa: A002
     ) -> TBatchedTensor:
         r"""Clamps all elements in ``self`` into the range ``[min_value,
         max_value]``.
@@ -1156,10 +1156,10 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         Note: ``min_value`` and ``max_value`` cannot be both ``None``.
 
         Args:
-            min_value (int, float or ``None``, optional): Specifies
+            min (int, float or ``None``, optional): Specifies
                 the lower bound. If ``min_value`` is ``None``,
                 there is no lower bound. Default: ``None``
-            max_value (int, float or ``None``, optional): Specifies
+            max (int, float or ``None``, optional): Specifies
                 the upper bound. If ``max_value`` is ``None``,
                 there is no upper bound. Default: ``None``
 
@@ -1173,17 +1173,17 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
-            >>> batch.clamp(min_value=2, max_value=5)
+            >>> batch.clamp(min=2, max=5)
             tensor([[2, 2, 2, 3, 4],
                     [5, 5, 5, 5, 5]], batch_dim=0)
-            >>> batch.clamp(min_value=2)
+            >>> batch.clamp(min=2)
             tensor([[2, 2, 2, 3, 4],
                     [5, 6, 7, 8, 9]])
-            >>> batch.clamp(max_value=7)
+            >>> batch.clamp(max=7)
             tensor([[0, 1, 2, 3, 4],
                     [5, 6, 7, 7, 7]], batch_dim=0)
         """
-        return torch.clamp(self, min=min_value, max=max_value)
+        return torch.clamp(self, min=min, max=max)
 
     def clamp_(
         self,

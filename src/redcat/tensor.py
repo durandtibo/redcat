@@ -43,6 +43,7 @@ class BatchedTensor(BaseBatchedTensor):
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
     ) -> BatchedTensor:
+        # print(func, types, args, kwargs)
         kwargs = kwargs or {}
         batch_dims = get_batch_dims(args, kwargs)
         check_batch_dims(batch_dims)
