@@ -1151,10 +1151,9 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         min: int | float | None = None,  # noqa: A002
         max: int | float | None = None,  # noqa: A002
     ) -> TBatchedTensor:
-        r"""Clamps all elements in ``self`` into the range ``[min_value,
-        max_value]``.
+        r"""Clamps all elements in ``self`` into the range ``[min, max]``.
 
-        Note: ``min_value`` and ``max_value`` cannot be both ``None``.
+        Note: ``min`` and ``max`` cannot be both ``None``.
 
         Args:
             min (int, float or ``None``, optional): Specifies
@@ -2437,13 +2436,13 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     @abstractmethod
     def cat_along_batch(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> TBatchedTensor:
         r"""Concatenates the data of the batch(es) to the current batch along
         the batch dimension and creates a new batch.
 
         Args:
-            other (``BaseBatchedTensor`` or ``torch.Tensor`` or
+            tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
@@ -2480,13 +2479,13 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     @abstractmethod
     def cat_along_batch_(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> None:
         r"""Concatenates the data of the batch(es) to the current batch along
         the batch dimension and creates a new batch.
 
         Args:
-            other (``BaseBatchedTensor`` or ``torch.Tensor`` or
+            tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Example usage:
