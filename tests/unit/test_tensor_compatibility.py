@@ -65,7 +65,7 @@ PAIRWISE_FUNCTIONS = (
 
 @mark.parametrize("func", UNARY_FUNCTIONS)
 def test_same_behaviour_unary(func: Callable) -> None:
-    tensor = torch.rand(2, 3)
+    tensor = torch.rand(2, 3).mul(2.0)
     assert func(BatchedTensor(tensor)).data.allclose(func(tensor), equal_nan=True)
 
 
