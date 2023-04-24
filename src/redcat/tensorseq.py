@@ -2,8 +2,8 @@ from __future__ import annotations
 
 __all__ = ["BatchedTensorSeq", "check_data_and_dims"]
 
+import functools
 from collections.abc import Callable, Iterable, Sequence
-from itertools import chain
 from typing import Any
 
 import torch
@@ -22,6 +22,8 @@ from redcat.utils import (
     get_seq_dims,
     permute_along_dim,
 )
+
+HANDLED_FUNCTIONS = {}
 
 
 class BatchedTensorSeq(BaseBatchedTensor):
@@ -57,6 +59,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
         kwargs: dict[str, Any] | None = None,
     ) -> BatchedTensorSeq:
         kwargs = kwargs or {}
+        if handled_func := HANDLED_FUNCTIONS.get(func, None):
+            return handled_func(*args, **kwargs)
+
         batch_dims = get_batch_dims(args, kwargs)
         check_batch_dims(batch_dims)
         seq_dims = get_seq_dims(args, kwargs)
@@ -827,42 +832,23 @@ class BatchedTensorSeq(BaseBatchedTensor):
         )
 
     def cat_along_batch(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
-    ) -> BatchedTensorSeq:
-        if isinstance(other, (BaseBatchedTensor, Tensor)):
-            other = [other]
-        batches = list(chain([self], other))
-        check_batch_dims(get_batch_dims(batches))
-        check_seq_dims(get_seq_dims(batches))
-        return self.__class__(
-            torch.cat(
-                [batch.data if hasattr(batch, "data") else batch for batch in batches],
-                dim=self._batch_dim,
-            ),
-            **self._get_kwargs(),
-        )
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+    ) -> BatchedTensor:
+        return self.cat(tensors, dim=self._batch_dim)
 
     def cat_along_batch_(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> None:
-        if isinstance(other, (BaseBatchedTensor, Tensor)):
-            other = [other]
-        batches = list(chain([self], other))
-        check_batch_dims(get_batch_dims(batches))
-        check_seq_dims(get_seq_dims(batches))
-        self._data = torch.cat(
-            [batch.data if hasattr(batch, "data") else batch for batch in batches],
-            dim=self._batch_dim,
-        )
+        self.cat_(tensors, dim=self._batch_dim)
 
     def cat_along_seq(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> BatchedTensorSeq:
         r"""Concatenates the data of the batch(es) to the current batch along
         the sequence dimension and creates a new batch.
 
         Args:
-            other (``BaseBatchedTensor`` or ``torch.Tensor`` or
+            tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
@@ -896,21 +882,10 @@ class BatchedTensorSeq(BaseBatchedTensor):
                     [20, 22],
                     [21, 23]], batch_dim=0, seq_dim=1)
         """
-        if isinstance(other, (BaseBatchedTensor, Tensor)):
-            other = [other]
-        batches = list(chain([self], other))
-        check_batch_dims(get_batch_dims(batches))
-        check_seq_dims(get_seq_dims(batches))
-        return self.__class__(
-            torch.cat(
-                [batch.data if hasattr(batch, "data") else batch for batch in batches],
-                dim=self._seq_dim,
-            ),
-            **self._get_kwargs(),
-        )
+        return self.cat(tensors, dim=self._seq_dim)
 
     def cat_along_seq_(
-        self, other: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> None:
         r"""Concatenates the data of the batch(es) to the current batch along
         the sequence dimension.
@@ -918,7 +893,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         In-place version of ``cat_along_seq()``.
 
         Args:
-            other (``BaseBatchedTensor`` or ``torch.Tensor`` or
+            tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Example usage:
@@ -952,15 +927,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
                     [20, 22],
                     [21, 23]], batch_dim=0, seq_dim=1)
         """
-        if isinstance(other, (BaseBatchedTensor, Tensor)):
-            other = [other]
-        batches = list(chain([self], other))
-        check_batch_dims(get_batch_dims(batches))
-        check_seq_dims(get_seq_dims(batches))
-        self._data = torch.cat(
-            [batch.data if hasattr(batch, "data") else batch for batch in batches],
-            dim=self._seq_dim,
-        )
+        self.cat_(tensors, dim=self._seq_dim)
 
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
         if not torch.is_tensor(index):
@@ -1213,3 +1180,33 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
         )
     if batch_dim == seq_dim:
         raise RuntimeError(f"batch_dim ({batch_dim}) and seq_dim ({seq_dim}) have to be different")
+
+
+def implements(torch_function: Callable) -> Callable:
+    """Register a torch function override for BatchedTensor."""
+
+    def decorator(func: Callable) -> Callable:
+        functools.update_wrapper(func, torch_function)
+        HANDLED_FUNCTIONS[torch_function] = func
+        return func
+
+    return decorator
+
+
+@implements(torch.cat)
+def cat(
+    tensors: tuple[BaseBatchedTensor | Tensor, ...] | list[BaseBatchedTensor | Tensor],
+    dim: int = 0,
+) -> BatchedTensorSeq:
+    r"""See ``torch.cat`` documentation."""
+    batch_dims = get_batch_dims(tensors)
+    check_batch_dims(batch_dims)
+    seq_dims = get_seq_dims(tensors)
+    check_seq_dims(seq_dims)
+    return BatchedTensorSeq(
+        torch.cat(
+            [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors], dim=dim
+        ),
+        batch_dim=batch_dims.pop(),
+        seq_dim=seq_dims.pop(),
+    )
