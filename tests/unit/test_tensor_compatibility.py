@@ -78,6 +78,38 @@ def test_same_behaviour_pairwise(func: Callable) -> None:
     )
 
 
+def test_same_behaviour_take_along_dim() -> None:
+    tensor = torch.rand(4, 6)
+    indices = torch.randint(0, 3, size=(4, 6))
+    assert torch.take_along_dim(BatchedTensor(tensor), indices=indices).data.equal(
+        torch.take_along_dim(tensor, indices=indices)
+    )
+
+
+def test_same_behaviour_take_along_dim_batch() -> None:
+    tensor = torch.rand(4, 6)
+    indices = torch.randint(0, 3, size=(4, 6))
+    assert torch.take_along_dim(BatchedTensor(tensor), indices=BatchedTensor(indices)).data.equal(
+        torch.take_along_dim(tensor, indices=indices)
+    )
+
+
+def test_same_behaviour_take_along_dim_tensor() -> None:
+    tensor = torch.rand(4, 6)
+    indices = torch.randint(0, 3, size=(4, 6))
+    assert torch.take_along_dim(tensor, indices=BatchedTensor(indices)).data.equal(
+        torch.take_along_dim(tensor, indices=indices)
+    )
+
+
+def test_same_behaviour_take_along_dim_0() -> None:
+    tensor = torch.rand(4, 6)
+    indices = torch.randint(0, 3, size=(4, 6))
+    assert torch.take_along_dim(
+        BatchedTensor(tensor), indices=BatchedTensor(indices), dim=0
+    ).data.equal(torch.take_along_dim(tensor, indices=indices, dim=0))
+
+
 def test_torch_abs() -> None:
     assert torch.abs(BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [0.0, -1.0, -2.0]]))).equal(
         BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]]))
