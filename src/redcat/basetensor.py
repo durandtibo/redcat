@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["BaseBatchedTensor"]
 
 from abc import abstractmethod
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from itertools import chain
 from typing import Any, TypeVar, overload
 
@@ -2561,6 +2561,36 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [42,  5],
                     [42, 42],
                     [ 8,  9]], batch_dim=0)
+        """
+
+    @abstractmethod
+    def take_along_dim(
+        self,
+        indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence,
+        dim: int | None = None,
+    ) -> TBatchedTensor:
+        r"""Takes values along the batch dimension.
+
+        Args:
+            indices (``BaseBatch`` or ``Tensor`` or sequence):
+                Specifies the indices to take along the batch
+                dimension.
+
+        Returns:
+            ``BaseBatch``: The batch with the selected data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).take_along_dim(
+            ...     BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])), dim=0
+            ... )
+            tensor([[6, 5],
+                    [0, 7],
+                    [2, 9]], batch_dim=0)
         """
 
     @abstractmethod

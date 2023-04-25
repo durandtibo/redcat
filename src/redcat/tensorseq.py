@@ -4,7 +4,7 @@ __all__ = ["BatchedTensorSeq", "check_data_and_dims"]
 
 import functools
 from collections.abc import Callable, Iterable, Sequence
-from typing import Any
+from typing import Any, overload
 
 import torch
 from torch import Tensor
@@ -1089,16 +1089,17 @@ class BatchedTensorSeq(BaseBatchedTensor):
         for chunk in data.split(split_size, dim=self._batch_dim):
             yield self.__class__(chunk, **self._get_kwargs())
 
-    def take_along_batch(self, indices: BaseBatch | Tensor | Sequence) -> BatchedTensorSeq:
-        check_batch_dims(get_batch_dims((self, indices)))
-        check_seq_dims(get_seq_dims((self, indices)))
-        if isinstance(indices, BaseBatch):
-            indices = indices.data
-        if not torch.is_tensor(indices):
+    def take_along_batch(
+        self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence
+    ) -> BatchedTensorSeq:
+        return self.take_along_dim(indices, dim=self._batch_dim)
+
+    def take_along_dim(
+        self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence, dim: int | None = None
+    ) -> BatchedTensorSeq:
+        if isinstance(indices, Sequence):
             indices = torch.as_tensor(indices)
-        return self.__class__(
-            self._data.take_along_dim(dim=self._batch_dim, indices=indices), **self._get_kwargs()
-        )
+        return torch.take_along_dim(self, indices, dim=dim)
 
     def take_along_seq(self, indices: BaseBatch | Tensor | Sequence) -> BatchedTensorSeq:
         r"""Takes values along the sequence dimension.
@@ -1123,15 +1124,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[3, 0, 1],
                     [7, 8, 9]], batch_dim=0, seq_dim=1)
         """
-        check_batch_dims(get_batch_dims((self, indices)))
-        check_seq_dims(get_seq_dims((self, indices)))
-        if isinstance(indices, BaseBatch):
-            indices = indices.data
-        if not torch.is_tensor(indices):
-            indices = torch.as_tensor(indices)
-        return self.__class__(
-            self._data.take_along_dim(dim=self._seq_dim, indices=indices), **self._get_kwargs()
-        )
+        return self.take_along_dim(indices, dim=self._seq_dim)
 
     def unsqueeze(self, dim: int) -> BatchedTensorSeq:
         return self.__class__(
@@ -1207,6 +1200,45 @@ def cat(
         torch.cat(
             [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors], dim=dim
         ),
+        batch_dim=batch_dims.pop(),
+        seq_dim=seq_dims.pop(),
+    )
+
+
+@overload
+def take_along_dim(
+    input: BaseBatchedTensor | Tensor,  # noqa: A002
+    indices: BaseBatchedTensor | Tensor,
+) -> Tensor:
+    r"""See ``torch.take_along_dim`` documentation."""
+
+
+@overload
+def take_along_dim(
+    input: BaseBatchedTensor | Tensor, indices: BaseBatchedTensor | Tensor, dim: int  # noqa: A002
+) -> BatchedTensorSeq:
+    r"""See ``torch.take_along_dim`` documentation."""
+
+
+@implements(torch.take_along_dim)
+def take_along_dim(
+    input: BaseBatchedTensor | Tensor,  # noqa: A002
+    indices: BaseBatchedTensor | Tensor,
+    dim: int | None = None,
+) -> BatchedTensorSeq | Tensor:
+    r"""See ``torch.take_along_dim`` documentation."""
+    batch_dims = get_batch_dims((input, indices))
+    check_batch_dims(batch_dims)
+    seq_dims = get_seq_dims((input, indices))
+    check_seq_dims(seq_dims)
+    if isinstance(input, BaseBatchedTensor):
+        input = input.data  # noqa: A001
+    if isinstance(indices, BaseBatchedTensor):
+        indices = indices.data
+    if dim is None:
+        return torch.take_along_dim(input, indices)
+    return BatchedTensorSeq(
+        torch.take_along_dim(input, indices, dim=dim),
         batch_dim=batch_dims.pop(),
         seq_dim=seq_dims.pop(),
     )
