@@ -1089,11 +1089,13 @@ class BatchedTensorSeq(BaseBatchedTensor):
         for chunk in data.split(split_size, dim=self._batch_dim):
             yield self.__class__(chunk, **self._get_kwargs())
 
-    def take_along_batch(self, indices: BaseBatch | Tensor | Sequence) -> BatchedTensorSeq:
+    def take_along_batch(
+        self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence
+    ) -> BatchedTensorSeq:
         return self.take_along_dim(indices, dim=self._batch_dim)
 
     def take_along_dim(
-        self, indices: BaseBatch | Tensor | Sequence, dim: int | None = None
+        self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence, dim: int | None = None
     ) -> BatchedTensorSeq:
         if isinstance(indices, Sequence):
             indices = torch.as_tensor(indices)
