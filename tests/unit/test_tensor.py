@@ -4110,6 +4110,52 @@ def test_batched_tensor_slice_along_batch_batch_dim_2() -> None:
     )
 
 
+def test_batched_tensor_split_split_size_1() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.arange(10).view(5, 2)).split(1),
+        (
+            BatchedTensor(torch.tensor([[0, 1]])),
+            BatchedTensor(torch.tensor([[2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5]])),
+            BatchedTensor(torch.tensor([[6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ),
+    )
+
+
+def test_batched_tensor_split_split_size_2() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.arange(10).view(5, 2)).split(2),
+        (
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ),
+    )
+
+
+def test_batched_tensor_split_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).split(2, dim=1),
+        (
+            BatchedTensor(torch.tensor([[0, 1], [5, 6]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[2, 3], [7, 8]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[4], [9]]), batch_dim=1),
+        ),
+    )
+
+
+def test_batched_tensor_split_split_list() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.arange(10).view(5, 2)).split([2, 2, 1]),
+        (
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ),
+    )
+
+
 def test_batched_tensor_split_along_batch_split_size_1() -> None:
     assert objects_are_equal(
         BatchedTensor(torch.arange(10).view(5, 2)).split_along_batch(1),

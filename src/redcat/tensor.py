@@ -363,7 +363,7 @@ class BatchedTensor(BaseBatchedTensor):
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
     ) -> tuple[BatchedTensor, ...]:
-        return torch.split(self, split_size_or_sections=split_size_or_sections, dim=self._batch_dim)
+        return self.split(split_size_or_sections, dim=self._batch_dim)
 
     def take_along_batch(
         self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence

@@ -2563,6 +2563,34 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [ 8,  9]], batch_dim=0)
         """
 
+    def split(
+        self, split_size_or_sections: int | Sequence[int], dim: int = 0
+    ) -> tuple[TBatchedTensor, ...]:
+        r"""Splits the batch into chunks along a given dimension.
+
+        Args:
+            split_size_or_sections (int or sequence): Specifies the
+                size of a single chunk or list of sizes for each chunk.
+            dim (int, optional): Specifies the dimension along which
+                to split the tensor. Default: ``0``
+
+        Returns:
+            tuple: The batch split into chunks along the given
+                dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).split(2, dim=0)
+            (tensor([[0, 1], [2, 3]], batch_dim=0),
+             tensor([[4, 5], [6, 7]], batch_dim=0),
+             tensor([[8, 9]], batch_dim=0))
+        """
+        return torch.split(self, split_size_or_sections, dim=dim)
+
     @abstractmethod
     def take_along_dim(
         self,
