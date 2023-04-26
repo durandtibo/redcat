@@ -2564,11 +2564,17 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         """
 
     def slice(
-        self, start: int = 0, stop: int | None = None, step: int = 1, dim: int = 0
+        self,
+        dim: int = 0,
+        start: int = 0,
+        stop: int | None = None,
+        step: int = 1,
     ) -> TBatchedTensor:
         r"""Slices the batch in a given dimension.
 
         Args:
+            dim (int, optional): Specifies the dimension along which
+                to slice the tensor. Default: ``0``
             start (int, optional): Specifies the index where the
                 slicing of object starts. Default: ``0``
             stop (int, optional): Specifies the index where the
@@ -2576,8 +2582,6 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                 Default: ``None``
             step (int, optional): Specifies the increment between
                 each index for slicing. Default: ``1``
-            dim (int, optional): Specifies the dimension along which
-                to slice the tensor. Default: ``0``
 
         Returns:
             ``BaseBatchedTensor``: A slice of the current batch.
