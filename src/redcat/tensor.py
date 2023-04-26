@@ -350,15 +350,7 @@ class BatchedTensor(BaseBatchedTensor):
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
     ) -> BatchedTensor:
-        if self._batch_dim == 0:
-            data = self._data[start:stop:step]
-        elif self._batch_dim == 1:
-            data = self._data[:, start:stop:step]
-        else:
-            data = self._data.transpose(0, self._batch_dim)[start:stop:step].transpose(
-                0, self._batch_dim
-            )
-        return self.__class__(data, **self._get_kwargs())
+        return self.slice(start, stop, step, dim=self._batch_dim)
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
