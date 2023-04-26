@@ -2659,6 +2659,14 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
             data = self._data.transpose(0, dim)[start:stop:step].transpose(0, dim)
         return self.__class__(data, **self._get_kwargs())
 
+    def sort(
+        self,
+        dim: int = -1,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> tuple[TBatchedTensor, TBatchedTensor]:
+        return torch.sort(self, dim=dim, descending=descending, stable=stable)
+
     def split(
         self, split_size_or_sections: int | Sequence[int], dim: int = 0
     ) -> tuple[TBatchedTensor, ...]:
