@@ -4577,6 +4577,68 @@ def test_torch_cat_incorrect_batch_dim() -> None:
         )
 
 
+#################################
+#     Tests for torch.split     #
+#################################
+
+
+def test_torch_split_size_1() -> None:
+    assert objects_are_equal(
+        torch.split(BatchedTensor(torch.arange(10).view(5, 2)), 1),
+        (
+            BatchedTensor(torch.tensor([[0, 1]])),
+            BatchedTensor(torch.tensor([[2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5]])),
+            BatchedTensor(torch.tensor([[6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ),
+    )
+
+
+def test_torch_split_size_2() -> None:
+    assert objects_are_equal(
+        torch.split(BatchedTensor(torch.arange(10).view(5, 2)), 2),
+        (
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ),
+    )
+
+
+def test_torch_split_size_list() -> None:
+    assert objects_are_equal(
+        torch.split(BatchedTensor(torch.arange(10).view(5, 2)), [2, 2, 1]),
+        (
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]])),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]])),
+            BatchedTensor(torch.tensor([[8, 9]])),
+        ),
+    )
+
+
+def test_torch_split_custom_dims() -> None:
+    assert objects_are_equal(
+        torch.split(BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1), 2),
+        (
+            BatchedTensor(torch.tensor([[0, 1], [2, 3]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[4, 5], [6, 7]]), batch_dim=1),
+            BatchedTensor(torch.tensor([[8, 9]]), batch_dim=1),
+        ),
+    )
+
+
+def test_torch_split_dim_1() -> None:
+    assert objects_are_equal(
+        torch.split(BatchedTensor(torch.arange(10).view(2, 5)), 2, dim=1),
+        (
+            BatchedTensor(torch.tensor([[0, 1], [5, 6]])),
+            BatchedTensor(torch.tensor([[2, 3], [7, 8]])),
+            BatchedTensor(torch.tensor([[4], [9]])),
+        ),
+    )
+
+
 ##########################################
 #     Tests for torch.take_along_dim     #
 ##########################################
@@ -4603,7 +4665,7 @@ def test_torch_take_along_dim(indices: BaseBatchedTensor | Tensor) -> None:
     (
         torch.tensor([[2, 4], [1, 3]]),
         BatchedTensor(torch.tensor([[2, 4], [1, 3]]), batch_dim=1),
-        BatchedTensorSeq(torch.tensor([[2, 4], [1, 3]]), batch_dim=1, seq_dim=0),
+        BatchedTensorSeq.from_seq_batch(torch.tensor([[2, 4], [1, 3]])),
     ),
 )
 def test_torch_take_along_dim_custom_dims(indices: BaseBatchedTensor | Tensor) -> None:
@@ -4632,7 +4694,7 @@ def test_torch_take_along_dim_0(indices: BaseBatchedTensor | Tensor) -> None:
     (
         torch.tensor([[2, 4], [1, 3]]),
         BatchedTensor(torch.tensor([[2, 4], [1, 3]]), batch_dim=1),
-        BatchedTensorSeq(torch.tensor([[2, 4], [1, 3]]), batch_dim=1, seq_dim=0),
+        BatchedTensorSeq.from_seq_batch(torch.tensor([[2, 4], [1, 3]])),
     ),
 )
 def test_torch_take_along_dim_0_custom_dims(indices: BaseBatchedTensor | Tensor) -> None:

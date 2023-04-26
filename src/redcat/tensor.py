@@ -444,6 +444,17 @@ def cat(
     )
 
 
+@implements(torch.split)
+def split(
+    tensor: BatchedTensor, split_size_or_sections: int | Sequence[int], dim: int = 0
+) -> tuple[BatchedTensor, ...]:
+    r"""See ``torch.split`` documentation."""
+    return tuple(
+        BatchedTensor(chunk, batch_dim=tensor.batch_dim)
+        for chunk in tensor.data.split(split_size_or_sections, dim=dim)
+    )
+
+
 @overload
 def take_along_dim(
     input: BaseBatchedTensor | Tensor,  # noqa: A002
