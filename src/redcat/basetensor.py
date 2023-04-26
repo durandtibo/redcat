@@ -2563,6 +2563,52 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [ 8,  9]], batch_dim=0)
         """
 
+    def slice(
+        self, start: int = 0, stop: int | None = None, step: int = 1, dim: int = 0
+    ) -> TBatchedTensor:
+        r"""Slices the batch in a given dimension.
+
+        Args:
+            start (int, optional): Specifies the index where the
+                slicing of object starts. Default: ``0``
+            stop (int, optional): Specifies the index where the
+                slicing of object stops. ``None`` means last.
+                Default: ``None``
+            step (int, optional): Specifies the increment between
+                each index for slicing. Default: ``1``
+            dim (int, optional): Specifies the dimension along which
+                to slice the tensor. Default: ``0``
+
+        Returns:
+            ``BaseBatchedTensor``: A slice of the current batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(start=2)
+            tensor([[4, 5],
+                    [6, 7],
+                    [8, 9]], batch_dim=0)
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(stop=3)
+            tensor([[0, 1],
+                    [2, 3],
+                    [4, 5]], batch_dim=0)
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(step=2)
+            tensor([[0, 1],
+                    [4, 5],
+                    [8, 9]], batch_dim=0)
+        """
+        if dim == 0:
+            data = self._data[start:stop:step]
+        elif dim == 1:
+            data = self._data[:, start:stop:step]
+        else:
+            data = self._data.transpose(0, dim)[start:stop:step].transpose(0, dim)
+        return self.__class__(data, **self._get_kwargs())
+
     def split(
         self, split_size_or_sections: int | Sequence[int], dim: int = 0
     ) -> tuple[TBatchedTensor, ...]:
