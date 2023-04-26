@@ -2591,7 +2591,6 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         """
         return torch.split(self, split_size_or_sections, dim=dim)
 
-    @abstractmethod
     def take_along_dim(
         self,
         indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence,
@@ -2620,6 +2619,9 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [0, 7],
                     [2, 9]], batch_dim=0)
         """
+        if isinstance(indices, Sequence):
+            indices = torch.as_tensor(indices)
+        return torch.take_along_dim(self, indices, dim=dim)
 
     @abstractmethod
     def unsqueeze(self, dim: int) -> TBatchedTensor:

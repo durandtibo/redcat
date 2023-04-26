@@ -1090,13 +1090,6 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ) -> BatchedTensorSeq:
         return self.take_along_dim(indices, dim=self._batch_dim)
 
-    def take_along_dim(
-        self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence, dim: int | None = None
-    ) -> BatchedTensorSeq:
-        if isinstance(indices, Sequence):
-            indices = torch.as_tensor(indices)
-        return torch.take_along_dim(self, indices, dim=dim)
-
     def take_along_seq(self, indices: BaseBatch | Tensor | Sequence) -> BatchedTensorSeq:
         r"""Takes values along the sequence dimension.
 
