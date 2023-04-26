@@ -2520,6 +2520,31 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [21, 23]], batch_dim=0)
         """
 
+    def chunk(self, chunks: int, dim: int = 0) -> tuple[TBatchedTensor, ...]:
+        r"""Splits the batch into chunks along a given dimension.
+
+        Args:
+            chunks (int): Specifies the number of chunks.
+            dim (int, optional): Specifies the dimension along which
+                to split the tensor. Default: ``0``
+
+        Returns:
+            tuple: The batch split into chunks along the given
+                dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).chunk(chunks=3)
+            (tensor([[0, 1], [2, 3]], batch_dim=0),
+             tensor([[4, 5], [6, 7]], batch_dim=0),
+             tensor([[8, 9]], batch_dim=0))
+        """
+        return torch.chunk(self, chunks, dim=dim)
+
     def extend(self, other: Iterable[BaseBatch]) -> None:
         self.cat_along_batch_(other)
 
