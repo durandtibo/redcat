@@ -1178,6 +1178,15 @@ def cat(
     )
 
 
+@implements(torch.chunk)
+def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedTensorSeq, ...]:
+    r"""See ``torch.chunk`` documentation."""
+    return tuple(
+        BatchedTensorSeq(chunk, batch_dim=tensor.batch_dim, seq_dim=tensor.seq_dim)
+        for chunk in tensor.data.chunk(chunks, dim=dim)
+    )
+
+
 @implements(torch.select)
 def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
     r"""See ``torch.select`` documentation."""
