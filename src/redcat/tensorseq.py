@@ -1026,7 +1026,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
     ) -> BatchedTensorSeq:
-        return self.slice(self._batch_dim, start, stop, step)
+        return self.slice_along_dim(self._batch_dim, start, stop, step)
 
     def slice_along_seq(
         self, start: int = 0, stop: int | None = None, step: int = 1
@@ -1062,7 +1062,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[0, 2, 4],
                     [9, 7, 5]], batch_dim=0, seq_dim=1)
         """
-        return self.slice(self._seq_dim, start, stop, step)
+        return self.slice_along_dim(self._seq_dim, start, stop, step)
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]

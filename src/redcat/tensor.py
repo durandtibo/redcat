@@ -350,7 +350,7 @@ class BatchedTensor(BaseBatchedTensor):
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
     ) -> BatchedTensor:
-        return self.slice(self._batch_dim, start, stop, step)
+        return self.slice_along_dim(self._batch_dim, start, stop, step)
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
