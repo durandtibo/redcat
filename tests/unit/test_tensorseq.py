@@ -5299,80 +5299,6 @@ def test_batched_tensor_seq_select_along_seq_extra_dims() -> None:
     )
 
 
-def test_batched_tensor_seq_slice() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(5, 2))
-        .slice()
-        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
-    )
-
-
-def test_batched_tensor_seq_slice_start_2() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(5, 2))
-        .slice(start=2)
-        .equal(BatchedTensorSeq(torch.tensor([[4, 5], [6, 7], [8, 9]])))
-    )
-
-
-def test_batched_tensor_seq_slice_stop_3() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(5, 2))
-        .slice(stop=3)
-        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [2, 3], [4, 5]])))
-    )
-
-
-def test_batched_tensor_seq_slice_stop_100() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(5, 2))
-        .slice(stop=100)
-        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
-    )
-
-
-def test_batched_tensor_seq_slice_step_2() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(5, 2))
-        .slice(step=2)
-        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [4, 5], [8, 9]])))
-    )
-
-
-def test_batched_tensor_seq_slice_start_1_stop_4_step_2() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(5, 2))
-        .slice(start=1, stop=4, step=2)
-        .equal(BatchedTensorSeq(torch.tensor([[2, 3], [6, 7]])))
-    )
-
-
-def test_batched_tensor_seq_slice_batch_dim_1() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(20).view(2, 5, 2), batch_dim=1, seq_dim=0)
-        .slice(start=2, dim=1)
-        .equal(
-            BatchedTensorSeq(
-                torch.tensor([[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]]),
-                batch_dim=1,
-                seq_dim=0,
-            )
-        )
-    )
-
-
-def test_batched_tensor_seq_slice_batch_dim_2() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(20).view(2, 2, 5), batch_dim=2)
-        .slice(start=2, dim=2)
-        .equal(
-            BatchedTensorSeq(
-                torch.tensor([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]]), batch_dim=2
-            )
-        )
-    )
-
-
 def test_batched_tensor_seq_slice_along_batch() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(5, 2))
@@ -5447,6 +5373,80 @@ def test_batched_tensor_seq_slice_along_batch_batch_dim_2() -> None:
     assert (
         BatchedTensorSeq(torch.arange(20).view(2, 2, 5), batch_dim=2)
         .slice_along_batch(start=2)
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]]), batch_dim=2
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .slice_along_dim()
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim_start_2() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .slice_along_dim(start=2)
+        .equal(BatchedTensorSeq(torch.tensor([[4, 5], [6, 7], [8, 9]])))
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim_stop_3() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .slice_along_dim(stop=3)
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [2, 3], [4, 5]])))
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim_stop_100() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .slice_along_dim(stop=100)
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])))
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim_step_2() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .slice_along_dim(step=2)
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1], [4, 5], [8, 9]])))
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim_start_1_stop_4_step_2() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2))
+        .slice_along_dim(start=1, stop=4, step=2)
+        .equal(BatchedTensorSeq(torch.tensor([[2, 3], [6, 7]])))
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim_batch_dim_1() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(20).view(2, 5, 2), batch_dim=1, seq_dim=0)
+        .slice_along_dim(start=2, dim=1)
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]]),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_slice_along_dim_batch_dim_2() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(20).view(2, 2, 5), batch_dim=2)
+        .slice_along_dim(start=2, dim=2)
         .equal(
             BatchedTensorSeq(
                 torch.tensor([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]]), batch_dim=2

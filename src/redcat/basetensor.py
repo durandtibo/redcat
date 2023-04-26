@@ -2563,7 +2563,7 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [ 8,  9]], batch_dim=0)
         """
 
-    def slice(
+    def slice_along_dim(
         self,
         dim: int = 0,
         start: int = 0,
@@ -2592,15 +2592,15 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(start=2)
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_dim(start=2)
             tensor([[4, 5],
                     [6, 7],
                     [8, 9]], batch_dim=0)
-            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(stop=3)
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_dim(stop=3)
             tensor([[0, 1],
                     [2, 3],
                     [4, 5]], batch_dim=0)
-            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(step=2)
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_dim(step=2)
             tensor([[0, 1],
                     [4, 5],
                     [8, 9]], batch_dim=0)
