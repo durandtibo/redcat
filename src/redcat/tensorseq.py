@@ -480,6 +480,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             descending (bool, optional): Controls the sorting order.
                 If ``True``, the elements are sorted in descending
                 order by value. Default: ``False``
+            # TODO: add stable
 
         Returns:
             (``BatchedTensorSeq``, ``BatchedTensorSeq``): A tuple with
@@ -501,11 +502,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
                         [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0, seq_dim=1),
              tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0, seq_dim=1))
         """
-        values, indices = self._data.sort(dim=self._seq_dim, descending=descending)
-        return (
-            BatchedTensorSeq(data=values, **self._get_kwargs()),
-            BatchedTensorSeq(data=indices, **self._get_kwargs()),
-        )
+        return self.sort(dim=self._seq_dim, descending=descending)
 
     ################################################
     #     Mathematical | point-wise operations     #
@@ -1191,6 +1188,21 @@ def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedT
 def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
     r"""See ``torch.select`` documentation."""
     return torch.select(input.data, dim=dim, index=index)
+
+
+@implements(torch.sort)
+def sort(
+    input: BatchedTensorSeq,  # noqa: A002
+    dim: int = -1,
+    descending: bool = False,
+    stable: bool = False,
+) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
+    r"""See ``torch.sort`` documentation."""
+    values, indices = torch.sort(input.data, dim=dim, descending=descending, stable=stable)
+    return (
+        BatchedTensorSeq(data=values, batch_dim=input.batch_dim, seq_dim=input.seq_dim),
+        BatchedTensorSeq(data=indices, batch_dim=input.batch_dim, seq_dim=input.seq_dim),
+    )
 
 
 @implements(torch.split)

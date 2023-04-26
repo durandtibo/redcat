@@ -13,6 +13,7 @@ UNARY_FUNCTIONS = (
     partial(torch.clamp, min=0.1, max=0.5),
     partial(torch.cumsum, dim=0),
     partial(torch.cumsum, dim=1),
+    partial(torch.select, dim=0, index=0),
     partial(torch.unsqueeze, dim=-1),
     partial(torch.unsqueeze, dim=0),
     torch.abs,
@@ -78,7 +79,7 @@ def test_same_behaviour_pairwise(func: Callable) -> None:
     )
 
 
-def test_same_behaviour_take_along_dim() -> None:
+def test_same_behaviour_take_along_dim() -> None:  # TODO: update
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))
     assert torch.take_along_dim(BatchedTensor(tensor), indices=indices).data.equal(
@@ -86,7 +87,7 @@ def test_same_behaviour_take_along_dim() -> None:
     )
 
 
-def test_same_behaviour_take_along_dim_batch() -> None:
+def test_same_behaviour_take_along_dim_batch() -> None:  # TODO: update
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))
     assert torch.take_along_dim(BatchedTensor(tensor), indices=BatchedTensor(indices)).data.equal(
@@ -94,7 +95,7 @@ def test_same_behaviour_take_along_dim_batch() -> None:
     )
 
 
-def test_same_behaviour_take_along_dim_tensor() -> None:
+def test_same_behaviour_take_along_dim_tensor() -> None:  # TODO: update
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))
     assert torch.take_along_dim(tensor, indices=BatchedTensor(indices)).data.equal(
@@ -102,7 +103,7 @@ def test_same_behaviour_take_along_dim_tensor() -> None:
     )
 
 
-def test_same_behaviour_take_along_dim_0() -> None:
+def test_same_behaviour_take_along_dim_0() -> None:  # TODO: update
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))
     assert torch.take_along_dim(

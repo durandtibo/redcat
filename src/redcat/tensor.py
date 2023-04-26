@@ -442,6 +442,21 @@ def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
     return torch.select(input.data, dim=dim, index=index)
 
 
+@implements(torch.sort)
+def sort(
+    input: BatchedTensor,  # noqa: A002
+    dim: int = -1,
+    descending: bool = False,
+    stable: bool = False,
+) -> tuple[BatchedTensor, BatchedTensor]:
+    r"""See ``torch.sort`` documentation."""
+    values, indices = torch.sort(input.data, dim=dim, descending=descending, stable=stable)
+    return (
+        BatchedTensor(data=values, batch_dim=input.batch_dim),
+        BatchedTensor(data=indices, batch_dim=input.batch_dim),
+    )
+
+
 @implements(torch.split)
 def split(
     tensor: BatchedTensor, split_size_or_sections: int | Sequence[int], dim: int = 0
