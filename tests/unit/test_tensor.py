@@ -3610,7 +3610,7 @@ def test_batched_tensor_append_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_append_custom_dims_seq_dim_2() -> None:
+def test_batched_tensor_append_custom_dims_2() -> None:
     batch = BatchedTensor(torch.ones(2, 3, 4), batch_dim=2)
     batch.append(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
     assert batch.equal(BatchedTensor(torch.ones(2, 3, 5), batch_dim=2))
@@ -3779,7 +3779,7 @@ def test_batched_tensor_cat_along_batch_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_cat_along_batch_custom_dims_seq_dim_2() -> None:
+def test_batched_tensor_cat_along_batch_custom_dims_2() -> None:
     assert (
         BatchedTensor(torch.ones(2, 3, 4), batch_dim=2)
         .cat_along_batch(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
@@ -3850,7 +3850,7 @@ def test_batched_tensor_cat_along_batch__custom_dims() -> None:
     )
 
 
-def test_batched_tensor_cat_along_batch__custom_dims_seq_dim_2() -> None:
+def test_batched_tensor_cat_along_batch__custom_dims_2() -> None:
     batch = BatchedTensor(torch.ones(2, 3, 4), batch_dim=2)
     batch.cat_along_batch_(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
     assert batch.equal(BatchedTensor(torch.ones(2, 3, 5), batch_dim=2))
@@ -3916,7 +3916,7 @@ def test_batched_tensor_extend_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_extend_custom_dims_seq_dim_2() -> None:
+def test_batched_tensor_extend_custom_dims_2() -> None:
     batch = BatchedTensor(torch.ones(2, 3, 4), batch_dim=2)
     batch.extend(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
     assert batch.equal(BatchedTensor(torch.ones(2, 3, 5), batch_dim=2))
@@ -4011,6 +4011,38 @@ def test_batched_tensor_masked_fill_incorrect_batch_dim() -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.masked_fill(BatchedTensor(torch.zeros(2, 3), batch_dim=1), 0)
+
+
+def test_batched_tensor_select_dim_0() -> None:
+    assert (
+        BatchedTensor(torch.arange(30).view(5, 2, 3))
+        .select(dim=0, index=2)
+        .equal(torch.tensor([[12, 13, 14], [15, 16, 17]]))
+    )
+
+
+def test_batched_tensor_select_dim_1() -> None:
+    assert (
+        BatchedTensor(torch.arange(30).view(5, 2, 3))
+        .select(dim=1, index=0)
+        .equal(torch.tensor([[0, 1, 2], [6, 7, 8], [12, 13, 14], [18, 19, 20], [24, 25, 26]]))
+    )
+
+
+def test_batched_tensor_select_dim_2() -> None:
+    assert (
+        BatchedTensor(torch.arange(30).view(5, 2, 3))
+        .select(dim=2, index=1)
+        .equal(torch.tensor([[1, 4], [7, 10], [13, 16], [19, 22], [25, 28]]))
+    )
+
+
+def test_batched_tensor_select_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(30).view(5, 2, 3), batch_dim=1)
+        .select(dim=0, index=2)
+        .equal(torch.tensor([[12, 13, 14], [15, 16, 17]]))
+    )
 
 
 def test_batched_tensor_select_along_batch() -> None:
@@ -4691,6 +4723,29 @@ def test_torch_cat_incorrect_batch_dim() -> None:
                 BatchedTensor(torch.zeros(2, 3), batch_dim=1),
             ]
         )
+
+
+##################################
+#     Tests for torch.select     #
+##################################
+
+
+def test_torch_select_dim_0() -> None:
+    assert torch.select(BatchedTensor(torch.arange(30).view(5, 2, 3)), dim=0, index=2).equal(
+        torch.tensor([[12, 13, 14], [15, 16, 17]])
+    )
+
+
+def test_torch_select_dim_1() -> None:
+    assert torch.select(BatchedTensor(torch.arange(30).view(5, 2, 3)), dim=1, index=0).equal(
+        torch.tensor([[0, 1, 2], [6, 7, 8], [12, 13, 14], [18, 19, 20], [24, 25, 26]])
+    )
+
+
+def test_torch_select_dim_2() -> None:
+    assert torch.select(BatchedTensor(torch.arange(30).view(5, 2, 3)), dim=2, index=1).equal(
+        torch.tensor([[1, 4], [7, 10], [13, 16], [19, 22], [25, 28]])
+    )
 
 
 #################################
