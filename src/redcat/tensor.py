@@ -370,13 +370,6 @@ class BatchedTensor(BaseBatchedTensor):
     ) -> BatchedTensor:
         return self.take_along_dim(indices, dim=self._batch_dim)
 
-    def take_along_dim(
-        self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence, dim: int | None = None
-    ) -> BatchedTensor:
-        if isinstance(indices, Sequence):
-            indices = torch.as_tensor(indices)
-        return torch.take_along_dim(self, indices, dim=dim)
-
     def unsqueeze(self, dim: int) -> BatchedTensor:
         return self.__class__(
             self._data.unsqueeze(dim=dim),
