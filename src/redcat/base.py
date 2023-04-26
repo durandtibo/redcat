@@ -378,11 +378,12 @@ class BaseBatch(Generic[T], ABC):
         """
 
     @abstractmethod
-    def split_along_batch(self, split_size: int, deepcopy: bool = False) -> Iterable[TBatch]:
+    def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[TBatch, ...]:
         r"""Splits the batch into chunks along the batch dimension.
 
         Args:
-            split_size (int): Specifies the chunck size.
+            split_size_or_sections (int or sequence): Specifies the
+                size of a single chunk or list of sizes for each chunk.
             deepcopy (bool, optional): If ``True``, a deepcopy of the
                 data is performed before to return the chunks.
                 If ``False``, each chunk is a view of the original
@@ -391,7 +392,7 @@ class BaseBatch(Generic[T], ABC):
                 the data. Default: ``False``
 
         Returns:
-            iterable: The batch split into chunks along the batch
+            tuple: The batch split into chunks along the batch
                 dimension.
 
         Example usage:
@@ -400,10 +401,10 @@ class BaseBatch(Generic[T], ABC):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> list(BatchedTensor(torch.arange(10).view(5, 2)).split_along_batch(2))
-            [tensor([[0, 1], [2, 3]], batch_dim=0),
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).split_along_batch(2)
+            (tensor([[0, 1], [2, 3]], batch_dim=0),
              tensor([[4, 5], [6, 7]], batch_dim=0),
-             tensor([[8, 9]], batch_dim=0)]
+             tensor([[8, 9]], batch_dim=0))
         """
 
     def take_along_batch(self, indices: BaseBatch | Tensor | Sequence) -> TBatch:
@@ -517,8 +518,10 @@ class BaseBatch(Generic[T], ABC):
                      [14, 15]], batch_dim=0)]
         """
         batch = self
+        if deepcopy:
+            batch = batch.clone()
         if drop_last:
             batch = self.slice_along_batch(
                 stop=int(self.get_num_minibatches(batch_size, drop_last) * batch_size)
             )
-        return batch.split_along_batch(batch_size, deepcopy=deepcopy)
+        return batch.split_along_batch(batch_size)

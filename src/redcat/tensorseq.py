@@ -1081,13 +1081,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
         return self.__class__(data, **self._get_kwargs())
 
     def split_along_batch(
-        self, split_size: int, deepcopy: bool = False
-    ) -> Iterable[BatchedTensorSeq]:
-        data = self._data
-        if deepcopy:
-            data = data.clone()
-        for chunk in data.split(split_size, dim=self._batch_dim):
-            yield self.__class__(chunk, **self._get_kwargs())
+        self, split_size_or_sections: int | Sequence[int]
+    ) -> tuple[BatchedTensorSeq, ...]:
+        return torch.split(self, split_size_or_sections=split_size_or_sections, dim=self._batch_dim)
 
     def take_along_batch(
         self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence
