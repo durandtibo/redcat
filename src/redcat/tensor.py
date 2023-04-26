@@ -427,6 +427,12 @@ def cat(
     )
 
 
+@implements(torch.select)
+def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
+    r"""See ``torch.select`` documentation."""
+    return torch.select(input.data, dim=dim, index=index)
+
+
 @implements(torch.split)
 def split(
     tensor: BatchedTensor, split_size_or_sections: int | Sequence[int], dim: int = 0

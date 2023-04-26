@@ -5259,6 +5259,38 @@ def test_batched_tensor_seq_repeat_along_seq_extra_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_select_dim_0() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(30).view(5, 2, 3))
+        .select(dim=0, index=2)
+        .equal(torch.tensor([[12, 13, 14], [15, 16, 17]]))
+    )
+
+
+def test_batched_tensor_seq_select_dim_1() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(30).view(5, 2, 3))
+        .select(dim=1, index=0)
+        .equal(torch.tensor([[0, 1, 2], [6, 7, 8], [12, 13, 14], [18, 19, 20], [24, 25, 26]]))
+    )
+
+
+def test_batched_tensor_seq_select_dim_2() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(30).view(5, 2, 3))
+        .select(dim=2, index=1)
+        .equal(torch.tensor([[1, 4], [7, 10], [13, 16], [19, 22], [25, 28]]))
+    )
+
+
+def test_batched_tensor_seq_select_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(30).view(5, 2, 3), batch_dim=1, seq_dim=0)
+        .select(dim=0, index=2)
+        .equal(torch.tensor([[12, 13, 14], [15, 16, 17]]))
+    )
+
+
 def test_batched_tensor_seq_select_along_batch() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]))
@@ -6162,6 +6194,29 @@ def test_torch_cat_incorrect_seq_dim() -> None:
                 BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2),
             ]
         )
+
+
+##################################
+#     Tests for torch.select     #
+##################################
+
+
+def test_torch_select_dim_0() -> None:
+    assert torch.select(BatchedTensorSeq(torch.arange(30).view(5, 2, 3)), dim=0, index=2).equal(
+        torch.tensor([[12, 13, 14], [15, 16, 17]])
+    )
+
+
+def test_torch_select_dim_1() -> None:
+    assert torch.select(BatchedTensorSeq(torch.arange(30).view(5, 2, 3)), dim=1, index=0).equal(
+        torch.tensor([[0, 1, 2], [6, 7, 8], [12, 13, 14], [18, 19, 20], [24, 25, 26]])
+    )
+
+
+def test_torch_select_dim_2() -> None:
+    assert torch.select(BatchedTensorSeq(torch.arange(30).view(5, 2, 3)), dim=2, index=1).equal(
+        torch.tensor([[1, 4], [7, 10], [13, 16], [19, 22], [25, 28]])
+    )
 
 
 #################################

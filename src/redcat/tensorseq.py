@@ -997,7 +997,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
         return self.__class__(self._data.repeat(*sizes), **self._get_kwargs())
 
     def select_along_batch(self, index: int) -> Tensor:
-        return self._data.select(self._batch_dim, index)
+        return self.select(self._batch_dim, index)
 
     def select_along_seq(self, index: int) -> BatchedTensor:
         r"""Slices the batch along the sequence dimension at the given index.
@@ -1176,6 +1176,12 @@ def cat(
         batch_dim=batch_dims.pop(),
         seq_dim=seq_dims.pop(),
     )
+
+
+@implements(torch.select)
+def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
+    r"""See ``torch.select`` documentation."""
+    return torch.select(input.data, dim=dim, index=index)
 
 
 @implements(torch.split)
