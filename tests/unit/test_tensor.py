@@ -1678,6 +1678,34 @@ def test_batched_tensor_shuffle_along_batch__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
+def test_batched_tensor_sort_along_batch_descending_false() -> None:
+    values, indices = BatchedTensor(
+        torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])
+    ).sort_along_batch()
+    assert values.equal(BatchedTensor(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])))
+    assert indices.equal(BatchedTensor(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])))
+
+
+def test_batched_tensor_sort_along_batch_descending_true() -> None:
+    values, indices = BatchedTensor(
+        torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])
+    ).sort_along_batch(descending=True)
+    assert values.equal(BatchedTensor(torch.tensor([[5, 9], [4, 8], [3, 7], [2, 6], [1, 5]])))
+    assert indices.equal(BatchedTensor(torch.tensor([[3, 0], [0, 4], [4, 1], [2, 3], [1, 2]])))
+
+
+def test_batched_tensor_sort_along_batch_custom_dims() -> None:
+    values, indices = BatchedTensor(
+        torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_dim=1
+    ).sort_along_batch()
+    assert values.equal(
+        BatchedTensor(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]), batch_dim=1)
+    )
+    assert indices.equal(
+        BatchedTensor(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), batch_dim=1)
+    )
+
+
 ################################################
 #     Mathematical | point-wise operations     #
 ################################################

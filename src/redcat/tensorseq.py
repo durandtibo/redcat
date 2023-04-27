@@ -472,7 +472,16 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor=self._data, permutation=permutation, dim=self._seq_dim
         )
 
-    def sort_along_seq(self, descending: bool = False) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
+    def sort_along_batch(
+        self,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
+        return self.sort(dim=self._batch_dim, descending=descending, stable=stable)
+
+    def sort_along_seq(
+        self, descending: bool = False, stable: bool = False
+    ) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
         r"""Sorts the elements of the batch along the sequence dimension in
         monotonic order by value.
 
@@ -480,7 +489,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
             descending (bool, optional): Controls the sorting order.
                 If ``True``, the elements are sorted in descending
                 order by value. Default: ``False``
-            # TODO: add stable
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
 
         Returns:
             (``BatchedTensorSeq``, ``BatchedTensorSeq``): A tuple with
@@ -502,7 +513,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
                         [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0, seq_dim=1),
              tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0, seq_dim=1))
         """
-        return self.sort(dim=self._seq_dim, descending=descending)
+        return self.sort(dim=self._seq_dim, descending=descending, stable=stable)
 
     ################################################
     #     Mathematical | point-wise operations     #
