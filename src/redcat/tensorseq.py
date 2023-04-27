@@ -926,6 +926,9 @@ class BatchedTensorSeq(BaseBatchedTensor):
         """
         self.cat_(tensors, dim=self._seq_dim)
 
+    def chunk_along_batch(self, chunks: int) -> tuple[BaseBatchedTensor, ...]:
+        return self.chunk(chunks, self._batch_dim)
+
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
         if not torch.is_tensor(index):
             index = torch.as_tensor(index)

@@ -255,6 +255,29 @@ class BaseBatch(Generic[T], ABC):
         """
 
     @abstractmethod
+    def chunk_along_batch(self, chunks: int) -> tuple[TBatch, ...]:
+        r"""Splits the batch into chunks along the batch dimension.
+
+        Args:
+            chunks (int): Specifies the number of chunks.
+
+        Returns:
+            tuple: The batch split into chunks along the batch
+                dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).chunk_along_batch(chunks=3)
+            (tensor([[0, 1], [2, 3]], batch_dim=0),
+             tensor([[4, 5], [6, 7]], batch_dim=0),
+             tensor([[8, 9]], batch_dim=0))
+        """
+
+    @abstractmethod
     def extend(self, other: Iterable[BaseBatch]) -> None:
         r"""Extends the current batch by appending all the batches from the
         iterable.
