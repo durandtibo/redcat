@@ -278,20 +278,24 @@ class BatchedTensor(BaseBatchedTensor):
     def cumsum_along_batch_(self) -> None:
         self._data.cumsum_(dim=self._batch_dim)
 
-    def permute_along_batch(self, permutation: Sequence[int] | torch.Tensor) -> BatchedTensor:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> BatchedTensor:
+        return self.permute_along_dim(permutation, dim=self._batch_dim)
+
+    def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
+        self.permute_along_dim_(permutation, dim=self._batch_dim)
+
+    def permute_along_dim(self, permutation: Sequence[int] | Tensor, dim: int) -> BatchedTensor:
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
-            permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
+            permute_along_dim(tensor=self._data, permutation=permutation, dim=dim),
             **self._get_kwargs(),
         )
 
-    def permute_along_batch_(self, permutation: Sequence[int] | torch.Tensor) -> None:
+    def permute_along_dim_(self, permutation: Sequence[int] | Tensor, dim: int) -> None:
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
-        self._data = permute_along_dim(
-            tensor=self._data, permutation=permutation, dim=self._batch_dim
-        )
+        self._data = permute_along_dim(tensor=self._data, permutation=permutation, dim=dim)
 
     def sort_along_batch(
         self,
