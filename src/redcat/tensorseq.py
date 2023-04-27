@@ -1092,6 +1092,11 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ) -> tuple[BatchedTensorSeq, ...]:
         return self.split(split_size_or_sections, dim=self._batch_dim)
 
+    def split_along_seq(
+        self, split_size_or_sections: int | Sequence[int]
+    ) -> tuple[BatchedTensorSeq, ...]:
+        return self.split(split_size_or_sections, dim=self._seq_dim)
+
     def take_along_batch(
         self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence
     ) -> BatchedTensorSeq:

@@ -5819,6 +5819,52 @@ def test_batched_tensor_seq_split_along_batch_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_split_along_seq_split_size_1() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).split_along_seq(1),
+        (
+            BatchedTensorSeq(torch.tensor([[0], [5]])),
+            BatchedTensorSeq(torch.tensor([[1], [6]])),
+            BatchedTensorSeq(torch.tensor([[2], [7]])),
+            BatchedTensorSeq(torch.tensor([[3], [8]])),
+            BatchedTensorSeq(torch.tensor([[4], [9]])),
+        ),
+    )
+
+
+def test_batched_tensor_seq_split_along_seq_split_size_2() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).split_along_seq(2),
+        (
+            BatchedTensorSeq(torch.tensor([[0, 1], [5, 6]])),
+            BatchedTensorSeq(torch.tensor([[2, 3], [7, 8]])),
+            BatchedTensorSeq(torch.tensor([[4], [9]])),
+        ),
+    )
+
+
+def test_batched_tensor_seq_split_along_seq_split_size_list() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).split_along_seq([2, 2, 1]),
+        (
+            BatchedTensorSeq(torch.tensor([[0, 1], [5, 6]])),
+            BatchedTensorSeq(torch.tensor([[2, 3], [7, 8]])),
+            BatchedTensorSeq(torch.tensor([[4], [9]])),
+        ),
+    )
+
+
+def test_batched_tensor_seq_split_along_seq_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0).split_along_seq(2),
+        (
+            BatchedTensorSeq(torch.tensor([[0, 1], [2, 3]]), batch_dim=1, seq_dim=0),
+            BatchedTensorSeq(torch.tensor([[4, 5], [6, 7]]), batch_dim=1, seq_dim=0),
+            BatchedTensorSeq(torch.tensor([[8, 9]]), batch_dim=1, seq_dim=0),
+        ),
+    )
+
+
 @mark.parametrize(
     "indices",
     (
