@@ -5133,6 +5133,41 @@ def test_batched_tensor_seq_chunk_along_batch_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_chunk_along_seq_5() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).chunk_along_seq(5),
+        (
+            BatchedTensorSeq(torch.tensor([[0], [5]])),
+            BatchedTensorSeq(torch.tensor([[1], [6]])),
+            BatchedTensorSeq(torch.tensor([[2], [7]])),
+            BatchedTensorSeq(torch.tensor([[3], [8]])),
+            BatchedTensorSeq(torch.tensor([[4], [9]])),
+        ),
+    )
+
+
+def test_batched_tensor_seq_chunk_along_seq_3() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).chunk_along_seq(3),
+        (
+            BatchedTensorSeq(torch.tensor([[0, 1], [5, 6]])),
+            BatchedTensorSeq(torch.tensor([[2, 3], [7, 8]])),
+            BatchedTensorSeq(torch.tensor([[4], [9]])),
+        ),
+    )
+
+
+def test_batched_tensor_seq_chunk_along_seq_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0).chunk_along_seq(3),
+        (
+            BatchedTensorSeq(torch.tensor([[0, 1], [2, 3]]), batch_dim=1, seq_dim=0),
+            BatchedTensorSeq(torch.tensor([[4, 5], [6, 7]]), batch_dim=1, seq_dim=0),
+            BatchedTensorSeq(torch.tensor([[8, 9]]), batch_dim=1, seq_dim=0),
+        ),
+    )
+
+
 @mark.parametrize(
     "other",
     (
