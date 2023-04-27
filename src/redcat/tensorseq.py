@@ -929,6 +929,29 @@ class BatchedTensorSeq(BaseBatchedTensor):
     def chunk_along_batch(self, chunks: int) -> tuple[BaseBatchedTensor, ...]:
         return self.chunk(chunks, self._batch_dim)
 
+    def chunk_along_seq(self, chunks: int) -> tuple[BaseBatchedTensor, ...]:
+        r"""Splits the batch into chunks along the sequence dimension.
+
+        Args:
+            chunks (int): Specifies the number of chunks.
+
+        Returns:
+            tuple: The batch split into chunks along the sequence
+                dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).chunk_along_seq(chunks=3)
+            (tensor([[0, 1], [5, 6]], batch_dim=0, seq_dim=1),
+             tensor([[2, 3], [7, 8]], batch_dim=0, seq_dim=1),
+             tensor([[4], [9]], batch_dim=0, seq_dim=1))
+        """
+        return self.chunk(chunks, self._seq_dim)
+
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
         if not torch.is_tensor(index):
             index = torch.as_tensor(index)
