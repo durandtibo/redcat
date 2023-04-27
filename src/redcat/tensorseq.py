@@ -401,19 +401,23 @@ class BatchedTensorSeq(BaseBatchedTensor):
         self._data.cumsum_(dim=self._seq_dim)
 
     def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> BatchedTensorSeq:
+        return self.permute_along_dim(permutation, dim=self._batch_dim)
+
+    def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
+        self.permute_along_dim_(permutation, dim=self._batch_dim)
+
+    def permute_along_dim(self, permutation: Sequence[int] | Tensor, dim: int) -> BatchedTensorSeq:
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
         return self.__class__(
-            permute_along_dim(tensor=self._data, permutation=permutation, dim=self._batch_dim),
+            permute_along_dim(tensor=self._data, permutation=permutation, dim=dim),
             **self._get_kwargs(),
         )
 
-    def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
+    def permute_along_dim_(self, permutation: Sequence[int] | Tensor, dim: int) -> None:
         if not torch.is_tensor(permutation):
             permutation = torch.tensor(permutation)
-        self._data = permute_along_dim(
-            tensor=self._data, permutation=permutation, dim=self._batch_dim
-        )
+        self._data = permute_along_dim(tensor=self._data, permutation=permutation, dim=dim)
 
     def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> BatchedTensorSeq:
         r"""Permutes the data along the sequence dimension.
@@ -438,12 +442,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[2, 1, 3, 0, 4],
                     [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
         """
-        if not torch.is_tensor(permutation):
-            permutation = torch.tensor(permutation)
-        return self.__class__(
-            permute_along_dim(tensor=self._data, permutation=permutation, dim=self._seq_dim),
-            **self._get_kwargs(),
-        )
+        return self.permute_along_dim(permutation, dim=self._seq_dim)
 
     def permute_along_seq_(self, permutation: Sequence[int] | Tensor) -> None:
         r"""Permutes the data along the sequence dimension.
@@ -466,11 +465,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[2, 1, 3, 0, 4],
                     [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
         """
-        if not torch.is_tensor(permutation):
-            permutation = torch.tensor(permutation)
-        self._data = permute_along_dim(
-            tensor=self._data, permutation=permutation, dim=self._seq_dim
-        )
+        self.permute_along_dim_(permutation, dim=self._seq_dim)
 
     def sort_along_batch(
         self,

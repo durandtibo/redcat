@@ -1032,8 +1032,7 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(2, 5)).cumsum(dim=1)
-            >>> batch
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).cumsum(dim=1)
             tensor([[ 0,  1,  2,  3,  4],
                     [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
@@ -1079,8 +1078,7 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(2, 5)).cumsum_along_batch()
-            >>> batch
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).cumsum_along_batch()
             tensor([[ 0,  1,  2,  3,  4],
                     [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
@@ -1102,6 +1100,123 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
             tensor([[ 0,  1,  2,  3,  4],
                     [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
+
+    @abstractmethod
+    def permute_along_dim(self, permutation: Sequence[int] | Tensor, dim: int) -> TBatchedTensor:
+        r"""Permutes the data/batch along a given dimension.
+
+        Args:
+            permutation (sequence or ``torch.Tensor`` of type long
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+            dim (int): Specifies the dimension where the permutation
+                is computed.
+
+        Returns:
+            ``BaseBatchedTensor``: A new batch with permuted data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).permute_along_dim([2, 1, 3, 0, 4], dim=0)
+            tensor([[4, 5],
+                    [2, 3],
+                    [6, 7],
+                    [0, 1],
+                    [8, 9]], batch_dim=0)
+        """
+
+    @abstractmethod
+    def permute_along_dim_(self, permutation: Sequence[int] | Tensor, dim: int) -> None:
+        r"""Permutes the data/batch along a given dimension.
+
+        Args:
+            permutation (sequence or ``torch.Tensor`` of type long
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+            dim (int): Specifies the dimension where the permutation
+                is computed.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.permute_along_dim_([2, 1, 3, 0, 4], dim=0)
+            >>> batch
+            tensor([[4, 5],
+                    [2, 3],
+                    [6, 7],
+                    [0, 1],
+                    [8, 9]], batch_dim=0)
+        """
+
+    # def shuffle_along_dim(
+    #     self, dim: int, generator: torch.Generator | None = None
+    # ) -> TBatchedTensor:
+    #     r"""Shuffles the data/batch along a given dimension.
+    #
+    #     Args:
+    #         generator (``torch.Generator`` or ``None``, optional):
+    #             Specifies an optional random generator.
+    #             Default: ``None``
+    #
+    #     Returns:
+    #         ``BaseBatchedTensor``:  A new batch with shuffled data
+    #             along a given dimension.
+    #
+    #     Example usage:
+    #
+    #     .. code-block:: python
+    #
+    #         >>> import torch
+    #         >>> from redcat import BatchedTensor
+    #         >>> BatchedTensor(torch.arange(10).view(5, 2)).shuffle_along_dim(dim=0)
+    #         tensor([[4, 5],
+    #                 [2, 3],
+    #                 [6, 7],
+    #                 [0, 1],
+    #                 [8, 9]], batch_dim=0)
+    #     """
+    #     return self.permute_along_dim(
+    #         torch.randperm(self._data.shape[dim], generator=generator), dim=dim
+    #     )
+    #
+    # def shuffle_along_dim_(self, dim: int, generator: torch.Generator | None = None) -> None:
+    #     r"""Shuffles the data/batch along a given dimension.
+    #
+    #     Args:
+    #         generator (``torch.Generator`` or ``None``, optional):
+    #             Specifies an optional random generator.
+    #             Default: ``None``
+    #
+    #     Returns:
+    #         ``BaseBatchedTensor``:  A new batch with shuffled data
+    #             along a given dimension.
+    #
+    #     Example usage:
+    #
+    #     .. code-block:: python
+    #
+    #         >>> import torch
+    #         >>> from redcat import BatchedTensor
+    #         >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+    #         >>> batch.shuffle_along_dim_(dim=0)
+    #         >>> batch
+    #         tensor([[4, 5],
+    #                 [2, 3],
+    #                 [6, 7],
+    #                 [0, 1],
+    #                 [8, 9]], batch_dim=0)
+    #     """
+    #     self.permute_along_dim_(torch.randperm(self._data.shape[dim], generator=generator), dim=dim)
 
     ################################################
     #     Mathematical | point-wise operations     #
@@ -2730,7 +2845,7 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> BatchedTensor(torch.rand(2, 5)).sort_along_batch()
             (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
-                        [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
+                    [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
              tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
         """
 
