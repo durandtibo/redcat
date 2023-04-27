@@ -293,6 +293,13 @@ class BatchedTensor(BaseBatchedTensor):
             tensor=self._data, permutation=permutation, dim=self._batch_dim
         )
 
+    def sort_along_batch(
+        self,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> tuple[BatchedTensor, BatchedTensor]:
+        return self.sort(dim=self._batch_dim, descending=descending, stable=stable)
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################

@@ -2690,13 +2690,49 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.rand(2, 5))
-            >>> batch.sort()
+            >>> BatchedTensor(torch.rand(2, 5)).sort()
             (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
                         [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
              tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
         """
         return torch.sort(self, dim=dim, descending=descending, stable=stable)
+
+    @abstractmethod
+    def sort_along_batch(
+        self,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> tuple[TBatchedTensor, TBatchedTensor]:
+        r"""Sorts the elements of the batch along the batch dimension in
+        monotonic order by value.
+
+        Args:
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+            (``BaseBatchedTensor``, ``BaseBatchedTensor``): A tuple
+                two values:
+                    - The first batch contains the batch values sorted
+                        along the given dimension.
+                    - The second batch contains the indices that sort
+                        the batch along the given dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.rand(2, 5)).sort_along_batch()
+            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
+                        [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
+             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
+        """
 
     def split(
         self, split_size_or_sections: int | Sequence[int], dim: int = 0
