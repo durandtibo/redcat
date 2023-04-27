@@ -9,38 +9,78 @@ from torch import Tensor
 
 from redcat import BaseBatchedTensor, BatchedTensor, BatchedTensorSeq
 
+BATCH_CLASSES = (BatchedTensor, BatchedTensorSeq)
+
 UNARY_FUNCTIONS = (
+    # partial(torch.select, dim=0, index=0),
+    # torch.arctan2,
+    # torch.max,
+    # torch.min,
     partial(torch.clamp, min=0.1, max=0.5),
     partial(torch.cumsum, dim=0),
     partial(torch.cumsum, dim=1),
-    partial(torch.select, dim=0, index=0),
     partial(torch.unsqueeze, dim=-1),
     partial(torch.unsqueeze, dim=0),
     torch.abs,
     torch.acos,
     torch.acosh,
+    torch.angle,
+    torch.arccos,
+    torch.arccosh,
+    torch.arcsin,
+    torch.arcsinh,
+    torch.arctan,
+    torch.arctanh,
     torch.asin,
     torch.asinh,
     torch.atan,
     torch.atanh,
+    torch.ceil,
     torch.cos,
     torch.cosh,
+    torch.deg2rad,
+    torch.digamma,
+    torch.erf,
+    torch.erfc,
+    torch.erfinv,
     torch.exp,
+    torch.fix,
+    torch.floor,
+    torch.floor,
+    torch.frac,
+    torch.isfinite,
     torch.isinf,
     torch.isnan,
     torch.isneginf,
     torch.isposinf,
+    torch.isreal,
+    torch.lgamma,
     torch.log,
+    torch.log10,
     torch.log1p,
+    torch.log2,
     torch.logical_not,
-    # torch.max,
-    # torch.min,
+    torch.logit,
+    torch.nan_to_num,
     torch.neg,
+    torch.negative,
+    torch.positive,
+    torch.rad2deg,
+    torch.real,
+    torch.reciprocal,
+    torch.round,
+    torch.rsqrt,
+    torch.sigmoid,
+    torch.sign,
     torch.sin,
+    torch.sinc,
     torch.sinh,
     torch.sqrt,
+    torch.sqrt,
+    torch.square,
     torch.tan,
     torch.tanh,
+    torch.trunc,
 )
 
 PAIRWISE_FUNCTIONS = (
@@ -51,32 +91,43 @@ PAIRWISE_FUNCTIONS = (
     torch.add,
     torch.div,
     torch.eq,
+    torch.floor_divide,
     torch.fmod,
     torch.ge,
+    torch.greater,
+    torch.greater_equal,
     torch.gt,
     torch.le,
+    torch.less,
+    torch.less_equal,
+    torch.logaddexp,
     torch.logical_and,
     torch.logical_or,
     torch.logical_xor,
     torch.lt,
     torch.mul,
+    torch.nextafter,
+    torch.remainder,
     torch.sub,
+    torch.true_divide,
+    torch.ne,
+    torch.not_equal,
 )
 
 
 @mark.parametrize("func", UNARY_FUNCTIONS)
-def test_same_behaviour_unary(func: Callable) -> None:
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_same_behaviour_unary(func: Callable, cls: type[BaseBatchedTensor]) -> None:
     tensor = torch.rand(2, 3).mul(2.0)
-    assert func(BatchedTensor(tensor)).data.allclose(func(tensor), equal_nan=True)
+    assert func(cls(tensor)).allclose(cls(func(tensor)), equal_nan=True)
 
 
 @mark.parametrize("func", PAIRWISE_FUNCTIONS)
-def test_same_behaviour_pairwise(func: Callable) -> None:
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_same_behaviour_pairwise(func: Callable, cls: type[BaseBatchedTensor]) -> None:
     tensor1 = torch.rand(2, 3)
     tensor2 = torch.rand(2, 3) + 1.0
-    assert func(BatchedTensor(tensor1), BatchedTensor(tensor2)).data.allclose(
-        func(tensor1, tensor2), equal_nan=True
-    )
+    assert func(cls(tensor1), cls(tensor2)).allclose(cls(func(tensor1, tensor2)), equal_nan=True)
 
 
 def test_same_behaviour_take_along_dim() -> None:  # TODO: update
