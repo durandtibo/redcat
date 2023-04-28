@@ -2445,7 +2445,7 @@ def test_batched_tensor_seq_clamp() -> None:
     )
 
 
-def test_batched_tensor_seq_clamp_only_max_value() -> None:
+def test_batched_tensor_seq_clamp_only_max() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))
         .clamp(max=5)
@@ -2453,7 +2453,7 @@ def test_batched_tensor_seq_clamp_only_max_value() -> None:
     )
 
 
-def test_batched_tensor_seq_clamp_only_min_value() -> None:
+def test_batched_tensor_seq_clamp_only_min() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))
         .clamp(min=2)
@@ -2475,25 +2475,25 @@ def test_batched_tensor_seq_clamp_custom_dims() -> None:
 
 def test_batched_tensor_seq_clamp_() -> None:
     batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
-    batch.clamp_(min_value=2, max_value=5)
+    batch.clamp_(min=2, max=5)
     assert batch.equal(BatchedTensorSeq(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]])))
 
 
-def test_batched_tensor_seq_clamp__only_max_value() -> None:
+def test_batched_tensor_seq_clamp__only_max() -> None:
     batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
-    batch.clamp_(max_value=5)
+    batch.clamp_(max=5)
     assert batch.equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 5, 5, 5, 5]])))
 
 
-def test_batched_tensor_seq_clamp__only_min_value() -> None:
+def test_batched_tensor_seq_clamp__only_min() -> None:
     batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
-    batch.clamp_(min_value=2)
+    batch.clamp_(min=2)
     assert batch.equal(BatchedTensorSeq(torch.tensor([[2, 2, 2, 3, 4], [5, 6, 7, 8, 9]])))
 
 
 def test_batched_tensor_seq_clamp__custom_dims() -> None:
     batch = BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0)
-    batch.clamp_(min_value=2, max_value=5)
+    batch.clamp_(min=2, max=5)
     assert batch.equal(
         BatchedTensorSeq(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]), batch_dim=1, seq_dim=0)
     )
