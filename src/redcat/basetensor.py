@@ -1158,65 +1158,65 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [8, 9]], batch_dim=0)
         """
 
-    # def shuffle_along_dim(
-    #     self, dim: int, generator: torch.Generator | None = None
-    # ) -> TBatchedTensor:
-    #     r"""Shuffles the data/batch along a given dimension.
-    #
-    #     Args:
-    #         generator (``torch.Generator`` or ``None``, optional):
-    #             Specifies an optional random generator.
-    #             Default: ``None``
-    #
-    #     Returns:
-    #         ``BaseBatchedTensor``:  A new batch with shuffled data
-    #             along a given dimension.
-    #
-    #     Example usage:
-    #
-    #     .. code-block:: python
-    #
-    #         >>> import torch
-    #         >>> from redcat import BatchedTensor
-    #         >>> BatchedTensor(torch.arange(10).view(5, 2)).shuffle_along_dim(dim=0)
-    #         tensor([[4, 5],
-    #                 [2, 3],
-    #                 [6, 7],
-    #                 [0, 1],
-    #                 [8, 9]], batch_dim=0)
-    #     """
-    #     return self.permute_along_dim(
-    #         torch.randperm(self._data.shape[dim], generator=generator), dim=dim
-    #     )
-    #
-    # def shuffle_along_dim_(self, dim: int, generator: torch.Generator | None = None) -> None:
-    #     r"""Shuffles the data/batch along a given dimension.
-    #
-    #     Args:
-    #         generator (``torch.Generator`` or ``None``, optional):
-    #             Specifies an optional random generator.
-    #             Default: ``None``
-    #
-    #     Returns:
-    #         ``BaseBatchedTensor``:  A new batch with shuffled data
-    #             along a given dimension.
-    #
-    #     Example usage:
-    #
-    #     .. code-block:: python
-    #
-    #         >>> import torch
-    #         >>> from redcat import BatchedTensor
-    #         >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-    #         >>> batch.shuffle_along_dim_(dim=0)
-    #         >>> batch
-    #         tensor([[4, 5],
-    #                 [2, 3],
-    #                 [6, 7],
-    #                 [0, 1],
-    #                 [8, 9]], batch_dim=0)
-    #     """
-    #     self.permute_along_dim_(torch.randperm(self._data.shape[dim], generator=generator), dim=dim)
+    def shuffle_along_dim(
+        self, dim: int, generator: torch.Generator | None = None
+    ) -> TBatchedTensor:
+        r"""Shuffles the data/batch along a given dimension.
+
+        Args:
+            generator (``torch.Generator`` or ``None``, optional):
+                Specifies an optional random generator.
+                Default: ``None``
+
+        Returns:
+            ``BaseBatchedTensor``:  A new batch with shuffled data
+                along a given dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).shuffle_along_dim(dim=0)
+            tensor([[4, 5],
+                    [2, 3],
+                    [6, 7],
+                    [0, 1],
+                    [8, 9]], batch_dim=0)
+        """
+        return self.permute_along_dim(
+            torch.randperm(self._data.shape[dim], generator=generator), dim=dim
+        )
+
+    def shuffle_along_dim_(self, dim: int, generator: torch.Generator | None = None) -> None:
+        r"""Shuffles the data/batch along a given dimension.
+
+        Args:
+            generator (``torch.Generator`` or ``None``, optional):
+                Specifies an optional random generator.
+                Default: ``None``
+
+        Returns:
+            ``BaseBatchedTensor``:  A new batch with shuffled data
+                along a given dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.shuffle_along_dim_(dim=0)
+            >>> batch
+            tensor([[4, 5],
+                    [2, 3],
+                    [6, 7],
+                    [0, 1],
+                    [8, 9]], batch_dim=0)
+        """
+        self.permute_along_dim_(torch.randperm(self._data.shape[dim], generator=generator), dim=dim)
 
     ################################################
     #     Mathematical | point-wise operations     #
