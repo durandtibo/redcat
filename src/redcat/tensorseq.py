@@ -467,6 +467,51 @@ class BatchedTensorSeq(BaseBatchedTensor):
         """
         self.permute_along_dim_(permutation, dim=self._seq_dim)
 
+    def shuffle_along_seq(self, generator: torch.Generator | None = None) -> BatchedTensorSeq:
+        r"""Shuffles the data along the sequence dimension.
+
+        Args:
+            generator (``torch.Generator`` or ``None``, optional):
+                Specifies an optional random generator.
+                Default: ``None``
+
+        Returns:
+            ``BatchedTensorSeq``:  A new batch with shuffled data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).shuffle_along_seq()
+            tensor([[2, 1, 4, 0, 3],
+                    [7, 6, 9, 5, 8]], batch_dim=0, seq_dim=1)
+        """
+        return self.permute_along_seq(torch.randperm(self.seq_len, generator=generator))
+
+    def shuffle_along_seq_(self, generator: torch.Generator | None = None) -> None:
+        r"""Shuffles the data along the sequence dimension.
+
+        Args:
+            generator (``torch.Generator`` or ``None``, optional):
+                Specifies an optional random generator.
+                Default: ``None``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.shuffle_along_seq_()
+            >>> batch
+            tensor([[2, 1, 4, 0, 3],
+                    [7, 6, 9, 5, 8]], batch_dim=0, seq_dim=1)
+        """
+        self.permute_along_seq_(torch.randperm(self.seq_len, generator=generator))
+
     def sort_along_batch(
         self,
         descending: bool = False,
