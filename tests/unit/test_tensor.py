@@ -1798,6 +1798,65 @@ def test_batched_tensor_shuffle_along_dim__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
+def test_batched_tensor_seq_sort_descending_true() -> None:
+    values, indices = BatchedTensor(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(
+        descending=True
+    )
+    assert values.equal(BatchedTensor(torch.tensor([[5, 4, 3, 2, 1], [9, 8, 7, 6, 5]])))
+    assert indices.equal(BatchedTensor(torch.tensor([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])))
+
+
+def test_batched_tensor_seq_sort_dim_0() -> None:
+    values, indices = BatchedTensor(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort(
+        dim=0
+    )
+    assert values.equal(BatchedTensor(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])))
+    assert indices.equal(BatchedTensor(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])))
+
+
+def test_batched_tensor_seq_sort_dim_1() -> None:
+    values, indices = BatchedTensor(
+        torch.tensor(
+            [
+                [[0, 1], [-2, 3], [-4, 5], [-6, 7], [-8, 9]],
+                [[10, -11], [12, -13], [14, -15], [16, -17], [18, -19]],
+            ]
+        )
+    ).sort(dim=1)
+    assert values.equal(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
+                    [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
+                ]
+            )
+        )
+    )
+    assert indices.equal(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
+                    [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                ]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_sort_custom_dims() -> None:
+    values, indices = BatchedTensor(
+        torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_dim=1
+    ).sort(dim=0)
+    assert values.equal(
+        BatchedTensor(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), batch_dim=1)
+    )
+    assert indices.equal(
+        BatchedTensor(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), batch_dim=1)
+    )
+
+
 def test_batched_tensor_sort_along_batch_descending_false() -> None:
     values, indices = BatchedTensor(
         torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])
@@ -1881,7 +1940,7 @@ def test_batched_tensor_clamp() -> None:
     )
 
 
-def test_batched_tensor_clamp_only_max_value() -> None:
+def test_batched_tensor_clamp_only_max() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
         .clamp(max=5)
@@ -1889,7 +1948,7 @@ def test_batched_tensor_clamp_only_max_value() -> None:
     )
 
 
-def test_batched_tensor_clamp_only_min_value() -> None:
+def test_batched_tensor_clamp_only_min() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
         .clamp(min=2)
@@ -1907,25 +1966,25 @@ def test_batched_tensor_clamp_custom_dims() -> None:
 
 def test_batched_tensor_clamp_() -> None:
     batch = BatchedTensor(torch.arange(10).view(2, 5))
-    batch.clamp_(min_value=2, max_value=5)
+    batch.clamp_(min=2, max=5)
     assert batch.equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]])))
 
 
-def test_batched_tensor_clamp__only_max_value() -> None:
+def test_batched_tensor_clamp__only_max() -> None:
     batch = BatchedTensor(torch.arange(10).view(2, 5))
-    batch.clamp_(max_value=5)
+    batch.clamp_(max=5)
     assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 5, 5, 5, 5]])))
 
 
-def test_batched_tensor_clamp__only_min_value() -> None:
+def test_batched_tensor_clamp__only_min() -> None:
     batch = BatchedTensor(torch.arange(10).view(2, 5))
-    batch.clamp_(min_value=2)
+    batch.clamp_(min=2)
     assert batch.equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 6, 7, 8, 9]])))
 
 
 def test_batched_tensor_clamp__custom_dims() -> None:
     batch = BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
-    batch.clamp_(min_value=2, max_value=5)
+    batch.clamp_(min=2, max=5)
     assert batch.equal(BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]), batch_dim=1))
 
 

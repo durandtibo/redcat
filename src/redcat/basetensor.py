@@ -1218,6 +1218,81 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         """
         self.permute_along_dim_(torch.randperm(self._data.shape[dim], generator=generator), dim=dim)
 
+    def sort(
+        self,
+        dim: int = -1,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> tuple[TBatchedTensor, TBatchedTensor]:
+        r"""Sorts the elements of the batch along a given dimension in monotonic
+        order by value.
+
+        Args:
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+            (``BaseBatchedTensor``, ``BaseBatchedTensor``): A tuple
+                two values:
+                    - The first batch contains the batch values sorted
+                        along the given dimension.
+                    - The second batch contains the indices that sort
+                        the batch along the given dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.rand(2, 5)).sort()
+            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
+                        [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
+             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
+        """
+        return torch.sort(self, dim=dim, descending=descending, stable=stable)
+
+    @abstractmethod
+    def sort_along_batch(
+        self,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> tuple[TBatchedTensor, TBatchedTensor]:
+        r"""Sorts the elements of the batch along the batch dimension in
+        monotonic order by value.
+
+        Args:
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+            (``BaseBatchedTensor``, ``BaseBatchedTensor``): A tuple
+                two values:
+                    - The first batch contains the batch values sorted
+                        along the given dimension.
+                    - The second batch contains the indices that sort
+                        the batch along the given dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.rand(2, 5)).sort_along_batch()
+            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
+                    [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
+             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
+        """
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
@@ -1272,10 +1347,10 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
         Args:
             min (int, float or ``None``, optional): Specifies
-                the lower bound. If ``min_value`` is ``None``,
+                the lower bound. If ``min`` is ``None``,
                 there is no lower bound. Default: ``None``
             max (int, float or ``None``, optional): Specifies
-                the upper bound. If ``max_value`` is ``None``,
+                the upper bound. If ``max`` is ``None``,
                 there is no upper bound. Default: ``None``
 
         Returns:
@@ -1302,22 +1377,22 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     def clamp_(
         self,
-        min_value: int | float | None = None,
-        max_value: int | float | None = None,
+        min: int | float | None = None,  # noqa: A002
+        max: int | float | None = None,  # noqa: A002
     ) -> None:
-        r"""Clamps all elements in ``self`` into the range ``[min_value,
-        max_value]``.
+        r"""Clamps all elements in ``self`` into the range ``[min,
+        max]``.
 
         Inplace version of ``clamp``.
 
-        Note: ``min_value`` and ``max_value`` cannot be both ``None``.
+        Note: ``min`` and ``max`` cannot be both ``None``.
 
         Args:
-            min_value (int, float or ``None``, optional): Specifies
-                the lower bound.  If ``min_value`` is ``None``,
+            min (int, float or ``None``, optional): Specifies
+                the lower bound.  If ``min`` is ``None``,
                 there is no lower bound. Default: ``None``
-            max_value (int, float or ``None``, optional): Specifies
-                the upper bound. If ``max_value`` is ``None``,
+            max (int, float or ``None``, optional): Specifies
+                the upper bound. If ``max`` is ``None``,
                 there is no upper bound. Default: ``None``
 
         Example usage:
@@ -1327,22 +1402,22 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
-            >>> batch.clamp_(min_value=2, max_value=5)
+            >>> batch.clamp_(min=2, max=5)
             >>> batch
             tensor([[2, 2, 2, 3, 4],
                     [5, 5, 5, 5, 5]], batch_dim=0)
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
-            >>> batch.clamp_(min_value=2)
+            >>> batch.clamp_(min=2)
             >>> batch
             tensor([[2, 2, 2, 3, 4],
                     [5, 6, 7, 8, 9]], batch_dim=0)
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
-            >>> batch.clamp_(max_value=7)
+            >>> batch.clamp_(max=7)
             >>> batch
             tensor([[0, 1, 2, 3, 4],
                     [5, 6, 7, 7, 7]], batch_dim=0)
         """
-        self._data.clamp_(min=min_value, max=max_value)
+        self._data.clamp_(min=min, max=max)
 
     def exp(self) -> TBatchedTensor:
         r"""Computes the exponential of the elements.
@@ -1746,6 +1821,10 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [3., 4., 5.]], batch_dim=0)
         """
         self._data.sqrt_()
+
+    ################################
+    #     Reduction operations     #
+    ################################
 
     ###########################################
     #     Mathematical | trigo operations     #
@@ -2811,81 +2890,6 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         else:
             data = self._data.transpose(0, dim)[start:stop:step].transpose(0, dim)
         return self.__class__(data, **self._get_kwargs())
-
-    def sort(
-        self,
-        dim: int = -1,
-        descending: bool = False,
-        stable: bool = False,
-    ) -> tuple[TBatchedTensor, TBatchedTensor]:
-        r"""Sorts the elements of the batch along a given dimension in monotonic
-        order by value.
-
-        Args:
-            descending (bool, optional): Controls the sorting order.
-                If ``True``, the elements are sorted in descending
-                order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
-                which guarantees that the order of equivalent elements
-                is preserved. Default: ``False``
-
-        Returns:
-            (``BaseBatchedTensor``, ``BaseBatchedTensor``): A tuple
-                two values:
-                    - The first batch contains the batch values sorted
-                        along the given dimension.
-                    - The second batch contains the indices that sort
-                        the batch along the given dimension.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.rand(2, 5)).sort()
-            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
-                        [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
-             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
-        """
-        return torch.sort(self, dim=dim, descending=descending, stable=stable)
-
-    @abstractmethod
-    def sort_along_batch(
-        self,
-        descending: bool = False,
-        stable: bool = False,
-    ) -> tuple[TBatchedTensor, TBatchedTensor]:
-        r"""Sorts the elements of the batch along the batch dimension in
-        monotonic order by value.
-
-        Args:
-            descending (bool, optional): Controls the sorting order.
-                If ``True``, the elements are sorted in descending
-                order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
-                which guarantees that the order of equivalent elements
-                is preserved. Default: ``False``
-
-        Returns:
-            (``BaseBatchedTensor``, ``BaseBatchedTensor``): A tuple
-                two values:
-                    - The first batch contains the batch values sorted
-                        along the given dimension.
-                    - The second batch contains the indices that sort
-                        the batch along the given dimension.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.rand(2, 5)).sort_along_batch()
-            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
-                    [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
-             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
-        """
 
     def split(
         self, split_size_or_sections: int | Sequence[int], dim: int = 0
