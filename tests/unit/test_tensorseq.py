@@ -2146,6 +2146,86 @@ def test_batched_tensor_seq_sort_descending_false() -> None:
     assert indices.equal(BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])))
 
 
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_seq() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .shuffle_along_seq()
+        .equal(BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+    )
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(
+            torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        )
+        .shuffle_along_seq()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]), batch_dim=1, seq_dim=0
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_seq_same_random_seed() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert batch.shuffle_along_seq(get_torch_generator(1)).equal(
+        batch.shuffle_along_seq(get_torch_generator(1))
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_seq_different_random_seeds() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert not batch.shuffle_along_seq(get_torch_generator(1)).equal(
+        batch.shuffle_along_seq(get_torch_generator(2))
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_seq_multiple_shuffle() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    generator = get_torch_generator(1)
+    assert not batch.shuffle_along_seq(generator).equal(batch.shuffle_along_seq(generator))
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_seq_() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch.shuffle_along_seq_()
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batched_tensor_seq_shuffle_along_seq__custom_dims() -> None:
+    batch = BatchedTensorSeq.from_seq_batch(
+        torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    )
+    batch.shuffle_along_seq_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]), batch_dim=1, seq_dim=0
+        )
+    )
+
+
+def test_batched_tensor_seq_shuffle_along_seq__same_random_seed() -> None:
+    batch1 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch1.shuffle_along_seq_(get_torch_generator(1))
+    batch2 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch2.shuffle_along_seq_(get_torch_generator(1))
+    assert batch1.equal(batch2)
+
+
+def test_batched_tensor_seq_shuffle_along_seq__different_random_seeds() -> None:
+    batch1 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch1.shuffle_along_seq_(get_torch_generator(1))
+    batch2 = BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch2.shuffle_along_seq_(get_torch_generator(2))
+    assert not batch1.equal(batch2)
+
+
 def test_batched_tensor_seq_sort_descending_true() -> None:
     values, indices = BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(
         descending=True
