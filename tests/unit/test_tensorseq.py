@@ -2948,6 +2948,54 @@ def test_batched_tensor_seq_pow__incorrect_seq_dim() -> None:
         )
 
 
+def test_batched_tensor_seq_rsqrt() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1.0, 4.0], [16.0, 25.0]], dtype=torch.float))
+        .rsqrt()
+        .equal(BatchedTensorSeq(torch.tensor([[1.0, 0.5], [0.25, 0.2]], dtype=torch.float)))
+    )
+
+
+def test_batched_tensor_seq_rsqrt_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1.0, 4.0], [16.0, 25.0]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .rsqrt()
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[1.0, 0.5], [0.25, 0.2]], dtype=torch.float),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_rsqrt_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[1.0, 4.0], [16.0, 25.0]], dtype=torch.float))
+    batch.rsqrt_()
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[1.0, 0.5], [0.25, 0.2]], dtype=torch.float)))
+
+
+def test_batched_tensor_seq_rsqrt__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[1.0, 4.0], [16.0, 25.0]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.rsqrt_()
+    assert batch.equal(
+        BatchedTensorSeq(
+            torch.tensor([[1.0, 0.5], [0.25, 0.2]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 def test_batched_tensor_seq_sqrt() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]], dtype=torch.float))
