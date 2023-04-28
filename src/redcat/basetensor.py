@@ -1670,6 +1670,44 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [ 9., 16., 25.]], batch_dim=0)
         """
 
+    def rsqrt(self) -> TBatchedTensor:
+        r"""Computes the reciprocal of the square-root of each element.
+
+        Return:
+            ``BaseBatchedTensor``: A batch with the square-root of
+                each element.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.tensor([[1.0, 4.0], [16.0, 25.0]])).rsqrt()
+            tensor([[1.0000, 0.5000],
+                    [0.2500, 0.2000]], batch_dim=0)
+        """
+        return torch.rsqrt(self)
+
+    def rsqrt_(self) -> None:
+        r"""Computes the reciprocal of the square-root of each element.
+
+        In-place version of ``rsqrt()``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 4.0], [16.0, 25.0]]))
+            >>> batch.rsqrt_()
+            >>> batch
+            tensor([[1.0000, 0.5000],
+                    [0.2500, 0.2000]], batch_dim=0)
+        """
+        self._data.rsqrt_()
+
     def sqrt(self) -> TBatchedTensor:
         r"""Computes the square-root of each element.
 
