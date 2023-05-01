@@ -2820,11 +2820,44 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
                     [ 8,  9]], batch_dim=0)
         """
 
+    @abstractmethod
+    def index_select(self, dim: int, index: torch.Tensor | Sequence[int]) -> BaseBatch:
+        r"""Selects data at the given indices along a given dimension.
+
+        Args:
+            dim (int): Specifies the index dimension.
+            index (``torch.Tensor`` or list or tuple): Specifies the
+                indices to select.
+
+        Returns:
+            ``BaseBatch``: A new batch which indexes ``self``
+                along the batch dimension using the entries in
+                ``index``.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.index_select(0, [2, 4])
+            tensor([[4, 5],
+                    [8, 9]], batch_dim=0)
+            >>> batch.index_select(0, torch.tensor([4, 3, 2, 1, 0]))
+            tensor([[8, 9],
+                    [6, 7],
+                    [4, 5],
+                    [2, 3],
+                    [0, 1]], batch_dim=0)
+        """
+
     def select(self, dim: int, index: int) -> Tensor:
         r"""Selects the batch along the batch dimension at the given index.
 
         Args:
-           index (int): Specifies the index to select.
+            dim (int): Specifies the index dimension.
+            index (int): Specifies the index to select.
 
         Returns:
             ``Tensor``: The batch sliced along the batch
