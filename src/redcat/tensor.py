@@ -345,10 +345,13 @@ class BatchedTensor(BaseBatchedTensor):
     def chunk_along_batch(self, chunks: int) -> tuple[BaseBatchedTensor, ...]:
         return self.chunk(chunks, self._batch_dim)
 
-    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
+    def index_select(self, dim: int, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
         if not torch.is_tensor(index):
             index = torch.tensor(index)
-        return self.__class__(self._data.index_select(self._batch_dim, index), **self._get_kwargs())
+        return self.__class__(self._data.index_select(dim, index), **self._get_kwargs())
+
+    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
+        return self.index_select(self._batch_dim, index)
 
     def masked_fill(
         self, mask: BaseBatchedTensor | Tensor, value: bool | int | float

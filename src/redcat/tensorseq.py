@@ -1003,10 +1003,13 @@ class BatchedTensorSeq(BaseBatchedTensor):
         """
         return self.chunk(chunks, self._seq_dim)
 
-    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
+    def index_select(self, dim: int, index: torch.Tensor | Sequence[int]) -> BatchedTensorSeq:
         if not torch.is_tensor(index):
-            index = torch.as_tensor(index)
-        return self.__class__(self._data.index_select(self._batch_dim, index), **self._get_kwargs())
+            index = torch.tensor(index)
+        return self.__class__(self._data.index_select(dim, index), **self._get_kwargs())
+
+    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensorSeq:
+        return self.index_select(self._batch_dim, index)
 
     def index_select_along_seq(self, index: torch.Tensor | Sequence[int]) -> BatchedTensorSeq:
         r"""Slices the batch along the sequence dimension at the given indices.
@@ -1033,9 +1036,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[4, 3, 2, 1, 0],
                     [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1)
         """
-        if not torch.is_tensor(index):
-            index = torch.tensor(index)
-        return self.__class__(self._data.index_select(self._seq_dim, index), **self._get_kwargs())
+        return self.index_select(self._seq_dim, index)
 
     def masked_fill(
         self, mask: BaseBatchedTensor | Tensor, value: bool | int | float
