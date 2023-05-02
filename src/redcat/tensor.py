@@ -17,8 +17,7 @@ HANDLED_FUNCTIONS = {}
 
 
 class BatchedTensor(BaseBatchedTensor):
-    r"""Implements a batched tensor to easily manipulate a batch of
-    examples.
+    r"""Implements a batched tensor to easily manipulate a batch of examples.
 
     Args:
         data (array_like): Specifies the data for the tensor. It can

@@ -150,8 +150,7 @@ def compute_batch_seq_permutation(
     new_batch_dim: int,
     new_seq_dim: int,
 ) -> list[int]:
-    r"""Computes the permutation to update the batch and sequence
-    dimensions.
+    r"""Computes the permutation to update the batch and sequence dimensions.
 
     Args:
         num_dims (int): Specifies the number of dimensions.
