@@ -60,8 +60,8 @@ def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
 
 
 def align_to_batch_seq(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> torch.Tensor:
-    r"""Aligns the input tensor format to ``(batch_size, sequence_length, *)``
-    where `*` means any number of dimensions.
+    r"""Aligns the input tensor format to ``(batch_size, sequence_length,
+    *)`` where `*` means any number of dimensions.
 
     Args:
         tensor (``torch.Tensor``): Specifies the tensor to change
@@ -88,8 +88,8 @@ def align_to_batch_seq(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> to
 
 
 def align_to_seq_batch(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> torch.Tensor:
-    r"""Aligns the input tensor format to ``(sequence_length, batch_size, *)``
-    where `*` means any number of dimensions.
+    r"""Aligns the input tensor format to ``(sequence_length, batch_size,
+    *)`` where `*` means any number of dimensions.
 
     Args:
         tensor (``torch.Tensor``): Specifies the tensor to change
@@ -150,7 +150,8 @@ def compute_batch_seq_permutation(
     new_batch_dim: int,
     new_seq_dim: int,
 ) -> list[int]:
-    r"""Computes the permutation to update the batch and sequence dimensions.
+    r"""Computes the permutation to update the batch and sequence
+    dimensions.
 
     Args:
         num_dims (int): Specifies the number of dimensions.
