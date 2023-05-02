@@ -72,7 +72,7 @@ profile = "black"
 
 [tool.docformatter]
 recursive = true
-wrap-summaries = 79
+wrap-summaries = 72
 wrap-descriptions = 72
 syntax = "google"
 

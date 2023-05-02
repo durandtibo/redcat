@@ -83,7 +83,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         )
 
     def is_contiguous(self, memory_format: torch.memory_format = torch.contiguous_format) -> bool:
-        r"""Indicates if a batch as a contiguous representation of the data.
+        r"""Indicates if a batch as a contiguous representation of the
+        data.
 
         Args:
             memory_format (``torch.memory_format``, optional):
@@ -160,8 +161,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return self.__class__(self._data.clone(*args, **kwargs), **self._get_kwargs())
 
     def empty_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates an uninitialized batch, with the same shape as the current
-        batch.
+        r"""Creates an uninitialized batch, with the same shape as the
+        current batch.
 
         Args:
             *args: See the documentation of ``torch.Tensor.empty_like``
@@ -186,8 +187,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return self.__class__(torch.empty_like(self._data, *args, **kwargs), **self._get_kwargs())
 
     def full_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates a batch filled with a given scalar value, with the same
-        shape as the current batch.
+        r"""Creates a batch filled with a given scalar value, with the
+        same shape as the current batch.
 
         Args:
             *args: See the documentation of ``torch.Tensor.full_like``
@@ -376,8 +377,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return torch.gt(self, other)
 
     def isinf(self) -> TBatchedTensor:
-        r"""Indicates if each element of the batch is infinite (positive or
-        negative infinity) or not.
+        r"""Indicates if each element of the batch is infinite (positive
+        or negative infinity) or not.
 
         Returns:
             BaseBatchedTensor:  A batch containing a boolean tensor
@@ -400,7 +401,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return torch.isinf(self)
 
     def isneginf(self) -> TBatchedTensor:
-        r"""Indicates if each element of the batch is negative infinity or not.
+        r"""Indicates if each element of the batch is negative infinity
+        or not.
 
         Returns:
             BaseBatchedTensor:  A batch containing a boolean tensor
@@ -423,7 +425,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return torch.isneginf(self)
 
     def isposinf(self) -> TBatchedTensor:
-        r"""Indicates if each element of the batch is positive infinity or not.
+        r"""Indicates if each element of the batch is positive infinity
+        or not.
 
         Returns:
             BaseBatchedTensor:  A batch containing a boolean tensor
@@ -1015,8 +1018,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
     ###########################################################
 
     def cumsum(self, dim: int, **kwargs) -> TBatchedTensor:
-        r"""Computes the cumulative sum of elements of the current batch in a
-        given dimension.
+        r"""Computes the cumulative sum of elements of the current batch
+        in a given dimension.
 
         Args:
             dim (int): Specifies the dimmenison of the cumulative sum.
@@ -1039,8 +1042,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return torch.cumsum(self, dim=dim, **kwargs)
 
     def cumsum_(self, dim: int, **kwargs) -> None:
-        r"""Computes the cumulative sum of elements of the current batch in a
-        given dimension.
+        r"""Computes the cumulative sum of elements of the current batch
+        in a given dimension.
 
         Args:
             dim (int): Specifies the dimmenison of the cumulative sum.
@@ -1062,8 +1065,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     @abstractmethod
     def cumsum_along_batch(self, **kwargs) -> TBatchedTensor:
-        r"""Computes the cumulative sum of elements of the current batch in the
-        batch dimension.
+        r"""Computes the cumulative sum of elements of the current batch
+        in the batch dimension.
 
         Args:
             **kwargs: see ``torch.cumsum`` documentation
@@ -1085,8 +1088,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     @abstractmethod
     def cumsum_along_batch_(self) -> None:
-        r"""Computes the cumulative sum of elements of the current batch in the
-        batch dimension.
+        r"""Computes the cumulative sum of elements of the current batch
+        in the batch dimension.
 
         Example usage:
 
@@ -1224,8 +1227,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         descending: bool = False,
         stable: bool = False,
     ) -> tuple[TBatchedTensor, TBatchedTensor]:
-        r"""Sorts the elements of the batch along a given dimension in monotonic
-        order by value.
+        r"""Sorts the elements of the batch along a given dimension in
+        monotonic order by value.
 
         Args:
             descending (bool, optional): Controls the sorting order.
@@ -1870,7 +1873,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         self._data.acos_()
 
     def acosh(self) -> TBatchedTensor:
-        r"""Computes the inverse hyperbolic cosine (arccosh) of each element.
+        r"""Computes the inverse hyperbolic cosine (arccosh) of each
+        element.
 
         Return:
             ``BaseBatchedTensor``: A batch with the inverse hyperbolic
@@ -1890,7 +1894,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return torch.acosh(self)
 
     def acosh_(self) -> None:
-        r"""Computes the inverse hyperbolic cosine (arccosh) of each element.
+        r"""Computes the inverse hyperbolic cosine (arccosh) of each
+        element.
 
         Return:
             ``BaseBatchedTensor``: A batch with the inverse hyperbolic
@@ -1950,7 +1955,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         self._data.asin_()
 
     def asinh(self) -> TBatchedTensor:
-        r"""Computes the inverse hyperbolic sine (arcsinh) of each element.
+        r"""Computes the inverse hyperbolic sine (arcsinh) of each
+        element.
 
         Return:
             ``BaseBatchedTensor``: A batch with the inverse hyperbolic
@@ -1970,7 +1976,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         return torch.asinh(self)
 
     def asinh_(self) -> None:
-        r"""Computes the inverse hyperbolic sine (arcsinh) of each element.
+        r"""Computes the inverse hyperbolic sine (arcsinh) of each
+        element.
 
         In-place version of ``asinh()``.
 
@@ -2579,7 +2586,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         self._data[index] = value
 
     def append(self, other: BaseBatchedTensor) -> None:
-        r"""Appends a new batch to the current batch along the batch dimension.
+        r"""Appends a new batch to the current batch along the batch
+        dimension.
 
         Args:
             other (``TensorSeqBatch``): Specifies the batch to append
@@ -2607,8 +2615,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
         dim: int = 0,
     ) -> TBatchedTensor:
-        r"""Concatenates the data of the batch(es) to the current batch along a
-        given dimension and creates a new batch.
+        r"""Concatenates the data of the batch(es) to the current batch
+        along a given dimension and creates a new batch.
 
         Args:
             tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
@@ -2641,8 +2649,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor],
         dim: int = 0,
     ) -> None:
-        r"""Concatenates the data of the batch(es) to the current batch along a
-        given dimension and creates a new batch.
+        r"""Concatenates the data of the batch(es) to the current batch
+        along a given dimension and creates a new batch.
 
         Args:
             tensor (``BaseBatchedTensor`` or ``torch.Tensor`` or
@@ -2670,8 +2678,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
     def cat_along_batch(
         self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> TBatchedTensor:
-        r"""Concatenates the data of the batch(es) to the current batch along
-        the batch dimension and creates a new batch.
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the batch dimension and creates a new batch.
 
         Args:
             tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
@@ -2713,8 +2721,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
     def cat_along_batch_(
         self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> None:
-        r"""Concatenates the data of the batch(es) to the current batch along
-        the batch dimension and creates a new batch.
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the batch dimension and creates a new batch.
 
         Args:
             tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
@@ -2853,7 +2861,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         """
 
     def select(self, dim: int, index: int) -> Tensor:
-        r"""Selects the batch along the batch dimension at the given index.
+        r"""Selects the batch along the batch dimension at the given
+        index.
 
         Args:
             dim (int): Specifies the index dimension.
@@ -2986,8 +2995,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     @abstractmethod
     def unsqueeze(self, dim: int) -> TBatchedTensor:
-        r"""Returns a new batch with a dimension of size one inserted at the
-        specified position.
+        r"""Returns a new batch with a dimension of size one inserted at
+        the specified position.
 
         The returned tensor shares the same underlying data with this
         batch.
@@ -3087,8 +3096,8 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
 
     @abstractmethod
     def _get_kwargs(self) -> dict:
-        r"""Gets the keyword arguments that are specific to the batched tensor
-        implementation.
+        r"""Gets the keyword arguments that are specific to the batched
+        tensor implementation.
 
         Returns:
             dict: The keyword arguments

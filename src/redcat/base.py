@@ -232,7 +232,8 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def append(self, other: BaseBatch) -> None:
-        r"""Appends a new batch to the current batch along the batch dimension.
+        r"""Appends a new batch to the current batch along the batch
+        dimension.
 
         Args:
             other (``TensorSeqBatch``): Specifies the batch to append
@@ -279,8 +280,8 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def extend(self, other: Iterable[BaseBatch]) -> None:
-        r"""Extends the current batch by appending all the batches from the
-        iterable.
+        r"""Extends the current batch by appending all the batches from
+        the iterable.
 
         This method should be used with batches of similar nature.
         For example, it is possible to extend a batch representing
@@ -345,7 +346,8 @@ class BaseBatch(Generic[T], ABC):
         """
 
     def select_along_batch(self, index: int) -> T:
-        r"""Selects the batch along the batch dimension at the given index.
+        r"""Selects the batch along the batch dimension at the given
+        index.
 
         Args:
             index (int): Specifies the index to select.

@@ -27,7 +27,8 @@ HANDLED_FUNCTIONS = {}
 
 
 class BatchedTensorSeq(BaseBatchedTensor):
-    r"""Implements a batched tensor to easily manipulate a batch of sequences.
+    r"""Implements a batched tensor to easily manipulate a batch of
+    sequences.
 
     Args:
         data (array_like): Specifies the data for the tensor. It can
@@ -263,8 +264,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
 
     @classmethod
     def from_seq_batch(cls, data: Any, **kwargs) -> BatchedTensorSeq:
-        r"""Creates a batch where the first dimension is the sequence dimension
-        and the second dimension is the batch dimension.
+        r"""Creates a batch where the first dimension is the sequence
+        dimension and the second dimension is the batch dimension.
 
         Args:
             data (array_like): Specifies the data for the tensor. It can
@@ -359,8 +360,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
         self._data.cumsum_(dim=self._batch_dim)
 
     def cumsum_along_seq(self, **kwargs) -> BatchedTensorSeq:
-        r"""Computes the cumulative sum of elements of the current batch in the
-        sequence dimension.
+        r"""Computes the cumulative sum of elements of the current batch
+        in the sequence dimension.
 
         Args:
             **kwargs: see ``torch.cumsum`` documentation
@@ -383,8 +384,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
         return torch.cumsum(self, dim=self._seq_dim, **kwargs)
 
     def cumsum_along_seq_(self) -> None:
-        r"""Computes the cumulative sum of elements of the current batch in the
-        sequence dimension.
+        r"""Computes the cumulative sum of elements of the current batch
+        in the sequence dimension.
 
         Example usage:
 
@@ -522,8 +523,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
     def sort_along_seq(
         self, descending: bool = False, stable: bool = False
     ) -> tuple[BatchedTensorSeq, BatchedTensorSeq]:
-        r"""Sorts the elements of the batch along the sequence dimension in
-        monotonic order by value.
+        r"""Sorts the elements of the batch along the sequence dimension
+        in monotonic order by value.
 
         Args:
             descending (bool, optional): Controls the sorting order.
@@ -892,8 +893,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
     def cat_along_seq(
         self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> BatchedTensorSeq:
-        r"""Concatenates the data of the batch(es) to the current batch along
-        the sequence dimension and creates a new batch.
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the sequence dimension and creates a new batch.
 
         Args:
             tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
@@ -935,8 +936,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
     def cat_along_seq_(
         self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
     ) -> None:
-        r"""Concatenates the data of the batch(es) to the current batch along
-        the sequence dimension.
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the sequence dimension.
 
         In-place version of ``cat_along_seq()``.
 
@@ -1012,7 +1013,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
         return self.index_select(self._batch_dim, index)
 
     def index_select_along_seq(self, index: torch.Tensor | Sequence[int]) -> BatchedTensorSeq:
-        r"""Slices the batch along the sequence dimension at the given indices.
+        r"""Slices the batch along the sequence dimension at the given
+        indices.
 
         Args:
             index (``torch.Tensor`` or list or tuple): Specifies the
@@ -1075,7 +1077,8 @@ class BatchedTensorSeq(BaseBatchedTensor):
         return self.select(self._batch_dim, index)
 
     def select_along_seq(self, index: int) -> BatchedTensor:
-        r"""Slices the batch along the sequence dimension at the given index.
+        r"""Slices the batch along the sequence dimension at the given
+        index.
 
         Args:
             index (int): Specifies the index to select.
