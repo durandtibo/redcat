@@ -1504,6 +1504,14 @@ def test_batched_tensor_cumsum() -> None:
     )
 
 
+def test_batched_tensor_cumsum_dim_1() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumsum(dim=1)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]])))
+    )
+
+
 def test_batched_tensor_cumsum_custom_dims() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
@@ -1569,6 +1577,76 @@ def test_batched_tensor_cumsum_along_batch__custom_dims() -> None:
     batch.cumsum_along_batch_()
     assert batch.equal(
         BatchedTensor(torch.tensor([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1)
+    )
+
+
+def test_batched_tensor_logcumsumexp_dim_0() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2))
+        .logcumsumexp(dim=0)
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [0.0, 1.0],
+                        [2.1269280110429727, 3.1269280110429727],
+                        [4.142931628499899, 5.142931628499899],
+                        [6.145077938960783, 7.145077938960783],
+                        [8.145368056908488, 9.145368056908488],
+                    ]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_logcumsumexp_dim_1() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5))
+        .logcumsumexp(dim=1)
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [
+                            0.0,
+                            1.3132616875182228,
+                            2.40760596444438,
+                            3.4401896985611953,
+                            4.451914395937593,
+                        ],
+                        [
+                            5.0,
+                            6.313261687518223,
+                            7.407605964444381,
+                            8.440189698561195,
+                            9.451914395937592,
+                        ],
+                    ]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_logcumsumexp_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2), batch_dim=1)
+        .logcumsumexp(dim=0)
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [0.0, 1.0],
+                        [2.1269280110429727, 3.1269280110429727],
+                        [4.142931628499899, 5.142931628499899],
+                        [6.145077938960783, 7.145077938960783],
+                        [8.145368056908488, 9.145368056908488],
+                    ]
+                ),
+                batch_dim=1,
+            )
+        )
     )
 
 
@@ -1798,7 +1876,7 @@ def test_batched_tensor_shuffle_along_dim__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
-def test_batched_tensor_seq_sort_descending_true() -> None:
+def test_batched_tensor_sort_descending_true() -> None:
     values, indices = BatchedTensor(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(
         descending=True
     )
@@ -1806,7 +1884,7 @@ def test_batched_tensor_seq_sort_descending_true() -> None:
     assert indices.equal(BatchedTensor(torch.tensor([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])))
 
 
-def test_batched_tensor_seq_sort_dim_0() -> None:
+def test_batched_tensor_sort_dim_0() -> None:
     values, indices = BatchedTensor(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort(
         dim=0
     )
@@ -1814,7 +1892,7 @@ def test_batched_tensor_seq_sort_dim_0() -> None:
     assert indices.equal(BatchedTensor(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])))
 
 
-def test_batched_tensor_seq_sort_dim_1() -> None:
+def test_batched_tensor_sort_dim_1() -> None:
     values, indices = BatchedTensor(
         torch.tensor(
             [
@@ -1845,7 +1923,7 @@ def test_batched_tensor_seq_sort_dim_1() -> None:
     )
 
 
-def test_batched_tensor_seq_sort_custom_dims() -> None:
+def test_batched_tensor_sort_custom_dims() -> None:
     values, indices = BatchedTensor(
         torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_dim=1
     ).sort(dim=0)
