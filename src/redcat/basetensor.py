@@ -1129,6 +1129,28 @@ class BaseBatchedTensor(BaseBatch[Tensor]):
         """
         return torch.logcumsumexp(self, dim=dim)
 
+    def logcumsumexp_(self, dim: int) -> None:
+        r"""Computes the logarithm of the cumulative summation of the
+        exponentiation of elements of the current batch in a given
+        dimension.
+
+        Args:
+            dim (int): Specifies the dimension of the cumulative sum.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5).float())
+            >>> batch.logcumsumexp_(dim=1)
+            >>> batch
+            tensor([[0.0000, 1.3133, 2.4076, 3.4402, 4.4519],
+                    [5.0000, 6.3133, 7.4076, 8.4402, 9.4519]], batch_dim=0)
+        """
+        self._data = self._data.logcumsumexp(dim=dim)
+
     @abstractmethod
     def permute_along_dim(self, permutation: Sequence[int] | Tensor, dim: int) -> TBatchedTensor:
         r"""Permutes the data/batch along a given dimension.
