@@ -354,10 +354,10 @@ class BatchedTensorSeq(BaseBatchedTensor):
     ###########################################################
 
     def cumsum_along_batch(self, **kwargs) -> BatchedTensorSeq:
-        return torch.cumsum(self, dim=self._batch_dim, **kwargs)
+        return self.cumsum(self._batch_dim, **kwargs)
 
     def cumsum_along_batch_(self) -> None:
-        self._data.cumsum_(dim=self._batch_dim)
+        self.cumsum_(self._batch_dim)
 
     def cumsum_along_seq(self, **kwargs) -> BatchedTensorSeq:
         r"""Computes the cumulative sum of elements of the current batch
@@ -381,7 +381,7 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[ 0,  1,  3,  6, 10],
                     [ 5, 11, 18, 26, 35]], batch_dim=0, seq_dim=1)
         """
-        return torch.cumsum(self, dim=self._seq_dim, **kwargs)
+        return self.cumsum(dim=self._seq_dim, **kwargs)
 
     def cumsum_along_seq_(self) -> None:
         r"""Computes the cumulative sum of elements of the current batch
@@ -399,7 +399,13 @@ class BatchedTensorSeq(BaseBatchedTensor):
             tensor([[ 0,  1,  3,  6, 10],
                     [ 5, 11, 18, 26, 35]], batch_dim=0, seq_dim=1)
         """
-        self._data.cumsum_(dim=self._seq_dim)
+        self.cumsum_(self._seq_dim)
+
+    def logcumsumexp_along_batch(self) -> BatchedTensorSeq:
+        return self.logcumsumexp(self._batch_dim)
+
+    def logcumsumexp_along_batch_(self) -> None:
+        self.logcumsumexp_(self._batch_dim)
 
     def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> BatchedTensorSeq:
         return self.permute_along_dim(permutation, dim=self._batch_dim)
