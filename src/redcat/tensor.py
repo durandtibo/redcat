@@ -274,10 +274,16 @@ class BatchedTensor(BaseBatchedTensor):
     ###########################################################
 
     def cumsum_along_batch(self, **kwargs) -> BatchedTensor:
-        return torch.cumsum(self, dim=self._batch_dim, **kwargs)
+        return self.cumsum(self._batch_dim, **kwargs)
 
     def cumsum_along_batch_(self) -> None:
-        self._data.cumsum_(dim=self._batch_dim)
+        self.cumsum_(self._batch_dim)
+
+    def logcumsumexp_along_batch(self) -> BatchedTensor:
+        return self.logcumsumexp(self._batch_dim)
+
+    def logcumsumexp_along_batch_(self) -> None:
+        self.logcumsumexp_(self._batch_dim)
 
     def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> BatchedTensor:
         return self.permute_along_dim(permutation, dim=self._batch_dim)

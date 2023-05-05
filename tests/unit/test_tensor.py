@@ -1714,6 +1714,102 @@ def test_batched_tensor_logcumsumexp__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_logcumsumexp_along_batch() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2))
+        .logcumsumexp_along_batch()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [0.0, 1.0],
+                        [2.1269280110429727, 3.1269280110429727],
+                        [4.142931628499899, 5.142931628499899],
+                        [6.145077938960783, 7.145077938960783],
+                        [8.145368056908488, 9.145368056908488],
+                    ]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_logcumsumexp_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5), batch_dim=1)
+        .logcumsumexp_along_batch()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [
+                        [
+                            0.0,
+                            1.3132616875182228,
+                            2.40760596444438,
+                            3.4401896985611953,
+                            4.451914395937593,
+                        ],
+                        [
+                            5.0,
+                            6.313261687518223,
+                            7.407605964444381,
+                            8.440189698561195,
+                            9.451914395937592,
+                        ],
+                    ]
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_logcumsumexp_along_batch_() -> None:
+    batch = BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2))
+    batch.logcumsumexp_along_batch_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [0.0, 1.0],
+                    [2.1269280110429727, 3.1269280110429727],
+                    [4.142931628499899, 5.142931628499899],
+                    [6.145077938960783, 7.145077938960783],
+                    [8.145368056908488, 9.145368056908488],
+                ]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_logcumsumexp_along_batch__custom_dims() -> None:
+    batch = BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5), batch_dim=1)
+    batch.logcumsumexp_along_batch_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [
+                    [
+                        0.0,
+                        1.3132616875182228,
+                        2.40760596444438,
+                        3.4401896985611953,
+                        4.451914395937593,
+                    ],
+                    [
+                        5.0,
+                        6.313261687518223,
+                        7.407605964444381,
+                        8.440189698561195,
+                        9.451914395937592,
+                    ],
+                ]
+            ),
+            batch_dim=1,
+        )
+    )
+
+
 @mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
 def test_batched_tensor_permute_along_batch(
     permutation: Union[Sequence[int], torch.Tensor]
