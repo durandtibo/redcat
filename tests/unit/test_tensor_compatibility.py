@@ -117,17 +117,51 @@ PAIRWISE_FUNCTIONS = (
 
 @mark.parametrize("func", UNARY_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
-def test_same_behaviour_unary(func: Callable, cls: type[BatchedTensor]) -> None:
+def test_unary(func: Callable, cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(2, 3).mul(2.0)
     assert func(cls(tensor)).allclose(cls(func(tensor)), equal_nan=True)
 
 
+@mark.parametrize("func", UNARY_FUNCTIONS)
+def test_unary_batched_tensor_custom_dims(func: Callable) -> None:
+    tensor = torch.rand(2, 3).mul(2.0)
+    assert func(BatchedTensor(tensor, batch_dim=1)).allclose(
+        BatchedTensor(func(tensor), batch_dim=1), equal_nan=True
+    )
+
+
+@mark.parametrize("func", UNARY_FUNCTIONS)
+def test_unary_batched_tensor_seq_custom_dims(func: Callable) -> None:
+    tensor = torch.rand(2, 3).mul(2.0)
+    assert func(BatchedTensorSeq.from_seq_batch(tensor)).allclose(
+        BatchedTensorSeq.from_seq_batch(func(tensor)), equal_nan=True
+    )
+
+
 @mark.parametrize("func", PAIRWISE_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
-def test_same_behaviour_pairwise(func: Callable, cls: type[BatchedTensor]) -> None:
+def test_pairwise(func: Callable, cls: type[BatchedTensor]) -> None:
     tensor1 = torch.rand(2, 3)
     tensor2 = torch.rand(2, 3) + 1.0
     assert func(cls(tensor1), cls(tensor2)).allclose(cls(func(tensor1, tensor2)), equal_nan=True)
+
+
+@mark.parametrize("func", PAIRWISE_FUNCTIONS)
+def test_pairwise_batched_tensor_custom_dims(func: Callable) -> None:
+    tensor1 = torch.rand(2, 3)
+    tensor2 = torch.rand(2, 3) + 1.0
+    assert func(BatchedTensor(tensor1, batch_dim=1), BatchedTensor(tensor2, batch_dim=1)).allclose(
+        BatchedTensor(func(tensor1, tensor2), batch_dim=1), equal_nan=True
+    )
+
+
+@mark.parametrize("func", PAIRWISE_FUNCTIONS)
+def test_pairwise_batched_tensor_seq_custom_dims(func: Callable) -> None:
+    tensor1 = torch.rand(2, 3)
+    tensor2 = torch.rand(2, 3) + 1.0
+    assert func(
+        BatchedTensorSeq.from_seq_batch(tensor1), BatchedTensorSeq.from_seq_batch(tensor2)
+    ).allclose(BatchedTensorSeq.from_seq_batch(func(tensor1, tensor2)), equal_nan=True)
 
 
 def test_same_behaviour_take_along_dim() -> None:  # TODO: update
