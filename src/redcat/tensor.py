@@ -115,7 +115,7 @@ class BatchedTensor(BaseBatchedTensor):
             shape[self._batch_dim] = batch_size
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return BatchedTensor(
+        return self.__class__(
             torch.full(size=shape, fill_value=fill_value, **kwargs), **self._get_kwargs()
         )
 
@@ -163,7 +163,7 @@ class BatchedTensor(BaseBatchedTensor):
             shape[self._batch_dim] = batch_size
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return BatchedTensor(torch.ones(*shape, **kwargs), **self._get_kwargs())
+        return self.__class__(torch.ones(*shape, **kwargs), **self._get_kwargs())
 
     def new_zeros(
         self,
@@ -209,7 +209,7 @@ class BatchedTensor(BaseBatchedTensor):
             shape[self._batch_dim] = batch_size
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return BatchedTensor(torch.zeros(*shape, **kwargs), **self._get_kwargs())
+        return self.__class__(torch.zeros(*shape, **kwargs), **self._get_kwargs())
 
     #################################
     #     Comparison operations     #
@@ -218,7 +218,7 @@ class BatchedTensor(BaseBatchedTensor):
     def allclose(
         self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
     ) -> bool:
-        if not isinstance(other, BatchedTensor):
+        if not isinstance(other, self.__class__):
             return False
         if self._batch_dim != other.batch_dim:
             return False
@@ -227,7 +227,7 @@ class BatchedTensor(BaseBatchedTensor):
         return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
 
     def equal(self, other: Any) -> bool:
-        if not isinstance(other, BatchedTensor):
+        if not isinstance(other, self.__class__):
             return False
         if self._batch_dim != other.batch_dim:
             return False
