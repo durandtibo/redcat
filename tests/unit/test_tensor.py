@@ -417,7 +417,6 @@ def test_batched_tensor_zeros_like_target_dtype(dtype: torch.dtype) -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -439,7 +438,6 @@ def test_batched_tensor__eq__(other: Union[BaseBatchedTensor, torch.Tensor, int,
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -461,7 +459,6 @@ def test_batched_tensor__ge__(other: Union[BaseBatchedTensor, torch.Tensor, int,
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -483,7 +480,6 @@ def test_batched_tensor__gt__(other: Union[BaseBatchedTensor, torch.Tensor, int,
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -505,7 +501,6 @@ def test_batched_tensor__le__(other: Union[BaseBatchedTensor, torch.Tensor, int,
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -573,7 +568,6 @@ def test_batched_tensor_allclose_true_rtol(batch: BatchedTensor, rtol: float) ->
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5.0)),
         5,
@@ -635,7 +629,6 @@ def test_batched_tensor_equal_false_different_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -677,7 +670,6 @@ def test_batched_tensor_ge_custom_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -831,9 +823,8 @@ def test_batched_tensor_isnan_custom_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
-        BatchedTensorSeq(torch.full((2, 1), 5)),
+        BatchedTensor(torch.full((2, 1), 5)),
         5,
         5.0,
     ),
@@ -873,7 +864,6 @@ def test_batched_tensor_le_custom_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5)),
         5,
@@ -1009,9 +999,9 @@ def test_batched_tensor_long_custom_batch_dim() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.ones(2, 3)),
         BatchedTensor(torch.ones(2, 3)),
         torch.ones(2, 3),
+        BatchedTensor(torch.ones(2, 1)),
         1,
         1.0,
     ),
@@ -1023,9 +1013,9 @@ def test_batched_tensor__add__(other: Union[BaseBatchedTensor, torch.Tensor, int
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.ones(2, 3)),
         BatchedTensor(torch.ones(2, 3)),
         torch.ones(2, 3),
+        BatchedTensor(torch.ones(2, 1)),
         1,
         1.0,
     ),
@@ -1039,9 +1029,9 @@ def test_batched_tensor__iadd__(other: Union[BaseBatchedTensor, torch.Tensor, in
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1053,9 +1043,9 @@ def test_batched_tensor__mul__(other: Union[BaseBatchedTensor, torch.Tensor, int
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1073,9 +1063,9 @@ def test_batched_tensor__neg__() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1087,9 +1077,9 @@ def test_batched_tensor__sub__(other: Union[BaseBatchedTensor, torch.Tensor, int
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1103,9 +1093,9 @@ def test_batched_tensor__isub__(other: Union[BaseBatchedTensor, torch.Tensor, in
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1119,9 +1109,9 @@ def test_batched_tensor__truediv__(
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1138,8 +1128,8 @@ def test_batched_tensor__itruediv__(
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1181,8 +1171,8 @@ def test_batched_tensor_add_incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1221,8 +1211,8 @@ def test_batched_tensor_add__incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1256,8 +1246,8 @@ def test_batched_tensor_div_incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1290,8 +1280,8 @@ def test_batched_tensor_div__incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1317,8 +1307,8 @@ def test_batched_tensor_fmod_incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1345,8 +1335,8 @@ def test_batched_tensor_fmod__incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1372,8 +1362,8 @@ def test_batched_tensor_mul_incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1412,8 +1402,8 @@ def test_batched_tensor_custom_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -1455,8 +1445,8 @@ def test_batched_tensor_sub_incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
         2,
         2.0,
     ),
@@ -2440,7 +2430,6 @@ def test_batched_tensor_max_global(data: torch.Tensor, max_value: Union[bool, in
     "other",
     (
         BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]])),
-        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]])),
         torch.tensor([[2, 0, 1], [0, 1, 0]]),
     ),
 )
@@ -2482,7 +2471,6 @@ def test_batched_tensor_min_global(data: torch.Tensor, min_value: Union[bool, in
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]])),
         BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]])),
         torch.tensor([[2, 0, 1], [0, 1, 0]]),
     ),
@@ -2511,7 +2499,7 @@ def test_batched_tensor_min_incorrect_batch_dim() -> None:
 
 @mark.parametrize(
     "exponent",
-    (BatchedTensor(torch.full((2, 5), 2.0)), BatchedTensorSeq(torch.full((2, 5), 2.0)), 2, 2.0),
+    (BatchedTensor(torch.full((2, 5), 2.0)), torch.full((2, 5), 2.0), 2, 2.0),
 )
 def test_batched_tensor_pow(exponent: Union[BaseBatchedTensor, int, float]) -> None:
     assert (
@@ -2566,7 +2554,7 @@ def test_batched_tensor_pow_incorrect_batch_dim() -> None:
 
 @mark.parametrize(
     "exponent",
-    (BatchedTensorSeq(torch.full((2, 5), 2.0)), BatchedTensor(torch.full((2, 5), 2.0)), 2, 2.0),
+    (BatchedTensor(torch.full((2, 5), 2.0)), torch.full((2, 5), 2.0), 2, 2.0),
 )
 def test_batched_tensor_pow_(exponent: Union[BaseBatchedTensor, int, float]) -> None:
     batch = BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5))
@@ -3576,12 +3564,8 @@ def test_batched_tensor_tanh__custom_dims() -> None:
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
         ),
-        BatchedTensorSeq(
-            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
-        ),
         torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
         BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
         torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
     ),
 )
@@ -3646,12 +3630,8 @@ def test_batched_tensor_logical_and_incorrect_batch_dim() -> None:
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
         ),
-        BatchedTensorSeq(
-            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
-        ),
         torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
         BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
         torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
     ),
 )
@@ -3772,12 +3752,8 @@ def test_batched_tensor_logical_not__custom_dims() -> None:
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
         ),
-        BatchedTensorSeq(
-            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
-        ),
         torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
         BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
         torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
     ),
 )
@@ -3842,12 +3818,8 @@ def test_batched_tensor_logical_or_incorrect_batch_dim() -> None:
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
         ),
-        BatchedTensorSeq(
-            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
-        ),
         torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
         BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
         torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
     ),
 )
@@ -3900,12 +3872,8 @@ def test_batched_tensor_logical_or__incorrect_batch_dim() -> None:
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
         ),
-        BatchedTensorSeq(
-            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
-        ),
         torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
         BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
         torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
     ),
 )
@@ -3970,12 +3938,8 @@ def test_batched_tensor_logical_xor_incorrect_batch_dim() -> None:
         BatchedTensor(
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
         ),
-        BatchedTensorSeq(
-            torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
-        ),
         torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
         BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
         torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
     ),
 )
@@ -4060,11 +4024,7 @@ def test_batched_tensor__setitem___int() -> None:
 
 @mark.parametrize(
     "value",
-    (
-        torch.tensor([[0, -4]]),
-        BatchedTensor(torch.tensor([[0, -4]])),
-        BatchedTensorSeq(torch.tensor([[0, -4]])),
-    ),
+    (torch.tensor([[0, -4]]), BatchedTensor(torch.tensor([[0, -4]]))),
 )
 def test_batched_tensor__setitem___range(value: Union[Tensor, BaseBatchedTensor]) -> None:
     batch = BatchedTensor(torch.arange(10).view(2, 5))
@@ -4076,7 +4036,6 @@ def test_batched_tensor__setitem___range(value: Union[Tensor, BaseBatchedTensor]
     "other",
     (
         BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
         torch.tensor([[10, 11, 12], [13, 14, 15]]),
     ),
 )
@@ -4115,7 +4074,6 @@ def test_batched_tensor_append_incorrect_batch_dim() -> None:
     "tensors",
     (
         BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
         torch.tensor([[10, 11, 12], [13, 14, 15]]),
         [BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))],
         (BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),),
@@ -4134,7 +4092,6 @@ def test_batched_tensor_cat_dim_0(
 @mark.parametrize(
     "tensors",
     (
-        BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
         BatchedTensor(torch.tensor([[10, 11], [12, 13]])),
         torch.tensor([[10, 11], [12, 13]]),
         [BatchedTensor(torch.tensor([[10, 11], [12, 13]]))],
@@ -4178,7 +4135,6 @@ def test_batched_tensor_cat_incorrect_batch_dim() -> None:
     "tensors",
     (
         BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
         torch.tensor([[10, 11, 12], [13, 14, 15]]),
         [BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))],
         (BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),),
@@ -4197,7 +4153,6 @@ def test_batched_tensor_cat__dim_0(
 @mark.parametrize(
     "tensors",
     (
-        BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])),
         BatchedTensor(torch.tensor([[10, 11], [12, 13]])),
         torch.tensor([[10, 11], [12, 13]]),
         [BatchedTensor(torch.tensor([[10, 11], [12, 13]]))],
@@ -4239,7 +4194,6 @@ def test_batched_tensor_cat__incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
         torch.tensor([[10, 11, 12], [13, 14, 15]]),
         [BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))],
         (BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),),
@@ -4282,7 +4236,7 @@ def test_batched_tensor_cat_along_batch_multiple() -> None:
         .cat_along_batch(
             [
                 BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-                BatchedTensorSeq(torch.tensor([[20, 21, 22]])),
+                BatchedTensor(torch.tensor([[20, 21, 22]])),
                 torch.tensor([[30, 31, 32]]),
             ]
         )
@@ -4312,7 +4266,6 @@ def test_batched_tensor_cat_along_batch_incorrect_batch_dim() -> None:
     "other",
     (
         BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
         torch.tensor([[10, 11, 12], [13, 14, 15]]),
         [BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))],
         (BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),),
@@ -4350,7 +4303,7 @@ def test_batched_tensor_cat_along_batch__multiple() -> None:
     batch.cat_along_batch_(
         [
             BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-            BatchedTensorSeq(torch.tensor([[20, 21, 22]])),
+            BatchedTensor(torch.tensor([[20, 21, 22]])),
             torch.tensor([[30, 31, 32]]),
         ]
     )
@@ -4486,7 +4439,7 @@ def test_batched_tensor_extend_multiple() -> None:
     batch.extend(
         [
             BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
-            BatchedTensorSeq(torch.tensor([[20, 21, 22]])),
+            BatchedTensor(torch.tensor([[20, 21, 22]])),
             torch.tensor([[30, 31, 32]]),
         ]
     )
@@ -4531,9 +4484,6 @@ def test_batched_tensor_index_select_along_batch_custom_dims() -> None:
 @mark.parametrize(
     "mask",
     (
-        BatchedTensorSeq(
-            torch.tensor([[True, False, True, False, True], [False, False, False, False, False]])
-        ),
         BatchedTensor(
             torch.tensor([[True, False, True, False, True], [False, False, False, False, False]])
         ),
@@ -4869,7 +4819,6 @@ def test_batched_tensor_split_along_batch_split_list() -> None:
 @mark.parametrize(
     "indices",
     (
-        BatchedTensorSeq(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         torch.tensor([[3, 2], [0, 3], [1, 4]]),
         [[3, 2], [0, 3], [1, 4]],
@@ -4924,7 +4873,6 @@ def test_batched_tensor_take_along_batch_incorrect_batch_dim() -> None:
 @mark.parametrize(
     "indices",
     (
-        BatchedTensorSeq(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         torch.tensor([[3, 2], [0, 3], [1, 4]]),
         [[3, 2], [0, 3], [1, 4]],
@@ -4941,7 +4889,6 @@ def test_batched_tensor_take_along_dim(indices: BaseBatch | Tensor | Sequence) -
 @mark.parametrize(
     "indices",
     (
-        BatchedTensorSeq(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         torch.tensor([[3, 2], [0, 3], [1, 4]]),
         [[3, 2], [0, 3], [1, 4]],
@@ -5220,7 +5167,6 @@ def test_check_data_and_dim_incorrect_batch_dim(batch_dim: int) -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.tensor([[10, 11, 12], [13, 14, 15]])),
         BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])),
         torch.tensor([[10, 11, 12], [13, 14, 15]]),
     ),
@@ -5237,7 +5183,6 @@ def test_torch_cat_dim_0(other: Union[BaseBatchedTensor, Tensor]) -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.tensor([[4, 5], [14, 15]])),
         BatchedTensor(torch.tensor([[4, 5], [14, 15]])),
         torch.tensor([[4, 5], [14, 15]]),
     ),
@@ -5507,7 +5452,6 @@ def test_torch_split_dim_1() -> None:
         torch.tensor([[2, 4], [1, 3]]),
         torch.tensor([[[2], [4]], [[1], [3]]]),
         BatchedTensor(torch.tensor([2, 4, 1, 3])),
-        BatchedTensorSeq(torch.tensor([[2, 4], [1, 3]])),
     ),
 )
 def test_torch_take_along_dim(indices: BaseBatchedTensor | Tensor) -> None:
@@ -5521,7 +5465,6 @@ def test_torch_take_along_dim(indices: BaseBatchedTensor | Tensor) -> None:
     (
         torch.tensor([[2, 4], [1, 3]]),
         BatchedTensor(torch.tensor([[2, 4], [1, 3]]), batch_dim=1),
-        BatchedTensorSeq.from_seq_batch(torch.tensor([[2, 4], [1, 3]])),
     ),
 )
 def test_torch_take_along_dim_custom_dims(indices: BaseBatchedTensor | Tensor) -> None:
@@ -5536,7 +5479,6 @@ def test_torch_take_along_dim_custom_dims(indices: BaseBatchedTensor | Tensor) -
     (
         torch.tensor([[2, 4], [1, 3]]),
         BatchedTensor(torch.tensor([[2, 4], [1, 3]])),
-        BatchedTensorSeq(torch.tensor([[2, 4], [1, 3]])),
     ),
 )
 def test_torch_take_along_dim_0(indices: BaseBatchedTensor | Tensor) -> None:
@@ -5550,7 +5492,6 @@ def test_torch_take_along_dim_0(indices: BaseBatchedTensor | Tensor) -> None:
     (
         torch.tensor([[2, 4], [1, 3]]),
         BatchedTensor(torch.tensor([[2, 4], [1, 3]]), batch_dim=1),
-        BatchedTensorSeq.from_seq_batch(torch.tensor([[2, 4], [1, 3]])),
     ),
 )
 def test_torch_take_along_dim_0_custom_dims(indices: BaseBatchedTensor | Tensor) -> None:

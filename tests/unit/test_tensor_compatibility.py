@@ -198,7 +198,6 @@ def test_torch_acosh() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.ones(2, 3)),
         BatchedTensor(torch.ones(2, 3)),
         torch.ones(2, 3),
         1,
@@ -212,7 +211,6 @@ def test_torch_add(other: Union[BaseBatchedTensor, Tensor, int, float]) -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.ones(2, 3)),
         BatchedTensor(torch.ones(2, 3)),
         torch.ones(2, 3),
         1,
@@ -290,7 +288,6 @@ def test_torch_atanh() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.tensor([[4, 5], [14, 15]])),
         BatchedTensor(torch.tensor([[4, 5], [14, 15]])),
         torch.tensor([[4, 5], [14, 15]]),
     ),
@@ -358,7 +355,6 @@ def test_torch_cumsum_dim_1() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         BatchedTensor(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
         2,
@@ -381,7 +377,6 @@ def test_torch_div_tensor() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5.0)),
         5,
@@ -430,7 +425,6 @@ def test_torch_exp() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 3), 2.0)),
-        BatchedTensorSeq(torch.full((2, 3), 2.0)),
         torch.full((2, 3), 2.0),
         2,
         2.0,
@@ -450,7 +444,6 @@ def test_torch_fmod_tensor() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5.0)),
         5,
@@ -483,7 +476,6 @@ def test_torch_ge_tensor() -> None:
     "other",
     (
         BatchedTensor(torch.full((2, 5), 5.0)),
-        BatchedTensorSeq(torch.full((2, 5), 5.0)),
         torch.full((2, 5), 5.0),
         BatchedTensor(torch.full((2, 1), 5.0)),
         5,
@@ -515,7 +507,6 @@ def test_torch_gt_tensor() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.ones(2, 3)),
         BatchedTensor(torch.ones(2, 3)),
         torch.ones(2, 3),
         1,
@@ -541,7 +532,6 @@ def test_torch_neg() -> None:
 @mark.parametrize(
     "other",
     (
-        BatchedTensorSeq(torch.ones(2, 3)),
         BatchedTensor(torch.ones(2, 3)),
         torch.ones(2, 3),
         1,
