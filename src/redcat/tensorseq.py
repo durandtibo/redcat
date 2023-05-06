@@ -10,7 +10,6 @@ import torch
 from torch import Tensor
 
 from redcat import BaseBatch
-from redcat.basetensor import BaseBatchedTensor
 from redcat.tensor import BatchedTensor
 from redcat.utils import (
     align_to_batch_seq,
@@ -303,7 +302,7 @@ class BatchedTensorSeq(BatchedTensor):
 
     def add_(
         self,
-        other: BaseBatchedTensor | Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> None:
         check_seq_dims(get_seq_dims((self, other)))
@@ -311,23 +310,23 @@ class BatchedTensorSeq(BatchedTensor):
 
     def div_(
         self,
-        other: BaseBatchedTensor | Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         rounding_mode: str | None = None,
     ) -> None:
         check_seq_dims(get_seq_dims((self, other)))
         super().div_(other, rounding_mode=rounding_mode)
 
-    def fmod_(self, divisor: BaseBatchedTensor | Tensor | int | float) -> None:
+    def fmod_(self, divisor: BatchedTensor | Tensor | int | float) -> None:
         check_seq_dims(get_seq_dims((self, divisor)))
         super().fmod_(divisor)
 
-    def mul_(self, other: BaseBatchedTensor | Tensor | int | float) -> None:
+    def mul_(self, other: BatchedTensor | Tensor | int | float) -> None:
         check_seq_dims(get_seq_dims((self, other)))
         super().mul_(other)
 
     def sub_(
         self,
-        other: BaseBatchedTensor | Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> None:
         check_seq_dims(get_seq_dims((self, other)))
@@ -430,7 +429,7 @@ class BatchedTensorSeq(BatchedTensor):
                 input should be compatible with the shape of the data.
 
         Returns:
-            ``BaseBatchedTensor``: A new batch with permuted data.
+            ``BatchedTensorSeq``: A new batch with permuted data.
 
         Example usage:
 
@@ -553,7 +552,7 @@ class BatchedTensorSeq(BatchedTensor):
     #     Mathematical | point-wise operations     #
     ################################################
 
-    def pow_(self, exponent: int | float | BaseBatchedTensor) -> None:
+    def pow_(self, exponent: int | float | BatchedTensor) -> None:
         check_seq_dims(get_seq_dims((self, exponent)))
         super().pow_(exponent)
 
@@ -561,15 +560,15 @@ class BatchedTensorSeq(BatchedTensor):
     #     Mathematical | logical operations     #
     #############################################
 
-    def logical_and_(self, other: BaseBatchedTensor | Tensor) -> None:
+    def logical_and_(self, other: BatchedTensor | Tensor) -> None:
         check_seq_dims(get_seq_dims((self, other)))
         super().logical_and_(other)
 
-    def logical_or_(self, other: BaseBatchedTensor | Tensor) -> None:
+    def logical_or_(self, other: BatchedTensor | Tensor) -> None:
         check_seq_dims(get_seq_dims((self, other)))
         super().logical_or_(other)
 
-    def logical_xor_(self, other: BaseBatchedTensor | Tensor) -> None:
+    def logical_xor_(self, other: BatchedTensor | Tensor) -> None:
         check_seq_dims(get_seq_dims((self, other)))
         super().logical_xor_(other)
 
@@ -870,13 +869,13 @@ class BatchedTensorSeq(BatchedTensor):
         )
 
     def cat_along_seq(
-        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
     ) -> BatchedTensorSeq:
         r"""Concatenates the data of the batch(es) to the current batch
         along the sequence dimension and creates a new batch.
 
         Args:
-            tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
+            tensors (``BatchedTensorSeq`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
@@ -913,7 +912,7 @@ class BatchedTensorSeq(BatchedTensor):
         return self.cat(tensors, dim=self._seq_dim)
 
     def cat_along_seq_(
-        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
     ) -> None:
         r"""Concatenates the data of the batch(es) to the current batch
         along the sequence dimension.
@@ -921,7 +920,7 @@ class BatchedTensorSeq(BatchedTensor):
         In-place version of ``cat_along_seq()``.
 
         Args:
-            tensors (``BaseBatchedTensor`` or ``torch.Tensor`` or
+            tensors (``BatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Example usage:
@@ -957,7 +956,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.cat_(tensors, dim=self._seq_dim)
 
-    def chunk_along_seq(self, chunks: int) -> tuple[BaseBatchedTensor, ...]:
+    def chunk_along_seq(self, chunks: int) -> tuple[BatchedTensorSeq, ...]:
         r"""Splits the batch into chunks along the sequence dimension.
 
         Args:
@@ -1009,11 +1008,11 @@ class BatchedTensorSeq(BatchedTensor):
         return self.index_select(self._seq_dim, index)
 
     def masked_fill(
-        self, mask: BaseBatchedTensor | Tensor, value: bool | int | float
+        self, mask: BatchedTensor | Tensor, value: bool | int | float
     ) -> BatchedTensorSeq:
         check_batch_dims(get_batch_dims((self, mask)))
         check_seq_dims(get_seq_dims((self, mask)))
-        if isinstance(mask, BaseBatchedTensor):
+        if isinstance(mask, BatchedTensor):
             mask = mask.data
         return self.__class__(self._data.masked_fill(mask.data, value), **self._get_kwargs())
 
@@ -1141,7 +1140,7 @@ class BatchedTensorSeq(BatchedTensor):
             seq_dim=self._seq_dim + 1 if self._seq_dim >= dim and dim >= 0 else self._seq_dim,
         )
 
-    def view_as(self, other: BaseBatchedTensor | Tensor) -> BatchedTensorSeq:
+    def view_as(self, other: BatchedTensor | Tensor) -> BatchedTensorSeq:
         check_batch_dims(get_batch_dims((self, other)))
         check_seq_dims(get_seq_dims((self, other)))
         return self.__class__(self._data.view_as(other.data), **self._get_kwargs())
@@ -1191,7 +1190,7 @@ def implements(torch_function: Callable) -> Callable:
 
 @implements(torch.cat)
 def cat(
-    tensors: tuple[BaseBatchedTensor | Tensor, ...] | list[BaseBatchedTensor | Tensor],
+    tensors: Sequence[BatchedTensor | Tensor],
     dim: int = 0,
 ) -> BatchedTensorSeq:
     r"""See ``torch.cat`` documentation."""
@@ -1218,7 +1217,7 @@ def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedT
 
 
 @implements(torch.select)
-def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
+def select(input: BatchedTensorSeq, dim: int, index: int) -> Tensor:  # noqa: A002
     r"""See ``torch.select`` documentation."""
     return torch.select(input.data, dim=dim, index=index)
 
@@ -1251,23 +1250,23 @@ def split(
 
 @overload
 def take_along_dim(
-    input: BaseBatchedTensor | Tensor,  # noqa: A002
-    indices: BaseBatchedTensor | Tensor,
+    input: BatchedTensor | Tensor,  # noqa: A002
+    indices: BatchedTensor | Tensor,
 ) -> Tensor:
     r"""See ``torch.take_along_dim`` documentation."""
 
 
 @overload
 def take_along_dim(
-    input: BaseBatchedTensor | Tensor, indices: BaseBatchedTensor | Tensor, dim: int  # noqa: A002
+    input: BatchedTensor | Tensor, indices: BatchedTensor | Tensor, dim: int  # noqa: A002
 ) -> BatchedTensorSeq:
     r"""See ``torch.take_along_dim`` documentation."""
 
 
 @implements(torch.take_along_dim)
 def take_along_dim(
-    input: BaseBatchedTensor | Tensor,  # noqa: A002
-    indices: BaseBatchedTensor | Tensor,
+    input: BatchedTensor | Tensor,  # noqa: A002
+    indices: BatchedTensor | Tensor,
     dim: int | None = None,
 ) -> BatchedTensorSeq | Tensor:
     r"""See ``torch.take_along_dim`` documentation."""
