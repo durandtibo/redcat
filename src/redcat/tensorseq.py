@@ -1275,9 +1275,9 @@ def take_along_dim(
     check_batch_dims(batch_dims)
     seq_dims = get_seq_dims((input, indices))
     check_seq_dims(seq_dims)
-    if isinstance(input, BaseBatchedTensor):
+    if isinstance(input, BatchedTensor):
         input = input.data  # noqa: A001
-    if isinstance(indices, BaseBatchedTensor):
+    if isinstance(indices, BatchedTensor):
         indices = indices.data
     if dim is None:
         return torch.take_along_dim(input, indices)
