@@ -4,7 +4,7 @@ __all__ = ["BatchedTensor", "check_data_and_dim"]
 
 import functools
 from collections.abc import Callable, Iterable, Sequence
-from typing import Any, overload
+from typing import Any, TypeVar, overload
 
 import torch
 from torch import Tensor
@@ -12,6 +12,10 @@ from torch import Tensor
 from redcat.base import BaseBatch
 from redcat.basetensor import BaseBatchedTensor
 from redcat.utils import check_batch_dims, get_batch_dims, permute_along_dim
+
+# Workaround because Self is not available for python 3.9 and 3.10
+# https://peps.python.org/pep-0673/
+TBatchedTensor = TypeVar("TBatchedTensor", bound="BatchedTensor")
 
 HANDLED_FUNCTIONS = {}
 
@@ -45,7 +49,7 @@ class BatchedTensor(BaseBatchedTensor):
         types: tuple[type, ...],
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
-    ) -> BatchedTensor:
+    ) -> TBatchedTensor:
         # print(func, types, args, kwargs)
         kwargs = kwargs or {}
         if handled_func := HANDLED_FUNCTIONS.get(func, None):
@@ -74,7 +78,7 @@ class BatchedTensor(BaseBatchedTensor):
         fill_value: float | int | bool,
         batch_size: int | None = None,
         **kwargs,
-    ) -> BatchedTensor:
+    ) -> TBatchedTensor:
         r"""Creates a batch filled with a scalar value.
 
         By default, the tensor in the returned batch has the same
@@ -91,7 +95,7 @@ class BatchedTensor(BaseBatchedTensor):
                 ``torch.Tensor.new_full``.
 
         Returns:
-            ``BaseBatchedTensor``: A batch filled with the scalar value.
+            ``BatchedTensor``: A batch filled with the scalar value.
 
         Example usage:
 
@@ -138,7 +142,7 @@ class BatchedTensor(BaseBatchedTensor):
                 ``torch.Tensor.new_ones``.
 
         Returns:
-            ``BaseBatchedTensor``: A batch filled with the scalar
+            ``BatchedTensor``: A batch filled with the scalar
                 value ``1``.
 
         Example usage:
@@ -169,7 +173,7 @@ class BatchedTensor(BaseBatchedTensor):
         self,
         batch_size: int | None = None,
         **kwargs,
-    ) -> BatchedTensor:
+    ) -> TBatchedTensor:
         r"""Creates a batch filled with the scalar value ``0``.
 
         By default, the tensor in the returned batch has the same
@@ -184,7 +188,7 @@ class BatchedTensor(BaseBatchedTensor):
                 ``torch.Tensor.new_zeros``.
 
         Returns:
-            ``BaseBatchedTensor``: A batch filled with the scalar
+            ``BatchedTensor``: A batch filled with the scalar
                 value ``0``.
 
         Example usage:
@@ -239,7 +243,7 @@ class BatchedTensor(BaseBatchedTensor):
 
     def add_(
         self,
-        other: BaseBatchedTensor | Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> None:
         check_batch_dims(get_batch_dims((self, other)))
@@ -247,23 +251,23 @@ class BatchedTensor(BaseBatchedTensor):
 
     def div_(
         self,
-        other: BaseBatchedTensor | torch.Tensor | int | float,
+        other: BatchedTensor | torch.Tensor | int | float,
         rounding_mode: str | None = None,
     ) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         self._data.div_(other, rounding_mode=rounding_mode)
 
-    def fmod_(self, divisor: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+    def fmod_(self, divisor: BatchedTensor | torch.Tensor | int | float) -> None:
         check_batch_dims(get_batch_dims((self, divisor)))
         self._data.fmod_(divisor)
 
-    def mul_(self, other: BaseBatchedTensor | torch.Tensor | int | float) -> None:
+    def mul_(self, other: BatchedTensor | torch.Tensor | int | float) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         self._data.mul_(other)
 
     def sub_(
         self,
-        other: BaseBatchedTensor | Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> None:
         check_batch_dims(get_batch_dims((self, other)))
@@ -273,27 +277,27 @@ class BatchedTensor(BaseBatchedTensor):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def cumsum_along_batch(self, **kwargs) -> BatchedTensor:
+    def cumsum_along_batch(self, **kwargs) -> TBatchedTensor:
         return self.cumsum(self._batch_dim, **kwargs)
 
     def cumsum_along_batch_(self) -> None:
         self.cumsum_(self._batch_dim)
 
-    def logcumsumexp_along_batch(self) -> BatchedTensor:
+    def logcumsumexp_along_batch(self) -> TBatchedTensor:
         return self.logcumsumexp(self._batch_dim)
 
     def logcumsumexp_along_batch_(self) -> None:
         self.logcumsumexp_(self._batch_dim)
 
-    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> BatchedTensor:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatchedTensor:
         return self.permute_along_dim(permutation, dim=self._batch_dim)
 
     def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
         self.permute_along_dim_(permutation, dim=self._batch_dim)
 
-    def permute_along_dim(self, permutation: Sequence[int] | Tensor, dim: int) -> BatchedTensor:
+    def permute_along_dim(self, permutation: Sequence[int] | Tensor, dim: int) -> TBatchedTensor:
         if not torch.is_tensor(permutation):
-            permutation = torch.tensor(permutation)
+            permutation = torch.as_tensor(permutation)
         return self.__class__(
             permute_along_dim(tensor=self._data, permutation=permutation, dim=dim),
             **self._get_kwargs(),
@@ -301,7 +305,7 @@ class BatchedTensor(BaseBatchedTensor):
 
     def permute_along_dim_(self, permutation: Sequence[int] | Tensor, dim: int) -> None:
         if not torch.is_tensor(permutation):
-            permutation = torch.tensor(permutation)
+            permutation = torch.as_tensor(permutation)
         self._data = permute_along_dim(tensor=self._data, permutation=permutation, dim=dim)
 
     def sort_along_batch(
@@ -315,7 +319,7 @@ class BatchedTensor(BaseBatchedTensor):
     #     Mathematical | point-wise operations     #
     ################################################
 
-    def pow_(self, exponent: int | float | BaseBatchedTensor) -> None:
+    def pow_(self, exponent: int | float | BatchedTensor) -> None:
         check_batch_dims(get_batch_dims((self, exponent)))
         self._data.pow_(exponent)
 
@@ -323,15 +327,15 @@ class BatchedTensor(BaseBatchedTensor):
     #     Mathematical | logical operations     #
     #############################################
 
-    def logical_and_(self, other: BaseBatchedTensor | Tensor) -> None:
+    def logical_and_(self, other: BatchedTensor | Tensor) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         self._data.logical_and_(other)
 
-    def logical_or_(self, other: BaseBatchedTensor | Tensor) -> None:
+    def logical_or_(self, other: BatchedTensor | Tensor) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         self._data.logical_or_(other)
 
-    def logical_xor_(self, other: BaseBatchedTensor | Tensor) -> None:
+    def logical_xor_(self, other: BatchedTensor | Tensor) -> None:
         check_batch_dims(get_batch_dims((self, other)))
         self._data.logical_xor_(other)
 
@@ -340,31 +344,31 @@ class BatchedTensor(BaseBatchedTensor):
     ##########################################################
 
     def cat_along_batch(
-        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
-    ) -> BatchedTensor:
+        self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
+    ) -> TBatchedTensor:
         return self.cat(tensors, dim=self._batch_dim)
 
     def cat_along_batch_(
-        self, tensors: BaseBatchedTensor | Tensor | Iterable[BaseBatchedTensor | Tensor]
+        self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
     ) -> None:
         self.cat_(tensors, dim=self._batch_dim)
 
-    def chunk_along_batch(self, chunks: int) -> tuple[BaseBatchedTensor, ...]:
+    def chunk_along_batch(self, chunks: int) -> tuple[BatchedTensor, ...]:
         return self.chunk(chunks, self._batch_dim)
 
-    def index_select(self, dim: int, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
+    def index_select(self, dim: int, index: torch.Tensor | Sequence[int]) -> TBatchedTensor:
         if not torch.is_tensor(index):
-            index = torch.tensor(index)
+            index = torch.as_tensor(index)
         return self.__class__(self._data.index_select(dim, index), **self._get_kwargs())
 
-    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BatchedTensor:
+    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> TBatchedTensor:
         return self.index_select(self._batch_dim, index)
 
     def masked_fill(
-        self, mask: BaseBatchedTensor | Tensor, value: bool | int | float
-    ) -> BatchedTensor:
+        self, mask: BatchedTensor | Tensor, value: bool | int | float
+    ) -> TBatchedTensor:
         check_batch_dims(get_batch_dims((self, mask)))
-        if isinstance(mask, BaseBatchedTensor):
+        if isinstance(mask, BatchedTensor):
             mask = mask.data
         return self.__class__(self._data.masked_fill(mask.data, value), **self._get_kwargs())
 
@@ -373,7 +377,7 @@ class BatchedTensor(BaseBatchedTensor):
 
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
-    ) -> BatchedTensor:
+    ) -> TBatchedTensor:
         return self.slice_along_dim(self._batch_dim, start, stop, step)
 
     def split_along_batch(
@@ -383,10 +387,10 @@ class BatchedTensor(BaseBatchedTensor):
 
     def take_along_batch(
         self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence
-    ) -> BatchedTensor:
+    ) -> TBatchedTensor:
         return self.take_along_dim(indices, dim=self._batch_dim)
 
-    def unsqueeze(self, dim: int) -> BatchedTensor:
+    def unsqueeze(self, dim: int) -> TBatchedTensor:
         return self.__class__(
             self._data.unsqueeze(dim=dim),
             batch_dim=self._batch_dim + 1
@@ -397,7 +401,7 @@ class BatchedTensor(BaseBatchedTensor):
     def view(self, *shape: tuple[int, ...]) -> Tensor:
         return self._data.view(*shape)
 
-    def view_as(self, other: BaseBatchedTensor | Tensor) -> BatchedTensor:
+    def view_as(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
         check_batch_dims(get_batch_dims((self, other)))
         return self.__class__(self._data.view_as(other.data), **self._get_kwargs())
 
@@ -437,7 +441,7 @@ def implements(torch_function: Callable) -> Callable:
 
 @implements(torch.cat)
 def cat(
-    tensors: tuple[BaseBatchedTensor | Tensor, ...] | list[BaseBatchedTensor | Tensor],
+    tensors: tuple[BatchedTensor | Tensor, ...] | list[BatchedTensor | Tensor],
     dim: int = 0,
 ) -> BatchedTensor:
     r"""See ``torch.cat`` documentation."""
@@ -494,31 +498,31 @@ def split(
 
 @overload
 def take_along_dim(
-    input: BaseBatchedTensor | Tensor,  # noqa: A002
-    indices: BaseBatchedTensor | Tensor,
+    input: BatchedTensor | Tensor,  # noqa: A002
+    indices: BatchedTensor | Tensor,
 ) -> Tensor:
     r"""See ``torch.take_along_dim`` documentation."""
 
 
 @overload
 def take_along_dim(
-    input: BaseBatchedTensor | Tensor, indices: BaseBatchedTensor | Tensor, dim: int  # noqa: A002
+    input: BatchedTensor | Tensor, indices: BatchedTensor | Tensor, dim: int  # noqa: A002
 ) -> BatchedTensor:
     r"""See ``torch.take_along_dim`` documentation."""
 
 
 @implements(torch.take_along_dim)
 def take_along_dim(
-    input: BaseBatchedTensor | Tensor,  # noqa: A002
-    indices: BaseBatchedTensor | Tensor,
+    input: BatchedTensor | Tensor,  # noqa: A002
+    indices: BatchedTensor | Tensor,
     dim: int | None = None,
 ) -> BatchedTensor | Tensor:
     r"""See ``torch.take_along_dim`` documentation."""
     batch_dims = get_batch_dims((input, indices))
     check_batch_dims(batch_dims)
-    if isinstance(input, BaseBatchedTensor):
+    if isinstance(input, BatchedTensor):
         input = input.data  # noqa: A001
-    if isinstance(indices, BaseBatchedTensor):
+    if isinstance(indices, BatchedTensor):
         indices = indices.data
     if dim is None:
         return torch.take_along_dim(input, indices)
