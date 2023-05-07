@@ -9,7 +9,7 @@ from typing import Any, overload
 import torch
 from torch import Tensor
 
-from redcat import BaseBatch
+from redcat import BaseBatch, tensor
 from redcat.tensor import BatchedTensor
 from redcat.utils import (
     align_to_batch_seq,
@@ -21,7 +21,12 @@ from redcat.utils import (
     get_seq_dims,
 )
 
-HANDLED_FUNCTIONS = {}
+HANDLED_FUNCTIONS = {
+    torch.mean: tensor.mean,
+    torch.median: tensor.median,
+    torch.prod: tensor.prod,
+    torch.sum: tensor.torchsum,
+}
 
 
 class BatchedTensorSeq(BatchedTensor):
@@ -1214,24 +1219,6 @@ def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedT
         BatchedTensorSeq(chunk, batch_dim=tensor.batch_dim, seq_dim=tensor.seq_dim)
         for chunk in tensor.data.chunk(chunks, dim=dim)
     )
-
-
-@implements(torch.mean)
-def mean(input: BatchedTensorSeq, **kwargs) -> Tensor:  # noqa: A002
-    r"""See ``torch.mean`` documentation."""
-    return torch.mean(input.data, **kwargs)
-
-
-@implements(torch.median)
-def median(input: BatchedTensorSeq, **kwargs) -> Tensor | torch.return_types.median:  # noqa: A002
-    r"""See ``torch.median`` documentation."""
-    return torch.median(input.data, **kwargs)
-
-
-@implements(torch.prod)
-def prod(input: BatchedTensorSeq, **kwargs) -> Tensor:  # noqa: A002
-    r"""See ``torch.prod`` documentation."""
-    return torch.prod(input.data, **kwargs)
 
 
 @implements(torch.select)

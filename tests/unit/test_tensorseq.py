@@ -7322,6 +7322,27 @@ def test_torch_split_dim_1() -> None:
     )
 
 
+###############################
+#     Tests for torch.sum     #
+###############################
+
+
+def test_torch_sum() -> None:
+    assert torch.sum(BatchedTensorSeq(torch.arange(10).view(2, 5))).equal(torch.tensor(45))
+
+
+def test_torch_sum_dim_1() -> None:
+    assert torch.sum(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1).equal(
+        torch.tensor([10, 35])
+    )
+
+
+def test_torch_sum_keepdim() -> None:
+    assert torch.sum(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True).equal(
+        torch.tensor([[10], [35]])
+    )
+
+
 ##########################################
 #     Tests for torch.take_along_dim     #
 ##########################################

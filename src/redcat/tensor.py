@@ -3540,6 +3540,15 @@ def split(
     )
 
 
+@implements(torch.sum)
+def torchsum(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.sum`` documentation.
+
+    Use the name `torchsum` to avoid shadowing `sum` python builtin.
+    """
+    return torch.sum(input.data, **kwargs)
+
+
 @overload
 def take_along_dim(
     input: BatchedTensor | Tensor,  # noqa: A002
