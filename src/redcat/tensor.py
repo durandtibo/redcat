@@ -3502,6 +3502,14 @@ def median(input: BatchedTensor, **kwargs) -> Tensor | torch.return_types.median
     return torch.median(input.data, **kwargs)
 
 
+@implements(torch.nanmedian)
+def nanmedian(
+    input: BatchedTensor, **kwargs  # noqa: A002
+) -> Tensor | torch.return_types.nanmedian:
+    r"""See ``torch.nanmedian`` documentation."""
+    return torch.nanmedian(input.data, **kwargs)
+
+
 @implements(torch.nansum)
 def nansum(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.nansum`` documentation."""

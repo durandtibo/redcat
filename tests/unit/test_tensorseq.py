@@ -7135,6 +7135,38 @@ def test_torch_median_keepdim() -> None:
     )
 
 
+#####################################
+#     Tests for torch.nanmedian     #
+#####################################
+
+
+def test_torch_nanmedian() -> None:
+    assert torch.nanmedian(
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+    ).equal(torch.tensor(4.0))
+
+
+def test_torch_nanmedian_dim_1() -> None:
+    assert objects_are_equal(
+        torch.nanmedian(
+            BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])), dim=1
+        ),
+        torch.return_types.nanmedian([torch.tensor([2.0, 6.0]), torch.tensor([2, 1])]),
+    )
+
+
+def test_torch_nanmedian_keepdim() -> None:
+    assert objects_are_equal(
+        torch.nanmedian(
+            BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])),
+            dim=1,
+            keepdim=True,
+        ),
+        torch.return_types.nanmedian([torch.tensor([[2.0], [6.0]]), torch.tensor([[2], [1]])]),
+        show_difference=True,
+    )
+
+
 ##################################
 #     Tests for torch.nansum     #
 ##################################
