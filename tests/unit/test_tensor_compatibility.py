@@ -538,6 +538,22 @@ def test_torch_gt_tensor() -> None:
     )
 
 
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_mean(cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    assert torch.mean(cls(x)).equal(torch.mean(x))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dim", (None, 0, 1))
+@mark.parametrize("keepdim", (True, False))
+def test_torch_mean_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
+    x = torch.rand(6, 10).mul(100)
+    assert torch.mean(cls(x), dim=dim, keepdim=keepdim).equal(
+        torch.mean(x, dim=dim, keepdim=keepdim)
+    )
+
+
 @mark.parametrize(
     "other",
     (
