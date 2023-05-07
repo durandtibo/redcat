@@ -551,7 +551,7 @@ def test_torch_mean(cls: type[BatchedTensor]) -> None:
 @mark.parametrize("dim", (0, 1))
 @mark.parametrize("keepdim", (True, False))
 def test_torch_mean_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10).mul(100)
+    x = torch.rand(6, 10)
     assert torch.mean(cls(x), dim=dim, keepdim=keepdim).equal(
         torch.mean(x, dim=dim, keepdim=keepdim)
     )
@@ -567,7 +567,7 @@ def test_torch_median(cls: type[BatchedTensor]) -> None:
 @mark.parametrize("dim", (0, 1))
 @mark.parametrize("keepdim", (True, False))
 def test_torch_median_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10).mul(100)
+    x = torch.rand(6, 10)
     assert objects_are_equal(
         torch.median(cls(x), dim=dim, keepdim=keepdim), torch.median(x, dim=dim, keepdim=keepdim)
     )
@@ -592,6 +592,23 @@ def test_torch_mul_tensor() -> None:
     )
 
 
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_nansum(cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    x[x < 10] = float("nan")
+    assert torch.nansum(cls(x)).equal(torch.nansum(x))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dim", (0, 1))
+@mark.parametrize("keepdim", (True, False))
+def test_torch_nansum_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
+    x = torch.rand(6, 10)
+    assert torch.nansum(cls(x), dim=dim, keepdim=keepdim).equal(
+        torch.nansum(x, dim=dim, keepdim=keepdim)
+    )
+
+
 def test_torch_neg() -> None:
     assert torch.neg(BatchedTensor(torch.full((2, 3), 2.0))).equal(
         BatchedTensor(torch.full((2, 3), -2.0))
@@ -608,7 +625,7 @@ def test_torch_prod(cls: type[BatchedTensor]) -> None:
 @mark.parametrize("dim", (0, 1))
 @mark.parametrize("keepdim", (True, False))
 def test_torch_prod_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10).mul(100)
+    x = torch.rand(6, 10)
     assert torch.prod(cls(x), dim=dim, keepdim=keepdim).equal(
         torch.prod(x, dim=dim, keepdim=keepdim)
     )
@@ -645,5 +662,5 @@ def test_torch_sum(cls: type[BatchedTensor]) -> None:
 @mark.parametrize("dim", (0, 1))
 @mark.parametrize("keepdim", (True, False))
 def test_torch_sum_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10).mul(100)
+    x = torch.rand(6, 10)
     assert torch.sum(cls(x), dim=dim, keepdim=keepdim).equal(torch.sum(x, dim=dim, keepdim=keepdim))

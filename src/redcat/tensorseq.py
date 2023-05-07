@@ -24,6 +24,7 @@ from redcat.utils import (
 HANDLED_FUNCTIONS = {
     torch.mean: tensor.mean,
     torch.median: tensor.median,
+    torch.nansum: tensor.nansum,
     torch.prod: tensor.prod,
     torch.sum: tensor.torchsum,
 }
