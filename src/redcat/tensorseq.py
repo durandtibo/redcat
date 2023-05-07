@@ -1216,6 +1216,12 @@ def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedT
     )
 
 
+@implements(torch.mean)
+def mean(input: BatchedTensorSeq, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.mean`` documentation."""
+    return torch.mean(input.data, **kwargs)
+
+
 @implements(torch.select)
 def select(input: BatchedTensorSeq, dim: int, index: int) -> Tensor:  # noqa: A002
     r"""See ``torch.select`` documentation."""

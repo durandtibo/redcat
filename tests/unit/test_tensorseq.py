@@ -7089,6 +7089,29 @@ def test_torch_chunk_dim_1() -> None:
     )
 
 
+################################
+#     Tests for torch.mean     #
+################################
+
+
+def test_torch_mean() -> None:
+    assert torch.mean(BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(2, 5))).equal(
+        torch.tensor(4.5)
+    )
+
+
+def test_torch_mean_dim_1() -> None:
+    assert torch.mean(
+        BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(2, 5)), dim=1
+    ).equal(torch.tensor([2.0, 7.0]))
+
+
+def test_torch_mean_keepdim() -> None:
+    assert torch.mean(
+        BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(2, 5)), dim=1, keepdim=True
+    ).equal(torch.tensor([[2.0], [7.0]]))
+
+
 ##################################
 #     Tests for torch.select     #
 ##################################
