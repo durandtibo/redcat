@@ -633,3 +633,17 @@ def test_torch_sub_tensor() -> None:
     assert torch.sub(torch.full((2, 3), 2.0), BatchedTensor(torch.ones(2, 3))).equal(
         BatchedTensor(torch.ones(2, 3))
     )
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_sum(cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    assert torch.sum(cls(x)).equal(torch.sum(x))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dim", (0, 1))
+@mark.parametrize("keepdim", (True, False))
+def test_torch_sum_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
+    x = torch.rand(6, 10).mul(100)
+    assert torch.sum(cls(x), dim=dim, keepdim=keepdim).equal(torch.sum(x, dim=dim, keepdim=keepdim))
