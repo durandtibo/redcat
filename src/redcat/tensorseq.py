@@ -1222,6 +1222,12 @@ def mean(input: BatchedTensorSeq, **kwargs) -> Tensor:  # noqa: A002
     return torch.mean(input.data, **kwargs)
 
 
+@implements(torch.median)
+def median(input: BatchedTensorSeq, **kwargs) -> Tensor | torch.return_types.median:  # noqa: A002
+    r"""See ``torch.median`` documentation."""
+    return torch.median(input.data, **kwargs)
+
+
 @implements(torch.select)
 def select(input: BatchedTensorSeq, dim: int, index: int) -> Tensor:  # noqa: A002
     r"""See ``torch.select`` documentation."""

@@ -4,6 +4,7 @@ from functools import partial
 from typing import Union
 
 import torch
+from coola import objects_are_equal
 from pytest import mark
 from torch import Tensor
 
@@ -551,6 +552,22 @@ def test_torch_mean_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) ->
     x = torch.rand(6, 10).mul(100)
     assert torch.mean(cls(x), dim=dim, keepdim=keepdim).equal(
         torch.mean(x, dim=dim, keepdim=keepdim)
+    )
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_median(cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    assert torch.median(cls(x)).equal(torch.median(x))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dim", (0, 1))
+@mark.parametrize("keepdim", (True, False))
+def test_torch_median_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
+    x = torch.rand(6, 10).mul(100)
+    assert objects_are_equal(
+        torch.median(cls(x), dim=dim, keepdim=keepdim), torch.median(x, dim=dim, keepdim=keepdim)
     )
 
 

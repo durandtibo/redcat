@@ -7113,6 +7113,29 @@ def test_torch_mean_keepdim() -> None:
 
 
 ##################################
+#     Tests for torch.median     #
+##################################
+
+
+def test_torch_median() -> None:
+    assert torch.median(BatchedTensorSeq(torch.arange(10).view(2, 5))).equal(torch.tensor(4))
+
+
+def test_torch_median_dim_1() -> None:
+    assert objects_are_equal(
+        torch.median(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1),
+        torch.return_types.median([torch.tensor([2, 7]), torch.tensor([2, 2])]),
+    )
+
+
+def test_torch_median_keepdim() -> None:
+    assert objects_are_equal(
+        torch.median(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True),
+        torch.return_types.median([torch.tensor([[2], [7]]), torch.tensor([[2], [2]])]),
+    )
+
+
+##################################
 #     Tests for torch.select     #
 ##################################
 
