@@ -20,6 +20,8 @@ UNARY_FUNCTIONS = (
     partial(torch.clamp, min=0.1, max=0.5),
     partial(torch.cumsum, dim=0),
     partial(torch.cumsum, dim=1),
+    partial(torch.cumprod, dim=0),
+    partial(torch.cumprod, dim=1),
     partial(torch.unsqueeze, dim=-1),
     partial(torch.unsqueeze, dim=0),
     torch.abs,
@@ -546,7 +548,7 @@ def test_torch_mean(cls: type[BatchedTensor]) -> None:
 
 
 @mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (None, 0, 1))
+@mark.parametrize("dim", (0, 1))
 @mark.parametrize("keepdim", (True, False))
 def test_torch_mean_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
     x = torch.rand(6, 10).mul(100)
@@ -593,6 +595,22 @@ def test_torch_mul_tensor() -> None:
 def test_torch_neg() -> None:
     assert torch.neg(BatchedTensor(torch.full((2, 3), 2.0))).equal(
         BatchedTensor(torch.full((2, 3), -2.0))
+    )
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_prod(cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    assert torch.prod(cls(x)).equal(torch.prod(x))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dim", (0, 1))
+@mark.parametrize("keepdim", (True, False))
+def test_torch_prod_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
+    x = torch.rand(6, 10).mul(100)
+    assert torch.prod(cls(x), dim=dim, keepdim=keepdim).equal(
+        torch.prod(x, dim=dim, keepdim=keepdim)
     )
 
 

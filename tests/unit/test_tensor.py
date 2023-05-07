@@ -5324,6 +5324,27 @@ def test_torch_median_keepdim() -> None:
     )
 
 
+################################
+#     Tests for torch.prod     #
+################################
+
+
+def test_torch_prod() -> None:
+    assert torch.prod(BatchedTensor(torch.arange(10).view(2, 5))).equal(torch.tensor(0.0))
+
+
+def test_torch_prod_dim_1() -> None:
+    assert torch.prod(BatchedTensor(torch.arange(10).view(2, 5)), dim=1).equal(
+        torch.tensor([0, 15120])
+    )
+
+
+def test_torch_prod_keepdim() -> None:
+    assert torch.prod(BatchedTensor(torch.arange(10).view(2, 5)), dim=1, keepdim=True).equal(
+        torch.tensor([[0], [15120]])
+    )
+
+
 ##################################
 #     Tests for torch.select     #
 ##################################
