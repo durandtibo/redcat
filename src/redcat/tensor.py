@@ -3502,6 +3502,12 @@ def median(input: BatchedTensor, **kwargs) -> Tensor | torch.return_types.median
     return torch.median(input.data, **kwargs)
 
 
+@implements(torch.prod)
+def prod(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.prod`` documentation."""
+    return torch.prod(input.data, **kwargs)
+
+
 @implements(torch.select)
 def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
     r"""See ``torch.select`` documentation."""
