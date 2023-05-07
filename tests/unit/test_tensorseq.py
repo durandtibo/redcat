@@ -7135,6 +7135,31 @@ def test_torch_median_keepdim() -> None:
     )
 
 
+##################################
+#     Tests for torch.nansum     #
+##################################
+
+
+def test_torch_nansum() -> None:
+    assert torch.nansum(
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+    ).equal(torch.tensor(36))
+
+
+def test_torch_nansum_dim_1() -> None:
+    assert torch.nansum(
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])), dim=1
+    ).equal(torch.tensor([10, 26]))
+
+
+def test_torch_nansum_keepdim() -> None:
+    assert torch.nansum(
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])),
+        dim=1,
+        keepdim=True,
+    ).equal(torch.tensor([[10], [26]]))
+
+
 ################################
 #     Tests for torch.prod     #
 ################################
