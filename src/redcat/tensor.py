@@ -1545,7 +1545,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         dim: int = -1,
         descending: bool = False,
         stable: bool = False,
-    ) -> tuple[TBatchedTensor, TBatchedTensor]:
+    ) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along a given dimension in
         monotonic order by value.
 
@@ -1582,7 +1582,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self,
         descending: bool = False,
         stable: bool = False,
-    ) -> tuple[TBatchedTensor, TBatchedTensor]:
+    ) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
@@ -3540,12 +3540,14 @@ def sort(
     dim: int = -1,
     descending: bool = False,
     stable: bool = False,
-) -> tuple[BatchedTensor, BatchedTensor]:
+) -> torch.return_types.sort:
     r"""See ``torch.sort`` documentation."""
     values, indices = torch.sort(input.data, dim=dim, descending=descending, stable=stable)
-    return (
-        BatchedTensor(data=values, batch_dim=input.batch_dim),
-        BatchedTensor(data=indices, batch_dim=input.batch_dim),
+    return torch.return_types.sort(
+        [
+            BatchedTensor(data=values, batch_dim=input.batch_dim),
+            BatchedTensor(data=indices, batch_dim=input.batch_dim),
+        ]
     )
 
 

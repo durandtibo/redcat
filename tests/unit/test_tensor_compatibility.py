@@ -667,6 +667,14 @@ def test_torch_prod_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) ->
     )
 
 
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_sort(cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    assert objects_are_equal(
+        torch.sort(cls(x)), torch.return_types.sort(cls(y) for y in torch.sort(x))
+    )
+
+
 @mark.parametrize(
     "other",
     (
