@@ -593,6 +593,23 @@ def test_torch_mul_tensor() -> None:
 
 
 @mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_nanmean(cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    x[x < 0.2] = float("nan")
+    assert torch.nanmean(cls(x)).equal(torch.nanmean(x))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dim", (0, 1))
+@mark.parametrize("keepdim", (True, False))
+def test_torch_nanmean_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
+    x = torch.rand(6, 10)
+    assert torch.nanmean(cls(x), dim=dim, keepdim=keepdim).equal(
+        torch.nanmean(x, dim=dim, keepdim=keepdim)
+    )
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
 def test_torch_nanmedian(cls: type[BatchedTensor]) -> None:
     x = torch.rand(6, 10)
     x[x < 0.2] = float("nan")
