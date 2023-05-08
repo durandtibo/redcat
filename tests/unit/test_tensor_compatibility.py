@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import math
 from collections.abc import Callable
 from functools import partial
-from typing import Union
 
 import torch
 from coola import objects_are_equal
@@ -241,7 +242,7 @@ def test_torch_acosh() -> None:
         1.0,
     ),
 )
-def test_torch_add(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_add(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.add(BatchedTensor(torch.zeros(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -254,7 +255,7 @@ def test_torch_add(other: Union[BatchedTensor, Tensor, int, float]) -> None:
         1.0,
     ),
 )
-def test_torch_add_alpha(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_add_alpha(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.add(BatchedTensor(torch.ones(2, 3)), other, alpha=2.0).equal(
         BatchedTensor(torch.full((2, 3), 3.0))
     )
@@ -329,7 +330,7 @@ def test_torch_atanh() -> None:
         torch.tensor([[4, 5], [14, 15]]),
     ),
 )
-def test_torch_cat(other: Union[BatchedTensor, Tensor]) -> None:
+def test_torch_cat(other: BatchedTensor | Tensor) -> None:
     assert torch.cat(
         tensors=[
             BatchedTensor(torch.tensor([[0, 1, 2], [10, 11, 12]])),
@@ -398,7 +399,7 @@ def test_torch_cumsum_dim_1() -> None:
         2.0,
     ),
 )
-def test_torch_div(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_div(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.div(BatchedTensor(torch.ones(2, 3)), other).equal(
         BatchedTensor(torch.full((2, 3), 0.5))
     )
@@ -420,7 +421,7 @@ def test_torch_div_tensor() -> None:
         5.0,
     ),
 )
-def test_torch_eq(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_eq(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.eq(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
         BatchedTensor(
             torch.tensor(
@@ -467,7 +468,7 @@ def test_torch_exp() -> None:
         2.0,
     ),
 )
-def test_torch_fmod(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_fmod(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.fmod(BatchedTensor(torch.ones(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -487,7 +488,7 @@ def test_torch_fmod_tensor() -> None:
         5.0,
     ),
 )
-def test_torch_ge(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_ge(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.ge(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
         BatchedTensor(
             torch.tensor(
@@ -519,7 +520,7 @@ def test_torch_ge_tensor() -> None:
         5.0,
     ),
 )
-def test_torch_gt(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_gt(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.gt(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
         BatchedTensor(
             torch.tensor(
@@ -582,7 +583,7 @@ def test_torch_median_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) 
         1.0,
     ),
 )
-def test_torch_mul(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_mul(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.mul(BatchedTensor(torch.ones(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -675,7 +676,7 @@ def test_torch_prod_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) ->
         1.0,
     ),
 )
-def test_torch_sub(other: Union[BatchedTensor, Tensor, int, float]) -> None:
+def test_torch_sub(other: BatchedTensor | Tensor | int | float) -> None:
     assert torch.sub(BatchedTensor(torch.full((2, 3), 2.0)), other).equal(
         BatchedTensor(torch.ones(2, 3))
     )

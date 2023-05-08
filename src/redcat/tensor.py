@@ -522,7 +522,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             return False
         return self._data.equal(other.data)
 
-    def ge(self, other: BatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+    def ge(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self >= other`` element-wise.
 
         Args:
@@ -553,7 +553,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.ge(self, other)
 
-    def gt(self, other: BatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+    def gt(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self > other`` element-wise.
 
         Args:
@@ -678,7 +678,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.isnan(self)
 
-    def le(self, other: BatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+    def le(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self <= other`` element-wise.
 
         Args:
@@ -708,7 +708,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.le(self, other)
 
-    def lt(self, other: BatchedTensor | torch.Tensor | bool | int | float) -> TBatchedTensor:
+    def lt(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self < other`` element-wise.
 
         Args:
@@ -944,7 +944,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     def div(
         self,
-        other: BatchedTensor | torch.Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         rounding_mode: str | None = None,
     ) -> TBatchedTensor:
         r"""Divides the ``self`` batch by the input ``other`.
@@ -985,7 +985,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     def div_(
         self,
-        other: BatchedTensor | torch.Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         rounding_mode: str | None = None,
     ) -> None:
         r"""Divides the ``self`` batch by the input ``other`.
@@ -1020,7 +1020,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     def fmod(
         self,
-        divisor: BatchedTensor | torch.Tensor | int | float,
+        divisor: BatchedTensor | Tensor | int | float,
     ) -> TBatchedTensor:
         r"""Computes the element-wise remainder of division.
 
@@ -1051,7 +1051,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.fmod(self, divisor)
 
-    def fmod_(self, divisor: BatchedTensor | torch.Tensor | int | float) -> None:
+    def fmod_(self, divisor: BatchedTensor | Tensor | int | float) -> None:
         r"""Computes the element-wise remainder of division.
 
         The current batch is the dividend.
@@ -1075,7 +1075,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         check_batch_dims(get_batch_dims((self, divisor)))
         self._data.fmod_(divisor)
 
-    def mul(self, other: BatchedTensor | torch.Tensor | int | float) -> TBatchedTensor:
+    def mul(self, other: BatchedTensor | Tensor | int | float) -> TBatchedTensor:
         r"""Multiplies the ``self`` batch by the input ``other`.
 
         Similar to ``out = self * other``
@@ -1105,7 +1105,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.mul(self, other)
 
-    def mul_(self, other: BatchedTensor | torch.Tensor | int | float) -> None:
+    def mul_(self, other: BatchedTensor | Tensor | int | float) -> None:
         r"""Multiplies the ``self`` batch by the input ``other`.
 
         Similar to ``self *= other`` (in-place)
@@ -1159,7 +1159,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     def sub(
         self,
-        other: BatchedTensor | torch.Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1,
     ) -> TBatchedTensor:
         r"""Subtracts the input ``other``, scaled by ``alpha``, to the ``self``
@@ -1196,7 +1196,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     def sub_(
         self,
-        other: BatchedTensor | torch.Tensor | int | float,
+        other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1,
     ) -> None:
         r"""Subtracts the input ``other``, scaled by ``alpha``, to the ``self``
@@ -3092,7 +3092,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def extend(self, other: Iterable[BatchedTensor]) -> None:
         self.cat_along_batch_(other)
 
-    def index_select(self, dim: int, index: torch.Tensor | Sequence[int]) -> TBatchedTensor:
+    def index_select(self, dim: int, index: Tensor | Sequence[int]) -> TBatchedTensor:
         r"""Selects data at the given indices along a given dimension.
 
         Args:
@@ -3126,7 +3126,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             index = torch.as_tensor(index)
         return self.__class__(self._data.index_select(dim, index), **self._get_kwargs())
 
-    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> TBatchedTensor:
+    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchedTensor:
         return self.index_select(self._batch_dim, index)
 
     def masked_fill(

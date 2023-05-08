@@ -16,8 +16,8 @@ jobs:
       max-parallel: 8
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
-        python-version: [ '3.10' ]
+        os: [ ubuntu-latest, macos-latest ]
+        python-version: [ '3.9', '3.10', '3.11' ]
 
     steps:
       - name: Checkout
@@ -53,15 +53,10 @@ jobs:
         run: |
           poetry run make unit-test-cov
 
-#      - name: Run integration tests
-#        run: |
-#          poetry run make integration-test-cov
-
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.10' && github.repository == 'durandtibo/redcat' && (github.event_name == 'push' || github.event_name == 'pull_request')
         uses: codecov/codecov-action@v3
         with:
-          token: ${{secrets.CODECOV_TOKEN}}
           files: ./coverage.xml
           # Ignore codecov failures as the codecov server is not
           # very reliable but we don't want to report a failure
