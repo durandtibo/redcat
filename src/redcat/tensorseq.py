@@ -987,7 +987,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.chunk(chunks, self._seq_dim)
 
-    def index_select_along_seq(self, index: torch.Tensor | Sequence[int]) -> BatchedTensorSeq:
+    def index_select_along_seq(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
         r"""Slices the batch along the sequence dimension at the given
         indices.
 

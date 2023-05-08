@@ -113,7 +113,7 @@ class BaseBatch(Generic[T], ABC):
     ###########################################################
 
     @abstractmethod
-    def permute_along_batch(self, permutation: Sequence[int] | torch.Tensor) -> TBatch:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatch:
         r"""Permutes the data/batch along the batch dimension.
 
         Args:
@@ -315,7 +315,7 @@ class BaseBatch(Generic[T], ABC):
         """
 
     @abstractmethod
-    def index_select_along_batch(self, index: torch.Tensor | Sequence[int]) -> BaseBatch:
+    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BaseBatch:
         r"""Selects data at the given indices along the batch dimension.
 
         Args:
