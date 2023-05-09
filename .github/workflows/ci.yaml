@@ -3,7 +3,7 @@ on:
   pull_request:
     branches:
       - main
-      - update-deps-**
+      - 'update-deps-**'
   push:
     branches:
       - main
