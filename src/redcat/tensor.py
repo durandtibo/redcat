@@ -2153,6 +2153,37 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Reduction operations     #
     ################################
 
+    def nansum(self, *args, **kwargs) -> Tensor:
+        r"""Computes the sum of all elements.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.nansum``
+            **kwargs: See the documentation of ``torch.Tensor.nansum``
+
+        Returns:
+            ``torch.Tensor``: The sum of all elements.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nansum()
+            tensor(36)
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nansum(dim=1)
+            tensor([10, 26])
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nansum(dim=1, keepdim=True)
+            tensor([[10], [26]])
+        """
+        return torch.nansum(self, *args, **kwargs)
+
     def sum(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum of all elements.
 

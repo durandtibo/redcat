@@ -4989,6 +4989,40 @@ def test_batched_tensor_seq_min_along_seq_extra_dims() -> None:
     assert indices.equal(BatchedTensor(torch.tensor([[0, 0], [0, 0]]), batch_dim=1))
 
 
+def test_batched_tensor_seq_nansum() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum()
+        .equal(torch.tensor(36.0))
+    )
+
+
+def test_batched_tensor_seq_nansum_keepdim_false() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum(dim=1)
+        .equal(torch.tensor([10.0, 26.0]))
+    )
+
+
+def test_batched_tensor_seq_nansum_keepdim_true() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum(dim=1, keepdim=True)
+        .equal(torch.tensor([[10.0], [26.0]]))
+    )
+
+
+def test_batched_tensor_seq_nansum_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]), batch_dim=1, seq_dim=0
+        )
+        .nansum()
+        .equal(torch.tensor(36.0))
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_sum(dtype: torch.dtype) -> None:
     assert (
