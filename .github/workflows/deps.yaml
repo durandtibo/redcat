@@ -37,9 +37,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          title: Update dependencies
+          title: '[workflow] Update dependencies'
           commit-message: Update dependencies
-          committer: durand.tibo+gh@gmail.com
           branch: update-deps
           branch-suffix: timestamp
           add-paths: |
