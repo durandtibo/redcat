@@ -41,7 +41,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          title: '[workflow] Update dependencies'
+          title: '[WF] Update dependencies'
           commit-message: Update dependencies
           committer: durandtibo <durand.tibo@gmail.com>
           assignees: durandtibo
