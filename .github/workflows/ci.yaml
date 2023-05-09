@@ -3,14 +3,11 @@ on:
   pull_request:
     branches:
       - main
+      - update-deps-**
   push:
     branches:
       - main
   workflow_dispatch:  # to trigger manually
-  workflow_run:
-    workflows: [ "Update dependencies" ]
-    types:
-      - completed
 
 jobs:
   test:
