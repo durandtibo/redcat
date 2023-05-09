@@ -548,11 +548,12 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> batch = BatchedTensorSeq(torch.rand(2, 5))
-            >>> batch.sort_along_seq()
-            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
-                        [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0, seq_dim=1),
-             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0, seq_dim=1))
+            >>> BatchedTensorSeq(torch.rand(2, 5)).sort_along_seq()
+            torch.return_types.sort(
+            values=tensor([[0.2884, 0.4014, 0.5857, 0.6949, 0.8264],
+                    [0.3811, 0.4431, 0.4857, 0.6009, 0.7207]], batch_dim=0, seq_dim=1),
+            indices=tensor([[2, 4, 3, 0, 1],
+                    [1, 0, 4, 2, 3]], batch_dim=0, seq_dim=1))
         """
         return self.sort(dim=self._seq_dim, descending=descending, stable=stable)
 
@@ -1231,14 +1232,9 @@ def select(input: BatchedTensorSeq, dim: int, index: int) -> Tensor:  # noqa: A0
 
 
 @implements(torch.sort)
-def sort(
-    input: BatchedTensorSeq,  # noqa: A002
-    dim: int = -1,
-    descending: bool = False,
-    stable: bool = False,
-) -> torch.return_types.sort:
+def sort(input: BatchedTensorSeq, *args, **kwargs) -> torch.return_types.sort:  # noqa: A002
     r"""See ``torch.sort`` documentation."""
-    values, indices = torch.sort(input.data, dim=dim, descending=descending, stable=stable)
+    values, indices = torch.sort(input.data, *args, **kwargs)
     return torch.return_types.sort(
         [
             BatchedTensorSeq(data=values, batch_dim=input.batch_dim, seq_dim=input.seq_dim),
