@@ -39,6 +39,9 @@ jobs:
         with:
           title: '[workflow] Update dependencies'
           commit-message: Update dependencies
+          committer: durandtibo <durand.tibo@gmail.com>
+          assignees: durandtibo
+          reviewers: durandtibo
           branch: update-deps
           branch-suffix: timestamp
           add-paths: |
