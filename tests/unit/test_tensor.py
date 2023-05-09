@@ -2698,6 +2698,42 @@ def test_batched_tensor_sqrt__custom_dims() -> None:
     )
 
 
+################################
+#     Reduction operations     #
+################################
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_sum(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5).to(dtype=dtype))
+        .sum()
+        .equal(torch.tensor(45, dtype=dtype))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_sum_keepdim_false(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5).to(dtype=dtype))
+        .sum(dim=1)
+        .equal(torch.tensor([10, 35], dtype=dtype))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_sum_keepdim_true(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5).to(dtype=dtype))
+        .sum(dim=1, keepdim=True)
+        .equal(torch.tensor([[10], [35]], dtype=dtype))
+    )
+
+
+def test_batched_tensor_sum_custom_dims() -> None:
+    assert BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).sum().equal(torch.tensor(45))
+
+
 ###########################################
 #     Mathematical | trigo operations     #
 ###########################################

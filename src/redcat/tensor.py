@@ -1572,9 +1572,11 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> BatchedTensor(torch.rand(2, 5)).sort()
-            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
-                        [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
-             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
+            torch.return_types.sort(
+            values=tensor([[0.0239, 0.1395, 0.1742, 0.2742, 0.3203],
+                    [0.1096, 0.1745, 0.5360, 0.8954, 0.9036]], batch_dim=0),
+            indices=tensor([[0, 1, 2, 3, 4],
+                    [2, 0, 3, 4, 1]], batch_dim=0))
         """
         return torch.sort(self, dim=dim, descending=descending, stable=stable)
 
@@ -1609,9 +1611,11 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> BatchedTensor(torch.rand(2, 5)).sort_along_batch()
-            (tensor([[0.2274, 0.4843, 0.4932, 0.8583, 0.9154],
-                    [0.0101, 0.0733, 0.5018, 0.6007, 0.6589]], batch_dim=0),
-             tensor([[2, 3, 4, 1, 0], [4, 3, 1, 0, 2]], batch_dim=0))
+            torch.return_types.sort(
+            values=tensor([[0.0091, 0.5615, 0.5453, 0.1468, 0.5192],
+                    [0.4122, 0.8932, 0.8783, 0.6494, 0.7763]], batch_dim=0),
+            indices=tensor([[0, 0, 1, 1, 0],
+                    [1, 1, 0, 0, 1]], batch_dim=0))
         """
         return self.sort(dim=self._batch_dim, descending=descending, stable=stable)
 
@@ -2148,6 +2152,31 @@ class BatchedTensor(BaseBatch[Tensor]):
     ################################
     #     Reduction operations     #
     ################################
+
+    def sum(self, *args, **kwargs) -> Tensor:
+        r"""Computes the sum of all elements.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.sum``
+            **kwargs: See the documentation of ``torch.Tensor.sum``
+
+        Returns:
+            ``torch.Tensor``: The sum of all elements.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).sum()
+            tensor(45)
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).sum(dim=1)
+            tensor([10, 35])
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).sum(dim=1, keepdim=True)
+            tensor([[10], [35]])
+        """
+        return torch.sum(self, *args, **kwargs)
 
     ###########################################
     #     Mathematical | trigo operations     #
@@ -3491,41 +3520,43 @@ def chunk(tensor: BatchedTensor, chunks: int, dim: int = 0) -> tuple[BatchedTens
 
 
 @implements(torch.mean)
-def mean(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
+def mean(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.mean`` documentation."""
-    return torch.mean(input.data, **kwargs)
+    return torch.mean(input.data, *args, **kwargs)
 
 
 @implements(torch.median)
-def median(input: BatchedTensor, **kwargs) -> Tensor | torch.return_types.median:  # noqa: A002
+def median(
+    input: BatchedTensor, *args, **kwargs  # noqa: A002
+) -> Tensor | torch.return_types.median:
     r"""See ``torch.median`` documentation."""
-    return torch.median(input.data, **kwargs)
+    return torch.median(input.data, *args, **kwargs)
 
 
 @implements(torch.nanmean)
-def nanmean(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
+def nanmean(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.nanmean`` documentation."""
-    return torch.nanmean(input.data, **kwargs)
+    return torch.nanmean(input.data, *args, **kwargs)
 
 
 @implements(torch.nanmedian)
 def nanmedian(
-    input: BatchedTensor, **kwargs  # noqa: A002
+    input: BatchedTensor, *args, **kwargs  # noqa: A002
 ) -> Tensor | torch.return_types.nanmedian:
     r"""See ``torch.nanmedian`` documentation."""
-    return torch.nanmedian(input.data, **kwargs)
+    return torch.nanmedian(input.data, *args, **kwargs)
 
 
 @implements(torch.nansum)
-def nansum(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
+def nansum(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.nansum`` documentation."""
-    return torch.nansum(input.data, **kwargs)
+    return torch.nansum(input.data, *args, **kwargs)
 
 
 @implements(torch.prod)
-def prod(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
+def prod(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.prod`` documentation."""
-    return torch.prod(input.data, **kwargs)
+    return torch.prod(input.data, *args, **kwargs)
 
 
 @implements(torch.select)
@@ -3535,14 +3566,9 @@ def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
 
 
 @implements(torch.sort)
-def sort(
-    input: BatchedTensor,  # noqa: A002
-    dim: int = -1,
-    descending: bool = False,
-    stable: bool = False,
-) -> torch.return_types.sort:
+def sort(input: BatchedTensor, *args, **kwargs) -> torch.return_types.sort:  # noqa: A002
     r"""See ``torch.sort`` documentation."""
-    values, indices = torch.sort(input.data, dim=dim, descending=descending, stable=stable)
+    values, indices = torch.sort(input.data, *args, **kwargs)
     return torch.return_types.sort(
         [
             BatchedTensor(data=values, batch_dim=input.batch_dim),
@@ -3563,12 +3589,12 @@ def split(
 
 
 @implements(torch.sum)
-def torchsum(input: BatchedTensor, **kwargs) -> Tensor:  # noqa: A002
+def torchsum(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.sum`` documentation.
 
     Use the name `torchsum` to avoid shadowing `sum` python builtin.
     """
-    return torch.sum(input.data, **kwargs)
+    return torch.sum(input.data, *args, **kwargs)
 
 
 @overload

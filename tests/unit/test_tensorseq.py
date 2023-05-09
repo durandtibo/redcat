@@ -4990,6 +4990,41 @@ def test_batched_tensor_seq_min_along_seq_extra_dims() -> None:
 
 
 @mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_sum(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
+        .sum()
+        .equal(torch.tensor(45, dtype=dtype))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_sum_keepdim_false(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
+        .sum(dim=1)
+        .equal(torch.tensor([10, 35], dtype=dtype))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_sum_keepdim_true(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
+        .sum(dim=1, keepdim=True)
+        .equal(torch.tensor([[10], [35]], dtype=dtype))
+    )
+
+
+def test_batched_tensor_seq_sum_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0)
+        .sum()
+        .equal(torch.tensor(45))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_sum_along_seq(dtype: torch.dtype) -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
