@@ -739,7 +739,7 @@ class BatchedTensorSeq(BatchedTensor):
             BatchedTensor(data=indices, batch_dim=batch_dim),
         )
 
-    def sum_along_seq(self, keepdim: bool = False) -> BatchedTensor | BatchedTensorSeq:
+    def sum_along_seq(self, keepdim: bool = False) -> Tensor:
         r"""Computes the sum values along the sequence dimension.
 
         Args:
@@ -749,7 +749,7 @@ class BatchedTensorSeq(BatchedTensor):
                 is ``BatchedTensorSeq``. Default: ``False``
 
         Returns:
-            ``TensorBatch``: A batch with the sum values along the
+            ``torch.Tensor``: A tensor with the sum values along the
                 sequence dimension.
 
         Example usage:
@@ -759,15 +759,9 @@ class BatchedTensorSeq(BatchedTensor):
             >>> import torch
             >>> from redcat import BatchedTensorSeq
             >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).sum_along_seq()
-            tensor([10, 35], batch_dim=0)
+            tensor([10, 35])
         """
-        values = torch.sum(self._data, dim=self._seq_dim, keepdim=keepdim)
-        if keepdim:
-            return BatchedTensorSeq(data=values, **self._get_kwargs())
-        return BatchedTensor(
-            data=values,
-            batch_dim=self._batch_dim if self._seq_dim > self._batch_dim else self._batch_dim - 1,
-        )
+        return torch.sum(self._data, dim=self._seq_dim, keepdim=keepdim)
 
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #

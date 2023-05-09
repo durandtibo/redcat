@@ -1702,7 +1702,7 @@ def test_batched_tensor_logcumsumexp__custom_dims() -> None:
     )
 
 
-def test_batched_tensor_seq_logcumsumexp_along_batch() -> None:
+def test_batched_tensor_logcumsumexp_along_batch() -> None:
     assert (
         BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2))
         .logcumsumexp_along_batch()
@@ -1722,7 +1722,7 @@ def test_batched_tensor_seq_logcumsumexp_along_batch() -> None:
     )
 
 
-def test_batched_tensor_seq_logcumsumexp_along_batch_custom_dims() -> None:
+def test_batched_tensor_logcumsumexp_along_batch_custom_dims() -> None:
     assert (
         BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5), batch_dim=1)
         .logcumsumexp_along_batch()
@@ -1752,7 +1752,7 @@ def test_batched_tensor_seq_logcumsumexp_along_batch_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_seq_logcumsumexp_along_batch_() -> None:
+def test_batched_tensor_logcumsumexp_along_batch_() -> None:
     batch = BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2))
     batch.logcumsumexp_along_batch_()
     assert batch.allclose(
@@ -1770,7 +1770,7 @@ def test_batched_tensor_seq_logcumsumexp_along_batch_() -> None:
     )
 
 
-def test_batched_tensor_seq_logcumsumexp_along_batch__custom_dims() -> None:
+def test_batched_tensor_logcumsumexp_along_batch__custom_dims() -> None:
     batch = BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5), batch_dim=1)
     batch.logcumsumexp_along_batch_()
     assert batch.allclose(
@@ -2012,7 +2012,7 @@ def test_batched_tensor_shuffle_along_dim__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
-def test_batched_tensor_seq_sort_descending_true() -> None:
+def test_batched_tensor_sort_descending_true() -> None:
     assert objects_are_equal(
         BatchedTensor(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(descending=True),
         torch.return_types.sort(
@@ -2024,7 +2024,7 @@ def test_batched_tensor_seq_sort_descending_true() -> None:
     )
 
 
-def test_batched_tensor_seq_sort_dim_0() -> None:
+def test_batched_tensor_sort_dim_0() -> None:
     assert objects_are_equal(
         BatchedTensor(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort(dim=0),
         torch.return_types.sort(
@@ -2036,7 +2036,7 @@ def test_batched_tensor_seq_sort_dim_0() -> None:
     )
 
 
-def test_batched_tensor_seq_sort_dim_1() -> None:
+def test_batched_tensor_sort_dim_1() -> None:
     assert objects_are_equal(
         BatchedTensor(
             torch.tensor(
@@ -2069,7 +2069,7 @@ def test_batched_tensor_seq_sort_dim_1() -> None:
     )
 
 
-def test_batched_tensor_seq_sort_custom_dims() -> None:
+def test_batched_tensor_sort_custom_dims() -> None:
     assert objects_are_equal(
         BatchedTensor(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_dim=1).sort(
             dim=0
@@ -2083,7 +2083,7 @@ def test_batched_tensor_seq_sort_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_seq_sort_along_batch_descending_false() -> None:
+def test_batched_tensor_sort_along_batch_descending_false() -> None:
     assert objects_are_equal(
         BatchedTensor(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort_along_batch(),
         torch.return_types.sort(
@@ -2095,7 +2095,7 @@ def test_batched_tensor_seq_sort_along_batch_descending_false() -> None:
     )
 
 
-def test_batched_tensor_seq_sort_along_batch_descending_true() -> None:
+def test_batched_tensor_sort_along_batch_descending_true() -> None:
     assert objects_are_equal(
         BatchedTensor(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort_along_batch(
             descending=True
@@ -2109,7 +2109,7 @@ def test_batched_tensor_seq_sort_along_batch_descending_true() -> None:
     )
 
 
-def test_batched_tensor_seq_sort_along_batch_custom_dims() -> None:
+def test_batched_tensor_sort_along_batch_custom_dims() -> None:
     assert objects_are_equal(
         BatchedTensor(
             torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_dim=1
@@ -2732,6 +2732,34 @@ def test_batched_tensor_sum_keepdim_true(dtype: torch.dtype) -> None:
 
 def test_batched_tensor_sum_custom_dims() -> None:
     assert BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).sum().equal(torch.tensor(45))
+    
+    
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_sum_along_batch(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2).to(dtype=dtype))
+        .sum_along_batch()
+        .equal(torch.tensor([20, 25], dtype=dtype))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_sum_along_batch_keepdim_true(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2).to(dtype=dtype))
+        .sum_along_batch(keepdim=True)
+        .equal(torch.tensor([[20, 25]], dtype=dtype))
+    )
+
+
+def test_batched_tensor_sum_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 4], [1, 2], [2, 5]]), batch_dim=1, seq_dim=0)
+        .sum_along_batch()
+        .equal(torch.tensor([4, 3, 7]))
+    )
 
 
 ###########################################

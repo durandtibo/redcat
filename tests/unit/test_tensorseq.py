@@ -5025,11 +5025,37 @@ def test_batched_tensor_seq_sum_custom_dims() -> None:
 
 
 @mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_sum_along_batch(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2).to(dtype=dtype))
+        .sum_along_batch()
+        .equal(torch.tensor([20, 25], dtype=dtype))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_batched_tensor_seq_sum_along_batch_keepdim_true(dtype: torch.dtype) -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(5, 2).to(dtype=dtype))
+        .sum_along_batch(keepdim=True)
+        .equal(torch.tensor([[20, 25]], dtype=dtype))
+    )
+
+
+def test_batched_tensor_seq_sum_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 4], [1, 2], [2, 5]]), batch_dim=1, seq_dim=0)
+        .sum_along_batch()
+        .equal(torch.tensor([4, 3, 7]))
+    )
+
+
+@mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_sum_along_seq(dtype: torch.dtype) -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
         .sum_along_seq()
-        .equal(BatchedTensor(torch.tensor([10, 35], dtype=dtype)))
+        .equal(torch.tensor([10, 35], dtype=dtype))
     )
 
 
@@ -5038,7 +5064,7 @@ def test_batched_tensor_seq_sum_along_seq_keepdim_true(dtype: torch.dtype) -> No
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
         .sum_along_seq(keepdim=True)
-        .equal(BatchedTensorSeq(torch.tensor([[10], [35]], dtype=dtype)))
+        .equal(torch.tensor([[10], [35]], dtype=dtype))
     )
 
 
@@ -5046,23 +5072,7 @@ def test_batched_tensor_seq_sum_along_seq_custom_dims() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[0, 4], [1, 2], [2, 5]]), batch_dim=1, seq_dim=0)
         .sum_along_seq()
-        .equal(BatchedTensor(torch.tensor([3, 11])))
-    )
-
-
-def test_batched_tensor_seq_sum_along_seq_keepdim_true_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
-        .sum_along_seq(keepdim=True)
-        .equal(BatchedTensorSeq(torch.tensor([[20, 25]]), batch_dim=1, seq_dim=0))
-    )
-
-
-def test_batched_tensor_seq_sum_along_seq_extra_dims() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1)
-        .sum_along_seq()
-        .equal(BatchedTensor(torch.tensor([[20, 25], [70, 75]]), batch_dim=1))
+        .equal(torch.tensor([3, 11]))
     )
 
 
