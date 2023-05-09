@@ -2703,6 +2703,38 @@ def test_batched_tensor_sqrt__custom_dims() -> None:
 ################################
 
 
+def test_batched_tensor_nansum() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum()
+        .equal(torch.tensor(36.0))
+    )
+
+
+def test_batched_tensor_nansum_keepdim_false() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum(dim=1)
+        .equal(torch.tensor([10.0, 26.0]))
+    )
+
+
+def test_batched_tensor_nansum_keepdim_true() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum(dim=1, keepdim=True)
+        .equal(torch.tensor([[10.0], [26.0]]))
+    )
+
+
+def test_batched_tensor_nansum_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]), batch_dim=1)
+        .nansum()
+        .equal(torch.tensor(36.0))
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_sum(dtype: torch.dtype) -> None:
     assert (
