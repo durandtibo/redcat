@@ -216,6 +216,8 @@ def get_available_devices() -> tuple[str, ...]:
     """
     if torch.cuda.is_available():
         return ("cpu", "cuda:0")
+    if torch.backends.mps.is_available():
+        return ("cpu", "mps:0")
     return ("cpu",)
 
 
