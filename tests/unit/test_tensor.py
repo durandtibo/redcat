@@ -2735,6 +2735,38 @@ def test_batched_tensor_nanmean_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_nanmedian() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nanmedian()
+        .equal(torch.tensor(4.0))
+    )
+
+
+def test_batched_tensor_nanmedian_keepdim_false() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])).nanmedian(dim=1),
+        torch.return_types.nanmedian([torch.tensor([2.0, 6.0]), torch.tensor([2, 1])]),
+    )
+
+
+def test_batched_tensor_nanmedian_keepdim_true() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])).nanmedian(
+            dim=1, keepdim=True
+        ),
+        torch.return_types.nanmedian([torch.tensor([[2.0], [6.0]]), torch.tensor([[2], [1]])]),
+    )
+
+
+def test_batched_tensor_nanmedian_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]), batch_dim=1)
+        .nanmedian()
+        .equal(torch.tensor(4.0))
+    )
+
+
 def test_batched_tensor_nansum() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
