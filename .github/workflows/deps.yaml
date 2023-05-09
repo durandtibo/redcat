@@ -21,7 +21,7 @@ jobs:
         run: |
           poetry run poetry update
 
-      - name: Install packages
+      - name: Install pre-commit
         run: |
           pip install pre-commit
 
@@ -33,10 +33,6 @@ jobs:
         run: |
           poetry run poetry show
           poetry run poetry show --tree
-
-      - name: Update version
-        run: |
-          poetry run poetry version prerelease
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
