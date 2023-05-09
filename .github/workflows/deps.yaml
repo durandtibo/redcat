@@ -44,6 +44,7 @@ jobs:
           reviewers: durandtibo
           branch: update-deps
           branch-suffix: timestamp
+          delete-branch: true
           add-paths: |
             .pre-commit-config.yaml
             poetry.lock
