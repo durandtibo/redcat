@@ -2732,8 +2732,6 @@ def test_batched_tensor_sum_keepdim_true(dtype: torch.dtype) -> None:
 
 def test_batched_tensor_sum_custom_dims() -> None:
     assert BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).sum().equal(torch.tensor(45))
-    
-    
 
 
 @mark.parametrize("dtype", (torch.float, torch.long))
@@ -2756,7 +2754,7 @@ def test_batched_tensor_sum_along_batch_keepdim_true(dtype: torch.dtype) -> None
 
 def test_batched_tensor_sum_along_batch_custom_dims() -> None:
     assert (
-        BatchedTensor(torch.tensor([[0, 4], [1, 2], [2, 5]]), batch_dim=1, seq_dim=0)
+        BatchedTensor(torch.tensor([[0, 4], [1, 2], [2, 5]]), batch_dim=1)
         .sum_along_batch()
         .equal(torch.tensor([4, 3, 7]))
     )
