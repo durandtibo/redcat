@@ -2178,6 +2178,30 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.sum(self, *args, **kwargs)
 
+    def sum_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the sum values along the batch dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the sequence dimension retained or not. If ``False``
+                the returned type is ``BatchedTensor``, otherwise it
+                is ``BatchedTensorSeq``. Default: ``False``
+
+        Returns:
+            ``torch.Tensor``: A tensor with the sum values along the
+                batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).sum_along_batch()
+            tensor([20, 25])
+        """
+        return torch.sum(self._data, dim=self._batch_dim, keepdim=keepdim)
+
     ###########################################
     #     Mathematical | trigo operations     #
     ###########################################
