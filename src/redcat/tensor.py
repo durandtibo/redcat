@@ -2184,6 +2184,37 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.nansum(self, *args, **kwargs)
 
+    def prod(self, *args, **kwargs) -> Tensor:
+        r"""Computes the product of all elements.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.nansum``
+            **kwargs: See the documentation of ``torch.Tensor.nansum``
+
+        Returns:
+            ``torch.Tensor``: The product of all elements.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])
+            ... ).prod()
+            tensor(362880)
+            >>> BatchedTensor(
+            ...     torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])
+            ... ).prod(dim=1)
+            tensor([ 120, 3024])
+            >>> BatchedTensor(
+            ...     torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])
+            ... ).prod(dim=1, keepdim=True)
+            tensor([[ 120], [3024]])
+        """
+        return torch.prod(self, *args, **kwargs)
+
     def sum(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum of all elements.
 
