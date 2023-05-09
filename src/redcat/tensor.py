@@ -2184,6 +2184,41 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.nanmean(self, *args, **kwargs)
 
+    def nanmedian(self, *args, **kwargs) -> Tensor | torch.return_types.nanmedian:
+        r"""Computes the median of all elements.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.nanmedian``
+            **kwargs: See the documentation of ``torch.Tensor.nanmedian``
+
+        Returns:
+            ``torch.Tensor`` or ``torch.return_types.nanmedian``:
+                The median of all elements or per dimension.
+                The first tensor will be populated with the median
+                values and the second tensor, which must have dtype
+                long, with their indices in the dimension dim of input.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nanmedian()
+            tensor(4.0)
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nanmedian(dim=1)
+            tensor([2.0, 6.0])
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nanmedian(dim=1, keepdim=True)
+            tensor([[2.0], [6.0]])
+        """
+        return torch.nanmedian(self, *args, **kwargs)
+
     def nansum(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum of all elements.
 
