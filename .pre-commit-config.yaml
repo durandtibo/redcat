@@ -5,12 +5,12 @@ default_stages: [ commit ]
 
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.2
+    rev: v3.4.0
     hooks:
       - id: pyupgrade
         args: [--py39-plus]
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.4
+    rev: v1.6.5
     hooks:
       - id: docformatter
         additional_dependencies: [tomli]
@@ -41,7 +41,7 @@ repos:
       - id: python-check-blanket-noqa
       - id: python-use-type-annotations
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.263
+    rev: v0.0.265
     hooks:
       - id: ruff
         args: [--fix]
