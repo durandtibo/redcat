@@ -44,7 +44,7 @@ jobs:
           reviewers: durandtibo
           base: main
           branch: update-deps
-          branch-suffix: timestamp
+#          branch-suffix: timestamp
           delete-branch: true
           add-paths: |
             .pre-commit-config.yaml
