@@ -8,10 +8,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
       - name: Install Poetry
         uses: snok/install-poetry@v1
 
@@ -22,8 +24,6 @@ jobs:
       - name: Install packages
         run: |
           pip install pre-commit
-#          poetry run make config-poetry
-#          poetry run make install
 
       - name: Update pre-commit
         run: |
@@ -34,6 +34,10 @@ jobs:
           poetry run poetry show
           poetry run poetry show --tree
 
+      - name: Update version
+        run: |
+          poetry run poetry version prerelease
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -42,6 +46,7 @@ jobs:
           committer: durandtibo <durand.tibo@gmail.com>
           assignees: durandtibo
           reviewers: durandtibo
+          base: main
           branch: update-deps
           branch-suffix: timestamp
           delete-branch: true
