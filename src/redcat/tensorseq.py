@@ -22,6 +22,7 @@ from redcat.utils import (
 )
 
 HANDLED_FUNCTIONS = {
+    torch.max: tensor.torchmax,
     torch.mean: tensor.mean,
     torch.median: tensor.median,
     torch.nanmean: tensor.nanmean,
@@ -1216,6 +1217,20 @@ def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedT
     return tuple(
         BatchedTensorSeq(chunk, batch_dim=tensor.batch_dim, seq_dim=tensor.seq_dim)
         for chunk in tensor.data.chunk(chunks, dim=dim)
+    )
+
+
+@implements(torch.maximum)
+def maximum(
+    input: BatchedTensorSeq, other: BatchedTensor | Tensor  # noqa: A002
+) -> BatchedTensorSeq:
+    r"""See ``torch.maximum`` documentation."""
+    check_batch_dims(get_batch_dims((input, other)))
+    check_seq_dims(get_seq_dims((input, other)))
+    if isinstance(other, BatchedTensor):
+        other = other.data
+    return BatchedTensorSeq(
+        torch.maximum(input.data, other), batch_dim=input.batch_dim, seq_dim=input.seq_dim
     )
 
 

@@ -1942,7 +1942,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         if other is None:
             return torch.max(self._data)
-        return torch.max(self, other)
+        return torch.maximum(self, other)
 
     @overload
     def min(self) -> bool | int | float:
@@ -3669,6 +3669,36 @@ def chunk(tensor: BatchedTensor, chunks: int, dim: int = 0) -> tuple[BatchedTens
         BatchedTensor(chunk, batch_dim=tensor.batch_dim)
         for chunk in tensor.data.chunk(chunks, dim=dim)
     )
+
+
+# Use the name `torchmax` to avoid shadowing `max` python builtin.
+@overload
+def torchmax(input: BatchedTensor) -> Tensor:  # noqa: A002
+    r"""See ``torch.max`` documentation."""
+
+
+@overload
+def torchmax(
+    input: BatchedTensor, dim: int, keepdim: bool = False  # noqa: A002
+) -> torch.return_types.max:
+    r"""See ``torch.max`` documentation."""
+
+
+@implements(torch.max)
+def torchmax(
+    input: BatchedTensor, *args, **kwargs  # noqa: A002
+) -> Tensor | torch.return_types.max:
+    r"""See ``torch.max`` documentation."""
+    return torch.max(input.data, *args, **kwargs)
+
+
+@implements(torch.maximum)
+def maximum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTensor:  # noqa: A002
+    r"""See ``torch.maximum`` documentation."""
+    check_batch_dims(get_batch_dims((input, other)))
+    if isinstance(other, BatchedTensor):
+        other = other.data
+    return BatchedTensor(torch.maximum(input.data, other), batch_dim=input.batch_dim)
 
 
 @implements(torch.mean)

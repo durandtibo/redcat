@@ -5481,6 +5481,62 @@ def test_torch_chunk_dim_1() -> None:
 
 
 ################################
+#     Tests for torch.max     #
+################################
+
+
+def test_torch_max() -> None:
+    assert torch.max(BatchedTensor(torch.arange(10).view(2, 5))).equal(torch.tensor(9))
+
+
+def test_torch_max_dim_1() -> None:
+    assert objects_are_equal(
+        torch.max(BatchedTensor(torch.arange(10).view(2, 5)), dim=1),
+        torch.return_types.max([torch.tensor([4, 9]), torch.tensor([4, 4])]),
+    )
+
+
+def test_torch_max_dim_1_keepdim() -> None:
+    assert objects_are_equal(
+        torch.max(BatchedTensor(torch.arange(10).view(2, 5)), dim=1, keepdim=True),
+        torch.return_types.max([torch.tensor([[4], [9]]), torch.tensor([[4], [4]])]),
+    )
+
+
+###################################
+#     Tests for torch.maximum     #
+###################################
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        torch.tensor([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_torch_maximum_other(other: BatchedTensor | Tensor) -> None:
+    assert torch.maximum(BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]])), other).equal(
+        BatchedTensor(torch.tensor([[2, 1, 2], [0, 1, 0]]))
+    )
+
+
+def test_torch_maximum_custom_dims() -> None:
+    assert torch.maximum(
+        BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1),
+        BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1),
+    ).equal(BatchedTensor(torch.tensor([[2, 1, 2], [0, 1, 0]]), batch_dim=1))
+
+
+def test_torch_maximum_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        torch.maximum(
+            BatchedTensor(torch.ones(2, 3)),
+            BatchedTensor(torch.ones(2, 3), batch_dim=1),
+        )
+
+
+################################
 #     Tests for torch.mean     #
 ################################
 
