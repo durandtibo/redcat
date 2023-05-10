@@ -7287,6 +7287,70 @@ def test_torch_chunk_dim_1() -> None:
 
 
 ################################
+#     Tests for torch.max     #
+################################
+
+
+def test_torch_max() -> None:
+    assert torch.max(BatchedTensorSeq(torch.arange(10).view(2, 5))).equal(torch.tensor(9))
+
+
+def test_torch_max_dim_1() -> None:
+    assert objects_are_equal(
+        torch.max(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1),
+        torch.return_types.max([torch.tensor([4, 9]), torch.tensor([4, 4])]),
+    )
+
+
+def test_torch_max_dim_1_keepdim() -> None:
+    assert objects_are_equal(
+        torch.max(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True),
+        torch.return_types.max([torch.tensor([[4], [9]]), torch.tensor([[4], [4]])]),
+    )
+
+
+###################################
+#     Tests for torch.maximum     #
+###################################
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        torch.tensor([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_torch_maximum_other(other: BatchedTensor | Tensor) -> None:
+    assert torch.maximum(BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]])), other).equal(
+        BatchedTensorSeq(torch.tensor([[2, 1, 2], [0, 1, 0]]))
+    )
+
+
+def test_torch_maximum_custom_dims() -> None:
+    assert torch.maximum(
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1, seq_dim=0),
+        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1, seq_dim=0),
+    ).equal(BatchedTensorSeq(torch.tensor([[2, 1, 2], [0, 1, 0]]), batch_dim=1, seq_dim=0))
+
+
+def test_torch_maximum_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        torch.maximum(
+            BatchedTensorSeq(torch.ones(2, 3, 1)),
+            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2),
+        )
+
+
+def test_torch_maximum_incorrect_seq_dim() -> None:
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        torch.maximum(
+            BatchedTensorSeq(torch.ones(2, 3, 1)), BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2)
+        )
+
+
+################################
 #     Tests for torch.mean     #
 ################################
 
@@ -7385,7 +7449,6 @@ def test_torch_nanmedian_keepdim() -> None:
             keepdim=True,
         ),
         torch.return_types.nanmedian([torch.tensor([[2.0], [6.0]]), torch.tensor([[2], [1]])]),
-        show_difference=True,
     )
 
 
