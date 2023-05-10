@@ -17,10 +17,12 @@ config-poetry :
 .PHONY : install
 install :
 	poetry install --no-interaction --all-extras
+	pip install --upgrade torch>=2.0.1
 
 .PHONY : install-all
 install-all :
 	poetry install --no-interaction --with exp --all-extras
+	pip install --upgrade torch>=2.0.1
 
 .PHONY : update
 update :
