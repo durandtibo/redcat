@@ -7286,9 +7286,9 @@ def test_torch_chunk_dim_1() -> None:
     )
 
 
-################################
+###############################
 #     Tests for torch.max     #
-################################
+###############################
 
 
 def test_torch_max() -> None:
@@ -7394,6 +7394,70 @@ def test_torch_median_keepdim() -> None:
         torch.median(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True),
         torch.return_types.median([torch.tensor([[2], [7]]), torch.tensor([[2], [2]])]),
     )
+
+
+###############################
+#     Tests for torch.min     #
+###############################
+
+
+def test_torch_min() -> None:
+    assert torch.min(BatchedTensorSeq(torch.arange(10).view(2, 5))).equal(torch.tensor(0))
+
+
+def test_torch_min_dim_1() -> None:
+    assert objects_are_equal(
+        torch.min(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1),
+        torch.return_types.min([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+    )
+
+
+def test_torch_min_dim_1_keepdim() -> None:
+    assert objects_are_equal(
+        torch.min(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True),
+        torch.return_types.min([torch.tensor([[0], [5]]), torch.tensor([[0], [0]])]),
+    )
+
+
+###################################
+#     Tests for torch.minimum     #
+###################################
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]])),
+        torch.tensor([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_torch_minimum(other: BatchedTensor | Tensor) -> None:
+    assert torch.minimum(BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]])), other).equal(
+        BatchedTensorSeq(torch.tensor([[0, 0, 1], [-2, -1, 0]]))
+    )
+
+
+def test_torch_minimum_custom_dims() -> None:
+    assert torch.minimum(
+        BatchedTensorSeq(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1, seq_dim=0),
+        BatchedTensorSeq(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1, seq_dim=0),
+    ).equal(BatchedTensorSeq(torch.tensor([[0, 0, 1], [-2, -1, 0]]), batch_dim=1, seq_dim=0))
+
+
+def test_torch_minimum_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        torch.minimum(
+            BatchedTensorSeq(torch.ones(2, 3, 1)),
+            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2),
+        )
+
+
+def test_torch_minimum_incorrect_seq_dim() -> None:
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        torch.minimum(
+            BatchedTensorSeq(torch.ones(2, 3, 1)), BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2)
+        )
 
 
 ###################################

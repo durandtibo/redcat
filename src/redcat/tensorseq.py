@@ -25,6 +25,7 @@ HANDLED_FUNCTIONS = {
     torch.max: tensor.torchmax,
     torch.mean: tensor.mean,
     torch.median: tensor.median,
+    torch.min: tensor.torchmin,
     torch.nanmean: tensor.nanmean,
     torch.nanmedian: tensor.nanmedian,
     torch.nansum: tensor.nansum,
@@ -1231,6 +1232,20 @@ def maximum(
         other = other.data
     return BatchedTensorSeq(
         torch.maximum(input.data, other), batch_dim=input.batch_dim, seq_dim=input.seq_dim
+    )
+
+
+@implements(torch.minimum)
+def minimum(
+    input: BatchedTensorSeq, other: BatchedTensor | Tensor  # noqa: A002
+) -> BatchedTensorSeq:
+    r"""See ``torch.minimum`` documentation."""
+    check_batch_dims(get_batch_dims((input, other)))
+    check_seq_dims(get_seq_dims((input, other)))
+    if isinstance(other, BatchedTensor):
+        other = other.data
+    return BatchedTensorSeq(
+        torch.minimum(input.data, other), batch_dim=input.batch_dim, seq_dim=input.seq_dim
     )
 
 

@@ -2018,7 +2018,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         if other is None:
             return torch.min(self._data)
-        return torch.min(self, other)
+        return torch.minimum(self, other)
 
     def pow(self, exponent: int | float | BatchedTensor) -> TBatchedTensor:
         r"""Computes the power of each element with the given exponent.
@@ -3672,18 +3672,6 @@ def chunk(tensor: BatchedTensor, chunks: int, dim: int = 0) -> tuple[BatchedTens
 
 
 # Use the name `torchmax` to avoid shadowing `max` python builtin.
-@overload
-def torchmax(input: BatchedTensor) -> Tensor:  # noqa: A002
-    r"""See ``torch.max`` documentation."""
-
-
-@overload
-def torchmax(
-    input: BatchedTensor, dim: int, keepdim: bool = False  # noqa: A002
-) -> torch.return_types.max:
-    r"""See ``torch.max`` documentation."""
-
-
 @implements(torch.max)
 def torchmax(
     input: BatchedTensor, *args, **kwargs  # noqa: A002
@@ -3713,6 +3701,24 @@ def median(
 ) -> Tensor | torch.return_types.median:
     r"""See ``torch.median`` documentation."""
     return torch.median(input.data, *args, **kwargs)
+
+
+# Use the name `torchmin` to avoid shadowing `min` python builtin.
+@implements(torch.min)
+def torchmin(
+    input: BatchedTensor, *args, **kwargs  # noqa: A002
+) -> Tensor | torch.return_types.min:
+    r"""See ``torch.min`` documentation."""
+    return torch.min(input.data, *args, **kwargs)
+
+
+@implements(torch.minimum)
+def minimum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTensor:  # noqa: A002
+    r"""See ``torch.minimum`` documentation."""
+    check_batch_dims(get_batch_dims((input, other)))
+    if isinstance(other, BatchedTensor):
+        other = other.data
+    return BatchedTensor(torch.minimum(input.data, other), batch_dim=input.batch_dim)
 
 
 @implements(torch.nanmean)
