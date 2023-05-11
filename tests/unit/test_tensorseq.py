@@ -5158,6 +5158,32 @@ def test_batched_tensor_seq_prod_along_batch_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_prod_along_seq_keepdim_false() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]]))
+        .prod_along_seq()
+        .equal(torch.tensor([120, 3024]))
+    )
+
+
+def test_batched_tensor_seq_prod_along_seq_keepdim_true() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]]))
+        .prod_along_seq(keepdim=True)
+        .equal(torch.tensor([[120], [3024]]))
+    )
+
+
+def test_batched_tensor_seq_prod_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1, 6], [2, 7], [3, 8], [4, 9], [5, 1]]), batch_dim=1, seq_dim=0
+        )
+        .prod_along_seq()
+        .equal(torch.tensor([120, 3024]))
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_sum(dtype: torch.dtype) -> None:
     assert (
