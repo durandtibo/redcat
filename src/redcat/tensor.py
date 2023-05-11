@@ -2245,12 +2245,14 @@ class BatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_batch()
+            >>> BatchedTensor(
+            ...     torch.tensor([[1, 6], [2, 7], [3, 8], [4, 9], [5, 1]])
+            ... ).prod_along_batch()
             tensor([ 120, 3024])
             >>> BatchedTensor(
-            ...     torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])
+            ...     torch.tensor([[1, 6], [2, 7], [3, 8], [4, 9], [5, 1]])
             ... ).prod_along_batch(keepdim=True)
-            tensor([[ 120], [3024]])
+            tensor([[ 120, 3024]])
         """
         return torch.prod(self, dim=self._batch_dim, keepdim=keepdim)
 
