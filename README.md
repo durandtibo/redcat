@@ -31,3 +31,7 @@
     </a>
     <br/>
 </p>
+
+<p align="center">
+<img src="assets/redcat.png" alt="logo"/>
+</p>
