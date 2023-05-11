@@ -109,13 +109,15 @@ PAIRWISE_FUNCTIONS = (
     torch.logical_or,
     torch.logical_xor,
     torch.lt,
+    torch.maximum,
+    torch.minimum,
     torch.mul,
+    torch.ne,
     torch.nextafter,
+    torch.not_equal,
     torch.remainder,
     torch.sub,
     torch.true_divide,
-    torch.ne,
-    torch.not_equal,
 )
 
 

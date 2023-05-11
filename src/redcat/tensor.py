@@ -1868,33 +1868,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         self._data.log1p_()
 
-    @overload
-    def max(self) -> bool | int | float:
-        r"""Finds the maximum value in the batch.
-
-        Returns:
-            The maximum value in the batch.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.max()
-            5
-            >>> batch = BatchedTensor(torch.tensor([[False, True, True], [True, False, True]]))
-            >>> batch.max()
-            True
-        """
-
-    @overload
-    def max(self, other: BatchedTensor) -> TBatchedTensor:
+    def maximum(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
         r"""Computes the element-wise maximum of ``self`` and ``other``.
 
         Args:
-            other (``BatchedTensor``): Specifies a batch.
+            other (``BatchedTensor`` or ``torch.Tensor``): Specifies
+                a batch.
 
         Returns:
             ``BatchedTensor``: The batch with the element-wise
@@ -1907,41 +1886,10 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
+            >>> batch.maximum(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
             tensor([[1, 1, 2],
                     [4, 5, 5]], batch_dim=0)
         """
-
-    def max(
-        self, other: BatchedTensor | Tensor | None = None
-    ) -> bool | int | float | TBatchedTensor:
-        r"""If ``other`` is None, this method finds the maximum value in the
-        batch, otherwise it computes the element-wise maximum of ``self`` and
-        ``other``.
-
-        Args:
-            other (``BatchedTensor`` or ``None``, optional):
-                Specifies a batch. Default: ``None``
-
-        Returns:
-            The maximum value in the batch or the element-wise maximum
-                of ``self`` and ``other``.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.max()
-            5
-            >>> batch.max(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
-            tensor([[1, 1, 2],
-                    [4, 5, 5]], batch_dim=0)
-        """
-        if other is None:
-            return torch.max(self._data)
         return torch.maximum(self, other)
 
     @overload
