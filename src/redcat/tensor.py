@@ -1892,33 +1892,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.maximum(self, other)
 
-    @overload
-    def min(self) -> bool | int | float:
-        r"""Finds the minimum value in the batch.
-
-        Returns:
-            The minimum value in the batch.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.min()
-            0
-            >>> batch = BatchedTensor(torch.tensor([[False, True, True], [True, False, True]]))
-            >>> batch.min()
-            False
-        """
-
-    @overload
-    def min(self, other: BatchedTensor) -> TBatchedTensor:
+    def minimum(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
         r"""Computes the element-wise minimum of ``self`` and ``other``.
 
         Args:
-            other (``BatchedTensor``): Specifies a batch.
+            other (``BatchedTensor`` or ``torch.Tensor``): Specifies
+                a batch.
 
         Returns:
             ``BatchedTensor``: The batch with the element-wise
@@ -1931,41 +1910,10 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
+            >>> batch.minimum(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
             tensor([[0, 0, 2],
                     [3, 4, 3]], batch_dim=0)
         """
-
-    def min(
-        self, other: BatchedTensor | Tensor | None = None
-    ) -> bool | int | float | TBatchedTensor:
-        r"""If ``other`` is None, this method finds the minimum value in the
-        batch, otherwise it computes the element-wise minimum of ``self`` and
-        ``other``.
-
-        Args:
-            other (``BatchedTensor`` or ``None``, optional):
-                Specifies a batch. Default: ``None``
-
-        Returns:
-            The minimum value in the batch or the element-wise minimum
-                of ``self`` and ``other``.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(6).view(2, 3))
-            >>> batch.min()
-            0
-            >>> batch.min(BatchedTensor(torch.tensor([[1, 0, 2], [4, 5, 3]])))
-            tensor([[0, 0, 2],
-                    [3, 4, 3]], batch_dim=0)
-        """
-        if other is None:
-            return torch.min(self._data)
         return torch.minimum(self, other)
 
     def pow(self, exponent: int | float | BatchedTensor) -> TBatchedTensor:

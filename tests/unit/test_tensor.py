@@ -2431,7 +2431,7 @@ def test_batched_tensor_log1p__custom_dims() -> None:
         torch.tensor([[2, 0, 1], [0, 1, 0]]),
     ),
 )
-def test_batched_tensor_seq_maximum(other: BatchedTensor | Tensor) -> None:
+def test_batched_tensor_maximum(other: BatchedTensor | Tensor) -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]))
         .maximum(other)
@@ -2439,7 +2439,7 @@ def test_batched_tensor_seq_maximum(other: BatchedTensor | Tensor) -> None:
     )
 
 
-def test_batched_tensor_seq_maximum_custom_dims() -> None:
+def test_batched_tensor_maximum_custom_dims() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1)
         .maximum(BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1))
@@ -2447,23 +2447,10 @@ def test_batched_tensor_seq_maximum_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_seq_maximum_incorrect_batch_dim() -> None:
+def test_batched_tensor_maximum_incorrect_batch_dim() -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.maximum(BatchedTensor(torch.ones(2, 3), batch_dim=1))
-
-
-@mark.parametrize(
-    "data,min_value",
-    (
-        (torch.tensor([[False, True, True], [True, False, True]], dtype=torch.bool), False),
-        # bool
-        (torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.long), 0),  # long
-        (torch.tensor([[4.0, 1.0, 7.0], [3.0, 2.0, 5.0]], dtype=torch.float), 1.0),  # float
-    ),
-)
-def test_batched_tensor_min_global(data: torch.Tensor, min_value: bool | int | float) -> None:
-    assert BatchedTensor(data).min() == min_value
 
 
 @mark.parametrize(
@@ -2473,26 +2460,26 @@ def test_batched_tensor_min_global(data: torch.Tensor, min_value: bool | int | f
         torch.tensor([[2, 0, 1], [0, 1, 0]]),
     ),
 )
-def test_batched_tensor_min(other: BatchedTensor | Tensor) -> None:
+def test_batched_tensor_minimum(other: BatchedTensor | Tensor) -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]))
-        .min(other)
+        .minimum(other)
         .equal(BatchedTensor(torch.tensor([[0, 0, 1], [-2, -1, 0]])))
     )
 
 
-def test_batched_tensor_min_custom_dims() -> None:
+def test_batched_tensor_minimum_custom_dims() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2], [-2, -1, 0]]), batch_dim=1)
-        .min(BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1))
+        .minimum(BatchedTensor(torch.tensor([[2, 0, 1], [0, 1, 0]]), batch_dim=1))
         .equal(BatchedTensor(torch.tensor([[0, 0, 1], [-2, -1, 0]]), batch_dim=1))
     )
 
 
-def test_batched_tensor_min_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3, 1))
+def test_batched_tensor_minimum_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.min(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+        batch.minimum(BatchedTensor(torch.ones(2, 3), batch_dim=1))
 
 
 @mark.parametrize(
