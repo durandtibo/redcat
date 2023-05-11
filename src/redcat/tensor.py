@@ -2153,6 +2153,31 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Reduction operations     #
     ################################
 
+    def mean(self, *args, **kwargs) -> Tensor:
+        r"""Computes the mean of all elements.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.mean``
+            **kwargs: See the documentation of ``torch.Tensor.mean``
+
+        Returns:
+            ``torch.Tensor``: The mean of all elements.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(2, 5).float()).mean()
+            tensor(4.5)
+            >>> BatchedTensor(torch.arange(10).view(2, 5).float()).mean(dim=1)
+            tensor([2.0, 7.0])
+            >>> BatchedTensor(torch.arange(10).view(2, 5).float()).mean(dim=1, keepdim=True)
+            tensor([[2.0], [7.0]])
+        """
+        return torch.mean(self, *args, **kwargs)
+
     def nanmean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
 
