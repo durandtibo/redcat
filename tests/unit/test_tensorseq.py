@@ -4893,6 +4893,30 @@ def test_batched_tensor_seq_mean_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_mean_along_batch() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(5, 2))
+        .mean_along_batch()
+        .equal(torch.tensor([4.0, 5.0], dtype=torch.float))
+    )
+
+
+def test_batched_tensor_seq_mean_along_batch_keepdim_true() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(5, 2))
+        .mean_along_batch(keepdim=True)
+        .equal(torch.tensor([[4.0, 5.0]], dtype=torch.float))
+    )
+
+
+def test_batched_tensor_seq_mean_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10, dtype=torch.float).view(2, 5))
+        .mean_along_batch()
+        .equal(torch.tensor([2.0, 7.0], dtype=torch.float))
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_mean_along_seq(dtype: torch.dtype) -> None:
     assert (
