@@ -2178,6 +2178,31 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.mean(self, *args, **kwargs)
 
+    def mean_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the mean values along the batch dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.Tensor``: A batch with
+                the mean values along the batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2).float()).mean_along_seq()
+            tensor([4.0, 5.0])
+            >>> BatchedTensor(torch.arange(10).view(5, 2).float()).mean_along_seq(keepdim=True)
+            tensor([[4.0], [5.0]])
+        """
+        return torch.mean(self, dim=self._batch_dim, keepdim=keepdim)
+
     def nanmean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
 

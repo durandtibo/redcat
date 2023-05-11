@@ -2735,6 +2735,30 @@ def test_batched_tensor_mean_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_mean_along_batch() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2))
+        .mean_along_batch()
+        .equal(torch.tensor([4.0, 5.0], dtype=torch.float))
+    )
+
+
+def test_batched_tensor_mean_along_batch_keepdim_true() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(5, 2))
+        .mean_along_batch(keepdim=True)
+        .equal(torch.tensor([[4.0, 5.0]], dtype=torch.float))
+    )
+
+
+def test_batched_tensor_mean_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5), batch_dim=1)
+        .mean_along_batch()
+        .equal(torch.tensor([2.0, 7.0], dtype=torch.float))
+    )
+
+
 def test_batched_tensor_nanmean() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
