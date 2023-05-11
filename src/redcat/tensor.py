@@ -2227,6 +2227,33 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.prod(self, *args, **kwargs)
 
+    def prod_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the product values along the batch dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.Tensor``: A batch with
+                the product values along the batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_batch()
+            tensor([ 120, 3024])
+            >>> BatchedTensor(
+            ...     torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])
+            ... ).prod_along_batch(keepdim=True)
+            tensor([[ 120], [3024]])
+        """
+        return torch.prod(self, dim=self._batch_dim, keepdim=keepdim)
+
     def sum(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum of all elements.
 
