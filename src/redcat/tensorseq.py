@@ -645,23 +645,12 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).mean_along_seq()
-            (tensor([2, 7], batch_dim=0), tensor([2, 2], batch_dim=0))
-            >>> BatchedTensorSeq(torch.arange(30).view(2, 5, 3)).mean_along_seq(keepdim=True)
-            (tensor([[[12, 13, 14]], [[27, 28, 29]]], batch_dim=0, seq_dim=1),
-             tensor([[[4, 4, 4]], [[4, 4, 4]]], batch_dim=0, seq_dim=1))
+            >>> BatchedTensorSeq(torch.arange(10).view(5, 2).float()).mean_along_seq()
+            tensor([2.0, 7.0])
+            >>> BatchedTensorSeq(torch.arange(10).view(5, 2).float()).mean_along_seq(keepdim=True)
+            tensor([[2.0], [7.0]])
         """
-        values = torch.mean(
-            self._data if self._data.is_floating_point() else self._data.float(),
-            dim=self._seq_dim,
-            keepdim=keepdim,
-        )
-        if keepdim:
-            return BatchedTensorSeq(data=values, **self._get_kwargs())
-        return BatchedTensor(
-            data=values,
-            batch_dim=self._batch_dim if self._seq_dim > self._batch_dim else self._batch_dim - 1,
-        )
+        return torch.mean(self, dim=self._seq_dim, keepdim=keepdim)
 
     def median_along_seq(
         self, keepdim: bool = False

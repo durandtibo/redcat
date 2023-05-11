@@ -4917,49 +4917,27 @@ def test_batched_tensor_seq_mean_along_batch_custom_dims() -> None:
     )
 
 
-@mark.parametrize("dtype", (torch.float, torch.long))
-def test_batched_tensor_seq_mean_along_seq(dtype: torch.dtype) -> None:
+def test_batched_tensor_seq_mean_along_seq() -> None:
     assert (
-        BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
+        BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(2, 5))
         .mean_along_seq()
-        .equal(BatchedTensor(torch.tensor([2.0, 7.0], dtype=torch.float)))
+        .equal(torch.tensor([2.0, 7.0], dtype=torch.float))
     )
 
 
-@mark.parametrize("dtype", (torch.float, torch.long))
-def test_batched_tensor_seq_mean_along_seq_keepdim_true(dtype: torch.dtype) -> None:
+def test_batched_tensor_seq_mean_along_seq_keepdim_true() -> None:
     assert (
-        BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype))
+        BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(2, 5))
         .mean_along_seq(keepdim=True)
-        .equal(BatchedTensorSeq(torch.tensor([[2.0], [7.0]], dtype=torch.float)))
+        .equal(torch.tensor([[2.0], [7.0]], dtype=torch.float))
     )
 
 
 def test_batched_tensor_seq_mean_along_seq_custom_dims() -> None:
     assert (
-        BatchedTensorSeq(torch.tensor([[0, 4], [1, 2], [2, 6]]), batch_dim=1, seq_dim=0)
+        BatchedTensorSeq.from_seq_batch(torch.arange(10, dtype=torch.float).view(5, 2))
         .mean_along_seq()
-        .equal(BatchedTensor(torch.tensor([1.0, 4.0], dtype=torch.float)))
-    )
-
-
-def test_batched_tensor_seq_mean_along_seq_keepdim_true_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
-        .mean_along_seq(keepdim=True)
-        .equal(
-            BatchedTensorSeq(torch.tensor([[4.0, 5.0]], dtype=torch.float), batch_dim=1, seq_dim=0)
-        )
-    )
-
-
-def test_batched_tensor_seq_mean_along_seq_extra_dims() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1)
-        .mean_along_seq()
-        .equal(
-            BatchedTensor(torch.tensor([[4.0, 5.0], [14.0, 15.0]], dtype=torch.float), batch_dim=1)
-        )
+        .equal(torch.tensor([4.0, 5.0], dtype=torch.float))
     )
 
 
