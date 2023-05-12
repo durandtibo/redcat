@@ -33,5 +33,9 @@
 </p>
 
 <p align="center">
-<img src="assets/redcat.png" alt="logo"/>
+<img height="242" src="assets/redcat.png" alt="logo"/>
 </p>
+
+---
+
+*The logo was generated with Stable Diffusion 2.1*
