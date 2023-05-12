@@ -119,3 +119,31 @@ jobs:
       - name: Run short experiment
         run: |
           python -c "import torch; import redcat; assert redcat.BatchedTensor(torch.arange(10).view(2, 5)).sum().equal(torch.tensor(45.0))"
+
+
+  package-all:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+        python-version: [ '3.9', '3.10', '3.11' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package
+        run: |
+          pip install "redcat[all]"
+
+      - name: Run short experiment
+        run: |
+          python -c "import torch; import redcat; assert redcat.BatchedTensor(torch.arange(10).view(2, 5)).sum().equal(torch.tensor(45.0))"
