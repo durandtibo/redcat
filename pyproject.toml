@@ -34,6 +34,12 @@ coola = "^0.0.6"
 python = "^3.9"
 torch = "^2.0"  # make optional
 numpy = "^1.24"  # make optional
+polars = { version = "^0.17", optional = true }
+
+[tool.poetry.extras]
+all = [
+    "polars",
+]
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.3"
