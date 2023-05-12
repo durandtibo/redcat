@@ -2201,9 +2201,8 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Args:
             keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not. If ``False``
-                the returned type is ``BatchedTensor``, otherwise it
-                is ``BatchedTensorSeq``. Default: ``False``
+                the sequence dimension retained or not.
+                Default: ``False``
 
         Returns:
             ``torch.Tensor``: A tensor with the sum values along the
@@ -2312,9 +2311,8 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Args:
             keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not. If ``False``
-                the returned type is ``BatchedTensor``, otherwise it
-                is ``BatchedTensorSeq``. Default: ``False``
+                the sequence dimension retained or not.
+                Default: ``False``
 
         Returns:
             ``torch.Tensor``: A tensor with the sum values along the

@@ -5132,6 +5132,34 @@ def test_batched_tensor_seq_nansum_along_batch_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_nansum_along_seq() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum_along_seq()
+        .equal(torch.tensor([10.0, 26.0]))
+    )
+
+
+def test_batched_tensor_seq_nansum_along_seq_keepdim_true() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+        .nansum_along_seq(keepdim=True)
+        .equal(torch.tensor([[10.0], [26.0]]))
+    )
+
+
+def test_batched_tensor_seq_nansum_along_seq_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[0.0, 5.0], [1.0, 6.0], [2.0, 7.0], [3.0, 8.0], [4.0, float("nan")]]),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .nansum_along_seq()
+        .equal(torch.tensor([10.0, 26.0]))
+    )
+
+
 def test_batched_tensor_seq_prod() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]]))
