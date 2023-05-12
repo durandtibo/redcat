@@ -730,6 +730,31 @@ class BatchedTensorSeq(BatchedTensor):
             BatchedTensor(data=indices, batch_dim=batch_dim),
         )
 
+    def nansum_along_seq(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the sum values along the sequence dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the sequence dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.Tensor``: A tensor with the sum values along the
+                sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nansum_along_seq()
+            tensor([20., 26.])
+        """
+        return self.nansum(dim=self._seq_dim, keepdim=keepdim)
+
     def prod_along_seq(self, keepdim: bool = False) -> Tensor:
         r"""Computes the product values along the sequence dimension.
 
