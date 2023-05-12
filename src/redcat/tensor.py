@@ -2184,17 +2184,43 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> BatchedTensor(
             ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
             ... ).nansum()
-            tensor(36)
+            tensor(36.)
             >>> BatchedTensor(
             ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
             ... ).nansum(dim=1)
-            tensor([10, 26])
+            tensor([10., 26.])
             >>> BatchedTensor(
             ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
             ... ).nansum(dim=1, keepdim=True)
-            tensor([[10], [26]])
+            tensor([[10.], [26.]])
         """
         return torch.nansum(self, *args, **kwargs)
+
+    def nansum_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the sum values along the batch dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the sequence dimension retained or not. If ``False``
+                the returned type is ``BatchedTensor``, otherwise it
+                is ``BatchedTensorSeq``. Default: ``False``
+
+        Returns:
+            ``torch.Tensor``: A tensor with the sum values along the
+                batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0., 5.], [1., 6.], [2., 7.], [3., 8.], [4., float("nan")]])
+            ... ).nansum_along_batch()
+            tensor([20., 26.])
+        """
+        return self.nansum(dim=self._batch_dim, keepdim=keepdim)
 
     def prod(self, *args, **kwargs) -> Tensor:
         r"""Computes the product of all elements.
