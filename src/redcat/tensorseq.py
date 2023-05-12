@@ -730,6 +730,35 @@ class BatchedTensorSeq(BatchedTensor):
             BatchedTensor(data=indices, batch_dim=batch_dim),
         )
 
+    def nanmedian_along_seq(self, keepdim: bool = False) -> torch.return_types.nanmedian:
+        r"""Computes the median values along the sequence dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the sequence dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.return_types.nanmedian``:  The first tensor will
+                be populated with the median values and the second
+                tensor, which must have dtype long, with their indices
+                in the sequence dimension of input.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nanmedian_along_seq()
+            torch.return_types.nanmedian(
+            values=tensor([2., 6.]),
+            indices=tensor([2, 1]))
+        """
+        return self.nanmedian(dim=self._seq_dim, keepdim=keepdim)
+
     def nansum_along_seq(self, keepdim: bool = False) -> Tensor:
         r"""Computes the sum values along the sequence dimension.
 
