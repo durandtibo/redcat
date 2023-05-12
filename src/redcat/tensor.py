@@ -2181,7 +2181,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             ``torch.return_types.nanmedian``:  The first tensor will
                 be populated with the median values and the second
                 tensor, which must have dtype long, with their indices
-                in the dimension dim of input.
+                in the batch dimension of input.
 
         Example usage:
 
