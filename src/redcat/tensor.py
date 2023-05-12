@@ -2097,7 +2097,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> BatchedTensor(torch.arange(10).view(5, 2).float()).mean_along_seq(keepdim=True)
             tensor([[4.0], [5.0]])
         """
-        return torch.mean(self, dim=self._batch_dim, keepdim=keepdim)
+        return self.mean(dim=self._batch_dim, keepdim=keepdim)
 
     def nanmean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
@@ -2254,7 +2254,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             ... ).prod_along_batch(keepdim=True)
             tensor([[ 120, 3024]])
         """
-        return torch.prod(self, dim=self._batch_dim, keepdim=keepdim)
+        return self.prod(dim=self._batch_dim, keepdim=keepdim)
 
     def sum(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum of all elements.
@@ -2303,7 +2303,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> BatchedTensor(torch.arange(10).view(5, 2)).sum_along_batch()
             tensor([20, 25])
         """
-        return torch.sum(self._data, dim=self._batch_dim, keepdim=keepdim)
+        return self.sum(dim=self._batch_dim, keepdim=keepdim)
 
     ###########################################
     #     Mathematical | trigo operations     #
