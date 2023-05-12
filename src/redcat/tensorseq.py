@@ -650,7 +650,7 @@ class BatchedTensorSeq(BatchedTensor):
             >>> BatchedTensorSeq(torch.arange(10).view(5, 2).float()).mean_along_seq(keepdim=True)
             tensor([[2.0], [7.0]])
         """
-        return torch.mean(self, dim=self._seq_dim, keepdim=keepdim)
+        return self.mean(dim=self._seq_dim, keepdim=keepdim)
 
     def median_along_seq(
         self, keepdim: bool = False
@@ -755,7 +755,7 @@ class BatchedTensorSeq(BatchedTensor):
             ... ).prod_along_seq(keepdim=True)
             tensor([[ 120], [3024]])
         """
-        return torch.prod(self, dim=self._seq_dim, keepdim=keepdim)
+        return self.prod(dim=self._seq_dim, keepdim=keepdim)
 
     def sum_along_seq(self, keepdim: bool = False) -> Tensor:
         r"""Computes the sum values along the sequence dimension.
@@ -779,7 +779,7 @@ class BatchedTensorSeq(BatchedTensor):
             >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).sum_along_seq()
             tensor([10, 35])
         """
-        return torch.sum(self._data, dim=self._seq_dim, keepdim=keepdim)
+        return self.sum(dim=self._seq_dim, keepdim=keepdim)
 
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
