@@ -5016,6 +5016,32 @@ def test_batched_tensor_seq_median_along_seq_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_min() -> None:
+    assert BatchedTensorSeq(torch.arange(10).view(2, 5)).min().equal(torch.tensor(0))
+
+
+def test_batched_tensor_seq_min_keepdim_false() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).min(dim=1),
+        torch.return_types.min([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+    )
+
+
+def test_batched_tensor_seq_min_keepdim_true() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).min(dim=1, keepdim=True),
+        torch.return_types.min([torch.tensor([[0], [5]]), torch.tensor([[0], [0]])]),
+    )
+
+
+def test_batched_tensor_seq_min_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0)
+        .min()
+        .equal(torch.tensor(0))
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_min_along_seq(dtype: torch.dtype) -> None:
     values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).min_along_seq()
