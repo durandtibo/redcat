@@ -4848,14 +4848,14 @@ def test_batched_tensor_seq_max_along_batch_custom_dims() -> None:
 def test_batched_tensor_seq_max_along_seq() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.arange(10).view(2, 5)).max_along_seq(),
-        torch.return_types.max([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+        torch.return_types.max([torch.tensor([4, 9]), torch.tensor([4, 4])]),
     )
 
 
 def test_batched_tensor_seq_max_along_seq_keepdim_true() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.arange(10).view(2, 5)).max_along_seq(keepdim=True),
-        torch.return_types.max([torch.tensor([[0], [5]]), torch.tensor([[0], [0]])]),
+        torch.return_types.max([torch.tensor([[4], [9]]), torch.tensor([[4], [4]])]),
     )
 
 
@@ -4864,7 +4864,7 @@ def test_batched_tensor_seq_max_along_seq_custom_dims() -> None:
         BatchedTensorSeq(
             torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]]), batch_dim=1, seq_dim=0
         ).max_along_seq(),
-        torch.return_types.max([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+        torch.return_types.max([torch.tensor([4, 9]), torch.tensor([4, 4])]),
     )
 
 
