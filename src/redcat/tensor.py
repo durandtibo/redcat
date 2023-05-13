@@ -2079,6 +2079,39 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.max(self, *args, **kwargs)
 
+    def max_along_batch(self, keepdim: bool = False) -> torch.return_types.max:
+        r"""Computes the maximum values along the batch dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.return_types.max``: A batch with
+                the maximum values along the batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])
+            ... ).max_along_batch()
+            torch.return_types.max(
+            values=tensor([4, 9]),
+            indices=tensor([4, 4]))
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])
+            ... ).max_along_batch(keepdim=True)
+            torch.return_types.max(
+            values=tensor([[4], [9]]),
+            indices=tensor([[4], [4]]))
+        """
+        return self.max(dim=self._batch_dim, keepdim=keepdim)
+
     def mean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
 
@@ -2221,7 +2254,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.min(self, *args, **kwargs)
 
-    def min_along_batch(self, keepdim: bool = False) -> Tensor:
+    def min_along_batch(self, keepdim: bool = False) -> torch.return_types.min:
         r"""Computes the minimum values along the batch dimension.
 
         Args:
