@@ -2221,6 +2221,39 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.min(self, *args, **kwargs)
 
+    def min_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the minimum values along the batch dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.return_types.min``: A batch with
+                the minimum values along the batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])
+            ... ).min_along_batch()
+            torch.return_types.min(
+            values=tensor([0, 5]),
+            indices=tensor([0, 0]))
+            >>> BatchedTensor(
+            ...     torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])
+            ... ).min_along_batch(keepdim=True)
+            torch.return_types.min(
+            values=tensor([[0], [5]]),
+            indices=tensor([[0], [0]]))
+        """
+        return self.min(dim=self._batch_dim, keepdim=keepdim)
+
     def nanmean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
 

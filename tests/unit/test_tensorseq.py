@@ -5042,6 +5042,29 @@ def test_batched_tensor_seq_min_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_min_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch(),
+        torch.return_types.min([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+    )
+
+
+def test_batched_tensor_seq_min_along_batch_keepdim_true() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch(
+            keepdim=True
+        ),
+        torch.return_types.min([torch.tensor([[0, 5]]), torch.tensor([[0, 0]])]),
+    )
+
+
+def test_batched_tensor_seq_min_along_batch_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0).min_along_batch(),
+        torch.return_types.min([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_min_along_seq(dtype: torch.dtype) -> None:
     values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).min_along_seq()
