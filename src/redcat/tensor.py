@@ -80,6 +80,40 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""``torch.device``: The device where the batch data/tensor is."""
         return self._data.device
 
+    def dim(self) -> int:
+        r"""Gets the number of dimensions.
+
+        Returns:
+            int: The number of dimensions
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.ones(2, 3)).dim()
+            2
+        """
+        return self._data.dim()
+
+    def ndimension(self) -> int:
+        r"""Gets the number of dimensions.
+
+        Returns:
+            int: The number of dimensions
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.ones(2, 3)).ndimension()
+            2
+        """
+        return self.dim()
+
     def numel(self) -> int:
         r"""Gets the total number of elements in the tensor.
 
