@@ -4916,6 +4916,32 @@ def test_batched_tensor_seq_mean_along_seq_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_median() -> None:
+    assert BatchedTensorSeq(torch.arange(10).view(2, 5)).median().equal(torch.tensor(4))
+
+
+def test_batched_tensor_seq_median_keepdim_false() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).median(dim=1),
+        torch.return_types.median([torch.tensor([2, 7]), torch.tensor([2, 2])]),
+    )
+
+
+def test_batched_tensor_seq_median_keepdim_true() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).median(dim=1, keepdim=True),
+        torch.return_types.median([torch.tensor([[2], [7]]), torch.tensor([[2], [2]])]),
+    )
+
+
+def test_batched_tensor_seq_median_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0)
+        .median()
+        .equal(torch.tensor(4))
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_median_along_seq(dtype: torch.dtype) -> None:
     values, indices = BatchedTensorSeq(

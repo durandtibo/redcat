@@ -2092,12 +2092,45 @@ class BatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.arange(10).view(5, 2).float()).mean_along_seq()
+            >>> BatchedTensor(torch.arange(10).view(5, 2).float()).mean_along_batch()
             tensor([4.0, 5.0])
-            >>> BatchedTensor(torch.arange(10).view(5, 2).float()).mean_along_seq(keepdim=True)
+            >>> BatchedTensor(torch.arange(10).view(5, 2).float()).mean_along_batch(keepdim=True)
             tensor([[4.0], [5.0]])
         """
         return self.mean(dim=self._batch_dim, keepdim=keepdim)
+
+    def median(self, *args, **kwargs) -> Tensor | torch.return_types.median:
+        r"""Computes the median of all elements.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.median``
+            **kwargs: See the documentation of ``torch.Tensor.median``
+
+        Returns:
+            ``torch.Tensor`` or ``torch.return_types.median``:
+                The median of all elements or per dimension.
+                The first tensor will be populated with the median
+                values and the second tensor, which must have dtype
+                long, with their indices in the dimension dim of input.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).median()
+            tensor(4)
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).median(dim=1)
+            torch.return_types.median(
+            values=tensor([2, 7]),
+            indices=tensor([2, 2]))
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).median(dim=1, keepdim=True)
+            torch.return_types.median(
+            values=tensor([[2], [7]]),
+            indices=tensor([[2], [2]]))
+        """
+        return torch.median(self, *args, **kwargs)
 
     def nanmean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
