@@ -2130,6 +2130,35 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.nanmean(self, *args, **kwargs)
 
+    def nanmean_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the mean values along the batch dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.Tensor``: A batch with
+                the mean values along the batch dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(
+            ...     torch.tensor([[0., 5.], [1., 6.], [2., 7.], [3., 8.], [4., float("nan")]])
+            ... ).nanmean_along_batch()
+            tensor([2.0, 6.5])
+            >>> BatchedTensor(
+            ...     torch.tensor([[0., 5.], [1., 6.], [2., 7.], [3., 8.], [4., float("nan")]])
+            ... ).nanmean_along_batch(keepdim=True)
+            tensor([[2.0, 6.5]])
+        """
+        return self.nanmean(dim=self._batch_dim, keepdim=keepdim)
+
     def nanmedian(self, *args, **kwargs) -> Tensor | torch.return_types.nanmedian:
         r"""Computes the median of all elements.
 
