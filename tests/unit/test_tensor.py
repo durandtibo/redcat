@@ -2823,6 +2823,29 @@ def test_batched_tensor_min_custom_dims() -> None:
     assert BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).min().equal(torch.tensor(0))
 
 
+def test_batched_tensor_min_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch(),
+        torch.return_types.min([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+    )
+
+
+def test_batched_tensor_min_along_batch_keepdim_true() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch(
+            keepdim=True
+        ),
+        torch.return_types.min([torch.tensor([[0, 5]]), torch.tensor([[0, 0]])]),
+    )
+
+
+def test_batched_tensor_min_along_batch_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).min_along_batch(),
+        torch.return_types.min([torch.tensor([0, 5]), torch.tensor([0, 0])]),
+    )
+
+
 def test_batched_tensor_nanmean() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
