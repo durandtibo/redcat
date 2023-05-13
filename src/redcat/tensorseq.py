@@ -730,6 +730,35 @@ class BatchedTensorSeq(BatchedTensor):
             BatchedTensor(data=indices, batch_dim=batch_dim),
         )
 
+    def nanmean_along_seq(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the mean values along the sequence dimension.
+
+        Args:
+            keepdim (bool): Indicates whether the output tensor has
+                the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+            ``torch.Tensor``: A batch with
+                the mean values along the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nanmean_along_seq()
+            tensor([2.0, 6.5])
+            >>> BatchedTensorSeq(
+            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
+            ... ).nanmean_along_seq(keepdim=True)
+            tensor([[2.0], [6.5]])
+        """
+        return self.nanmean(dim=self._seq_dim, keepdim=keepdim)
+
     def nanmedian_along_seq(self, keepdim: bool = False) -> torch.return_types.nanmedian:
         r"""Computes the median values along the sequence dimension.
 
@@ -749,8 +778,8 @@ class BatchedTensorSeq(BatchedTensor):
         .. code-block:: python
 
             >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(
             ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
             ... ).nanmedian_along_seq()
             torch.return_types.nanmedian(
@@ -776,8 +805,8 @@ class BatchedTensorSeq(BatchedTensor):
         .. code-block:: python
 
             >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(
             ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
             ... ).nansum_along_seq()
             tensor([20., 26.])
@@ -801,10 +830,10 @@ class BatchedTensorSeq(BatchedTensor):
         .. code-block:: python
 
             >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_seq()
+            >>> from redcat import BatchedTensorSeq
+            >>> BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_seq()
             tensor([ 120, 3024])
-            >>> BatchedTensor(
+            >>> BatchedTensorSeq(
             ...     torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])
             ... ).prod_along_seq(keepdim=True)
             tensor([[ 120], [3024]])
