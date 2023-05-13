@@ -2049,6 +2049,36 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Reduction operations     #
     ################################
 
+    def max(self, *args, **kwargs) -> Tensor | torch.return_types.max:
+        r"""Computes the maximum of all elements.
+
+        Args:
+            *args: See the documentation of ``torch.Tensor.max``
+            **kwargs: See the documentation of ``torch.Tensor.max``
+
+        Returns:
+            ``torch.Tensor`` or ``torch.return_types.max``:
+                The maximum of all elements.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).max()
+            tensor(9)
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1)
+            torch.return_types.max(
+            values=tensor([4, 9]),
+            indices=tensor([4, 4]))
+            >>> BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1, keepdim=True)
+            torch.return_types.max(
+            values=tensor([[4], [9]]),
+            indices=tensor([[4], [4]]))
+        """
+        return torch.max(self, *args, **kwargs)
+
     def mean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
 
