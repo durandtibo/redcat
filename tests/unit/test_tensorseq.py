@@ -4796,6 +4796,32 @@ def test_batched_tensor_seq_logical_xor__incorrect_seq_dim() -> None:
 ################################
 
 
+def test_batched_tensor_seq_max() -> None:
+    assert BatchedTensorSeq(torch.arange(10).view(2, 5)).max().equal(torch.tensor(9))
+
+
+def test_batched_tensor_seq_max_keepdim_false() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).max(dim=1),
+        torch.return_types.max([torch.tensor([4, 9]), torch.tensor([4, 4])]),
+    )
+
+
+def test_batched_tensor_seq_max_keepdim_true() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.arange(10).view(2, 5)).max(dim=1, keepdim=True),
+        torch.return_types.max([torch.tensor([[4], [9]]), torch.tensor([[4], [4]])]),
+    )
+
+
+def test_batched_tensor_seq_max_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0)
+        .max()
+        .equal(torch.tensor(9))
+    )
+
+
 @mark.parametrize("dtype", (torch.float, torch.long))
 def test_batched_tensor_seq_max_along_seq(dtype: torch.dtype) -> None:
     values, indices = BatchedTensorSeq(torch.arange(10).view(2, 5).to(dtype=dtype)).max_along_seq()
