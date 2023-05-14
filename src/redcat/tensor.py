@@ -5,7 +5,7 @@ __all__ = ["BatchedTensor", "check_data_and_dim"]
 import functools
 from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
-from typing import Any, TypeVar, overload
+from typing import Any, TypeVar, Union, overload
 
 import torch
 from torch import Tensor
@@ -19,7 +19,7 @@ TBatchedTensor = TypeVar("TBatchedTensor", bound="BatchedTensor")
 
 HANDLED_FUNCTIONS = {}
 
-IndexType = int | slice | list[int] | Tensor | None
+IndexType = Union[int, slice, list[int], Tensor, None]
 
 
 class BatchedTensor(BaseBatch[Tensor]):
