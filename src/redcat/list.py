@@ -1,62 +1,60 @@
 from __future__ import annotations
 
-__all__ = ["BaseBatch"]
+__all__ = ["BatchList"]
 
-from abc import ABC, abstractmethod
+import copy
 from collections.abc import Iterable, Sequence
-from typing import Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 import torch
+from coola import objects_are_equal
 from torch import Tensor
+
+from redcat.base import BaseBatch
 
 T = TypeVar("T")
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
-TBatch = TypeVar("TBatch", bound="BaseBatch")
+TBatchList = TypeVar("TBatchList", bound="BatchList")
 
 
-class BaseBatch(Generic[T], ABC):
-    r"""Define the base class to implement a batch."""
+class BatchList(BaseBatch[list[T]]):
+    r"""Implements a batch object to easily manipulate a list of
+    examples.
+
+    Args:
+        data (list): Specifies the list of examples.
+    """
+
+    def __init__(self, data: list[T]) -> None:
+        if not isinstance(data, list):
+            raise TypeError(f"Incorrect type. Expect a list but received {type(data)}")
+        self._data = data
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__qualname__}(batch_size={self.batch_size:,})"
 
     @property
-    @abstractmethod
     def batch_size(self) -> int:
         r"""int: The batch size."""
+        return len(self._data)
 
     @property
-    @abstractmethod
-    def data(self) -> T:
+    def data(self) -> list[T]:
         r"""The data in the batch."""
+        return self._data
 
     ###############################
     #     Creation operations     #
     ###############################
 
-    @abstractmethod
-    def clone(self) -> TBatch:
-        r"""Creates a copy of the current batch.
-
-        Returns:
-            ``BaseBatch``: A copy of the current batch.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch_copy = batch.clone()
-            >>> batch_copy
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
-        """
+    def clone(self, *args, **kwargs) -> TBatchList:
+        return self.__class__(data=copy.deepcopy(self._data))
 
     #################################
     #     Comparison operations     #
     #################################
 
-    @abstractmethod
     def allclose(
         self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
     ) -> bool:
@@ -87,7 +85,6 @@ class BaseBatch(Generic[T], ABC):
             True
         """
 
-    @abstractmethod
     def equal(self, other: Any) -> bool:
         r"""Indicates if two batches are equal or not.
 
@@ -107,13 +104,15 @@ class BaseBatch(Generic[T], ABC):
             >>> BatchedTensor(torch.ones(2, 3)).equal(BatchedTensor(torch.zeros(2, 3)))
             False
         """
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(self.data, other.data)
 
     ###########################################################
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    @abstractmethod
-    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatch:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatchList:
         r"""Permutes the data/batch along the batch dimension.
 
         Args:
@@ -123,7 +122,7 @@ class BaseBatch(Generic[T], ABC):
                 input should be compatible with the shape of the data.
 
         Returns:
-            ``BaseBatch``: A new batch with permuted data.
+            ``BaseBatchedTensor``: A new batch with permuted data.
 
         Example usage:
 
@@ -140,7 +139,6 @@ class BaseBatch(Generic[T], ABC):
                     [8, 9]], batch_dim=0)
         """
 
-    @abstractmethod
     def permute_along_batch_(self, permutation: Sequence[int] | torch.Tensor) -> None:
         r"""Permutes the data/batch along the batch dimension.
 
@@ -166,58 +164,6 @@ class BaseBatch(Generic[T], ABC):
                     [8, 9]], batch_dim=0)
         """
 
-    def shuffle_along_batch(self, generator: torch.Generator | None = None) -> TBatch:
-        r"""Shuffles the data/batch along the batch dimension.
-
-        Args:
-            generator (``torch.Generator`` or ``None``, optional):
-                Specifies an optional random generator.
-                Default: ``None``
-
-        Returns:
-            ``BaseBatch``:  A new batch with shuffled data.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_batch()
-            tensor([[4, 5],
-                    [2, 3],
-                    [6, 7],
-                    [0, 1],
-                    [8, 9]], batch_dim=0)
-        """
-        return self.permute_along_batch(torch.randperm(self.batch_size, generator=generator))
-
-    def shuffle_along_batch_(self, generator: torch.Generator | None = None) -> None:
-        r"""Shuffles the data/batch along the batch dimension.
-
-        Args:
-            generator (``torch.Generator`` or ``None``, optional):
-                Specifies an optional random generator.
-                Default: ``None``
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_batch_()
-            >>> batch
-            tensor([[4, 5],
-                    [2, 3],
-                    [6, 7],
-                    [0, 1],
-                    [8, 9]], batch_dim=0)
-        """
-        self.permute_along_batch_(torch.randperm(self.batch_size, generator=generator))
-
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
@@ -230,7 +176,6 @@ class BaseBatch(Generic[T], ABC):
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
 
-    @abstractmethod
     def append(self, other: BaseBatch) -> None:
         r"""Appends a new batch to the current batch along the batch
         dimension.
@@ -255,8 +200,7 @@ class BaseBatch(Generic[T], ABC):
                     [2., 2., 2.]], batch_dim=0)
         """
 
-    @abstractmethod
-    def chunk_along_batch(self, chunks: int) -> tuple[TBatch, ...]:
+    def chunk_along_batch(self, chunks: int) -> tuple[TBatchList, ...]:
         r"""Splits the batch into chunks along the batch dimension.
 
         Args:
@@ -278,7 +222,6 @@ class BaseBatch(Generic[T], ABC):
              tensor([[8, 9]], batch_dim=0))
         """
 
-    @abstractmethod
     def extend(self, other: Iterable[BaseBatch]) -> None:
         r"""Extends the current batch by appending all the batches from
         the iterable.
@@ -314,7 +257,6 @@ class BaseBatch(Generic[T], ABC):
                     [2., 2., 2.]], batch_dim=0)
         """
 
-    @abstractmethod
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BaseBatch:
         r"""Selects data at the given indices along the batch dimension.
 
@@ -366,8 +308,9 @@ class BaseBatch(Generic[T], ABC):
             tensor([4, 5])
         """
 
-    @abstractmethod
-    def slice_along_batch(self, start: int = 0, stop: int | None = None, step: int = 1) -> TBatch:
+    def slice_along_batch(
+        self, start: int = 0, stop: int | None = None, step: int = 1
+    ) -> TBatchList:
         r"""Slices the batch in the batch dimension.
 
         Args:
@@ -402,8 +345,9 @@ class BaseBatch(Generic[T], ABC):
                     [8, 9]], batch_dim=0)
         """
 
-    @abstractmethod
-    def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[TBatch, ...]:
+    def split_along_batch(
+        self, split_size_or_sections: int | Sequence[int]
+    ) -> tuple[TBatchList, ...]:
         r"""Splits the batch into chunks along the batch dimension.
 
         Args:
@@ -432,7 +376,7 @@ class BaseBatch(Generic[T], ABC):
              tensor([[8, 9]], batch_dim=0))
         """
 
-    def take_along_batch(self, indices: BaseBatch | Tensor | Sequence) -> TBatch:
+    def take_along_batch(self, indices: BaseBatch | Tensor | Sequence) -> TBatchList:
         r"""Takes values along the batch dimension.
 
         Args:
@@ -460,93 +404,3 @@ class BaseBatch(Generic[T], ABC):
     ########################
     #     mini-batches     #
     ########################
-
-    def get_num_minibatches(self, batch_size: int, drop_last: bool = False) -> int:
-        r"""Gets the number of mini-batches for a given batch size.
-
-        Args:
-            batch_size (int): Specifies the target batch size of the
-                mini-batches.
-            drop_last (bool, optional): If ``True``, the last batch is
-                dropped if it is not full, otherwise it is returned.
-                Default: ``False``
-
-        Returns:
-            int: The number of mini-batches.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10))
-            >>> batch.get_num_minibatches(batch_size=4)
-            3
-            >>> batch.get_num_minibatches(batch_size=4, drop_last=True)
-            2
-        """
-        if drop_last:
-            return self.batch_size // batch_size
-        return (self.batch_size + batch_size - 1) // batch_size
-
-    def to_minibatches(
-        self,
-        batch_size: int,
-        drop_last: bool = False,
-        deepcopy: bool = False,
-    ) -> Iterable[TBatch]:
-        r"""Gets the mini-batches of the current batch.
-
-        Args:
-            batch_size (int): Specifies the target batch size of the
-                mini-batches.
-            drop_last (bool, optional): If ``True``, the last batch is
-                dropped if it is not full, otherwise it is returned.
-                Default: ``False``
-            deepcopy (bool, optional): If ``True``, a deepcopy of the
-                batch is performed before to return the mini-batches.
-                If ``False``, each chunk is a view of the original
-                batch/tensor. Using deepcopy allows a deterministic
-                behavior when in-place operations are performed on the
-                data. Default: ``False``
-
-        Returns:
-            iterable: The mini-batches.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(20).view(10, 2))
-            >>> list(batch.to_minibatches(batch_size=4))
-            [tensor([[0, 1],
-                     [2, 3],
-                     [4, 5],
-                     [6, 7]], batch_dim=0),
-             tensor([[ 8,  9],
-                     [10, 11],
-                     [12, 13],
-                     [14, 15]], batch_dim=0),
-             tensor([[16, 17],
-                     [18, 19]], batch_dim=0)]
-            >>> list(batch.to_minibatches(batch_size=4, drop_last=True))
-            [tensor([[0, 1],
-                     [2, 3],
-                     [4, 5],
-                     [6, 7]], batch_dim=0),
-             tensor([[ 8,  9],
-                     [10, 11],
-                     [12, 13],
-                     [14, 15]], batch_dim=0)]
-        """
-        batch = self
-        if deepcopy:
-            batch = batch.clone()
-        if drop_last:
-            batch = self.slice_along_batch(
-                stop=int(self.get_num_minibatches(batch_size, drop_last) * batch_size)
-            )
-        return batch.split_along_batch(batch_size)
