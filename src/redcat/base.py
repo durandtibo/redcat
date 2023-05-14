@@ -266,6 +266,9 @@ class BaseBatch(Generic[T], ABC):
             tuple: The batch split into chunks along the batch
                 dimension.
 
+        Raises:
+            RuntimeError if the number of chunks is incorrect
+
         Example usage:
 
         .. code-block:: python

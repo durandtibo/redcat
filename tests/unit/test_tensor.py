@@ -4883,6 +4883,11 @@ def test_batched_tensor_chunk_along_batch_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_chunk_along_batch_incorrect_chunks() -> None:
+    with raises(RuntimeError, match="chunk expects `chunks` to be greater than 0, got: 0"):
+        BatchedTensor(torch.arange(10).view(5, 2)).chunk_along_batch(0)
+
+
 @mark.parametrize(
     "other",
     (

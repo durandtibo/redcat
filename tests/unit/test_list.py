@@ -151,8 +151,8 @@ def test_batched_tensor_seq_chunk_along_batch_3() -> None:
 
 
 def test_batched_tensor_seq_chunk_along_batch_incorrect_chunks() -> None:
-    with raises(ValueError):
-        BatchList([i for i in range(5)]).chunk_along_batch(chunks=0),
+    with raises(RuntimeError, match="chunks has to be greater than 0 but received"):
+        BatchList([i for i in range(5)]).chunk_along_batch(chunks=0)
 
 
 @mark.parametrize(
