@@ -80,6 +80,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""``torch.device``: The device where the batch data/tensor is."""
         return self._data.device
 
+    @property
+    def shape(self) -> torch.Size:
+        r"""``torch.Size``: The shape of the tensor."""
+        return self._data.shape
+
     def dim(self) -> int:
         r"""Gets the number of dimensions.
 
