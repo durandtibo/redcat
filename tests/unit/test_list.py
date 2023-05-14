@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 
 import torch
+from coola import objects_are_equal
 from pytest import mark, raises
 from torch import Tensor
 
@@ -135,6 +136,25 @@ def test_batch_list_append(other: BatchList | Tensor) -> None:
     assert batch.equal(BatchList(["a", "b", "c", "d", "e"]))
 
 
+def test_batched_tensor_seq_chunk_along_batch_5() -> None:
+    assert objects_are_equal(
+        BatchList([i for i in range(5)]).chunk_along_batch(chunks=5),
+        (BatchList([0]), BatchList([1]), BatchList([2]), BatchList([3]), BatchList([4])),
+    )
+
+
+def test_batched_tensor_seq_chunk_along_batch_3() -> None:
+    assert objects_are_equal(
+        BatchList([i for i in range(5)]).chunk_along_batch(3),
+        (BatchList([0, 1]), BatchList([2, 3]), BatchList([4])),
+    )
+
+
+def test_batched_tensor_seq_chunk_along_batch_incorrect_chunks() -> None:
+    with raises(ValueError):
+        BatchList([i for i in range(5)]).chunk_along_batch(chunks=0),
+
+
 @mark.parametrize(
     "other",
     (
@@ -143,7 +163,7 @@ def test_batch_list_append(other: BatchList | Tensor) -> None:
         [BatchList(["d"]), ["e"]],
     ),
 )
-def test_batched_tensor_seq_extend(
+def test_batch_list_extend(
     other: Iterable[BatchList | list],
 ) -> None:
     batch = BatchList(["a", "b", "c"])
@@ -210,3 +230,28 @@ def test_batch_list_slice_along_batch_start_1_stop_4_step_2() -> None:
         .slice_along_batch(start=1, stop=4, step=2)
         .equal(BatchList(["b", "d"]))
     )
+
+
+def test_batch_list_split_along_batch_split_size_1() -> None:
+    assert objects_are_equal(
+        BatchList([i for i in range(5)]).split_along_batch(1),
+        (BatchList([0]), BatchList([1]), BatchList([2]), BatchList([3]), BatchList([4])),
+    )
+
+
+def test_batch_list_split_along_batch_split_size_2() -> None:
+    assert objects_are_equal(
+        BatchList([i for i in range(5)]).split_along_batch(2),
+        (BatchList([0, 1]), BatchList([2, 3]), BatchList([4])),
+    )
+
+
+def test_batch_list_split_along_batch_split_size_list() -> None:
+    assert objects_are_equal(
+        BatchList([i for i in range(8)]).split_along_batch([2, 2, 3, 1]),
+        (BatchList([0, 1]), BatchList([2, 3]), BatchList([4, 5, 6]), BatchList([7])),
+    )
+
+
+def test_batch_list_split_along_batch_split_size_list_empty() -> None:
+    assert objects_are_equal(BatchList([i for i in range(8)]).split_along_batch([]), tuple())
