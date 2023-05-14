@@ -97,7 +97,7 @@ class BatchList(BaseBatch[list[T]]):
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchList, ...]:
         if chunks < 1:
-            raise ValueError(f"chunks has to be greater or equal to 1 but received {chunks}")
+            raise RuntimeError(f"chunks has to be greater than 0 but received {chunks}")
         return self.split_along_batch(math.ceil(self.batch_size / chunks))
 
     def extend(self, other: Iterable[BatchList | Sequence[T]]) -> None:

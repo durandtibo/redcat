@@ -6254,6 +6254,11 @@ def test_batched_tensor_seq_chunk_along_batch_3() -> None:
     )
 
 
+def test_batched_tensor_seq_chunk_along_batch_incorrect_chunks() -> None:
+    with raises(RuntimeError, match="chunk expects `chunks` to be greater than 0, got: 0"):
+        BatchedTensorSeq(torch.arange(10).view(5, 2)).chunk_along_batch(0)
+
+
 def test_batched_tensor_seq_chunk_along_batch_custom_dims() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.arange(10).view(2, 5), batch_dim=1, seq_dim=0).chunk_along_batch(3),
