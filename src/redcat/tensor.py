@@ -5,19 +5,21 @@ __all__ = ["BatchedTensor", "check_data_and_dim"]
 import functools
 from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
-from typing import Any, TypeVar, overload
+from typing import Any, TypeVar, Union, overload
 
 import torch
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.utils import IndexType, check_batch_dims, get_batch_dims, permute_along_dim
+from redcat.utils import check_batch_dims, get_batch_dims, permute_along_dim
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchedTensor = TypeVar("TBatchedTensor", bound="BatchedTensor")
 
 HANDLED_FUNCTIONS = {}
+
+IndexType = Union[int, slice, list[int], Tensor, None]
 
 
 class BatchedTensor(BaseBatch[Tensor]):
@@ -3368,11 +3370,15 @@ class BatchedTensor(BaseBatch[Tensor]):
     ##########################################################
 
     def __getitem__(self, index: IndexType) -> Tensor:
+        if isinstance(index, BatchedTensor):
+            index = index.data
         return self._data[index]
 
     def __setitem__(
         self, index: IndexType, value: bool | int | float | Tensor | BatchedTensor
     ) -> None:
+        if isinstance(index, BatchedTensor):
+            index = index.data
         if isinstance(value, BatchedTensor):
             value = value.data
         self._data[index] = value
