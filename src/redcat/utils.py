@@ -2,7 +2,6 @@ from __future__ import annotations
 
 __all__ = [
     "DeviceType",
-    "IndexType",
     "align_to_batch_first",
     "align_to_batch_seq",
     "align_to_seq_batch",
@@ -18,7 +17,7 @@ __all__ = [
 ]
 
 import copy
-from collections.abc import Iterable, Mapping, MutableSequence, Sequence
+from collections.abc import Iterable, Mapping, MutableSequence
 from typing import Any, Union, overload
 
 import numpy as np
@@ -26,7 +25,6 @@ import torch
 from torch import Tensor
 
 DeviceType = Union[torch.device, str, int]
-IndexType = Union[None, int, slice, str, Tensor, Sequence[int]]
 
 
 def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:

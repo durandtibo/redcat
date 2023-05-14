@@ -7,7 +7,6 @@ import math
 from collections.abc import Iterable, Sequence
 from typing import Any, TypeVar
 
-import torch
 from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
@@ -75,7 +74,7 @@ class BatchList(BaseBatch[list[T]]):
     def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatchList:
         return self.__class__([self._data[i] for i in permutation])
 
-    def permute_along_batch_(self, permutation: Sequence[int] | torch.Tensor) -> None:
+    def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
         self._data = [self._data[i] for i in permutation]
 
     ################################################

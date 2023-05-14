@@ -146,7 +146,7 @@ def test_batch_list__setitem___int() -> None:
 
 
 @mark.parametrize("value", ([1, 2], (1, 2), BatchList([1, 2])))
-def test_batch_list__setitem___seq(value: Sequence | BatchList) -> None:
+def test_batch_list__setitem___slice(value: Sequence | BatchList) -> None:
     batch = BatchList(["a", "b", "c", "d", "e"])
     batch[1:3] = value
     assert batch.equal(BatchList(["a", 1, 2, "d", "e"]))
