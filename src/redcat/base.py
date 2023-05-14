@@ -141,7 +141,7 @@ class BaseBatch(Generic[T], ABC):
         """
 
     @abstractmethod
-    def permute_along_batch_(self, permutation: Sequence[int] | torch.Tensor) -> None:
+    def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
         r"""Permutes the data/batch along the batch dimension.
 
         Args:
@@ -309,7 +309,9 @@ class BaseBatch(Generic[T], ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.extend([BatchedTensor(torch.zeros(1, 3)), BatchedTensor(torch.full((1, 3), 2.0))])
+            >>> batch.extend(
+            ...     [BatchedTensor(torch.zeros(1, 3)), BatchedTensor(torch.full((1, 3), 2.0))]
+            ... )
             >>> batch.data
             tensor([[1., 1., 1.],
                     [1., 1., 1.],
@@ -412,12 +414,6 @@ class BaseBatch(Generic[T], ABC):
         Args:
             split_size_or_sections (int or sequence): Specifies the
                 size of a single chunk or list of sizes for each chunk.
-            deepcopy (bool, optional): If ``True``, a deepcopy of the
-                data is performed before to return the chunks.
-                If ``False``, each chunk is a view of the original
-                batch/tensor. Using deepcopy allows a deterministic
-                behavior when in-place operations are performed on
-                the data. Default: ``False``
 
         Returns:
             tuple: The batch split into chunks along the batch
@@ -498,8 +494,8 @@ class BaseBatch(Generic[T], ABC):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(20).view(10, 2))
-            >>> list(batch.to_minibatches(batch_size=4))
+            >>> b = BatchedTensor(torch.arange(20).view(10, 2))
+            >>> list(b.to_minibatches(batch_size=4))
             [tensor([[0, 1],
                      [2, 3],
                      [4, 5],
@@ -510,7 +506,7 @@ class BaseBatch(Generic[T], ABC):
                      [14, 15]], batch_dim=0),
              tensor([[16, 17],
                      [18, 19]], batch_dim=0)]
-            >>> list(batch.to_minibatches(batch_size=4, drop_last=True))
+            >>> list(b.to_minibatches(batch_size=4, drop_last=True))
             [tensor([[0, 1],
                      [2, 3],
                      [4, 5],

@@ -129,6 +129,29 @@ def test_batch_list_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
 ##########################################################
 
 
+def test_batch_list__getitem___int() -> None:
+    batch = BatchList(["a", "b", "c", "d", "e"])
+    assert batch[0] == "a"
+
+
+def test_batch_list__getitem___slice() -> None:
+    batch = BatchList(["a", "b", "c", "d", "e"])
+    assert batch[0:2] == ["a", "b"]
+
+
+def test_batch_list__setitem___int() -> None:
+    batch = BatchList(["a", "b", "c", "d", "e"])
+    batch[0] = 7
+    assert batch.equal(BatchList([7, "b", "c", "d", "e"]))
+
+
+@mark.parametrize("value", ([1, 2], (1, 2), BatchList([1, 2])))
+def test_batch_list__setitem___seq(value: Sequence | BatchList) -> None:
+    batch = BatchList(["a", "b", "c", "d", "e"])
+    batch[1:3] = value
+    assert batch.equal(BatchList(["a", 1, 2, "d", "e"]))
+
+
 @mark.parametrize("other", (BatchList(["d", "e"]), ["d", "e"], ("d", "e")))
 def test_batch_list_append(other: BatchList | Tensor) -> None:
     batch = BatchList(["a", "b", "c"])
@@ -136,21 +159,21 @@ def test_batch_list_append(other: BatchList | Tensor) -> None:
     assert batch.equal(BatchList(["a", "b", "c", "d", "e"]))
 
 
-def test_batched_tensor_seq_chunk_along_batch_5() -> None:
+def test_batch_list_chunk_along_batch_5() -> None:
     assert objects_are_equal(
         BatchList([i for i in range(5)]).chunk_along_batch(chunks=5),
         (BatchList([0]), BatchList([1]), BatchList([2]), BatchList([3]), BatchList([4])),
     )
 
 
-def test_batched_tensor_seq_chunk_along_batch_3() -> None:
+def test_batch_list_chunk_along_batch_3() -> None:
     assert objects_are_equal(
         BatchList([i for i in range(5)]).chunk_along_batch(3),
         (BatchList([0, 1]), BatchList([2, 3]), BatchList([4])),
     )
 
 
-def test_batched_tensor_seq_chunk_along_batch_incorrect_chunks() -> None:
+def test_batch_list_chunk_along_batch_incorrect_chunks() -> None:
     with raises(RuntimeError, match="chunks has to be greater than 0 but received"):
         BatchList([i for i in range(5)]).chunk_along_batch(chunks=0)
 

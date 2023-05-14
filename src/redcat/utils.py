@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     "DeviceType",
     "IndexType",
@@ -24,7 +26,7 @@ import torch
 from torch import Tensor
 
 DeviceType = Union[torch.device, str, int]
-IndexType = Union[None, int, slice, str, Tensor, Sequence]
+IndexType = Union[None, int, slice, str, Tensor, Sequence[int]]
 
 
 def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
@@ -59,7 +61,7 @@ def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
     return tensor.transpose(0, batch_dim)
 
 
-def align_to_batch_seq(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> torch.Tensor:
+def align_to_batch_seq(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
     r"""Aligns the input tensor format to ``(batch_size, sequence_length,
     *)`` where `*` means any number of dimensions.
 
@@ -87,7 +89,7 @@ def align_to_batch_seq(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> to
     )
 
 
-def align_to_seq_batch(tensor: torch.Tensor, batch_dim: int, seq_dim: int) -> torch.Tensor:
+def align_to_seq_batch(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
     r"""Aligns the input tensor format to ``(sequence_length, batch_size,
     *)`` where `*` means any number of dimensions.
 
@@ -221,7 +223,7 @@ def get_available_devices() -> tuple[str, ...]:
     return ("cpu",)
 
 
-def get_batch_dims(args: Iterable[Any], kwargs: Union[Mapping[str, Any], None] = None) -> set[int]:
+def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:
     r"""Gets the batch dimensions from the inputs.
 
     Args:
@@ -237,9 +239,7 @@ def get_batch_dims(args: Iterable[Any], kwargs: Union[Mapping[str, Any], None] =
     return dims
 
 
-def get_seq_dims(
-    args: Iterable[Any, ...], kwargs: Union[Mapping[str, Any], None] = None
-) -> set[int]:
+def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = None) -> set[int]:
     r"""Gets the sequence dimensions from the inputs.
 
     Args:
@@ -256,7 +256,7 @@ def get_seq_dims(
 
 
 def get_torch_generator(
-    random_seed: int = 1, device: Union[torch.device, str, None] = "cpu"
+    random_seed: int = 1, device: torch.device | str | None = "cpu"
 ) -> torch.Generator:
     r"""Creates a ``torch.Generator`` initialized with a given seed.
 
@@ -359,8 +359,8 @@ def swap2(sequence: MutableSequence, index0: int, index1: int) -> MutableSequenc
 
 
 def swap2(
-    sequence: Union[Tensor, np.ndarray, MutableSequence], index0: int, index1: int
-) -> Union[Tensor, np.ndarray, MutableSequence]:
+    sequence: Tensor | np.ndarray | MutableSequence, index0: int, index1: int
+) -> Tensor | np.ndarray | MutableSequence:
     r"""Swaps two values in a mutable sequence.
 
     Args:

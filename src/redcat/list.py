@@ -90,6 +90,14 @@ class BatchList(BaseBatch[list[T]]):
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
 
+    def __getitem__(self, index: int | slice) -> list[T]:
+        return self._data[index]
+
+    def __setitem__(self, index: int | slice, value: Any) -> None:
+        if isinstance(value, BatchList):
+            value = value.data
+        self._data[index] = value
+
     def append(self, other: BatchList | Sequence[T]) -> None:
         if isinstance(other, BatchList):
             other = other.data
