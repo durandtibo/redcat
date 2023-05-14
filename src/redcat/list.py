@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["BatchList"]
 
 import copy
+import math
 from collections.abc import Iterable, Sequence
 from typing import Any, TypeVar
 
@@ -95,26 +96,9 @@ class BatchList(BaseBatch[list[T]]):
         self._data.extend(other)
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchList, ...]:
-        r"""Splits the batch into chunks along the batch dimension.
-
-        Args:
-            chunks (int): Specifies the number of chunks.
-
-        Returns:
-            tuple: The batch split into chunks along the batch
-                dimension.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.arange(10).view(5, 2)).chunk_along_batch(chunks=3)
-            (tensor([[0, 1], [2, 3]], batch_dim=0),
-             tensor([[4, 5], [6, 7]], batch_dim=0),
-             tensor([[8, 9]], batch_dim=0))
-        """
+        if chunks < 1:
+            raise ValueError(f"chunks has to be greater or equal to 1 but received {chunks}")
+        return self.split_along_batch(math.ceil(self.batch_size / chunks))
 
     def extend(self, other: Iterable[BatchList | Sequence[T]]) -> None:
         for batch in other:
@@ -134,33 +118,17 @@ class BatchList(BaseBatch[list[T]]):
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
     ) -> tuple[TBatchList, ...]:
-        r"""Splits the batch into chunks along the batch dimension.
-
-        Args:
-            split_size_or_sections (int or sequence): Specifies the
-                size of a single chunk or list of sizes for each chunk.
-            deepcopy (bool, optional): If ``True``, a deepcopy of the
-                data is performed before to return the chunks.
-                If ``False``, each chunk is a view of the original
-                batch/tensor. Using deepcopy allows a deterministic
-                behavior when in-place operations are performed on
-                the data. Default: ``False``
-
-        Returns:
-            tuple: The batch split into chunks along the batch
-                dimension.
-
-        Example usage:
-
-        .. code-block:: python
-
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> BatchedTensor(torch.arange(10).view(5, 2)).split_along_batch(2)
-            (tensor([[0, 1], [2, 3]], batch_dim=0),
-             tensor([[4, 5], [6, 7]], batch_dim=0),
-             tensor([[8, 9]], batch_dim=0))
-        """
+        if isinstance(split_size_or_sections, int):
+            return tuple(
+                self.__class__(self._data[i : i + split_size_or_sections])
+                for i in range(0, self.batch_size, split_size_or_sections)
+            )
+        i = 0
+        output = []
+        for size in split_size_or_sections:
+            output.append(self.__class__(self._data[i : i + size]))
+            i += size
+        return tuple(output)
 
     ########################
     #     mini-batches     #
