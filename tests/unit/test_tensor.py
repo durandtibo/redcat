@@ -70,6 +70,10 @@ def test_batched_tensor_device(device: str) -> None:
     assert BatchedTensor(torch.ones(2, 3, device=device)).device == device
 
 
+def test_batched_tensor_shape() -> None:
+    assert BatchedTensor(torch.ones(2, 3)).shape == torch.Size([2, 3])
+
+
 def test_batched_tensor_dim() -> None:
     assert BatchedTensor(torch.ones(2, 3)).dim() == 2
 

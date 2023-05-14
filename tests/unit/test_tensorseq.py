@@ -108,6 +108,10 @@ def test_batched_tensor_seq_device(device: str) -> None:
     assert BatchedTensorSeq(torch.ones(2, 3, device=device)).device == device
 
 
+def test_batched_tensor_seq_shape() -> None:
+    assert BatchedTensorSeq(torch.ones(2, 3)).shape == torch.Size([2, 3])
+
+
 def test_batched_tensor_seq_dim() -> None:
     assert BatchedTensorSeq(torch.ones(2, 3)).dim() == 2
 
