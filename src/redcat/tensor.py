@@ -3759,6 +3759,29 @@ class BatchedTensor(BaseBatch[Tensor]):
     def take_along_batch(
         self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence
     ) -> TBatchedTensor:
+        r"""Takes values along the batch dimension.
+
+        Args:
+            indices (``BaseBatch`` or ``Tensor`` or sequence):
+                Specifies the indices to take along the batch
+                dimension.
+
+        Returns:
+            ``BaseBatch``: The batch with the selected data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(10).view(5, 2)).take_along_batch(
+            ...     BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]]))
+            ... )
+            tensor([[6, 5],
+                    [0, 7],
+                    [2, 9]], batch_dim=0)
+        """
         return self.take_along_dim(indices, dim=self._batch_dim)
 
     def take_along_dim(
