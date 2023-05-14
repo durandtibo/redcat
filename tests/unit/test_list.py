@@ -1,4 +1,10 @@
+from __future__ import annotations
+
+from collections.abc import Iterable, Sequence
+
+import torch
 from pytest import mark, raises
+from torch import Tensor
 
 from redcat import BatchList
 
@@ -40,6 +46,42 @@ def test_batch_list_clone() -> None:
 #################################
 
 
+def test_batch_list_allclose_true() -> None:
+    assert BatchList(["a", "b", "c"]).allclose(BatchList(["a", "b", "c"]))
+
+
+def test_batch_list_allclose_false_different_type() -> None:
+    assert not BatchList(["a", "b", "c"]).allclose(["a", "b", "c"])
+
+
+def test_batch_list_allclose_false_different_data() -> None:
+    assert not BatchList(["a", "b", "c"]).allclose(BatchList(["a", "b", "c", "d"]))
+
+
+@mark.parametrize(
+    "batch,atol",
+    (
+        (BatchList([0.5, 1.5, 2.5, 3.5]), 1.0),
+        (BatchList([0.05, 1.05, 2.05, 3.05]), 1e-1),
+        (BatchList([0.005, 1.005, 2.005, 3.005]), 1e-2),
+    ),
+)
+def test_batch_list_allclose_true_atol(batch: BatchList, atol: float) -> None:
+    assert BatchList([0.0, 1.0, 2.0, 3.0]).allclose(batch, atol=atol, rtol=0)
+
+
+@mark.parametrize(
+    "batch,rtol",
+    (
+        (BatchList([1.5, 2.5, 3.5]), 1.0),
+        (BatchList([1.05, 2.05, 3.05]), 1e-1),
+        (BatchList([1.005, 2.005, 3.005]), 1e-2),
+    ),
+)
+def test_batch_list_allclose_true_rtol(batch: BatchList, rtol: float) -> None:
+    assert BatchList([1.0, 2.0, 3.0]).allclose(batch, rtol=rtol)
+
+
 def test_batch_list_equal_true() -> None:
     assert BatchList(["a", "b", "c"]).equal(BatchList(["a", "b", "c"]))
 
@@ -50,3 +92,121 @@ def test_batch_list_equal_false_different_type() -> None:
 
 def test_batch_list_equal_false_different_data() -> None:
     assert not BatchList(["a", "b", "c"]).equal(BatchList(["a", "b", "c", "d"]))
+
+
+###########################################################
+#     Mathematical | advanced arithmetical operations     #
+###########################################################
+
+
+@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batch_list_permute_along_batch(permutation: Sequence[int] | Tensor) -> None:
+    assert (
+        BatchList(["a", "b", "c", "d"])
+        .permute_along_batch(permutation)
+        .equal(BatchList(["c", "b", "d", "a"]))
+    )
+
+
+@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batch_list_permute_along_batch_(permutation: Sequence[int] | Tensor) -> None:
+    batch = BatchList(["a", "b", "c", "d"])
+    batch.permute_along_batch_(permutation)
+    assert batch.equal(BatchList(["c", "b", "d", "a"]))
+
+
+################################################
+#     Mathematical | point-wise operations     #
+################################################
+
+###########################################
+#     Mathematical | trigo operations     #
+###########################################
+
+##########################################################
+#    Indexing, slicing, joining, mutating operations     #
+##########################################################
+
+
+@mark.parametrize("other", (BatchList(["d", "e"]), ["d", "e"], ("d", "e")))
+def test_batch_list_append(other: BatchList | Tensor) -> None:
+    batch = BatchList(["a", "b", "c"])
+    batch.append(other)
+    assert batch.equal(BatchList(["a", "b", "c", "d", "e"]))
+
+
+@mark.parametrize(
+    "other",
+    (
+        [BatchList(["d"]), BatchList(["e"])],
+        [BatchList(["d", "e"])],
+        [BatchList(["d"]), ["e"]],
+    ),
+)
+def test_batched_tensor_seq_extend(
+    other: Iterable[BatchList | list],
+) -> None:
+    batch = BatchList(["a", "b", "c"])
+    batch.extend(other)
+    assert batch.equal(BatchList(["a", "b", "c", "d", "e"]))
+
+
+@mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
+def test_batch_list_index_select_along_batch(index: Tensor | Sequence[int]) -> None:
+    assert (
+        BatchList(["a", "b", "c", "d", "e"])
+        .index_select_along_batch(index)
+        .equal(BatchList(["c", "a"]))
+    )
+
+
+def test_batch_list_select_along_batch() -> None:
+    assert BatchList(["a", "b", "c", "d", "e"]).select_along_batch(2) == "c"
+
+
+def test_batch_list_slice_along_batch() -> None:
+    assert (
+        BatchList(["a", "b", "c", "d", "e"])
+        .slice_along_batch()
+        .equal(BatchList(["a", "b", "c", "d", "e"]))
+    )
+
+
+def test_batch_list_slice_along_batch_start_2() -> None:
+    assert (
+        BatchList(["a", "b", "c", "d", "e"])
+        .slice_along_batch(start=2)
+        .equal(BatchList(["c", "d", "e"]))
+    )
+
+
+def test_batch_list_slice_along_batch_stop_3() -> None:
+    assert (
+        BatchList(["a", "b", "c", "d", "e"])
+        .slice_along_batch(stop=3)
+        .equal(BatchList(["a", "b", "c"]))
+    )
+
+
+def test_batch_list_slice_along_batch_stop_100() -> None:
+    assert (
+        BatchList(["a", "b", "c", "d", "e"])
+        .slice_along_batch(stop=100)
+        .equal(BatchList(["a", "b", "c", "d", "e"]))
+    )
+
+
+def test_batch_list_slice_along_batch_step_2() -> None:
+    assert (
+        BatchList(["a", "b", "c", "d", "e"])
+        .slice_along_batch(step=2)
+        .equal(BatchList(["a", "c", "e"]))
+    )
+
+
+def test_batch_list_slice_along_batch_start_1_stop_4_step_2() -> None:
+    assert (
+        BatchList(["a", "b", "c", "d", "e"])
+        .slice_along_batch(start=1, stop=4, step=2)
+        .equal(BatchList(["b", "d"]))
+    )
