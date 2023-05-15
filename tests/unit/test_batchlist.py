@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+from unittest.mock import patch
 
 import torch
 from coola import objects_are_equal
@@ -8,6 +9,7 @@ from pytest import mark, raises
 from torch import Tensor
 
 from redcat import BatchList
+from redcat.utils import get_torch_generator
 
 
 @mark.parametrize("data", ([1, 2, 3, 4], ["a", "b", "c"]))
@@ -114,6 +116,56 @@ def test_batch_list_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
     batch = BatchList(["a", "b", "c", "d"])
     batch.permute_along_batch_(permutation)
     assert batch.equal(BatchList(["c", "b", "d", "a"]))
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batch_list_shuffle_along_batch() -> None:
+    assert (
+        BatchList(["a", "b", "c", "d"]).shuffle_along_batch().equal(BatchList(["c", "b", "d", "a"]))
+    )
+
+
+def test_batch_list_shuffle_along_batch_same_random_seed() -> None:
+    batch = BatchList(["a", "b", "c", "d", "e"])
+    assert batch.shuffle_along_batch(get_torch_generator(1)).equal(
+        batch.shuffle_along_batch(get_torch_generator(1))
+    )
+
+
+def test_batch_list_shuffle_along_batch_different_random_seeds() -> None:
+    batch = BatchList(["a", "b", "c", "d", "e"])
+    assert not batch.shuffle_along_batch(get_torch_generator(1)).equal(
+        batch.shuffle_along_batch(get_torch_generator(2))
+    )
+
+
+def test_batch_list_shuffle_along_batch_multiple_shuffle() -> None:
+    batch = BatchList(["a", "b", "c", "d", "e"])
+    generator = get_torch_generator(1)
+    assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batch_list_shuffle_along_batch_() -> None:
+    batch = BatchList(["a", "b", "c", "d"])
+    batch.shuffle_along_batch_()
+    assert batch.equal(BatchList(["c", "b", "d", "a"]))
+
+
+def test_batch_list_shuffle_along_batch__same_random_seed() -> None:
+    batch1 = BatchList(["a", "b", "c", "d", "e"])
+    batch1.shuffle_along_batch_(get_torch_generator(1))
+    batch2 = BatchList(["a", "b", "c", "d", "e"])
+    batch2.shuffle_along_batch_(get_torch_generator(1))
+    assert batch1.equal(batch2)
+
+
+def test_batch_list_shuffle_along_batch__different_random_seeds() -> None:
+    batch1 = BatchList(["a", "b", "c", "d", "e"])
+    batch1.shuffle_along_batch_(get_torch_generator(1))
+    batch2 = BatchList(["a", "b", "c", "d", "e"])
+    batch2.shuffle_along_batch_(get_torch_generator(2))
+    assert not batch1.equal(batch2)
 
 
 ################################################
