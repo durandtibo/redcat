@@ -7,6 +7,6 @@ __all__ = [
 
 from redcat import comparators  # noqa: F401
 from redcat.base import BaseBatch
-from redcat.list import BatchList
+from redcat.batchlist import BatchList
 from redcat.tensor import BatchedTensor
 from redcat.tensorseq import BatchedTensorSeq
