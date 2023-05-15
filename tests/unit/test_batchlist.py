@@ -330,3 +330,95 @@ def test_batch_list_split_along_batch_split_size_list() -> None:
 
 def test_batch_list_split_along_batch_split_size_list_empty() -> None:
     assert objects_are_equal(BatchList([i for i in range(8)]).split_along_batch([]), tuple())
+
+
+########################
+#     mini-batches     #
+########################
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+def test_batch_list_get_num_minibatches_drop_last_false(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert BatchList([i for i in range(10)]).get_num_minibatches(batch_size) == num_minibatches
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+def test_batch_list_get_num_minibatches_drop_last_true(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert (
+        BatchList([i for i in range(10)]).get_num_minibatches(batch_size, drop_last=True)
+        == num_minibatches
+    )
+
+
+def test_batch_list_to_minibatches_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        tuple(BatchList([i for i in range(10)]).to_minibatches(batch_size=2)),
+        (
+            BatchList([0, 1]),
+            BatchList([2, 3]),
+            BatchList([4, 5]),
+            BatchList([6, 7]),
+            BatchList([8, 9]),
+        ),
+    )
+
+
+def test_batch_list_to_minibatches_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        tuple(BatchList([i for i in range(10)]).to_minibatches(batch_size=3)),
+        (
+            BatchList([0, 1, 2]),
+            BatchList([3, 4, 5]),
+            BatchList([6, 7, 8]),
+            BatchList([9]),
+        ),
+    )
+
+
+def test_batch_list_to_minibatches_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        tuple(BatchList([i for i in range(10)]).to_minibatches(batch_size=4)),
+        (
+            BatchList([0, 1, 2, 3]),
+            BatchList([4, 5, 6, 7]),
+            BatchList([8, 9]),
+        ),
+    )
+
+
+def test_batch_list_to_minibatches_drop_last_true_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        tuple(BatchList([i for i in range(10)]).to_minibatches(batch_size=2, drop_last=True)),
+        (
+            BatchList([0, 1]),
+            BatchList([2, 3]),
+            BatchList([4, 5]),
+            BatchList([6, 7]),
+            BatchList([8, 9]),
+        ),
+    )
+
+
+def test_batch_list_to_minibatches_drop_last_true_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        tuple(BatchList([i for i in range(10)]).to_minibatches(batch_size=3, drop_last=True)),
+        (
+            BatchList([0, 1, 2]),
+            BatchList([3, 4, 5]),
+            BatchList([6, 7, 8]),
+        ),
+    )
+
+
+def test_batch_list_to_minibatches_drop_last_true_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        tuple(BatchList([i for i in range(10)]).to_minibatches(batch_size=4, drop_last=True)),
+        (
+            BatchList([0, 1, 2, 3]),
+            BatchList([4, 5, 6, 7]),
+        ),
+    )
