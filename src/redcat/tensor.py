@@ -3929,6 +3929,31 @@ class BatchedTensor(BaseBatch[Tensor]):
         check_batch_dims(get_batch_dims((self, other)))
         return self.__class__(self._data.view_as(other.data), **self._get_kwargs())
 
+    def apply(self, fn: Callable[[Tensor], Tensor]) -> TBatchedTensor:
+        r"""Apply a function to the tensor of the current batch.
+
+        Args:
+            fn (``Callable``): Specifies the function to be applied to
+                the tensor. It is the responsibility of the user to
+                verify the function applies a valid transformation of
+                the data.
+
+        Returns:
+            ``BatchedTensor``: The transformed batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.apply(lambda tensor: tensor + 2)
+            tensor([[ 2,  3,  4,  5,  6],
+                    [ 7,  8,  9, 10, 11]], batch_dim=0)
+        """
+        return self.__class__(fn(self._data), **self._get_kwargs())
+
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
 
