@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-__all__ = ["BatchDict", "check_batch_size"]
+__all__ = ["BatchDict", "check_same_batch_size", "check_same_keys"]
 
 import copy
 from collections.abc import Hashable, Iterable, Sequence
 from typing import Any, TypeVar
 
 from coola import objects_are_allclose, objects_are_equal
+from coola.utils.format import str_indent
 from torch import Tensor
 
 from redcat.base import BaseBatch
@@ -26,11 +27,15 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     def __init__(self, data: dict[Hashable, BaseBatch]) -> None:
         if not isinstance(data, dict):
             raise TypeError(f"Incorrect type. Expect a dict but received {type(data)}")
-        check_batch_size(data)
+        check_same_batch_size(data)
         self._data = data
 
-    def __str__(self) -> str:
-        return f"{self.__class__.__qualname__}(batch_size={self.batch_size:,})"
+    def __repr__(self) -> str:
+        data_str = str_indent(
+            # to_torch_mapping_str({key: repr(value) for key, value in self._data.items()})
+            str({key: repr(value) for key, value in self._data.items()})
+        )
+        return f"{self.__class__.__qualname__}(\n  {data_str}\n)"
 
     @property
     def batch_size(self) -> int:
@@ -70,10 +75,13 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     ###########################################################
 
     def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatchDict:
-        pass
+        return self.__class__(
+            {k: v.permute_along_batch(permutation) for k, v in self._data.items()}
+        )
 
     def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
-        pass
+        for value in self._data.values():
+            value.permute_along_batch_(permutation)
 
     ################################################
     #     Mathematical | point-wise operations     #
@@ -87,20 +95,27 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
 
-    # def __getitem__(self, index: int | slice) -> list[TBatch]:
-    #     pass
-    #
-    # def __setitem__(self, index: int | slice, value: Any) -> None:
-    #     pass
+    def __getitem__(self, key: Hashable) -> BaseBatch:
+        return self._data[key]
 
-    def append(self, other: BatchDict | Sequence[TBatchDict]) -> None:
-        pass
+    def __setitem__(self, key: Hashable, value: BaseBatch) -> None:
+        if value.batch_size != self.batch_size:
+            raise RuntimeError(
+                f"Incorrect batch size. Expected {self.batch_size} but received {value.batch_size}"
+            )
+        self._data[key] = value
+
+    def append(self, other: BatchDict) -> None:
+        check_same_keys(self.data, other.data)
+        for key, value in self._data.items():
+            value.append(other[key])
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchDict, ...]:
         pass
 
     def extend(self, other: Iterable[BatchDict | Sequence[TBatchDict]]) -> None:
-        pass
+        for batch in other:
+            self.append(batch)
 
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchDict:
         pass
@@ -123,7 +138,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     ########################
 
 
-def check_batch_size(data: dict[Hashable, BaseBatch]) -> None:
+def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
     r"""Checks if the all the batches in a group have the same batch
     size.
 
@@ -134,9 +149,27 @@ def check_batch_size(data: dict[Hashable, BaseBatch]) -> None:
     Raises:
         RuntimeError if there are several batch sizes.
     """
+    if not data:
+        raise RuntimeError("The dictionary cannot be empty")
     batch_sizes = {val.batch_size for val in data.values()}
     if len(batch_sizes) != 1:
         raise RuntimeError(
             "Incorrect batch size. A single batch size is expected but received several values: "
             f"{batch_sizes}"
         )
+
+
+def check_same_keys(data1: dict, data2: dict) -> None:
+    r"""Checks if the dictionaries have the same keys.
+
+    Args:
+        data1 (dict): Specifies the first dictionary.
+        data2 (dict): Specifies the second dictionary.
+
+    Raises:
+        RuntimeError if the keys are different.
+    """
+    keys1 = set(data1.keys())
+    keys2 = set(data2.keys())
+    if keys1 != keys2:
+        raise RuntimeError(f"Keys do not match: ({keys1} vs {keys2})")
