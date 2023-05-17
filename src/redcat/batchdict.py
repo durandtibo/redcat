@@ -11,6 +11,7 @@ from coola.utils.format import str_indent
 from torch import Tensor
 
 from redcat.base import BaseBatch
+from redcat.format import str_mapping
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -31,10 +32,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         self._data = data
 
     def __repr__(self) -> str:
-        data_str = str_indent(
-            # to_torch_mapping_str({key: repr(value) for key, value in self._data.items()})
-            str({key: repr(value) for key, value in self._data.items()})
-        )
+        data_str = str_indent(str_mapping({key: repr(value) for key, value in self._data.items()}))
         return f"{self.__class__.__qualname__}(\n  {data_str}\n)"
 
     @property
