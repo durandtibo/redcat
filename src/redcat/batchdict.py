@@ -47,7 +47,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     #     Creation operations     #
     ###############################
 
-    def clone(self, *args, **kwargs) -> TBatchDict:
+    def clone(self) -> TBatchDict:
         return self.__class__(copy.deepcopy(self._data))
 
     #################################
@@ -109,27 +109,41 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             value.append(other[key])
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchDict, ...]:
-        pass
+        keys = self._data.keys()
+        batches = []
+        for values in zip(*[batch.chunk_along_batch(chunks) for batch in self._data.values()]):
+            batches.append(self.__class__({key: value for key, value in zip(keys, values)}))
+        return tuple(batches)
 
     def extend(self, other: Iterable[BatchDict | Sequence[TBatchDict]]) -> None:
         for batch in other:
             self.append(batch)
 
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchDict:
-        pass
+        return self.__class__(
+            {key: value.index_select_along_batch(index) for key, value in self._data.items()}
+        )
 
     def select_along_batch(self, index: int) -> dict:
-        pass
+        return {key: value.select_along_batch(index) for key, value in self._data.items()}
 
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
     ) -> TBatchDict:
-        pass
+        return self.__class__(
+            {key: value.slice_along_batch(start, stop, step) for key, value in self._data.items()}
+        )
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
     ) -> tuple[TBatchDict, ...]:
-        pass
+        keys = self._data.keys()
+        batches = []
+        for values in zip(
+            *[batch.split_along_batch(split_size_or_sections) for batch in self._data.values()]
+        ):
+            batches.append(self.__class__({key: value for key, value in zip(keys, values)}))
+        return tuple(batches)
 
     ########################
     #     mini-batches     #
