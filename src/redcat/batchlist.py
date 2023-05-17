@@ -31,6 +31,9 @@ class BatchList(BaseBatch[list[T]]):
             raise TypeError(f"Incorrect type. Expect a list but received {type(data)}")
         self._data = data
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__qualname__}(data={self._data})"
+
     def __str__(self) -> str:
         return f"{self.__class__.__qualname__}(batch_size={self.batch_size:,})"
 

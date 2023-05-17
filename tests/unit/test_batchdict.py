@@ -1,10 +1,13 @@
+from collections.abc import Iterable, Sequence
 from unittest.mock import Mock
 
+import torch
 from coola import objects_are_equal
 from pytest import mark, raises
+from torch import Tensor
 
 from redcat import BaseBatch, BatchDict, BatchList
-from redcat.batchdict import check_batch_size
+from redcat.batchdict import check_same_batch_size, check_same_keys
 
 
 def test_batch_dict_init_data_1_item() -> None:
@@ -26,6 +29,11 @@ def test_batch_dict_init_data_different_batch_sizes() -> None:
         match="Incorrect batch size. A single batch size is expected but received several values:",
     ):
         BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c"])})
+
+
+def test_batch_dict_init_data_empty() -> None:
+    with raises(RuntimeError, match="The dictionary cannot be empty"):
+        BatchDict({})
 
 
 def test_batch_dict_init_data_incorrect_type() -> None:
@@ -55,7 +63,7 @@ def test_batch_dict_batch_size(batch_size: int) -> None:
 def test_batch_dict_clone() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     clone = batch.clone()
-    batch.data["key2"][1] = "d"
+    batch["key2"][1] = "d"
     assert batch.equal(
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
     )
@@ -125,21 +133,142 @@ def test_batch_dict_equal_false_different_data() -> None:
     assert not BatchDict({"key": BatchList(["a", "b", "c"])}).equal(BatchList(["a", "b", "c", "d"]))
 
 
+###########################################################
+#     Mathematical | advanced arithmetical operations     #
+###########################################################
+
+
+@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batch_dict_permute_along_batch(permutation: Sequence[int] | Tensor) -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
+        .permute_along_batch(permutation)
+        .equal(
+            BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
+        )
+    )
+
+
+@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
+    batch.permute_along_batch_(permutation)
+    assert batch.equal(
+        BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
+    )
+
+
+################################################
+#     Mathematical | point-wise operations     #
+################################################
+
+###########################################
+#     Mathematical | trigo operations     #
+###########################################
+
+##########################################################
+#    Indexing, slicing, joining, mutating operations     #
+##########################################################
+
+
+def test_batch_dict__getitem__() -> None:
+    assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})[
+        "key2"
+    ].equal(BatchList(["a", "d", "c"]))
+
+
+def test_batch_dict__getitem__missing_key() -> None:
+    with raises(KeyError):
+        BatchDict({"key1": BatchList([1, 2, 3])})["key2"]
+
+
+def test_batch_dict__setitem__update_value() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    batch["key2"] = BatchList(["d", "e", "f"])
+    assert batch.equal(
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["d", "e", "f"])})
+    )
+
+
+def test_batch_dict__setitem__new_key() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3])})
+    batch["key2"] = BatchList(["a", "d", "c"])
+    assert batch.equal(
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    )
+
+
+def test_batch_dict__setitem__incorrect_batch_size() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3])})
+    with raises(RuntimeError, match="Incorrect batch size."):
+        batch["key2"] = BatchList(["a", "d", "c", "d"])
+
+
+def test_batch_dict_append_1_item() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3])})
+    batch.append(BatchDict({"key1": BatchList(["a", "b"])}))
+    assert batch.equal(BatchDict({"key1": BatchList([1, 2, 3, "a", "b"])}))
+
+
+def test_batch_dict_append_2_items() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    batch.append(BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])}))
+    assert batch.equal(
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "d", "c", "d", "e"])}
+        )
+    )
+
+
+def test_batch_dict_append_missing_key() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    with raises(RuntimeError, match="Keys do not match"):
+        batch.append(BatchDict({"key2": BatchList(["a", "b"])}))
+
+
+@mark.parametrize(
+    "other",
+    (
+        [
+            BatchDict({"key1": BatchList([4]), "key2": BatchList(["d"])}),
+            BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
+        ],
+        [BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])})],
+        [BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])})],
+    ),
+)
+def test_batch_dict_extend(
+    other: Iterable[BatchDict],
+) -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+    batch.extend(other)
+    assert batch.equal(
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+    )
+
+
 ######################################
 #     Tests for check_batch_size     #
 ######################################
 
 
 def test_check_batch_size_1_item() -> None:
-    check_batch_size({"key": Mock(spec=BaseBatch, batch_size=42)})
+    check_same_batch_size({"key": Mock(spec=BaseBatch, batch_size=42)})
     # will fail if an exception is raised
 
 
 def test_check_batch_size_2_items_same_batch_size() -> None:
-    check_batch_size(
+    check_same_batch_size(
         {"key1": Mock(spec=BaseBatch, batch_size=42), "key2": Mock(spec=BaseBatch, batch_size=42)}
     )
     # will fail if an exception is raised
+
+
+def test_check_batch_size_empty() -> None:
+    with raises(RuntimeError, match="The dictionary cannot be empty"):
+        check_same_batch_size({})
 
 
 def test_check_batch_size_2_items_different_batch_size() -> None:
@@ -147,9 +276,29 @@ def test_check_batch_size_2_items_different_batch_size() -> None:
         RuntimeError,
         match="Incorrect batch size. A single batch size is expected but received several values:",
     ):
-        check_batch_size(
+        check_same_batch_size(
             {
                 "key1": Mock(spec=BaseBatch, batch_size=42),
                 "key2": Mock(spec=BaseBatch, batch_size=4),
             }
         )
+
+
+#####################################
+#     Tests for check_same_keys     #
+#####################################
+
+
+def test_check_same_keys_same() -> None:
+    check_same_keys({"key1": 1, "key2": 2}, {"key2": 20, "key1": 10})
+    # will fail if an exception is raised
+
+
+def test_check_same_keys_different_names() -> None:
+    with raises(RuntimeError, match="Keys do not match"):
+        check_same_keys({"key1": 1, "key2": 2}, {"key": 20, "key1": 10})
+
+
+def test_check_same_keys_missing_key() -> None:
+    with raises(RuntimeError, match="Keys do not match"):
+        check_same_keys({"key1": 1, "key2": 2}, {"key1": 10})
