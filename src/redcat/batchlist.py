@@ -34,9 +34,6 @@ class BatchList(BaseBatch[list[T]]):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(data={self._data})"
 
-    def __str__(self) -> str:
-        return f"{self.__class__.__qualname__}(batch_size={self.batch_size:,})"
-
     @property
     def batch_size(self) -> int:
         return len(self._data)
