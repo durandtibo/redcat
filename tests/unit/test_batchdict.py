@@ -80,20 +80,20 @@ def test_batch_dict_clone() -> None:
 
 
 def test_batch_dict_allclose_true() -> None:
-    assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])}).allclose(
-        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}).allclose(
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     )
 
 
 def test_batch_dict_allclose_false_different_type() -> None:
     assert not BatchDict(
-        {"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])}
+        {"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}
     ).allclose(["a", "b", "c"])
 
 
 def test_batch_dict_allclose_false_different_data() -> None:
-    assert not BatchDict({"key": BatchList(["a", "d", "c"])}).allclose(
-        BatchDict({"key": BatchList(["a", "d", "c", "d"])})
+    assert not BatchDict({"key": BatchList(["a", "b", "c"])}).allclose(
+        BatchDict({"key": BatchList(["a", "b", "c", "d"])})
     )
 
 
@@ -174,9 +174,9 @@ def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
 
 
 def test_batch_dict__getitem__() -> None:
-    assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})[
+    assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})[
         "key2"
-    ].equal(BatchList(["a", "d", "c"]))
+    ].equal(BatchList(["a", "b", "c"]))
 
 
 def test_batch_dict__getitem__missing_key() -> None:
@@ -185,7 +185,7 @@ def test_batch_dict__getitem__missing_key() -> None:
 
 
 def test_batch_dict__setitem__update_value() -> None:
-    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     batch["key2"] = BatchList(["d", "e", "f"])
     assert batch.equal(
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["d", "e", "f"])})
@@ -194,16 +194,16 @@ def test_batch_dict__setitem__update_value() -> None:
 
 def test_batch_dict__setitem__new_key() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3])})
-    batch["key2"] = BatchList(["a", "d", "c"])
+    batch["key2"] = BatchList(["a", "b", "c"])
     assert batch.equal(
-        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     )
 
 
 def test_batch_dict__setitem__incorrect_batch_size() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3])})
     with raises(RuntimeError, match="Incorrect batch size."):
-        batch["key2"] = BatchList(["a", "d", "c", "d"])
+        batch["key2"] = BatchList(["a", "b", "c", "d"])
 
 
 def test_batch_dict_append_1_item() -> None:
@@ -213,19 +213,66 @@ def test_batch_dict_append_1_item() -> None:
 
 
 def test_batch_dict_append_2_items() -> None:
-    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     batch.append(BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])}))
     assert batch.equal(
         BatchDict(
-            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "d", "c", "d", "e"])}
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
     )
 
 
 def test_batch_dict_append_missing_key() -> None:
-    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     with raises(RuntimeError, match="Keys do not match"):
         batch.append(BatchDict({"key2": BatchList(["a", "b"])}))
+
+
+def test_batch_dict_chunk_along_batch_5() -> None:
+    assert objects_are_equal(
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        ).chunk_along_batch(chunks=5),
+        (
+            BatchDict({"key1": BatchList([1]), "key2": BatchList(["a"])}),
+            BatchDict({"key1": BatchList([2]), "key2": BatchList(["b"])}),
+            BatchDict({"key1": BatchList([3]), "key2": BatchList(["c"])}),
+            BatchDict({"key1": BatchList([4]), "key2": BatchList(["d"])}),
+            BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
+        ),
+        show_difference=True,
+    )
+
+
+def test_batch_dict_chunk_along_batch_3() -> None:
+    assert objects_are_equal(
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        ).chunk_along_batch(chunks=3),
+        (
+            BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}),
+            BatchDict({"key1": BatchList([3, 4]), "key2": BatchList(["c", "d"])}),
+            BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
+        ),
+    )
+
+
+def test_batch_dict_chunk_along_batch_1_item() -> None:
+    assert objects_are_equal(
+        BatchDict({"key": BatchList([1, 2, 3, 4, 5])}).chunk_along_batch(chunks=3),
+        (
+            BatchDict({"key": BatchList([1, 2])}),
+            BatchDict({"key": BatchList([3, 4])}),
+            BatchDict({"key": BatchList([5])}),
+        ),
+    )
+
+
+def test_batch_dict_chunk_along_batch_incorrect_chunks() -> None:
+    with raises(RuntimeError, match="chunks has to be greater than 0 but received"):
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        ).chunk_along_batch(chunks=0)
 
 
 @mark.parametrize(
@@ -249,6 +296,167 @@ def test_batch_dict_extend(
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
     )
+
+
+@mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
+def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+        .index_select_along_batch(index)
+        .equal(BatchDict({"key1": BatchList([3, 1]), "key2": BatchList(["c", "a"])}))
+    )
+
+
+def test_batch_dict_select_along_batch() -> None:
+    assert BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    ).select_along_batch(2) == {"key1": 3, "key2": "c"}
+
+
+def test_batch_dict_slice_along_batch() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+        .slice_along_batch()
+        .equal(
+            BatchDict(
+                {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+            )
+        )
+    )
+
+
+def test_batch_dict_slice_along_batch_start_2() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+        .slice_along_batch(start=2)
+        .equal(BatchDict({"key1": BatchList([3, 4, 5]), "key2": BatchList(["c", "d", "e"])}))
+    )
+
+
+def test_batch_dict_slice_along_batch_stop_3() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+        .slice_along_batch(stop=3)
+        .equal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
+    )
+
+
+def test_batch_dict_slice_along_batch_stop_100() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+        .slice_along_batch(stop=100)
+        .equal(
+            BatchDict(
+                {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+            )
+        )
+    )
+
+
+def test_batch_dict_slice_along_batch_step_2() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+        .slice_along_batch(step=2)
+        .equal(BatchDict({"key1": BatchList([1, 3, 5]), "key2": BatchList(["a", "c", "e"])}))
+    )
+
+
+def test_batch_dict_slice_along_batch_start_1_stop_4_step_2() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        )
+        .slice_along_batch(start=1, stop=4, step=2)
+        .equal(BatchDict({"key1": BatchList([2, 4]), "key2": BatchList(["b", "d"])}))
+    )
+
+
+def test_batch_dict_split_along_batch_5() -> None:
+    assert objects_are_equal(
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        ).split_along_batch(split_size_or_sections=1),
+        (
+            BatchDict({"key1": BatchList([1]), "key2": BatchList(["a"])}),
+            BatchDict({"key1": BatchList([2]), "key2": BatchList(["b"])}),
+            BatchDict({"key1": BatchList([3]), "key2": BatchList(["c"])}),
+            BatchDict({"key1": BatchList([4]), "key2": BatchList(["d"])}),
+            BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
+        ),
+        show_difference=True,
+    )
+
+
+def test_batch_dict_split_along_batch_3() -> None:
+    assert objects_are_equal(
+        BatchDict(
+            {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+        ).split_along_batch(split_size_or_sections=2),
+        (
+            BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}),
+            BatchDict({"key1": BatchList([3, 4]), "key2": BatchList(["c", "d"])}),
+            BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
+        ),
+    )
+
+
+def test_batch_dict_split_along_batch_1_item() -> None:
+    assert objects_are_equal(
+        BatchDict({"key": BatchList([1, 2, 3, 4, 5])}).split_along_batch(split_size_or_sections=2),
+        (
+            BatchDict({"key": BatchList([1, 2])}),
+            BatchDict({"key": BatchList([3, 4])}),
+            BatchDict({"key": BatchList([5])}),
+        ),
+    )
+
+
+def test_batch_dict_split_along_batch_split_size_list() -> None:
+    assert objects_are_equal(
+        BatchDict(
+            {
+                "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8]),
+                "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h"]),
+            }
+        ).split_along_batch([2, 2, 3, 1]),
+        (
+            BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}),
+            BatchDict({"key1": BatchList([3, 4]), "key2": BatchList(["c", "d"])}),
+            BatchDict({"key1": BatchList([5, 6, 7]), "key2": BatchList(["e", "f", "g"])}),
+            BatchDict({"key1": BatchList([8]), "key2": BatchList(["h"])}),
+        ),
+    )
+
+
+def test_batch_dict_split_along_batch_split_size_list_empty() -> None:
+    assert objects_are_equal(
+        BatchDict(
+            {
+                "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8]),
+                "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h"]),
+            }
+        ).split_along_batch([]),
+        tuple(),
+    )
+
+
+# def test_batch_dict_split_along_batch_incorrect_split_size() -> None:
+#     with raises(RuntimeError, match="chunks has to be greater than 0 but received"):
+#         BatchDict(
+#             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+#         ).split_along_batch(split_size_or_sections=0)
 
 
 ######################################
