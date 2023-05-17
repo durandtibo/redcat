@@ -39,7 +39,7 @@ def test_batch_list_batch_size(batch_size: int) -> None:
 def test_batch_list_clone() -> None:
     batch = BatchList(["a", "b", "c"])
     clone = batch.clone()
-    batch.data[1] = "d"
+    batch[1] = "d"
     assert batch.equal(BatchList(["a", "d", "c"]))
     assert clone.equal(BatchList(["a", "b", "c"]))
 
