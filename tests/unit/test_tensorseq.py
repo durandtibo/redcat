@@ -7353,6 +7353,22 @@ def test_batched_tensor_seq_view_as_incorrect_seq_dim() -> None:
         batch.view_as(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
+def test_batched_tensor_seq_apply() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .apply(lambda tensor: tensor + 2)
+        .equal(BatchedTensorSeq(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]])))
+    )
+
+
+def test_batched_tensor_seq_apply_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(2, 5))
+        .apply(lambda tensor: tensor + 2)
+        .equal(BatchedTensorSeq.from_seq_batch(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]])))
+    )
+
+
 ########################
 #     mini-batches     #
 ########################
