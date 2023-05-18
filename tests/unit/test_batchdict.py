@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import torch
 from coola import objects_are_equal
@@ -10,6 +10,7 @@ from torch import Tensor
 
 from redcat import BaseBatch, BatchDict, BatchList
 from redcat.batchdict import check_same_batch_size, check_same_keys
+from redcat.utils.tensor import get_torch_generator
 
 
 def test_batch_dict_init_data_1_item() -> None:
@@ -158,6 +159,76 @@ def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
     assert batch.equal(
         BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
     )
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batch_dict_shuffle_along_batch() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
+        .shuffle_along_batch()
+        .equal(
+            BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
+        )
+    )
+
+
+def test_batch_dict_shuffle_along_batch_same_random_seed() -> None:
+    batch = BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    )
+    assert batch.shuffle_along_batch(get_torch_generator(1)).equal(
+        batch.shuffle_along_batch(get_torch_generator(1))
+    )
+
+
+def test_batch_dict_shuffle_along_batch_different_random_seeds() -> None:
+    batch = BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    )
+    assert not batch.shuffle_along_batch(get_torch_generator(1)).equal(
+        batch.shuffle_along_batch(get_torch_generator(2))
+    )
+
+
+def test_batch_dict_shuffle_along_batch_multiple_shuffle() -> None:
+    batch = BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    )
+    generator = get_torch_generator(1)
+    assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+def test_batch_dict_shuffle_along_batch_() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
+    batch.shuffle_along_batch_()
+    assert batch.equal(
+        BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
+    )
+
+
+def test_batch_dict_shuffle_along_batch__same_random_seed() -> None:
+    batch1 = BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    )
+    batch1.shuffle_along_batch_(get_torch_generator(1))
+    batch2 = BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    )
+    batch2.shuffle_along_batch_(get_torch_generator(1))
+    assert batch1.equal(batch2)
+
+
+def test_batch_dict_shuffle_along_batch__different_random_seeds() -> None:
+    batch1 = BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    )
+    batch1.shuffle_along_batch_(get_torch_generator(1))
+    batch2 = BatchDict(
+        {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
+    )
+    batch2.shuffle_along_batch_(get_torch_generator(2))
+    assert not batch1.equal(batch2)
 
 
 ################################################
@@ -457,6 +528,153 @@ def test_batch_dict_split_along_batch_split_size_list_empty() -> None:
 #         BatchDict(
 #             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
 #         ).split_along_batch(split_size_or_sections=0)
+
+
+########################
+#     mini-batches     #
+########################
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+def test_batch_dict_get_num_minibatches_drop_last_false(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert (
+        BatchDict(
+            {
+                "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+            }
+        ).get_num_minibatches(batch_size)
+        == num_minibatches
+    )
+
+
+@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+def test_batch_dict_get_num_minibatches_drop_last_true(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert (
+        BatchDict(
+            {
+                "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+            }
+        ).get_num_minibatches(batch_size, drop_last=True)
+        == num_minibatches
+    )
+
+
+def test_batch_dict_to_minibatches_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        tuple(
+            BatchDict(
+                {
+                    "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                    "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+                }
+            ).to_minibatches(batch_size=2)
+        ),
+        (
+            BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}),
+            BatchDict({"key1": BatchList([3, 4]), "key2": BatchList(["c", "d"])}),
+            BatchDict({"key1": BatchList([5, 6]), "key2": BatchList(["e", "f"])}),
+            BatchDict({"key1": BatchList([7, 8]), "key2": BatchList(["g", "h"])}),
+            BatchDict({"key1": BatchList([9, 10]), "key2": BatchList(["i", "j"])}),
+        ),
+    )
+
+
+def test_batch_dict_to_minibatches_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        tuple(
+            BatchDict(
+                {
+                    "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                    "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+                }
+            ).to_minibatches(batch_size=3)
+        ),
+        (
+            BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}),
+            BatchDict({"key1": BatchList([4, 5, 6]), "key2": BatchList(["d", "e", "f"])}),
+            BatchDict({"key1": BatchList([7, 8, 9]), "key2": BatchList(["g", "h", "i"])}),
+            BatchDict({"key1": BatchList([10]), "key2": BatchList(["j"])}),
+        ),
+    )
+
+
+def test_batch_dict_to_minibatches_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        tuple(
+            BatchDict(
+                {
+                    "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                    "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+                }
+            ).to_minibatches(batch_size=4)
+        ),
+        (
+            BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])}),
+            BatchDict({"key1": BatchList([5, 6, 7, 8]), "key2": BatchList(["e", "f", "g", "h"])}),
+            BatchDict({"key1": BatchList([9, 10]), "key2": BatchList(["i", "j"])}),
+        ),
+    )
+
+
+def test_batch_dict_to_minibatches_drop_last_true_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        tuple(
+            BatchDict(
+                {
+                    "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                    "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+                }
+            ).to_minibatches(batch_size=2, drop_last=True)
+        ),
+        (
+            BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}),
+            BatchDict({"key1": BatchList([3, 4]), "key2": BatchList(["c", "d"])}),
+            BatchDict({"key1": BatchList([5, 6]), "key2": BatchList(["e", "f"])}),
+            BatchDict({"key1": BatchList([7, 8]), "key2": BatchList(["g", "h"])}),
+            BatchDict({"key1": BatchList([9, 10]), "key2": BatchList(["i", "j"])}),
+        ),
+    )
+
+
+def test_batch_dict_to_minibatches_drop_last_true_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        tuple(
+            BatchDict(
+                {
+                    "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                    "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+                }
+            ).to_minibatches(batch_size=3, drop_last=True)
+        ),
+        (
+            BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}),
+            BatchDict({"key1": BatchList([4, 5, 6]), "key2": BatchList(["d", "e", "f"])}),
+            BatchDict({"key1": BatchList([7, 8, 9]), "key2": BatchList(["g", "h", "i"])}),
+        ),
+    )
+
+
+def test_batch_dict_to_minibatches_drop_last_true_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        tuple(
+            BatchDict(
+                {
+                    "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                    "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+                }
+            ).to_minibatches(batch_size=4, drop_last=True)
+        ),
+        (
+            BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])}),
+            BatchDict({"key1": BatchList([5, 6, 7, 8]), "key2": BatchList(["e", "f", "g", "h"])}),
+        ),
+    )
 
 
 ######################################
