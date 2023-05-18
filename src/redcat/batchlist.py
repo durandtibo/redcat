@@ -146,13 +146,14 @@ class BatchList(BaseBatch[list[T]]):
     #################
 
     def apply(self, fn: Callable[[T], T]) -> TBatchList:
-        r"""Apply a function to transform the list of the current batch.
+        r"""Apply a function to transform the element in the list of the
+        current batch.
 
         Args:
             fn (``Callable``): Specifies the function to be applied to
-                the tensor. It is the responsibility of the user to
-                verify the function applies a valid transformation of
-                the data.
+                the element in the list. It is the responsibility of
+                the user to verify the function applies a valid
+                transformation of the data.
 
         Returns:
             ``BatchedTensor``: The transformed batch.
@@ -167,6 +168,31 @@ class BatchList(BaseBatch[list[T]]):
             BatchList(data=[3, 4, 5])
         """
         return self._create_new_batch([fn(val) for val in self._data])
+
+    def apply_(self, fn: Callable[[T], T]) -> None:
+        r"""Apply a function to transform the element in the list of the
+        current batch.
+
+        In-place version of ``apply``.
+
+        Args:
+            fn (``Callable``): Specifies the function to be applied to
+                the element in the list. It is the responsibility of
+                the user to verify the function applies a valid
+                transformation of the data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchList
+            >>> batch = BatchList([1, 2, 3])
+            >>> batch.apply_(lambda val: val + 2)
+            >>> batch
+            BatchList(data=[3, 4, 5])
+        """
+        self._data = [fn(val) for val in self._data]
 
     def _create_new_batch(self, data: list[T]) -> TBatchList:
         return self.__class__(data)
