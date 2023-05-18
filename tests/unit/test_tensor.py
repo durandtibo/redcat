@@ -5675,6 +5675,20 @@ def test_batched_tensor_apply_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_apply_() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch.apply_(lambda tensor: tensor + 2)
+    assert batch.equal(BatchedTensor(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]])))
+
+
+def test_batched_tensor_apply__custom_dims() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1)
+    batch.apply_(lambda tensor: tensor + 2)
+    assert batch.equal(
+        BatchedTensor(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]]), batch_dim=1)
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
