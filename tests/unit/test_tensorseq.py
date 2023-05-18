@@ -7353,22 +7353,6 @@ def test_batched_tensor_seq_view_as_incorrect_seq_dim() -> None:
         batch.view_as(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
 
 
-def test_batched_tensor_seq_apply() -> None:
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(2, 5))
-        .apply(lambda tensor: tensor + 2)
-        .equal(BatchedTensorSeq(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]])))
-    )
-
-
-def test_batched_tensor_seq_apply_custom_dims() -> None:
-    assert (
-        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(2, 5))
-        .apply(lambda tensor: tensor + 2)
-        .equal(BatchedTensorSeq.from_seq_batch(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]])))
-    )
-
-
 ########################
 #     mini-batches     #
 ########################
@@ -7501,6 +7485,27 @@ def test_batched_tensor_seq_to_minibatches_deepcopy_false() -> None:
     for item in batch.to_minibatches(batch_size=2):
         item.data[0, 0] = 42
     assert batch.equal(BatchedTensorSeq(torch.tensor([[42, 1], [2, 3], [42, 5], [6, 7], [42, 9]])))
+
+
+#################
+#     Other     #
+#################
+
+
+def test_batched_tensor_seq_apply() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .apply(lambda tensor: tensor + 2)
+        .equal(BatchedTensorSeq(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]])))
+    )
+
+
+def test_batched_tensor_seq_apply_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(2, 5))
+        .apply(lambda tensor: tensor + 2)
+        .equal(BatchedTensorSeq.from_seq_batch(torch.tensor([[2, 3, 4, 5, 6], [7, 8, 9, 10, 11]])))
+    )
 
 
 #########################################

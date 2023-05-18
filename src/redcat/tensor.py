@@ -3924,6 +3924,14 @@ class BatchedTensor(BaseBatch[Tensor]):
         check_batch_dims(get_batch_dims((self, other)))
         return self._create_new_batch(self._data.view_as(other.data))
 
+    ########################
+    #     mini-batches     #
+    ########################
+
+    #################
+    #     Other     #
+    #################
+
     def apply(self, fn: Callable[[Tensor], Tensor]) -> TBatchedTensor:
         r"""Apply a function to the tensor of the current batch.
 
