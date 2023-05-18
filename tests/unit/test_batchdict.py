@@ -8,7 +8,7 @@ from coola import objects_are_equal
 from pytest import mark, raises
 from torch import Tensor
 
-from redcat import BaseBatch, BatchDict, BatchList
+from redcat import BaseBatch, BatchDict, BatchedTensorSeq, BatchList
 from redcat.batchdict import check_same_batch_size, check_same_keys
 from redcat.utils.tensor import get_torch_generator
 
@@ -159,6 +159,54 @@ def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
     assert batch.equal(
         BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
     )
+
+
+@mark.parametrize("permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+def test_batch_dict_permute_along_seq(permutation: Sequence[int] | Tensor) -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .permute_along_seq(permutation)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_permute_along_seq_no_seq() -> None:
+    assert (
+        BatchDict({"key": BatchList(["a", "b"])})
+        .permute_along_seq((2, 4, 1, 3, 0))
+        .equal(BatchDict({"key": BatchList(["a", "b"])}))
+    )
+
+
+@mark.parametrize("permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+def test_batch_dict_permute_along_seq_(permutation: Sequence[int] | Tensor) -> None:
+    batch = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    batch.permute_along_seq_(permutation)
+    assert batch.equal(
+        BatchDict(
+            {
+                "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
+                "key2": BatchList(["a", "b"]),
+            }
+        )
+    )
+
+
+def test_batch_dict_permute_along_seq__no_seq() -> None:
+    batch = BatchDict({"key": BatchList(["a", "b"])})
+    batch.permute_along_seq_((2, 4, 1, 3, 0))
+    assert batch.equal(BatchDict({"key": BatchList(["a", "b"])}))
 
 
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))

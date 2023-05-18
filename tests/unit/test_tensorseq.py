@@ -2245,7 +2245,7 @@ def test_batched_tensor_seq_permute_along_dim__0(permutation: Sequence[int] | Te
 
 
 @mark.parametrize("permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
-def test_batched_tensor_seq_permute_along_seq__1(permutation: Sequence[int] | Tensor) -> None:
+def test_batched_tensor_seq_permute_along_dim__1(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
     batch.permute_along_dim_(permutation, dim=1)
     assert batch.equal(BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
