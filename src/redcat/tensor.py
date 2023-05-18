@@ -3958,6 +3958,35 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._create_new_batch(fn(self._data))
 
+    def apply_(self, fn: Callable[[Tensor], Tensor]) -> TBatchedTensor:
+        r"""Apply a function to transform the tensor of the current
+        batch.
+
+        In-place version of ``apply``.
+
+        Args:
+            fn (``Callable``): Specifies the function to be applied to
+                the tensor. It is the responsibility of the user to
+                verify the function applies a valid transformation of
+                the data.
+
+        Returns:
+            ``BatchedTensor``: The transformed batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.apply_(lambda tensor: tensor + 2)
+            >>> batch
+            tensor([[ 2,  3,  4,  5,  6],
+                    [ 7,  8,  9, 10, 11]], batch_dim=0)
+        """
+        self._data = fn(self._data)
+
     def _create_new_batch(self, data: Tensor) -> TBatchedTensor:
         return self.__class__(data, **self._get_kwargs())
 
