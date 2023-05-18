@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-__all__ = ["BatchDict", "check_same_batch_size", "check_same_keys"]
+__all__ = ["BatchDict", "check_same_batch_size", "check_same_keys", "get_seq_lens"]
 
 import copy
 from collections.abc import Hashable, Iterable, Sequence
 from typing import Any, TypeVar
 
+import torch
 from coola import objects_are_allclose, objects_are_equal
 from coola.utils.format import str_indent
 from torch import Tensor
@@ -85,7 +86,8 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         r"""Permutes the data along the sequence dimension.
 
         This method only permutes the values that implement
-        ``permute_along_seq``.
+        ``permute_along_seq``. This method should be called
+        only if all the sequences have the same length.
 
         Args:
             permutation (sequence or ``torch.Tensor`` of type long
@@ -126,7 +128,8 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         r"""Permutes the data along the sequence dimension.
 
         This method only permutes the values that implement
-        ``permute_along_seq``.
+        ``permute_along_seq``. This method should be called
+        only if all the sequences have the same length.
 
         Args:
             permutation (sequence or ``torch.Tensor`` of type long
@@ -157,6 +160,88 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         for val in self._data.values():
             if hasattr(val, "permute_along_seq_"):
                 val.permute_along_seq_(permutation)
+
+    def shuffle_along_seq(self, generator: torch.Generator | None = None) -> TBatchDict:
+        r"""Shuffles the data along the sequence dimension.
+
+        This method should be called only if all the sequences have
+        the same length.
+
+        Args:
+            generator (``torch.Generator`` or ``None``, optional):
+                Specifies an optional random generator.
+                Default: ``None``
+
+        Returns:
+            ``BatchDict``:  A new batch with shuffled data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.shuffle_along_seq()
+            BatchDict(
+              (key1) tensor([[2, 1, 3, 0, 4],
+                             [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
+              (key2) BatchList(data=['a', 'b'])
+            )
+        """
+        seq_lens = get_seq_lens(self._data)
+        if not seq_lens:
+            return self
+        if len(seq_lens) > 1:
+            raise RuntimeError(
+                f"Invalid operation because the batch has multiple sequence lengths: {seq_lens}"
+            )
+        return self.permute_along_seq(torch.randperm(seq_lens.pop(), generator=generator))
+
+    def shuffle_along_seq_(self, generator: torch.Generator | None = None) -> None:
+        r"""Shuffles the data along the sequence dimension.
+
+        This method should be called only if all the sequences have
+        the same length.
+
+        Args:
+            generator (``torch.Generator`` or ``None``, optional):
+                Specifies an optional random generator.
+                Default: ``None``
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.shuffle_along_seq()
+            >>> batch
+            BatchDict(
+              (key1) tensor([[2, 1, 3, 0, 4],
+                             [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
+              (key2) BatchList(data=['a', 'b'])
+            )
+        """
+        seq_lens = get_seq_lens(self._data)
+        if not seq_lens:
+            return
+        if len(seq_lens) > 1:
+            raise RuntimeError(
+                f"Invalid operation because the batch has multiple sequence lengths: {seq_lens}"
+            )
+        self.permute_along_seq_(torch.randperm(seq_lens.pop(), generator=generator))
 
     ################################################
     #     Mathematical | point-wise operations     #
@@ -262,3 +347,15 @@ def check_same_keys(data1: dict, data2: dict) -> None:
     keys2 = set(data2.keys())
     if keys1 != keys2:
         raise RuntimeError(f"Keys do not match: ({keys1} vs {keys2})")
+
+
+def get_seq_lens(data: dict[Hashable, BaseBatch]) -> set[int]:
+    r"""Gets the sequence lengths from the inputs.
+
+    Args:
+        data (dict): Specifies the data with the sequences.
+
+    Returns:
+        set: The sequence lengths.
+    """
+    return {val.seq_len for val in data.values() if hasattr(val, "seq_len")}

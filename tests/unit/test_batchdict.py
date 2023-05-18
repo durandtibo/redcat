@@ -9,7 +9,7 @@ from pytest import mark, raises
 from torch import Tensor
 
 from redcat import BaseBatch, BatchDict, BatchedTensorSeq, BatchList
-from redcat.batchdict import check_same_batch_size, check_same_keys
+from redcat.batchdict import check_same_batch_size, check_same_keys, get_seq_lens
 from redcat.utils.tensor import get_torch_generator
 
 
@@ -276,6 +276,132 @@ def test_batch_dict_shuffle_along_batch__different_random_seeds() -> None:
         {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
     )
     batch2.shuffle_along_batch_(get_torch_generator(2))
+    assert not batch1.equal(batch2)
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+def test_batch_dict_shuffle_along_seq_mix() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .shuffle_along_seq()
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+def test_batch_dict_shuffle_along_seq_no_seq() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
+        .shuffle_along_seq()
+        .equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+    )
+
+
+def test_batch_dict_shuffle_along_seq_multiple_sequence_lengths() -> None:
+    batch = BatchDict(
+        {
+            "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            "key2": BatchedTensorSeq(torch.ones(2, 3)),
+        }
+    )
+    with raises(
+        RuntimeError, match="Invalid operation because the batch has multiple sequence lengths"
+    ):
+        batch.shuffle_along_seq()
+
+
+def test_batch_dict_shuffle_along_seq_same_random_seed() -> None:
+    batch = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    assert batch.shuffle_along_seq(get_torch_generator(1)).equal(
+        batch.shuffle_along_seq(get_torch_generator(1))
+    )
+
+
+def test_batch_dict_shuffle_along_seq_different_random_seeds() -> None:
+    batch = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    assert not batch.shuffle_along_seq(get_torch_generator(1)).equal(
+        batch.shuffle_along_seq(get_torch_generator(2))
+    )
+
+
+def test_batch_dict_shuffle_along_seq_multiple_shuffle() -> None:
+    batch = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    generator = get_torch_generator(1)
+    assert not batch.shuffle_along_seq(generator).equal(batch.shuffle_along_seq(generator))
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+def test_batch_dict_shuffle_along_seq__mix() -> None:
+    batch = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    batch.shuffle_along_seq_()
+    assert batch.equal(
+        BatchDict(
+            {
+                "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
+                "key2": BatchList(["a", "b"]),
+            }
+        )
+    )
+
+
+@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+def test_batch_dict_shuffle_along_seq__no_seq() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
+    batch.shuffle_along_seq_()
+    assert batch.equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+
+
+def test_batch_dict_shuffle_along_seq__multiple_sequence_lengths() -> None:
+    batch = BatchDict(
+        {
+            "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            "key2": BatchedTensorSeq(torch.ones(2, 3)),
+        }
+    )
+    with raises(
+        RuntimeError, match="Invalid operation because the batch has multiple sequence lengths"
+    ):
+        batch.shuffle_along_seq_()
+
+
+def test_batch_dict_shuffle_along_seq__same_random_seed() -> None:
+    batch1 = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    batch1.shuffle_along_seq_(get_torch_generator(1))
+    batch2 = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    batch2.shuffle_along_seq_(get_torch_generator(1))
+    assert batch1.equal(batch2)
+
+
+def test_batch_dict_shuffle_along_seq__different_random_seeds() -> None:
+    batch1 = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    batch1.shuffle_along_seq_(get_torch_generator(1))
+    batch2 = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    batch2.shuffle_along_seq_(get_torch_generator(2))
     assert not batch1.equal(batch2)
 
 
@@ -778,3 +904,40 @@ def test_check_same_keys_different_names() -> None:
 def test_check_same_keys_missing_key() -> None:
     with raises(RuntimeError, match="Keys do not match"):
         check_same_keys({"key1": 1, "key2": 2}, {"key1": 10})
+
+
+##################################
+#     Tests for get_seq_lens     #
+##################################
+
+
+def test_get_seq_lens_no_sequence() -> None:
+    assert get_seq_lens({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}) == set()
+
+
+def test_get_seq_lens_mix() -> None:
+    assert get_seq_lens(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    ) == {5}
+
+
+def test_get_seq_lens_two_sequences_same_lengths() -> None:
+    assert get_seq_lens(
+        {
+            "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            "key2": BatchedTensorSeq(torch.ones(2, 5)),
+        }
+    ) == {5}
+
+
+def test_get_seq_lens_two_sequences_different_lengths() -> None:
+    assert get_seq_lens(
+        {
+            "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            "key2": BatchedTensorSeq(torch.ones(2, 3)),
+        }
+    ) == {3, 5}
+
+
+def test_get_seq_lens_empty() -> None:
+    assert get_seq_lens({}) == set()
