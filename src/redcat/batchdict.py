@@ -81,6 +81,83 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         for value in self._data.values():
             value.permute_along_batch_(permutation)
 
+    def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> TBatchDict:
+        r"""Permutes the data along the sequence dimension.
+
+        This method only permutes the values that implement
+        ``permute_along_seq``.
+
+        Args:
+            permutation (sequence or ``torch.Tensor`` of type long
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+
+        Returns:
+            ``BatchDict``: A new batch with permuted data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.permute_along_seq([2, 1, 3, 0, 4])
+            BatchDict(
+              (key1) tensor([[2, 1, 3, 0, 4],
+                             [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
+              (key2) BatchList(data=['a', 'b'])
+            )
+        """
+        out = {}
+        for key, val in self._data.items():
+            if hasattr(val, "permute_along_seq"):
+                val = val.permute_along_seq(permutation)
+            out[key] = val
+        return self.__class__(out)
+
+    def permute_along_seq_(self, permutation: Sequence[int] | Tensor) -> None:
+        r"""Permutes the data along the sequence dimension.
+
+        This method only permutes the values that implement
+        ``permute_along_seq``.
+
+        Args:
+            permutation (sequence or ``torch.Tensor`` of type long
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.permute_along_seq_([2, 1, 3, 0, 4])
+            >>> batch
+            BatchDict(
+              (key1) tensor([[2, 1, 3, 0, 4],
+                             [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
+              (key2) BatchList(data=['a', 'b'])
+            )
+        """
+        for val in self._data.values():
+            if hasattr(val, "permute_along_seq_"):
+                val.permute_along_seq_(permutation)
+
     ################################################
     #     Mathematical | point-wise operations     #
     ################################################
