@@ -11,7 +11,7 @@ from torch import Tensor
 
 from redcat import BaseBatch, tensor
 from redcat.tensor import BatchedTensor
-from redcat.utils import (
+from redcat.utils.tensor import (
     align_to_batch_seq,
     align_to_seq_batch,
     check_batch_dims,

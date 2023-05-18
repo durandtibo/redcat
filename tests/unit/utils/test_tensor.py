@@ -5,7 +5,7 @@ import torch
 from pytest import raises
 
 from redcat import BatchedTensor, BatchedTensorSeq
-from redcat.utils import (
+from redcat.utils.tensor import (
     align_to_batch_first,
     align_to_batch_seq,
     align_to_seq_batch,

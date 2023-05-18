@@ -1,4 +1,4 @@
-from redcat.format import str_mapping
+from redcat.utils.format import str_mapping
 
 #################################
 #     Tests for str_mapping     #
