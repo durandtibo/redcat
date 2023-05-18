@@ -33,11 +33,10 @@ class BatchShufflerIterDataPipe(IterDataPipe[BaseBatch[T]]):
         >>> from redcat import BatchedTensor
         >>> from redcat.datapipes.iter import BatchShuffler
         >>> datapipe = BatchShuffler(
-        ...     IterableWrapper([BatchedTensor(torch.arange(4).add(i)) for i in range(2)]),
+        ...     IterableWrapper([BatchedTensor(torch.arange(4).add(i)) for i in range(2)])
         ... )
-        >>> [print(item) for item in datapipe]
-        tensor([1, 0, 3, 2], batch_dim=0)
-        tensor([3, 2, 1, 4], batch_dim=0)
+        >>> list(datapipe)
+        [tensor([3, 0, 1, 2], batch_dim=0), tensor([1, 3, 4, 2], batch_dim=0)]
     """
 
     def __init__(
