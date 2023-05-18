@@ -9,7 +9,7 @@ from pytest import mark, raises
 from torch import Tensor
 
 from redcat import BatchList
-from redcat.utils import get_torch_generator
+from redcat.utils.tensor import get_torch_generator
 
 
 @mark.parametrize("data", ([1, 2, 3, 4], ["a", "b", "c"]))

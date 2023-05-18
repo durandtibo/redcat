@@ -14,7 +14,7 @@ from torch.overrides import is_tensor_like
 
 from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq
 from redcat.tensor import IndexType, check_data_and_dim
-from redcat.utils import get_available_devices, get_torch_generator
+from redcat.utils.tensor import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
 

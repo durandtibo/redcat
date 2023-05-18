@@ -46,7 +46,7 @@ def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
     .. code-block:: python
 
         >>> import torch
-        >>> from redcat.utils import align_to_batch_first
+        >>> from redcat.utils.tensor import align_to_batch_first
         >>> align_to_batch_first(torch.arange(20).view(4, 5), batch_dim=1)
         tensor([[ 0,  5, 10, 15],
                 [ 1,  6, 11, 16],
@@ -168,7 +168,7 @@ def compute_batch_seq_permutation(
 
     .. code-block:: python
 
-        >>> from redcat.utils import compute_batch_seq_permutation
+        >>> from redcat.utils.tensor import compute_batch_seq_permutation
         >>> compute_batch_seq_permutation(5, 0, 1, 1, 0)
         [1, 0, 2, 3, 4]
         >>> compute_batch_seq_permutation(2, 0, 1, 1, 0)
@@ -210,7 +210,7 @@ def get_available_devices() -> tuple[str, ...]:
 
     .. code-block:: python
 
-        >>> from redcat.utils import get_available_devices
+        >>> from redcat.utils.tensor import get_available_devices
         >>> get_available_devices()
         ('cpu', 'cuda:0')
     """
@@ -275,7 +275,7 @@ def get_torch_generator(
     .. code-block:: python
 
         >>> import torch
-        >>> from redcat.utils import get_torch_generator
+        >>> from redcat.utils.tensor import get_torch_generator
         >>> generator = get_torch_generator(42)
         >>> torch.rand(2, 4, generator=generator)
         tensor([[0.8823, 0.9150, 0.3829, 0.9593],
@@ -311,7 +311,7 @@ def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tens
 
     .. code-block:: python
 
-        >>> from redcat.utils import permute_along_dim
+        >>> from redcat.utils.tensor import permute_along_dim
         >>> permute_along_dim(tensor=torch.arange(4), permutation=torch.tensor([0, 2, 1, 3]))
         tensor([0, 2, 1, 3])
         >>> permute_along_dim(
@@ -375,7 +375,7 @@ def swap2(
 
     .. code-block:: python
 
-        >>> from redcat.utils import swap2
+        >>> from redcat.utils.tensor import swap2
         >>> seq = [1, 2, 3, 4, 5]
         >>> swap2(seq, 2, 0)
         >>> seq

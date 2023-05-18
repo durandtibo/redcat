@@ -11,7 +11,7 @@ import torch
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.utils import check_batch_dims, get_batch_dims, permute_along_dim
+from redcat.utils.tensor import check_batch_dims, get_batch_dims, permute_along_dim
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
