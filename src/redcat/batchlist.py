@@ -4,7 +4,7 @@ __all__ = ["BatchList"]
 
 import copy
 import math
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from typing import Any, TypeVar
 
 from coola import objects_are_allclose, objects_are_equal
@@ -47,7 +47,7 @@ class BatchList(BaseBatch[list[T]]):
     ###############################
 
     def clone(self, *args, **kwargs) -> TBatchList:
-        return self.__class__(copy.deepcopy(self._data))
+        return self._create_new_batch(copy.deepcopy(self._data))
 
     #################################
     #     Comparison operations     #
@@ -72,7 +72,7 @@ class BatchList(BaseBatch[list[T]]):
     ###########################################################
 
     def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatchList:
-        return self.__class__([self._data[i] for i in permutation])
+        return self._create_new_batch([self._data[i] for i in permutation])
 
     def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
         self._data = [self._data[i] for i in permutation]
@@ -112,7 +112,7 @@ class BatchList(BaseBatch[list[T]]):
             self.append(batch)
 
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchList:
-        return self.__class__([self._data[i] for i in index])
+        return self._create_new_batch([self._data[i] for i in index])
 
     def select_along_batch(self, index: int) -> T:
         return self._data[index]
@@ -120,23 +120,53 @@ class BatchList(BaseBatch[list[T]]):
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
     ) -> TBatchList:
-        return self.__class__(self._data[start:stop:step])
+        return self._create_new_batch(self._data[start:stop:step])
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
     ) -> tuple[TBatchList, ...]:
         if isinstance(split_size_or_sections, int):
             return tuple(
-                self.__class__(self._data[i : i + split_size_or_sections])
+                self._create_new_batch(self._data[i : i + split_size_or_sections])
                 for i in range(0, self.batch_size, split_size_or_sections)
             )
         i = 0
         output = []
         for size in split_size_or_sections:
-            output.append(self.__class__(self._data[i : i + size]))
+            output.append(self._create_new_batch(self._data[i : i + size]))
             i += size
         return tuple(output)
 
     ########################
     #     mini-batches     #
     ########################
+
+    #################
+    #     Other     #
+    #################
+
+    def apply(self, fn: Callable[[T], T]) -> TBatchList:
+        r"""Apply a function to transform the list of the current batch.
+
+        Args:
+            fn (``Callable``): Specifies the function to be applied to
+                the tensor. It is the responsibility of the user to
+                verify the function applies a valid transformation of
+                the data.
+
+        Returns:
+            ``BatchedTensor``: The transformed batch.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchList
+            >>> BatchList([1, 2, 3]).apply(lambda val: val + 2)
+            BatchList(data=[3, 4, 5])
+        """
+        return self._create_new_batch([fn(val) for val in self._data])
+
+    def _create_new_batch(self, data: list[T]) -> TBatchList:
+        return self.__class__(data)

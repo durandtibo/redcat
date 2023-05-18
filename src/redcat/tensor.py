@@ -3933,7 +3933,8 @@ class BatchedTensor(BaseBatch[Tensor]):
     #################
 
     def apply(self, fn: Callable[[Tensor], Tensor]) -> TBatchedTensor:
-        r"""Apply a function to the tensor of the current batch.
+        r"""Apply a function to transform the tensor of the current
+        batch.
 
         Args:
             fn (``Callable``): Specifies the function to be applied to
