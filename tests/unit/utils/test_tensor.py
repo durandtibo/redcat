@@ -4,17 +4,12 @@ import numpy as np
 import torch
 from pytest import raises
 
-from redcat import BatchedTensor, BatchedTensorSeq
 from redcat.utils.tensor import (
     align_to_batch_first,
     align_to_batch_seq,
     align_to_seq_batch,
-    check_batch_dims,
-    check_seq_dims,
     compute_batch_seq_permutation,
     get_available_devices,
-    get_batch_dims,
-    get_seq_dims,
     get_torch_generator,
     permute_along_dim,
     swap2,
@@ -110,34 +105,6 @@ def test_align_to_seq_batch_permute_dims_extra_dims() -> None:
     )
 
 
-######################################
-#     Tests for check_batch_dims     #
-######################################
-
-
-def test_check_batch_dims_correct() -> None:
-    check_batch_dims({0})
-
-
-def test_check_batch_dims_incorrect() -> None:
-    with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        check_batch_dims({0, 1})
-
-
-####################################
-#     Tests for check_seq_dims     #
-####################################
-
-
-def test_check_seq_dims_correct() -> None:
-    check_seq_dims({0})
-
-
-def test_check_seq_dims_incorrect() -> None:
-    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        check_seq_dims({0, 1})
-
-
 ###################################################
 #     Tests for compute_batch_seq_permutation     #
 ###################################################
@@ -202,52 +169,6 @@ def test_get_available_devices_cpu_and_gpu() -> None:
 @patch("torch.backends.mps.is_available", lambda *args, **kwargs: True)
 def test_get_available_devices_cpu_and_mps() -> None:
     assert get_available_devices() == ("cpu", "mps:0")
-
-
-####################################
-#     Tests for get_batch_dims     #
-####################################
-
-
-def test_get_batch_dims() -> None:
-    assert get_batch_dims(
-        (BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 3))),
-        {"val": BatchedTensorSeq(torch.ones(2, 3))},
-    ) == {0}
-
-
-def test_get_batch_dims_2() -> None:
-    assert get_batch_dims(
-        (BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 3), batch_dim=1)),
-        {"val": BatchedTensorSeq(torch.ones(2, 3))},
-    ) == {0, 1}
-
-
-def test_get_batch_dims_empty() -> None:
-    assert get_batch_dims(tuple()) == set()
-
-
-##################################
-#     Tests for get_seq_dims     #
-##################################
-
-
-def test_get_seq_dims() -> None:
-    assert get_seq_dims(
-        (BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq(torch.ones(2, 3))),
-        {"val": BatchedTensorSeq(torch.ones(2, 3))},
-    ) == {1}
-
-
-def test_get_seq_dims_2() -> None:
-    assert get_seq_dims(
-        (BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))),
-        {"val": BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))},
-    ) == {0, 1}
-
-
-def test_get_seq_dims_empty() -> None:
-    assert get_seq_dims(tuple()) == set()
 
 
 #########################################
