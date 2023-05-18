@@ -473,6 +473,94 @@ def test_batch_dict_append_missing_key() -> None:
         batch.append(BatchDict({"key2": BatchList(["a", "b"])}))
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),
+        BatchDict(
+            {
+                "key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]])),
+                "key2": BatchList(["a", "b"]),
+            }
+        ),
+        [BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))})],
+        (BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),),
+        [
+            BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11], [20, 21]]))}),
+            BatchDict({"key1": BatchedTensorSeq(torch.tensor([[12], [22]]))}),
+        ],
+    ),
+)
+def test_batched_tensor_seq_cat_along_seq(other: BatchDict | Sequence[BatchDict]) -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .cat_along_seq(other)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(
+                        torch.tensor([[0, 1, 2, 3, 4, 10, 11, 12], [5, 6, 7, 8, 9, 20, 21, 22]])
+                    ),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_cat_along_seq_empty() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+        .cat_along_seq([])
+        .equal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),
+        BatchDict(
+            {
+                "key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]])),
+                "key2": BatchList(["a", "b"]),
+            }
+        ),
+        [BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))})],
+        (BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),),
+        [
+            BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11], [20, 21]]))}),
+            BatchDict({"key1": BatchedTensorSeq(torch.tensor([[12], [22]]))}),
+        ],
+    ),
+)
+def test_batched_tensor_seq_cat_along_seq_(other: BatchDict | Sequence[BatchDict]) -> None:
+    batch = BatchDict(
+        {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+    )
+    batch.cat_along_seq_(other)
+    assert batch.equal(
+        BatchDict(
+            {
+                "key1": BatchedTensorSeq(
+                    torch.tensor([[0, 1, 2, 3, 4, 10, 11, 12], [5, 6, 7, 8, 9, 20, 21, 22]])
+                ),
+                "key2": BatchList(["a", "b"]),
+            }
+        )
+    )
+
+
+def test_batch_dict_cat_along_seq__empty() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+    batch.cat_along_seq_([])
+    assert batch.equal(
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+    )
+
+
 def test_batch_dict_chunk_along_batch_5() -> None:
     assert objects_are_equal(
         BatchDict(
