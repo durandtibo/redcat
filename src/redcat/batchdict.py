@@ -85,9 +85,12 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> TBatchDict:
         r"""Permutes the data along the sequence dimension.
 
+        The same permutation is applied on all the sequences. This
+        method should be called only if all the sequences have the
+        same length.
+
         This method only permutes the values that implement
-        ``permute_along_seq``. This method should be called
-        only if all the sequences have the same length.
+        ``permute_along_seq``.
 
         Args:
             permutation (sequence or ``torch.Tensor`` of type long
@@ -127,9 +130,12 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     def permute_along_seq_(self, permutation: Sequence[int] | Tensor) -> None:
         r"""Permutes the data along the sequence dimension.
 
+        The same permutation is applied on all the sequences. This
+        method should be called only if all the sequences have the
+        same length.
+
         This method only permutes the values that implement
-        ``permute_along_seq``. This method should be called
-        only if all the sequences have the same length.
+        ``permute_along_seq``.
 
         Args:
             permutation (sequence or ``torch.Tensor`` of type long
@@ -175,6 +181,9 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         Returns:
             ``BatchDict``:  A new batch with shuffled data.
 
+        Raises:
+            RuntimeError if the batch has multiple sequence lengths.
+
         Example usage:
 
         .. code-block:: python
@@ -213,6 +222,9 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
+
+        Raises:
+            RuntimeError if the batch has multiple sequence lengths.
 
         Example usage:
 
@@ -269,6 +281,88 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         check_same_keys(self.data, other.data)
         for key, value in self._data.items():
             value.append(other[key])
+
+    def cat_along_seq(self, batches: BatchDict | Sequence[BatchDict]) -> TBatchDict:
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the sequence dimension and creates a new batch.
+
+        Args:
+            batches (``BatchDict`` or  ``Sequence``): Specifies the
+                batch(es) to concatenate along the sequence dimension.
+
+        Returns:
+            ``BatchDict``: A batch with the concatenated data
+                along the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> b = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> b.cat_along_seq(
+            ...     BatchDict(
+            ...         {"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}
+            ...     )
+            ... )
+            BatchDict(
+              (key1) tensor([[ 0,  1,  2,  3,  4, 10, 11, 12],
+                             [ 5,  6,  7,  8,  9, 20, 21, 22]], batch_dim=0, seq_dim=1)
+              (key2) BatchList(data=['a', 'b'])
+            )
+        """
+        if isinstance(batches, BatchDict):
+            batches = [batches]
+        out = {}
+        for key, val in self._data.items():
+            if hasattr(val, "cat_along_seq"):
+                val = val.cat_along_seq([batch[key] for batch in batches])
+            out[key] = val
+        return self.__class__(out)
+
+    def cat_along_seq_(self, batches: BatchDict | Sequence[BatchDict]) -> None:
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the sequence dimension and creates a new batch.
+
+        Args:
+            batches (``BatchDict`` or  ``Sequence``): Specifies the
+                batch(es) to concatenate along the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: python
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> b = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> b.cat_along_seq_(
+            ...     BatchDict(
+            ...         {"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}
+            ...     )
+            ... )
+            >>> b
+            BatchDict(
+              (key1) tensor([[ 0,  1,  2,  3,  4, 10, 11, 12],
+                             [ 5,  6,  7,  8,  9, 20, 21, 22]], batch_dim=0, seq_dim=1)
+              (key2) BatchList(data=['a', 'b'])
+            )
+        """
+        if isinstance(batches, BatchDict):
+            batches = [batches]
+        for key, val in self._data.items():
+            if hasattr(val, "cat_along_seq_"):
+                val.cat_along_seq_([batch[key] for batch in batches])
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchDict, ...]:
         keys = self._data.keys()

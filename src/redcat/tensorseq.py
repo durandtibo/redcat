@@ -950,7 +950,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Returns:
             ``BatchedTensorSeq``: A batch with the concatenated data
-                in the sequence dimension.
+                along the sequence dimension.
 
         Example usage:
 
@@ -977,7 +977,7 @@ class BatchedTensorSeq(BatchedTensor):
                     [10, 12],
                     [11, 13],
                     [20, 22],
-                    [21, 23]], batch_dim=0, seq_dim=1)
+                    [21, 23]], batch_dim=1, seq_dim=0)
         """
         return self.cat(tensors, dim=self._seq_dim)
 
@@ -1022,7 +1022,7 @@ class BatchedTensorSeq(BatchedTensor):
                     [10, 12],
                     [11, 13],
                     [20, 22],
-                    [21, 23]], batch_dim=0, seq_dim=1)
+                    [21, 23]], batch_dim=1, seq_dim=0)
         """
         self.cat_(tensors, dim=self._seq_dim)
 
