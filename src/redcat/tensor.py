@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-__all__ = ["BatchedTensor", "check_data_and_dim"]
+__all__ = ["BatchedTensor", "check_data_and_dim", "check_batch_dims", "get_batch_dims"]
 
 import functools
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from itertools import chain
 from typing import Any, TypeVar, Union, overload
 
@@ -11,7 +11,7 @@ import torch
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.utils.tensor import check_batch_dims, get_batch_dims, permute_along_dim
+from redcat.utils.tensor import permute_along_dim
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -4011,6 +4011,35 @@ def check_data_and_dim(data: Tensor, batch_dim: int) -> None:
         raise RuntimeError(
             f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {data.dim() - 1}]"
         )
+
+
+def check_batch_dims(dims: set[int]) -> None:
+    r"""Gets the batch dimensions from the inputs.
+
+    Args:
+        dims (set): Specifies the batch dims to check.
+
+    Raises:
+        RuntimeError if there are more than one batch dimension.
+    """
+    if len(dims) != 1:
+        raise RuntimeError(f"The batch dimensions do not match. Received multiple values: {dims}")
+
+
+def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:
+    r"""Gets the batch dimensions from the inputs.
+
+    Args:
+        args: Variable length argument list.
+        kwargs: Arbitrary keyword arguments.
+
+    Returns:
+        set: The batch dimensions.
+    """
+    kwargs = kwargs or {}
+    dims = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
+    dims.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
+    return dims
 
 
 def implements(torch_function: Callable) -> Callable:

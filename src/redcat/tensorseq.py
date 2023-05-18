@@ -1,24 +1,20 @@
 from __future__ import annotations
 
-__all__ = ["BatchedTensorSeq", "check_data_and_dims"]
+__all__ = ["BatchedTensorSeq", "check_data_and_dims", "check_seq_dims", "get_seq_dims"]
 
 import functools
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Any, overload
 
 import torch
 from torch import Tensor
 
 from redcat import BaseBatch, tensor
-from redcat.tensor import BatchedTensor
+from redcat.tensor import BatchedTensor, check_batch_dims, get_batch_dims
 from redcat.utils.tensor import (
     align_to_batch_seq,
     align_to_seq_batch,
-    check_batch_dims,
-    check_seq_dims,
     compute_batch_seq_permutation,
-    get_batch_dims,
-    get_seq_dims,
 )
 
 HANDLED_FUNCTIONS = {
@@ -1245,6 +1241,37 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
         )
     if batch_dim == seq_dim:
         raise RuntimeError(f"batch_dim ({batch_dim}) and seq_dim ({seq_dim}) have to be different")
+
+
+def check_seq_dims(dims: set[int]) -> None:
+    r"""Gets the sequence dimensions from the inputs.
+
+    Args:
+        dims (set): Specifies the sequence dims to check.
+
+    Raises:
+        RuntimeError if there are more than one sequence dimension.
+    """
+    if len(dims) != 1:
+        raise RuntimeError(
+            f"The sequence dimensions do not match. Received multiple values: {dims}"
+        )
+
+
+def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = None) -> set[int]:
+    r"""Gets the sequence dimensions from the inputs.
+
+    Args:
+        args: Variable length argument list.
+        kwargs: Arbitrary keyword arguments.
+
+    Returns:
+        set: The sequence dimensions.
+    """
+    kwargs = kwargs or {}
+    dims = {val._seq_dim for val in args if hasattr(val, "_seq_dim")}
+    dims.update({val._seq_dim for val in kwargs.values() if hasattr(val, "_seq_dim")})
+    return dims
 
 
 def implements(torch_function: Callable) -> Callable:

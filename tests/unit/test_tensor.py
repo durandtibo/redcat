@@ -13,7 +13,12 @@ from torch import Tensor
 from torch.overrides import is_tensor_like
 
 from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq
-from redcat.tensor import IndexType, check_data_and_dim
+from redcat.tensor import (
+    IndexType,
+    check_batch_dims,
+    check_data_and_dim,
+    get_batch_dims,
+)
 from redcat.utils.tensor import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
@@ -5710,6 +5715,43 @@ def test_check_data_and_dim_incorrect_batch_dim(batch_dim: int) -> None:
         RuntimeError, match=r"Incorrect batch_dim \(.*\) but the value should be in \[0, 1\]"
     ):
         check_data_and_dim(torch.ones(2, 3), batch_dim=batch_dim)
+
+
+######################################
+#     Tests for check_batch_dims     #
+######################################
+
+
+def test_check_batch_dims_correct() -> None:
+    check_batch_dims({0})
+
+
+def test_check_batch_dims_incorrect() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        check_batch_dims({0, 1})
+
+
+####################################
+#     Tests for get_batch_dims     #
+####################################
+
+
+def test_get_batch_dims() -> None:
+    assert get_batch_dims(
+        (BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 3))),
+        {"val": BatchedTensorSeq(torch.ones(2, 3))},
+    ) == {0}
+
+
+def test_get_batch_dims_2() -> None:
+    assert get_batch_dims(
+        (BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 3), batch_dim=1)),
+        {"val": BatchedTensorSeq(torch.ones(2, 3))},
+    ) == {0, 1}
+
+
+def test_get_batch_dims_empty() -> None:
+    assert get_batch_dims(tuple()) == set()
 
 
 ###############################
