@@ -146,9 +146,7 @@ class BatchedTensorSeq(BatchedTensor):
             shape[self._seq_dim] = seq_len
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return self.__class__(
-            torch.full(size=shape, fill_value=fill_value, **kwargs), **self._get_kwargs()
-        )
+        return self._create_new_batch(torch.full(size=shape, fill_value=fill_value, **kwargs))
 
     def new_ones(
         self,
@@ -203,7 +201,7 @@ class BatchedTensorSeq(BatchedTensor):
             shape[self._seq_dim] = seq_len
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return self.__class__(torch.ones(*shape, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.ones(*shape, **kwargs))
 
     def new_zeros(
         self,
@@ -258,7 +256,7 @@ class BatchedTensorSeq(BatchedTensor):
             shape[self._seq_dim] = seq_len
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return self.__class__(torch.zeros(*shape, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.zeros(*shape, **kwargs))
 
     @classmethod
     def from_seq_batch(cls, data: Any, **kwargs) -> BatchedTensorSeq:
@@ -1086,7 +1084,7 @@ class BatchedTensorSeq(BatchedTensor):
         check_seq_dims(get_seq_dims((self, mask)))
         if isinstance(mask, BatchedTensor):
             mask = mask.data
-        return self.__class__(self._data.masked_fill(mask.data, value), **self._get_kwargs())
+        return self._create_new_batch(self._data.masked_fill(mask.data, value))
 
     def repeat_along_seq(self, repeats: int) -> BatchedTensorSeq:
         r"""Repeats the batch along the sequence dimension.
@@ -1110,7 +1108,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         sizes = [1] * self._data.dim()
         sizes[self._seq_dim] = repeats
-        return self.__class__(self._data.repeat(*sizes), **self._get_kwargs())
+        return self._create_new_batch(self._data.repeat(*sizes))
 
     def select_along_seq(self, index: int) -> BatchedTensor:
         r"""Slices the batch along the sequence dimension at the given
@@ -1215,7 +1213,7 @@ class BatchedTensorSeq(BatchedTensor):
     def view_as(self, other: BatchedTensor | Tensor) -> BatchedTensorSeq:
         check_batch_dims(get_batch_dims((self, other)))
         check_seq_dims(get_seq_dims((self, other)))
-        return self.__class__(self._data.view_as(other.data), **self._get_kwargs())
+        return self._create_new_batch(self._data.view_as(other.data))
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}

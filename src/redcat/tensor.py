@@ -166,9 +166,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.is_contiguous()
             True
         """
-        return self.__class__(
-            self._data.contiguous(memory_format=memory_format), **self._get_kwargs()
-        )
+        return self._create_new_batch(self._data.contiguous(memory_format=memory_format))
 
     def is_contiguous(self, memory_format: torch.memory_format = torch.contiguous_format) -> bool:
         r"""Indicates if a batch as a contiguous representation of the
@@ -218,7 +216,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[True, True, True],
                     [True, True, True]], batch_dim=0)
         """
-        return self.__class__(self._data.to(*args, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(self._data.to(*args, **kwargs))
 
     ###############################
     #     Creation operations     #
@@ -246,7 +244,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[1., 1., 1.],
                     [1., 1., 1.]], batch_dim=0)
         """
-        return self.__class__(self._data.clone(*args, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(self._data.clone(*args, **kwargs))
 
     def empty_like(self, *args, **kwargs) -> TBatchedTensor:
         r"""Creates an uninitialized batch, with the same shape as the
@@ -272,7 +270,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[0., 0., 0.],
                     [0., 0., 0.]], batch_dim=0)
         """
-        return self.__class__(torch.empty_like(self._data, *args, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.empty_like(self._data, *args, **kwargs))
 
     def full_like(self, *args, **kwargs) -> TBatchedTensor:
         r"""Creates a batch filled with a given scalar value, with the
@@ -298,7 +296,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[42., 42., 42.],
                     [42., 42., 42.]], batch_dim=0)
         """
-        return self.__class__(torch.full_like(self._data, *args, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.full_like(self._data, *args, **kwargs))
 
     def new_full(
         self,
@@ -346,9 +344,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             shape[self._batch_dim] = batch_size
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return self.__class__(
-            torch.full(size=shape, fill_value=fill_value, **kwargs), **self._get_kwargs()
-        )
+        return self._create_new_batch(torch.full(size=shape, fill_value=fill_value, **kwargs))
 
     def new_ones(
         self,
@@ -394,7 +390,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             shape[self._batch_dim] = batch_size
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return self.__class__(torch.ones(*shape, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.ones(*shape, **kwargs))
 
     def new_zeros(
         self,
@@ -440,7 +436,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             shape[self._batch_dim] = batch_size
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         kwargs["device"] = kwargs.get("device", self.device)
-        return self.__class__(torch.zeros(*shape, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.zeros(*shape, **kwargs))
 
     def ones_like(self, *args, **kwargs) -> TBatchedTensor:
         r"""Creates a batch filled with the scalar value ``1``, with the same
@@ -467,7 +463,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[1., 1., 1.],
                     [1., 1., 1.]], batch_dim=0)
         """
-        return self.__class__(torch.ones_like(self._data, *args, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.ones_like(self._data, *args, **kwargs))
 
     def zeros_like(self, *args, **kwargs) -> TBatchedTensor:
         r"""Creates a batch filled with the scalar value ``0``, with the same
@@ -494,7 +490,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[0., 0., 0.],
                     [0., 0., 0.]], batch_dim=0)
         """
-        return self.__class__(torch.zeros_like(self._data, *args, **kwargs), **self._get_kwargs())
+        return self._create_new_batch(torch.zeros_like(self._data, *args, **kwargs))
 
     #################################
     #     Comparison operations     #
@@ -804,7 +800,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.bool().dtype
             torch.bool
         """
-        return self.__class__(self._data.bool(), **self._get_kwargs())
+        return self._create_new_batch(self._data.bool())
 
     def double(self) -> TBatchedTensor:
         r"""Converts the current batch to double data type.
@@ -822,7 +818,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.double().dtype
             torch.float64
         """
-        return self.__class__(self._data.double(), **self._get_kwargs())
+        return self._create_new_batch(self._data.double())
 
     def float(self) -> TBatchedTensor:
         r"""Converts the current batch to float data type.
@@ -840,7 +836,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.float().dtype
             torch.float32
         """
-        return self.__class__(self._data.float(), **self._get_kwargs())
+        return self._create_new_batch(self._data.float())
 
     def int(self) -> TBatchedTensor:
         r"""Converts the current batch to int data type.
@@ -858,7 +854,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.int().dtype
             torch.int32
         """
-        return self.__class__(self._data.int(), **self._get_kwargs())
+        return self._create_new_batch(self._data.int())
 
     def long(self) -> TBatchedTensor:
         r"""Converts the current batch to long data type.
@@ -876,7 +872,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.long().dtype
             torch.int64
         """
-        return self.__class__(self._data.long(), **self._get_kwargs())
+        return self._create_new_batch(self._data.long())
 
     ##################################################
     #     Mathematical | arithmetical operations     #
@@ -1486,9 +1482,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         if not torch.is_tensor(permutation):
             permutation = torch.as_tensor(permutation)
-        return self.__class__(
-            permute_along_dim(tensor=self._data, permutation=permutation, dim=dim),
-            **self._get_kwargs(),
+        return self._create_new_batch(
+            permute_along_dim(tensor=self._data, permutation=permutation, dim=dim)
         )
 
     def permute_along_dim_(self, permutation: Sequence[int] | Tensor, dim: int) -> None:
@@ -3599,7 +3594,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         if not torch.is_tensor(index):
             index = torch.as_tensor(index)
-        return self.__class__(self._data.index_select(dim, index), **self._get_kwargs())
+        return self._create_new_batch(self._data.index_select(dim, index))
 
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchedTensor:
         return self.index_select(self._batch_dim, index)
@@ -3646,7 +3641,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         check_batch_dims(get_batch_dims((self, mask)))
         if isinstance(mask, BatchedTensor):
             mask = mask.data
-        return self.__class__(self._data.masked_fill(mask.data, value), **self._get_kwargs())
+        return self._create_new_batch(self._data.masked_fill(mask.data, value))
 
     def select(self, dim: int, index: int) -> Tensor:
         r"""Selects the batch along the batch dimension at the given
@@ -3727,7 +3722,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             data = self._data[:, start:stop:step]
         else:
             data = self._data.transpose(0, dim)[start:stop:step].transpose(0, dim)
-        return self.__class__(data, **self._get_kwargs())
+        return self._create_new_batch(data)
 
     def split(
         self, split_size_or_sections: int | Sequence[int], dim: int = 0
@@ -3927,7 +3922,15 @@ class BatchedTensor(BaseBatch[Tensor]):
                      [9]]], batch_dim=0)
         """
         check_batch_dims(get_batch_dims((self, other)))
-        return self.__class__(self._data.view_as(other.data), **self._get_kwargs())
+        return self._create_new_batch(self._data.view_as(other.data))
+
+    ########################
+    #     mini-batches     #
+    ########################
+
+    #################
+    #     Other     #
+    #################
 
     def apply(self, fn: Callable[[Tensor], Tensor]) -> TBatchedTensor:
         r"""Apply a function to the tensor of the current batch.
@@ -3952,7 +3955,10 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[ 2,  3,  4,  5,  6],
                     [ 7,  8,  9, 10, 11]], batch_dim=0)
         """
-        return self.__class__(fn(self._data), **self._get_kwargs())
+        return self._create_new_batch(fn(self._data))
+
+    def _create_new_batch(self, data: Tensor) -> TBatchedTensor:
+        return self.__class__(data, **self._get_kwargs())
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
