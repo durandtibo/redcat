@@ -431,3 +431,9 @@ def test_batch_list_to_minibatches_drop_last_true_10_batch_size_4() -> None:
 
 def test_batch_list_apply() -> None:
     assert BatchList([1, 2, 3]).apply(lambda val: val + 2).equal(BatchList([3, 4, 5]))
+
+
+def test_batch_list_apply_() -> None:
+    batch = BatchList([1, 2, 3])
+    batch.apply_(lambda val: val + 2)
+    assert batch.equal(BatchList([3, 4, 5]))
