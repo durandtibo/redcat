@@ -286,6 +286,8 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         r"""Concatenates the data of the batch(es) to the current batch
         along the sequence dimension and creates a new batch.
 
+        Note that only the sequences are concatenated.
+
         Args:
             batches (``BatchDict`` or  ``Sequence``): Specifies the
                 batch(es) to concatenate along the sequence dimension.
@@ -329,6 +331,8 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     def cat_along_seq_(self, batches: BatchDict | Sequence[BatchDict]) -> None:
         r"""Concatenates the data of the batch(es) to the current batch
         along the sequence dimension and creates a new batch.
+
+        Note that only the sequences are concatenated.
 
         Args:
             batches (``BatchDict`` or  ``Sequence``): Specifies the
