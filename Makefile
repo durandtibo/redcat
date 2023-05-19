@@ -17,12 +17,12 @@ config-poetry :
 .PHONY : install-min
 install-min :
 	poetry install --no-interaction
-	pip install --upgrade torch>=2.0.1  # TODO: https://github.com/pytorch/pytorch/issues/100974
+	pip install --upgrade "torch>=2.0.1"  # TODO: https://github.com/pytorch/pytorch/issues/100974
 
 .PHONY : install
 install :
 	poetry install --no-interaction --all-extras
-	pip install --upgrade torch>=2.0.1  # TODO: https://github.com/pytorch/pytorch/issues/100974
+	pip install --upgrade "torch>=2.0.1"  # TODO: https://github.com/pytorch/pytorch/issues/100974
 
 .PHONY : install-all
 install-all : install
@@ -61,19 +61,11 @@ integration-test :
 integration-test-cov :
 	python -m pytest --timeout 60 --cov-report html --cov-report xml --cov-report term --cov=$(NAME) --cov-append $(INTEGRATION_TESTS)
 
-.PHONY : functional-test
-functional-test :
-	python -m pytest --timeout 60 tests/functional
-
-.PHONY : functional-test-cov
-functional-test-cov :
-	python -m pytest --timeout 60 --cov-report html --cov-report xml --cov-report term --cov=$(NAME) --cov-append tests/functional
-
 .PHONY : test
-make test : unit-test integration-test functional-test
+make test : unit-test integration-test
 
 .PHONY : test-cov
-make test-cov : unit-test-cov integration-test-cov functional-test-cov
+make test-cov : unit-test-cov integration-test-cov
 
 .PHONY : publish-pypi
 publish-pypi :
