@@ -620,14 +620,14 @@ xlsxwriter = ["xlsxwriter"]
 
 [[package]]
 name = "pre-commit"
-version = "2.21.0"
+version = "3.3.2"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 category = "dev"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "pre_commit-2.21.0-py2.py3-none-any.whl", hash = "sha256:e2f91727039fc39a92f58a588a25b87f936de6567eed4f0e673e0507edc75bad"},
-    {file = "pre_commit-2.21.0.tar.gz", hash = "sha256:31ef31af7e474a8d8995027fefdfcf509b5c913ff31f2015b4ec4beb26a6f658"},
+    {file = "pre_commit-3.3.2-py2.py3-none-any.whl", hash = "sha256:8056bc52181efadf4aac792b1f4f255dfd2fb5a350ded7335d251a68561e8cb6"},
+    {file = "pre_commit-3.3.2.tar.gz", hash = "sha256:66e37bec2d882de1f17f88075047ef8962581f83c234ac08da21a0c58953d1f0"},
 ]
 
 [package.dependencies]
@@ -1021,4 +1021,4 @@ all = ["polars"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "24352d4f5b5be5d9cae7c205af5c1acc35a3d65a1ee44937d89fb9080e337595"
+content-hash = "c13e44afa841e24ddf263ad647e5a9824df6c5e2b3a75f9dc789e36c207645d8"
