@@ -87,7 +87,7 @@ class BatchedTensorSeq(BatchedTensor):
 
     @property
     def seq_len(self) -> int:
-        r"""int: The sequence length."""
+        r"""``int``: The sequence length."""
         return self._data.shape[self._seq_dim]
 
     ###############################

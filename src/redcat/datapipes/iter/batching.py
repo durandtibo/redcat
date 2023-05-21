@@ -101,10 +101,11 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
 
     @property
     def batch_size(self) -> int:
-        r"""int: The batch size."""
+        r"""``int``: The batch size."""
         return self._batch_size
 
     @property
     def random_seed(self) -> int:
-        r"""int: The random seed used to initialize the pseudo random generator."""
+        r"""``int``: The random seed used to initialize the pseudo random
+        generator."""
         return self._generator.initial_seed()
