@@ -3,7 +3,14 @@ from __future__ import annotations
 __all__ = ["BatchDict", "check_same_batch_size", "check_same_keys", "get_seq_lens"]
 
 import copy
-from collections.abc import Hashable, Iterable, Sequence
+from collections.abc import (
+    Hashable,
+    ItemsView,
+    Iterable,
+    KeysView,
+    Sequence,
+    ValuesView,
+)
 from typing import Any, TypeVar
 
 import torch
@@ -43,6 +50,19 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     @property
     def data(self) -> dict[Hashable, BaseBatch]:
         return self._data
+
+    #################################
+    #     Dictionary operations     #
+    #################################
+
+    def items(self) -> ItemsView:
+        return self._data.items()
+
+    def keys(self) -> KeysView:
+        return self._data.keys()
+
+    def values(self) -> ValuesView:
+        return self._data.values()
 
     ###############################
     #     Creation operations     #
