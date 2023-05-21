@@ -58,6 +58,39 @@ def test_batch_dict_batch_size(batch_size: int) -> None:
     )
 
 
+#################################
+#     Dictionary operations     #
+#################################
+
+
+def test_batch_dict_items() -> None:
+    assert objects_are_equal(
+        list(
+            BatchDict(
+                {"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])}
+            ).items()
+        ),
+        [("key1", BatchList([1, 2, 3, 4])), ("key2", BatchList(["a", "b", "c", "d"]))],
+    )
+
+
+def test_batch_dict_keys() -> None:
+    assert list(
+        BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])}).keys()
+    ) == ["key1", "key2"]
+
+
+def test_batch_dict_values() -> None:
+    assert objects_are_equal(
+        list(
+            BatchDict(
+                {"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])}
+            ).values()
+        ),
+        [BatchList([1, 2, 3, 4]), BatchList(["a", "b", "c", "d"])],
+    )
+
+
 ###############################
 #     Creation operations     #
 ###############################
