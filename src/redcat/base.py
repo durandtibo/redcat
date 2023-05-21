@@ -21,7 +21,7 @@ class BaseBatch(Generic[T], ABC):
     @property
     @abstractmethod
     def batch_size(self) -> int:
-        r"""int: The batch size."""
+        r"""``int``: The batch size."""
 
     @property
     @abstractmethod
