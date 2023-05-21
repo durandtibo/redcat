@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-__all__ = ["BatchedTensorSeq", "check_data_and_dims", "check_seq_dims", "get_seq_dims"]
+__all__ = [
+    "BatchedTensorSeq",
+    "check_data_and_dims",
+    "check_seq_dims",
+    "get_seq_dims",
+    "from_sequences",
+]
 
 import functools
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -8,6 +14,7 @@ from typing import Any, overload
 
 import torch
 from torch import Tensor
+from torch.nn.utils.rnn import pad_sequence
 
 from redcat import BaseBatch, tensor
 from redcat.tensor import BatchedTensor, check_batch_dims, get_batch_dims
@@ -1406,4 +1413,42 @@ def take_along_dim(
         torch.take_along_dim(input, indices, dim=dim),
         batch_dim=batch_dims.pop(),
         seq_dim=seq_dims.pop(),
+    )
+
+
+def from_sequences(
+    sequences: Iterable[torch.Tensor], padding_value: bool | int | float = 0
+) -> BatchedTensorSeq:
+    r"""Converts variable length sequences to a single padded tensor.
+
+    Args:
+        sequences (iterable): Specifies an iterable over the variable
+            length sequences. Each sequence is a ``torch.Tensor`` of
+            shape ``(sequence_length, *)``. This function assumes
+            trailing dimensions and type of all the tensors in
+            sequences are same.
+        padding_value (bool or int or float, optional): Specifies the
+        padding value. Default: ``0``
+
+    Returns:
+        ``BatchedTensorSeq``: A padded tensor. The underlying data is
+            a ``torch.Tensor`` of shape
+            ``(batch_size, sequence_length, *)``.
+
+    Example usage:
+
+    .. code-block:: python
+
+        >>> import torch
+        >>> import redcat
+        >>> redcat.tensorseq.from_sequences(
+        ...     [torch.ones(3), torch.ones(5), torch.ones(1), torch.ones(0)]
+        ... )
+        tensor([[1., 1., 1., 0., 0.],
+                [1., 1., 1., 1., 1.],
+                [1., 0., 0., 0., 0.],
+                [0., 0., 0., 0., 0.]], batch_dim=0, seq_dim=1)
+    """
+    return BatchedTensorSeq(
+        pad_sequence(list(sequences), padding_value=padding_value, batch_first=True)
     )
