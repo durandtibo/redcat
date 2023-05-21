@@ -14,7 +14,12 @@ from torch.overrides import is_tensor_like
 
 from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq
 from redcat.tensor import IndexType
-from redcat.tensorseq import check_data_and_dims, check_seq_dims, get_seq_dims
+from redcat.tensorseq import (
+    check_data_and_dims,
+    check_seq_dims,
+    from_sequences,
+    get_seq_dims,
+)
 from redcat.utils.tensor import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
@@ -8303,3 +8308,58 @@ def test_torch_take_along_dim_incorrect_seq_dim() -> None:
         torch.take_along_dim(
             BatchedTensorSeq(torch.ones(2, 3, 4)), BatchedTensorSeq(torch.zeros(2, 1, 4), seq_dim=2)
         )
+
+
+####################################
+#     Tests for from_sequences     #
+####################################
+
+
+@mark.parametrize("dtype", (torch.bool, torch.long, torch.float))
+def test_from_sequences(dtype: torch.dtype) -> None:
+    assert from_sequences(
+        [
+            torch.ones(3, dtype=dtype),
+            torch.ones(5, dtype=dtype),
+            torch.ones(1, dtype=dtype),
+            torch.ones(0, dtype=dtype),
+        ]
+    ).equal(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [1, 1, 1, 0, 0],
+                    [1, 1, 1, 1, 1],
+                    [1, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                ],
+                dtype=dtype,
+            )
+        )
+    )
+
+
+@mark.parametrize("padding_value", (0.0, -1.0, float("nan")))
+def test_from_sequences_padding_value(padding_value: float) -> None:
+    assert from_sequences(
+        [
+            torch.ones(3, dtype=torch.float),
+            torch.ones(5, dtype=torch.float),
+            torch.ones(1, dtype=torch.float),
+            torch.ones(0, dtype=torch.float),
+        ],
+        padding_value=padding_value,
+    ).allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [1, 1, 1, padding_value, padding_value],
+                    [1, 1, 1, 1, 1],
+                    [1, padding_value, padding_value, padding_value, padding_value],
+                    [padding_value, padding_value, padding_value, padding_value, padding_value],
+                ],
+                dtype=torch.float,
+            )
+        ),
+        equal_nan=True,
+    )
