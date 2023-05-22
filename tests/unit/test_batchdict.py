@@ -63,6 +63,67 @@ def test_batch_dict_batch_size(batch_size: int) -> None:
 #################################
 
 
+def test_batch_dict__contains__true() -> None:
+    assert "key1" in BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+
+
+def test_batch_dict__contains__false() -> None:
+    assert "key2" not in BatchDict({"key1": BatchList([1, 2, 3])})
+
+
+def test_batch_dict__getitem__() -> None:
+    assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})[
+        "key2"
+    ].equal(BatchList(["a", "b", "c"]))
+
+
+def test_batch_dict__getitem__missing_key() -> None:
+    with raises(KeyError):
+        BatchDict({"key1": BatchList([1, 2, 3])})["key2"]
+
+
+def test_batch_dict__setitem__update_value() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+    batch["key2"] = BatchList(["d", "e", "f"])
+    assert batch.equal(
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["d", "e", "f"])})
+    )
+
+
+def test_batch_dict__setitem__new_key() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3])})
+    batch["key2"] = BatchList(["a", "b", "c"])
+    assert batch.equal(
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+    )
+
+
+def test_batch_dict__setitem__incorrect_batch_size() -> None:
+    batch = BatchDict({"key1": BatchList([1, 2, 3])})
+    with raises(RuntimeError, match="Incorrect batch size."):
+        batch["key2"] = BatchList(["a", "b", "c", "d"])
+
+
+def test_batch_dict_get() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+        .get("key2")
+        .equal(BatchList(["a", "b", "c"]))
+    )
+
+
+def test_batch_dict_get_missing_key() -> None:
+    assert BatchDict({"key1": BatchList([1, 2, 3])}).get("key2") is None
+
+
+def test_batch_dict_get_missing_key_custom_default() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2, 3])})
+        .get("key2", default=BatchList(["a", "b", "c"]))
+        .equal(BatchList(["a", "b", "c"]))
+    )
+
+
 def test_batch_dict_items() -> None:
     assert objects_are_equal(
         list(
@@ -449,39 +510,6 @@ def test_batch_dict_shuffle_along_seq__different_random_seeds() -> None:
 ##########################################################
 #    Indexing, slicing, joining, mutating operations     #
 ##########################################################
-
-
-def test_batch_dict__getitem__() -> None:
-    assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})[
-        "key2"
-    ].equal(BatchList(["a", "b", "c"]))
-
-
-def test_batch_dict__getitem__missing_key() -> None:
-    with raises(KeyError):
-        BatchDict({"key1": BatchList([1, 2, 3])})["key2"]
-
-
-def test_batch_dict__setitem__update_value() -> None:
-    batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
-    batch["key2"] = BatchList(["d", "e", "f"])
-    assert batch.equal(
-        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["d", "e", "f"])})
-    )
-
-
-def test_batch_dict__setitem__new_key() -> None:
-    batch = BatchDict({"key1": BatchList([1, 2, 3])})
-    batch["key2"] = BatchList(["a", "b", "c"])
-    assert batch.equal(
-        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
-    )
-
-
-def test_batch_dict__setitem__incorrect_batch_size() -> None:
-    batch = BatchDict({"key1": BatchList([1, 2, 3])})
-    with raises(RuntimeError, match="Incorrect batch size."):
-        batch["key2"] = BatchList(["a", "b", "c", "d"])
 
 
 def test_batch_dict_append_1_item() -> None:
