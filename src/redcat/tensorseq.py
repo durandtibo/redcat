@@ -574,15 +574,15 @@ class BatchedTensorSeq(BatchedTensor):
 
     def logical_and_(self, other: BatchedTensor | Tensor) -> None:
         check_seq_dims(get_seq_dims((self, other)))
-        super().logical_and_(other.to(dtype=self.dtype))
+        super().logical_and_(other)
 
     def logical_or_(self, other: BatchedTensor | Tensor) -> None:
         check_seq_dims(get_seq_dims((self, other)))
-        super().logical_or_(other.to(dtype=self.dtype))
+        super().logical_or_(other)
 
     def logical_xor_(self, other: BatchedTensor | Tensor) -> None:
         check_seq_dims(get_seq_dims((self, other)))
-        super().logical_xor_(other.to(dtype=self.dtype))
+        super().logical_xor_(other)
 
     ################################
     #     Reduction operations     #

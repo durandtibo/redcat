@@ -4750,12 +4750,12 @@ def test_batched_tensor_seq_logical_xor_incorrect_seq_dim() -> None:
             torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool)
         ),
         torch.tensor([[True, False, True, False], [True, True, True, True]], dtype=torch.bool),
-        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float)),
-        torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.float),
+        BatchedTensorSeq(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.long)),
+        BatchedTensor(torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.long)),
+        torch.tensor([[1, 0, 1, 0], [1, 1, 1, 1]], dtype=torch.long),
     ),
 )
-@mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
+@mark.parametrize("dtype", (torch.bool, torch.long))
 def test_batched_tensor_seq_logical_xor_(other: BatchedTensor | Tensor, dtype: torch.dtype) -> None:
     batch = BatchedTensorSeq(
         torch.tensor([[True, True, False, False], [True, False, True, False]], dtype=dtype)
