@@ -4456,7 +4456,7 @@ def test_batched_tensor_seq_logical_not(dtype: torch.dtype) -> None:
         .logical_not()
         .equal(
             BatchedTensorSeq(
-                torch.tensor([[False, False, True, True], [False, True, False, True]], dtype=dtype)
+                torch.tensor([[False, False, True, True], [False, True, False, True]])
             )
         )
     )
