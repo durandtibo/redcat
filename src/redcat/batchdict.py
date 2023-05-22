@@ -55,6 +55,22 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     #     Dictionary operations     #
     #################################
 
+    def __contains__(self, key: Hashable) -> bool:
+        return key in self._data
+
+    def __getitem__(self, key: Hashable) -> BaseBatch:
+        return self._data[key]
+
+    def __setitem__(self, key: Hashable, value: BaseBatch) -> None:
+        if value.batch_size != self.batch_size:
+            raise RuntimeError(
+                f"Incorrect batch size. Expected {self.batch_size} but received {value.batch_size}"
+            )
+        self._data[key] = value
+
+    def get(self, key: Hashable, default: BaseBatch | None = None) -> BaseBatch | None:
+        return self._data.get(key, default)
+
     def items(self) -> ItemsView:
         return self._data.items()
 
@@ -286,16 +302,6 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
-
-    def __getitem__(self, key: Hashable) -> BaseBatch:
-        return self._data[key]
-
-    def __setitem__(self, key: Hashable, value: BaseBatch) -> None:
-        if value.batch_size != self.batch_size:
-            raise RuntimeError(
-                f"Incorrect batch size. Expected {self.batch_size} but received {value.batch_size}"
-            )
-        self._data[key] = value
 
     def append(self, other: BatchDict) -> None:
         check_same_keys(self.data, other.data)
