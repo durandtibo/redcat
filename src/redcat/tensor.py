@@ -3187,7 +3187,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [ True, False,  True, False]], batch_dim=0)
         """
         check_batch_dims(get_batch_dims((self, other)))
-        self._data.logical_and_(other)
+        self._data.logical_and_(other.to(dtype=self.dtype))
 
     def logical_not(self) -> TBatchedTensor:
         r"""Computes the element-wise logical NOT of the current batch.
@@ -3296,7 +3296,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [ True,  True,  True,  True]], batch_dim=0)
         """
         check_batch_dims(get_batch_dims((self, other)))
-        self._data.logical_or_(other)
+        self._data.logical_or_(other.to(dtype=self.dtype))
 
     def logical_xor(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
         r"""Computes the element-wise logical XOR.
@@ -3358,7 +3358,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [False,  True, False,  True]], batch_dim=0)
         """
         check_batch_dims(get_batch_dims((self, other)))
-        self._data.logical_xor_(other)
+        self._data.logical_xor_(other.to(dtype=self.dtype))
 
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #

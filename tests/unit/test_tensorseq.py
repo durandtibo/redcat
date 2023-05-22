@@ -7994,7 +7994,7 @@ def test_torch_nansum_keepdim() -> None:
 
 
 def test_torch_prod() -> None:
-    assert torch.prod(BatchedTensorSeq(torch.arange(10).view(2, 5))).equal(torch.tensor(0.0))
+    assert torch.prod(BatchedTensorSeq(torch.arange(10).view(2, 5))).equal(torch.tensor(0))
 
 
 def test_torch_prod_dim_1() -> None:
