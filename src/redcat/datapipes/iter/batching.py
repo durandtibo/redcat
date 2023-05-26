@@ -35,7 +35,7 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> import torch
         >>> from torch.utils.data.datapipes.iter import IterableWrapper

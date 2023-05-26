@@ -41,7 +41,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -77,7 +77,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -100,7 +100,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -127,7 +127,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -152,7 +152,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -179,7 +179,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -203,7 +203,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -241,7 +241,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -271,7 +271,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -304,14 +304,12 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.extend(
-            ...     [BatchedTensor(torch.zeros(1, 3)), BatchedTensor(torch.full((1, 3), 2.0))]
-            ... )
+            >>> batch.extend([BatchedTensor(torch.zeros(1, 3)), BatchedTensor(torch.full((1, 3), 2.0))])
             >>> batch.data
             tensor([[1., 1., 1.],
                     [1., 1., 1.],
@@ -334,7 +332,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -363,7 +361,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -389,7 +387,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -421,7 +419,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -450,7 +448,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor
@@ -490,7 +488,7 @@ class BaseBatch(Generic[T], ABC):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensor

@@ -1091,4 +1091,4 @@ all = ["polars"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b263fee7e129a0ec0597becc2f34ca0ecd7820d4fb9c04b438292fa2253787f9"
+content-hash = "799925190004c1d5bd0aa5b3e7e7ca27cc9b1867f7d00091da398c5b0db714b3"
