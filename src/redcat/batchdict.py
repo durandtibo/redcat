@@ -139,7 +139,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
@@ -181,7 +181,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
@@ -222,7 +222,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
@@ -264,7 +264,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
@@ -324,7 +324,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
@@ -335,9 +335,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ...     }
             ... )
             >>> b.cat_along_seq(
-            ...     BatchDict(
-            ...         {"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}
-            ...     )
+            ...     BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))})
             ... )
             BatchDict(
               (key1) tensor([[ 0,  1,  2,  3,  4, 10, 11, 12],
@@ -366,7 +364,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
@@ -377,9 +375,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ...     }
             ... )
             >>> b.cat_along_seq_(
-            ...     BatchDict(
-            ...         {"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}
-            ...     )
+            ...     BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))})
             ... )
             >>> b
             BatchDict(

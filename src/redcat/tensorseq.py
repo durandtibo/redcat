@@ -124,7 +124,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -179,7 +179,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -234,7 +234,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -275,7 +275,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -360,7 +360,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -377,7 +377,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -401,7 +401,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -418,7 +418,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -444,7 +444,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -466,7 +466,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -491,7 +491,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -511,7 +511,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -547,7 +547,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -602,7 +602,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -632,7 +632,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -659,7 +659,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -684,7 +684,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -713,7 +713,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -744,7 +744,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -771,7 +771,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -796,15 +796,15 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
             >>> BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_seq()
             tensor([ 120, 3024])
-            >>> BatchedTensorSeq(
-            ...     torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])
-            ... ).prod_along_seq(keepdim=True)
+            >>> BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_seq(
+            ...     keepdim=True
+            ... )
             tensor([[ 120], [3024]])
         """
         return self.prod(dim=self._seq_dim, keepdim=keepdim)
@@ -824,7 +824,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -852,7 +852,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -900,7 +900,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -923,7 +923,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -957,7 +957,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -967,7 +967,9 @@ class BatchedTensorSeq(BatchedTensor):
             tensor([[ 0,  1,  2, 10, 11],
                     [ 4,  5,  6, 12, 13]], batch_dim=0, seq_dim=1)
             >>> BatchedTensorSeq(
-            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0,
+            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]),
+            ...     batch_dim=1,
+            ...     seq_dim=0,
             ... ).cat_along_seq(
             ...     [
             ...         BatchedTensorSeq(torch.tensor([[10, 12], [11, 13]]), batch_dim=1, seq_dim=0),
@@ -998,19 +1000,19 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.cat_along_seq_(
-            ...     BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]]))
-            ... )
+            >>> batch.cat_along_seq_(BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])))
             >>> batch
             tensor([[ 0,  1,  2, 10, 11],
                     [ 4,  5,  6, 12, 13]], batch_dim=0, seq_dim=1)
             >>> batch = BatchedTensorSeq(
-            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0,
+            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]),
+            ...     batch_dim=1,
+            ...     seq_dim=0,
             ... )
             >>> batch.cat_along_seq(
             ...     [
@@ -1041,7 +1043,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -1066,7 +1068,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -1101,7 +1103,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -1126,7 +1128,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -1157,7 +1159,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -1192,7 +1194,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
@@ -1437,7 +1439,7 @@ def from_sequences(
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> import torch
         >>> import redcat

@@ -23,10 +23,10 @@ def str_mapping(mapping: Mapping, sorted_keys: bool = False, num_spaces: int = 2
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> from redcat.utils.format import str_mapping
-        >>> str_mapping({'key1': 'abc', 'key2': 'something\nelse'})
+        >>> str_mapping({"key1": "abc", "key2": "something\nelse"})
         (key1) abc
         (key2) something
           else

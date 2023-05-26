@@ -39,7 +39,7 @@ def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> import torch
         >>> from redcat.utils.tensor import align_to_batch_first
@@ -134,7 +134,7 @@ def compute_batch_seq_permutation(
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> from redcat.utils.tensor import compute_batch_seq_permutation
         >>> compute_batch_seq_permutation(5, 0, 1, 1, 0)
@@ -176,7 +176,7 @@ def get_available_devices() -> tuple[str, ...]:
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> from redcat.utils.tensor import get_available_devices
         >>> get_available_devices()
@@ -208,7 +208,7 @@ def get_torch_generator(
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> import torch
         >>> from redcat.utils.tensor import get_torch_generator
@@ -245,7 +245,7 @@ def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tens
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> from redcat.utils.tensor import permute_along_dim
         >>> permute_along_dim(tensor=torch.arange(4), permutation=torch.tensor([0, 2, 1, 3]))
@@ -309,7 +309,7 @@ def swap2(
 
     Example usage:
 
-    .. code-block:: python
+    .. code-block:: pycon
 
         >>> from redcat.utils.tensor import swap2
         >>> seq = [1, 2, 3, 4, 5]

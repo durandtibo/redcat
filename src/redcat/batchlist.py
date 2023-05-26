@@ -160,7 +160,7 @@ class BatchList(BaseBatch[list[T]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchList
@@ -183,7 +183,7 @@ class BatchList(BaseBatch[list[T]]):
 
         Example usage:
 
-        .. code-block:: python
+        .. code-block:: pycon
 
             >>> import torch
             >>> from redcat import BatchList
