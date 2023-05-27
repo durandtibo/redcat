@@ -82,6 +82,25 @@ def test_batch_dict__getitem__missing_key() -> None:
         BatchDict({"key1": BatchList([1, 2, 3])})["key2"]
 
 
+def test_batch_dict__iter__1() -> None:
+    assert list(BatchDict({"key1": BatchList([1, 2, 3])})) == ["key1"]
+
+
+def test_batch_dict__iter__2() -> None:
+    assert list(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})) == [
+        "key1",
+        "key2",
+    ]
+
+
+def test_batch_dict__len__1() -> None:
+    assert len(BatchDict({"key1": BatchList([1, 2, 3])})) == 1
+
+
+def test_batch_dict__len__2() -> None:
+    assert len(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})) == 2
+
+
 def test_batch_dict__setitem__update_value() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     batch["key2"] = BatchList(["d", "e", "f"])
