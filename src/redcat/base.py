@@ -522,3 +522,24 @@ class BaseBatch(Generic[T], ABC):
                 stop=int(self.get_num_minibatches(batch_size, drop_last) * batch_size)
             )
         return batch.split_along_batch(batch_size)
+
+    #################
+    #     Other     #
+    #################
+
+    @abstractmethod
+    def summary(self) -> str:
+        r"""Returns a summary of the current batch.
+
+        Returns:
+            str: The summary of the current batch
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> BatchedTensor(torch.arange(20).view(10, 2)).summary()
+            'BatchedTensor(dtype=torch.int64, shape=torch.Size([2, 5]), device=cpu, batch_dim=0)'
+        """

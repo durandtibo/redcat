@@ -438,6 +438,14 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     #     mini-batches     #
     ########################
 
+    #################
+    #     Other     #
+    #################
+
+    def summary(self) -> str:
+        data_str = str_mapping({key: value.summary() for key, value in self._data.items()})
+        return f"{self.__class__.__qualname__}(\n  {str_indent(data_str)}\n)"
+
 
 def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
     r"""Checks if the all the batches in a group have the same batch

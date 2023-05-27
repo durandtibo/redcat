@@ -194,5 +194,8 @@ class BatchList(BaseBatch[list[T]]):
         """
         self._data = [fn(val) for val in self._data]
 
+    def summary(self) -> str:
+        return f"{self.__class__.__qualname__}(batch_size={self.batch_size})"
+
     def _create_new_batch(self, data: list[T]) -> TBatchList:
         return self.__class__(data)

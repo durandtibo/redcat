@@ -437,3 +437,7 @@ def test_batch_list_apply_() -> None:
     batch = BatchList([1, 2, 3])
     batch.apply_(lambda val: val + 2)
     assert batch.equal(BatchList([3, 4, 5]))
+
+
+def test_batch_list_summary() -> None:
+    assert BatchList([1, 2, 3]).summary() == ("BatchList(batch_size=3)")

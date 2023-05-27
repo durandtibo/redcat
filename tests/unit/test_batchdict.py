@@ -1019,6 +1019,25 @@ def test_batch_dict_to_minibatches_drop_last_true_10_batch_size_4() -> None:
     )
 
 
+def test_batch_dict_summary() -> None:
+    print(
+        BatchDict(
+            {
+                "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+                "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+            }
+        ).summary()
+    )
+    assert BatchDict(
+        {
+            "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+            "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
+        }
+    ).summary() == (
+        "BatchDict(\n  (key1) BatchList(batch_size=10)\n  (key2) BatchList(batch_size=10)\n)"
+    )
+
+
 ######################################
 #     Tests for check_batch_size     #
 ######################################
