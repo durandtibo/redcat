@@ -3932,7 +3932,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._create_new_batch(fn(self._data))
 
-    def apply_(self, fn: Callable[[Tensor], Tensor]) -> TBatchedTensor:
+    def apply_(self, fn: Callable[[Tensor], Tensor]) -> None:
         r"""Apply a function to transform the tensor of the current
         batch.
 
@@ -3943,9 +3943,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 the tensor. It is the responsibility of the user to
                 verify the function applies a valid transformation of
                 the data.
-
-        Returns:
-            ``BatchedTensor``: The transformed batch.
 
         Example usage:
 
@@ -3960,6 +3957,13 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [ 7,  8,  9, 10, 11]], batch_dim=0)
         """
         self._data = fn(self._data)
+
+    def summary(self) -> str:
+        dims = ", ".join([f"{key}={value}" for key, value in self._get_kwargs().items()])
+        return (
+            f"{self.__class__.__qualname__}(dtype={self.dtype}, shape={self.shape}, "
+            f"device={self.device}, {dims})"
+        )
 
     def _create_new_batch(self, data: Tensor) -> TBatchedTensor:
         return self.__class__(data, **self._get_kwargs())
