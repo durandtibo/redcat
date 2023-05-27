@@ -5694,6 +5694,13 @@ def test_batched_tensor_apply__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_summary() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5)).summary()
+        == "BatchedTensor(dtype=torch.int64, shape=torch.Size([2, 5]), device=cpu, batch_dim=0)"
+    )
+
+
 ########################################
 #     Tests for check_data_and_dim     #
 ########################################
