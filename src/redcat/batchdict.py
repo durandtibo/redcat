@@ -7,6 +7,7 @@ from collections.abc import (
     Hashable,
     ItemsView,
     Iterable,
+    Iterator,
     KeysView,
     Sequence,
     ValuesView,
@@ -60,6 +61,12 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
 
     def __getitem__(self, key: Hashable) -> BaseBatch:
         return self._data[key]
+
+    def __iter__(self) -> Iterator[Hashable]:
+        return iter(self._data)
+
+    def __len__(self) -> int:
+        return len(self._data)
 
     def __setitem__(self, key: Hashable, value: BaseBatch) -> None:
         if value.batch_size != self.batch_size:
