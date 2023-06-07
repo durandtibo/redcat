@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ["BatchExtenderIterDataPipe", "create_large_batch"]
 
 import logging
