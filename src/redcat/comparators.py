@@ -1,5 +1,6 @@
 r"""This module implements some comparators to use ``BaseBatch`` objects with
 ``coola.objects_are_equal`` and ``coola.objects_are_allclose``."""
+from __future__ import annotations
 
 __all__ = ["BatchEqualityOperator", "BatchAllCloseOperator"]
 
