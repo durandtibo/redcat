@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 __all__ = ["MiniBatcherIterDataPipe"]
 
 import logging
 from collections.abc import Iterator
-from typing import TypeVar, Union
+from typing import TypeVar
 
 from coola.utils.format import str_indent
 from torch.utils.data import IterDataPipe
@@ -61,7 +63,7 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
 
     def __init__(
         self,
-        datapipe_or_batch: Union[IterDataPipe[BaseBatch[T]], BaseBatch[T]],
+        datapipe_or_batch: IterDataPipe[BaseBatch[T]] | BaseBatch[T],
         batch_size: int,
         drop_last: bool = False,
         shuffle: bool = False,
