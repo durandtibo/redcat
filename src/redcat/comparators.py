@@ -37,6 +37,8 @@ class BatchAllCloseOperator(BaseAllCloseOperator[BaseBatch]):
         equal_nan: bool = False,
         show_difference: bool = False,
     ) -> bool:
+        if object1 is object2:
+            return True
         if not isinstance(object2, BaseBatch):
             if show_difference:
                 logger.info(f"object2 is not a `BaseBatch` object: {type(object2)}")
@@ -68,6 +70,8 @@ class BatchEqualityOperator(BaseEqualityOperator[BaseBatch]):
         object2: Any,
         show_difference: bool = False,
     ) -> bool:
+        if object1 is object2:
+            return True
         if not isinstance(object2, BaseBatch):
             if show_difference:
                 logger.info(f"object2 is not a `BaseBatch` object: {type(object2)}")
