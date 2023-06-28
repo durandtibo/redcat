@@ -38,6 +38,11 @@ def test_batch_allclose_operator_allclose_true() -> None:
     )
 
 
+def test_batch_allclose_operator_allclose_true_same_object() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    assert BatchAllCloseOperator().allclose(AllCloseTester(), batch, batch)
+
+
 def test_batch_allclose_operator_allclose_true_show_difference(caplog: LogCaptureFixture) -> None:
     with caplog.at_level(logging.INFO):
         assert BatchAllCloseOperator().allclose(
@@ -150,6 +155,11 @@ def test_batch_equality_operator_equal_true() -> None:
     assert BatchEqualityOperator().equal(
         EqualityTester(), BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 3))
     )
+
+
+def test_batch_equality_operator_equal_true_same_object() -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    assert BatchEqualityOperator().equal(EqualityTester(), batch, batch)
 
 
 def test_batch_equality_operator_equal_true_show_difference(caplog: LogCaptureFixture) -> None:
