@@ -24,8 +24,8 @@ DeviceType = Union[torch.device, str, int]
 
 
 def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
-    r"""Aligns the input tensor format to ``(batch_size, *)`` where `*` means
-    any number of dimensions.
+    r"""Aligns the input tensor format to ``(batch_size, *)`` where `*`
+    means any number of dimensions.
 
     Args:
         tensor (``torch.Tensor``): Specifies the tensor to change

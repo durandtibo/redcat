@@ -79,7 +79,8 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     @property
     def device(self) -> torch.device:
-        r"""``torch.device``: The device where the batch data/tensor is."""
+        r"""``torch.device``: The device where the batch data/tensor
+        is."""
         return self._data.device
 
     @property
@@ -439,8 +440,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(torch.zeros(*shape, **kwargs))
 
     def ones_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates a batch filled with the scalar value ``1``, with the same
-        shape as the current batch.
+        r"""Creates a batch filled with the scalar value ``1``, with the
+        same shape as the current batch.
 
         Args:
             *args: See the documentation of ``torch.Tensor.ones_like``
@@ -466,8 +467,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(torch.ones_like(self._data, *args, **kwargs))
 
     def zeros_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates a batch filled with the scalar value ``0``, with the same
-        shape as the current batch.
+        r"""Creates a batch filled with the scalar value ``0``, with the
+        same shape as the current batch.
 
         Args:
             *args: See the documentation of ``torch.Tensor.zeros_like``
@@ -914,8 +915,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> TBatchedTensor:
-        r"""Adds the input ``other``, scaled by ``alpha``, to the ``self``
-        batch.
+        r"""Adds the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
 
         Similar to ``out = self + alpha * other``
 
@@ -952,8 +953,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1.0,
     ) -> None:
-        r"""Adds the input ``other``, scaled by ``alpha``, to the ``self``
-        batch.
+        r"""Adds the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
 
         Similar to ``self += alpha * other`` (in-place)
 
@@ -1199,8 +1200,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1,
     ) -> TBatchedTensor:
-        r"""Subtracts the input ``other``, scaled by ``alpha``, to the ``self``
-        batch.
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
 
         Similar to ``out = self - alpha * other``
 
@@ -1236,8 +1237,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | int | float,
         alpha: int | float = 1,
     ) -> None:
-        r"""Subtracts the input ``other``, scaled by ``alpha``, to the ``self``
-        batch.
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
 
         Similar to ``self -= alpha * other`` (in-place)
 
@@ -1703,7 +1704,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         min: int | float | None = None,  # noqa: A002
         max: int | float | None = None,  # noqa: A002
     ) -> TBatchedTensor:
-        r"""Clamps all elements in ``self`` into the range ``[min, max]``.
+        r"""Clamps all elements in ``self`` into the range ``[min,
+        max]``.
 
         Note: ``min`` and ``max`` cannot be both ``None``.
 
@@ -3576,8 +3578,8 @@ class BatchedTensor(BaseBatch[Tensor]):
     def masked_fill(
         self, mask: BatchedTensor | Tensor, value: bool | int | float
     ) -> TBatchedTensor:
-        r"""Fills elements of ``self`` batch with ``value`` where ``mask`` is
-        ``True``.
+        r"""Fills elements of ``self`` batch with ``value`` where
+        ``mask`` is ``True``.
 
         Args:
             mask (``BatchedTensor`` or ``torch.Tensor``):
@@ -3834,8 +3836,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         )
 
     def view(self, *shape: tuple[int, ...]) -> Tensor:
-        r"""Creates a new tensor with the same data as the ``self`` batch but
-        with a new shape.
+        r"""Creates a new tensor with the same data as the ``self`` batch
+        but with a new shape.
 
         Args:
             shape (tuple): Specifies the desired shape.
@@ -3860,8 +3862,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._data.view(*shape)
 
     def view_as(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
-        r"""Creates a new batch with the same data as the ``self`` batch but the
-        shape of ``other``.
+        r"""Creates a new batch with the same data as the ``self`` batch
+        but the shape of ``other``.
 
         The returned batch shares the same data and must have the
         same number of elements, but the data may have a different

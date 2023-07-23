@@ -17,8 +17,8 @@ T = TypeVar("T")
 
 
 class BatchExtenderIterDataPipe(IterDataPipe[BaseBatch[T]]):
-    r"""Implements a DataPipe to combine several ``BaseBatch`` object into a
-    single ``BaseBatch`` object.
+    r"""Implements a DataPipe to combine several ``BaseBatch`` object
+    into a single ``BaseBatch`` object.
 
     Args:
         datapipe (``IterDataPipe``): Specifies the source
