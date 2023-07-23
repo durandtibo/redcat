@@ -6,8 +6,8 @@ from coola.utils.format import str_indent
 
 
 def str_mapping(mapping: Mapping, sorted_keys: bool = False, num_spaces: int = 2) -> str:
-    r"""Computes a torch-like (``torch.nn.Module``) string representation of a
-    mapping.
+    r"""Computes a torch-like (``torch.nn.Module``) string representation
+    of a mapping.
 
     Args:
     ----
