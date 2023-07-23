@@ -182,11 +182,12 @@ def get_available_devices() -> tuple[str, ...]:
         >>> get_available_devices()
         ('cpu', 'cuda:0')
     """
+    devices = ["cpu"]
     if torch.cuda.is_available():
-        return ("cpu", "cuda:0")
-    if torch.backends.mps.is_available():
-        return ("cpu", "mps:0")
-    return ("cpu",)
+        devices.append("cuda:0")
+    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        devices.append("mps:0")
+    return tuple(devices)
 
 
 def get_torch_generator(
