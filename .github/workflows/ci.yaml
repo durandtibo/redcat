@@ -9,6 +9,69 @@ on:
   workflow_dispatch:  # to trigger manually
 
 jobs:
+  coverage:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.10' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install packages
+        run: |
+          poetry run make config-poetry
+          poetry run make install
+
+      - name: Show installed packages
+        run: |
+          poetry run poetry show
+          poetry run poetry show --tree
+
+      - name: Format
+        run: |
+          poetry run make format
+
+      - name: Lint
+        run: |
+          poetry run make lint
+
+      - name: Run unit tests
+        run: |
+          poetry run make unit-test-cov
+
+      - name: Upload coverage to Codecov
+        if: github.repository == 'durandtibo/redcat' && (github.event_name == 'push' || github.event_name == 'pull_request')
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          # Ignore codecov failures as the codecov server is not
+          # very reliable but we don't want to report a failure
+          # in the github UI just because the coverage report failed to
+          # be published.
+          fail_ci_if_error: false
+
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v4.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: ./coverage.xml:coverage.py
+          debug: true
+
   test:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
@@ -98,8 +161,7 @@ jobs:
         run: |
           poetry run make unit-test-cov
 
-
-  coverage:
+  test-numpy:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
@@ -108,6 +170,11 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.10' ]
+        numpy-version: [ 1.25.1, 1.24.3, 1.23.5, 1.22.4, 1.21.6 ]
+        include:
+          - os: ubuntu-latest
+            python-version: 3.9
+            numpy-version: 1.20.3
 
     steps:
       - name: Checkout
@@ -126,38 +193,60 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
+      - name: Install NumPy
+        run: |
+          poetry run pip install numpy==${{ matrix.numpy-version }}
+
       - name: Show installed packages
         run: |
           poetry run poetry show
           poetry run poetry show --tree
 
-      - name: Format
-        run: |
-          poetry run make format
-
-      - name: Lint
-        run: |
-          poetry run make lint
-
       - name: Run unit tests
         run: |
           poetry run make unit-test-cov
 
-      - name: Upload coverage to Codecov
-        if: github.repository == 'durandtibo/redcat' && (github.event_name == 'push' || github.event_name == 'pull_request')
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage.xml
-          # Ignore codecov failures as the codecov server is not
-          # very reliable but we don't want to report a failure
-          # in the github UI just because the coverage report failed to
-          # be published.
-          fail_ci_if_error: false
+  test-torch:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.10' ]
+        pytorch-version: [ 2.0.0, 1.13.1, 1.12.1, 1.11.0 ]
+        include:
+          - os: ubuntu-latest
+            python-version: 3.9
+            pytorch-version: 1.10.0
 
-      - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v4.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          coverageLocations: ./coverage.xml:coverage.py
-          debug: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install packages
+        run: |
+          poetry run make config-poetry
+          poetry run make install
+
+      - name: Install PyTorch
+        run: |
+          poetry run pip install torch==${{ matrix.pytorch-version }}
+
+      - name: Show installed packages
+        run: |
+          poetry run poetry show
+          poetry run poetry show --tree
+
+      - name: Run unit tests
+        run: |
+          poetry run make unit-test-cov
