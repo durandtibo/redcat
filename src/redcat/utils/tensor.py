@@ -185,6 +185,8 @@ def get_available_devices() -> tuple[str, ...]:
     devices = ["cpu"]
     if torch.cuda.is_available():
         devices.append("cuda:0")
+    if torch.backends.mps.is_available():
+        devices.append("mps:0")
     return tuple(devices)
 
 
