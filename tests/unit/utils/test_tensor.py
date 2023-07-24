@@ -161,6 +161,7 @@ def test_get_available_devices_cpu() -> None:
 
 @patch("torch.cuda.is_available", lambda *args, **kwargs: True)
 @patch("torch.cuda.device_count", lambda *args, **kwargs: 1)
+@patch("torch.backends.mps.is_available", lambda *args, **kwargs: False)
 def test_get_available_devices_cpu_and_gpu() -> None:
     assert get_available_devices() == ("cpu", "cuda:0")
 
@@ -169,6 +170,13 @@ def test_get_available_devices_cpu_and_gpu() -> None:
 @patch("torch.backends.mps.is_available", lambda *args, **kwargs: True)
 def test_get_available_devices_cpu_and_mps() -> None:
     assert get_available_devices() == ("cpu", "mps:0")
+
+
+@patch("torch.cuda.is_available", lambda *args, **kwargs: True)
+@patch("torch.cuda.device_count", lambda *args, **kwargs: 1)
+@patch("torch.backends.mps.is_available", lambda *args, **kwargs: True)
+def test_get_available_devices_cpu_and_gpu_and_mps() -> None:
+    assert get_available_devices() == ("cpu", "cuda:0", "mps:0")
 
 
 #########################################
