@@ -16,11 +16,10 @@ from typing import Any, TypeVar
 
 import torch
 from coola import objects_are_allclose, objects_are_equal
-from coola.utils.format import str_indent
+from coola.utils.format import str_indent, str_mapping
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.utils.format import str_mapping
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
