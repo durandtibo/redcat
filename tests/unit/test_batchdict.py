@@ -1034,7 +1034,7 @@ def test_batch_dict_summary() -> None:
             "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
         }
     ).summary() == (
-        "BatchDict(\n  (key1) BatchList(batch_size=10)\n  (key2) BatchList(batch_size=10)\n)"
+        "BatchDict(\n  (key1): BatchList(batch_size=10)\n  (key2): BatchList(batch_size=10)\n)"
     )
 
 
