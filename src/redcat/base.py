@@ -564,5 +564,5 @@ class BaseBatch(Generic[T], ABC):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(20).view(10, 2))
             >>> print(batch.summary())
-            BatchedTensor(dtype=torch.int64, shape=torch.Size([2, 5]), device=cpu, batch_dim=0)
+            BatchedTensor(dtype=torch.int64, shape=torch.Size([10, 2]), device=cpu, batch_dim=0)
         """
