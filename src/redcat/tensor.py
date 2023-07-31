@@ -291,9 +291,8 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.empty_like()
-            tensor([[0., 0., 0.],
-                    [0., 0., 0.]], batch_dim=0)
+            >>> batch.empty_like()  # doctest:+ELLIPSIS
+            tensor([[...]], batch_dim=0)
         """
         return self._create_new_batch(torch.empty_like(self._data, *args, **kwargs))
 
@@ -3141,10 +3140,10 @@ class BatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.1, 3.2], [4.0, 5.1, 6.2]]))
             >>> batch.cosh()
-            tensor([[  1.5431,   3.7622,  10.0677],
-                    [ 27.3082,  74.2099, 201.7156]], batch_dim=0)
+            tensor([[  1.5431,   4.1443,  12.2866],
+                    [ 27.3082,  82.0140, 246.3755]], batch_dim=0)
         """
         return torch.cosh(self)
 
@@ -3159,11 +3158,11 @@ class BatchedTensor(BaseBatch[Tensor]):
 
             >>> import torch
             >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+            >>> batch = BatchedTensor(torch.tensor([[1.0, 2.1, 3.2], [4.0, 5.1, 6.2]]))
             >>> batch.cosh_()
             >>> batch
-            tensor([[  1.5431,   3.7622,  10.0677],
-                    [ 27.3082,  74.2099, 201.7156]], batch_dim=0)
+            tensor([[  1.5431,   4.1443,  12.2866],
+                    [ 27.3082,  82.0140, 246.3755]], batch_dim=0)
         """
         self._data.cosh_()
 
