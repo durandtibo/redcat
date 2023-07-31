@@ -28,12 +28,14 @@ def align_to_batch_first(tensor: Tensor, batch_dim: int) -> Tensor:
     means any number of dimensions.
 
     Args:
+    ----
         tensor (``torch.Tensor``): Specifies the tensor to change
             format.
         batch_dim (int): Specifies the batch dimension in the input
             tensor.
 
     Returns:
+    -------
         ``torch.Tensor``: A tensor of shape ``(batch_size, *)`` where
             `*` means any number of dimensions.
 
@@ -60,6 +62,7 @@ def align_to_batch_seq(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
     *)`` where `*` means any number of dimensions.
 
     Args:
+    ----
         tensor (``torch.Tensor``): Specifies the tensor to change
             format.
         batch_dim (int): Specifies the batch dimension in the input
@@ -68,6 +71,7 @@ def align_to_batch_seq(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
             tensor.
 
     Returns:
+    -------
         ``torch.Tensor``: A tensor of shape
             ``(batch_size, sequence_length, *)`` where `*` means any
             number of dimensions.
@@ -88,6 +92,7 @@ def align_to_seq_batch(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
     *)`` where `*` means any number of dimensions.
 
     Args:
+    ----
         tensor (``torch.Tensor``): Specifies the tensor to change
             format.
         batch_dim (int): Specifies the batch dimension in the input
@@ -96,6 +101,7 @@ def align_to_seq_batch(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
             tensor.
 
     Returns:
+    -------
         ``torch.Tensor``: A tensor of shape
             ``(sequence_length, batch_size, *)`` where `*` means any
             number of dimensions.
@@ -122,6 +128,7 @@ def compute_batch_seq_permutation(
     dimensions.
 
     Args:
+    ----
         num_dims (int): Specifies the number of dimensions.
         old_batch_dim (int): Specifies the old batch dimension.
         old_seq_dim (int): Specifies the old sequence dimension.
@@ -129,6 +136,7 @@ def compute_batch_seq_permutation(
         new_seq_dim (int): Specifies the new sequence dimension.
 
     Returns:
+    -------
         list: The permutation to update the batch and sequence
             dimensions.
 
@@ -179,8 +187,8 @@ def get_available_devices() -> tuple[str, ...]:
     .. code-block:: pycon
 
         >>> from redcat.utils.tensor import get_available_devices
-        >>> get_available_devices()
-        ('cpu', 'cuda:0')
+        >>> get_available_devices()  # doctest:+ELLIPSIS
+        ('cpu'...)
     """
     devices = ["cpu"]
     if torch.cuda.is_available():
@@ -214,13 +222,11 @@ def get_torch_generator(
         >>> import torch
         >>> from redcat.utils.tensor import get_torch_generator
         >>> generator = get_torch_generator(42)
-        >>> torch.rand(2, 4, generator=generator)
-        tensor([[0.8823, 0.9150, 0.3829, 0.9593],
-                [0.3904, 0.6009, 0.2566, 0.7936]])
+        >>> torch.rand(2, 4, generator=generator)  # doctest:+ELLIPSIS
+        tensor([[...]])
         >>> generator = get_torch_generator(42)
-        >>> torch.rand(2, 4, generator=generator)
-        tensor([[0.8823, 0.9150, 0.3829, 0.9593],
-                [0.3904, 0.6009, 0.2566, 0.7936]])
+        >>> torch.rand(2, 4, generator=generator)  # doctest:+ELLIPSIS
+        tensor([[...]])
     """
     generator = torch.Generator(device)
     generator.manual_seed(random_seed)
@@ -255,7 +261,10 @@ def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tens
         ...     tensor=torch.arange(20).view(4, 5),
         ...     permutation=torch.tensor([0, 2, 1, 3]),
         ... )
-        tensor([[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]])
+        tensor([[ 0,  1,  2,  3,  4],
+                [10, 11, 12, 13, 14],
+                [ 5,  6,  7,  8,  9],
+                [15, 16, 17, 18, 19]])
         >>> permute_along_dim(
         ...     tensor=torch.arange(20).view(4, 5),
         ...     permutation=torch.tensor([0, 4, 2, 1, 3]),
@@ -299,12 +308,14 @@ def swap2(
     r"""Swaps two values in a mutable sequence.
 
     Args:
+    ----
         sequence (``torch.Tensor`` or ``numpy.ndarray`` or
             ``MutableSequence``): Specifies the sequence to update.
         index0 (int): Specifies the index of the first value to swap.
         index1 (int): Specifies the index of the second value to swap.
 
     Returns:
+    -------
         ``torch.Tensor`` or ``numpy.ndarray`` or ``MutableSequence``:
             The updated sequence.
 

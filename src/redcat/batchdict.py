@@ -30,6 +30,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     r"""Implements a batch object to represent a dictionary of batches.
 
     Args:
+    ----
         data (dict): Specifies the dictionary of batches.
     """
 
@@ -135,12 +136,14 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         ``permute_along_seq``.
 
         Args:
+        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
 
         Returns:
+        -------
             ``BatchDict``: A new batch with permuted data.
 
         Example usage:
@@ -180,6 +183,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         ``permute_along_seq``.
 
         Args:
+        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
@@ -216,11 +220,13 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         the same length.
 
         Args:
+        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Returns:
+        -------
             ``BatchDict``:  A new batch with shuffled data.
 
         Raises:
@@ -261,11 +267,13 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         the same length.
 
         Args:
+        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Raises:
+        ------
             RuntimeError if the batch has multiple sequence lengths.
 
         Example usage:
@@ -321,10 +329,12 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         Note that only the sequences are concatenated.
 
         Args:
+        ----
             batches (``BatchDict`` or  ``Sequence``): Specifies the
                 batch(es) to concatenate along the sequence dimension.
 
         Returns:
+        -------
             ``BatchDict``: A batch with the concatenated data
                 along the sequence dimension.
 
@@ -365,6 +375,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         Note that only the sequences are concatenated.
 
         Args:
+        ----
             batches (``BatchDict`` or  ``Sequence``): Specifies the
                 batch(es) to concatenate along the sequence dimension.
 
@@ -451,11 +462,26 @@ def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
     size.
 
     Args:
+    ----
         group (``BaseBatch`` or dict or sequence): Specifies the group
             of batches to check.
 
     Raises:
+    ------
         RuntimeError if there are several batch sizes.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat import BatchedTensor, BatchedTensorSeq
+        >>> from redcat.batchdict import check_same_batch_size
+        >>> check_same_batch_size(
+        ...     {
+        ...         "key1": BatchedTensorSeq(torch.ones(2, 3)),
+        ...         "key2": BatchedTensor(torch.ones(2, 6)),
+        ...     }
+        ... )
     """
     if not data:
         raise RuntimeError("The dictionary cannot be empty")
@@ -471,11 +497,30 @@ def check_same_keys(data1: dict, data2: dict) -> None:
     r"""Checks if the dictionaries have the same keys.
 
     Args:
+    ----
         data1 (dict): Specifies the first dictionary.
         data2 (dict): Specifies the second dictionary.
 
     Raises:
+    ------
         RuntimeError if the keys are different.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat import BatchedTensor, BatchedTensorSeq
+        >>> from redcat.batchdict import check_same_keys
+        >>> check_same_keys(
+        ...     {
+        ...         "key1": BatchedTensorSeq(torch.ones(2, 3)),
+        ...         "key2": BatchedTensor(torch.ones(2, 6)),
+        ...     },
+        ...     {
+        ...         "key1": BatchedTensorSeq(torch.zeros(2, 4)),
+        ...         "key2": BatchedTensor(torch.zeros(2, 4)),
+        ...     },
+        ... )
     """
     keys1 = set(data1.keys())
     keys2 = set(data2.keys())
@@ -487,9 +532,25 @@ def get_seq_lens(data: dict[Hashable, BaseBatch]) -> set[int]:
     r"""Gets the sequence lengths from the inputs.
 
     Args:
+    ----
         data (dict): Specifies the data with the sequences.
 
     Returns:
+    -------
         set: The sequence lengths.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat import BatchedTensor, BatchedTensorSeq
+        >>> from redcat.batchdict import get_seq_lens
+        >>> get_seq_lens(
+        ...     {
+        ...         "key1": BatchedTensorSeq(torch.ones(2, 3)),
+        ...         "key2": BatchedTensor(torch.ones(2, 6)),
+        ...     }
+        ... )
+        {3}
     """
     return {val.seq_len for val in data.values() if hasattr(val, "seq_len")}

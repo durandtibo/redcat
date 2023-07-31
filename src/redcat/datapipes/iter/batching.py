@@ -23,6 +23,7 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
     (``BaseBatch`` object).
 
     Args:
+    ----
         datapipe_or_batch (``IterDataPipe`` or ``BaseBatch``):
             Specifies the datapipe of batches to split.
             The generated mini-batches have the same structure

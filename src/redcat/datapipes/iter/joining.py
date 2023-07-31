@@ -21,6 +21,7 @@ class BatchExtenderIterDataPipe(IterDataPipe[BaseBatch[T]]):
     into a single ``BaseBatch`` object.
 
     Args:
+    ----
         datapipe (``IterDataPipe``): Specifies the source
             DataPipe. The DataPipe has to return compatible
             ``BaseBatch`` objects.
