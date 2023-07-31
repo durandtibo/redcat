@@ -75,6 +75,19 @@ def align_to_batch_seq(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
         ``torch.Tensor``: A tensor of shape
             ``(batch_size, sequence_length, *)`` where `*` means any
             number of dimensions.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import torch
+        >>> from redcat.utils.tensor import align_to_batch_seq
+        >>> align_to_batch_seq(torch.arange(20).view(4, 5), batch_dim=1, seq_dim=0)
+        tensor([[ 0,  5, 10, 15],
+                [ 1,  6, 11, 16],
+                [ 2,  7, 12, 17],
+                [ 3,  8, 13, 18],
+                [ 4,  9, 14, 19]])
     """
     return tensor.permute(
         *compute_batch_seq_permutation(
@@ -105,6 +118,19 @@ def align_to_seq_batch(tensor: Tensor, batch_dim: int, seq_dim: int) -> Tensor:
         ``torch.Tensor``: A tensor of shape
             ``(sequence_length, batch_size, *)`` where `*` means any
             number of dimensions.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import torch
+        >>> from redcat.utils.tensor import align_to_seq_batch
+        >>> align_to_seq_batch(torch.arange(20).view(4, 5), batch_dim=0, seq_dim=1)
+        tensor([[ 0,  5, 10, 15],
+                [ 1,  6, 11, 16],
+                [ 2,  7, 12, 17],
+                [ 3,  8, 13, 18],
+                [ 4,  9, 14, 19]])
     """
     return tensor.permute(
         *compute_batch_seq_permutation(
@@ -306,6 +332,8 @@ def swap2(
     sequence: Tensor | np.ndarray | MutableSequence, index0: int, index1: int
 ) -> Tensor | np.ndarray | MutableSequence:
     r"""Swaps two values in a mutable sequence.
+
+    The swap is performed in-place.
 
     Args:
     ----

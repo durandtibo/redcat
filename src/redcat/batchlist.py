@@ -25,6 +25,17 @@ class BatchList(BaseBatch[list[T]]):
     Args:
     ----
         data (list): Specifies the list of examples.
+
+    Raises:
+    ------
+        TypeError if the input is not a list.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat import BatchList
+        >>> batch = BatchList([1, 2, 3])
     """
 
     def __init__(self, data: list[T]) -> None:
@@ -165,7 +176,7 @@ class BatchList(BaseBatch[list[T]]):
 
         .. code-block:: pycon
 
-            >>> import torch
+
             >>> from redcat import BatchList
             >>> batch = BatchList([1, 2, 3])
             >>> batch.apply(lambda val: val + 2)
@@ -190,7 +201,7 @@ class BatchList(BaseBatch[list[T]]):
 
         .. code-block:: pycon
 
-            >>> import torch
+
             >>> from redcat import BatchList
             >>> batch = BatchList([1, 2, 3])
             >>> batch.apply_(lambda val: val + 2)
