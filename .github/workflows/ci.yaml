@@ -49,6 +49,10 @@ jobs:
         run: |
           poetry run make lint
 
+      - name: Run doctest on source code
+        run: |
+          poetry run make doctest-src
+
       - name: Run unit tests
         run: |
           poetry run make unit-test-cov
