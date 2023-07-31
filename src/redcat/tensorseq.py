@@ -52,6 +52,14 @@ class BatchedTensorSeq(BatchedTensor):
             the ``torch.Tensor`` object. Default: ``1``
         kwargs: Keyword arguments that are passed to
             ``torch.as_tensor``.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import torch
+        >>> from redcat import BatchedTensorSeq
+        >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
     """
 
     def __init__(self, data: Any, *, batch_dim: int = 0, seq_dim: int = 1, **kwargs) -> None:

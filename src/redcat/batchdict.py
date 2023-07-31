@@ -32,6 +32,19 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
     Args:
     ----
         data (dict): Specifies the dictionary of batches.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import torch
+        >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+        >>> batch = BatchDict(
+        ...     {
+        ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+        ...         "key2": BatchList(["a", "b"]),
+        ...     }
+        ... )
     """
 
     def __init__(self, data: dict[Hashable, BaseBatch]) -> None:
