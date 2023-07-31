@@ -160,9 +160,9 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ... )
             >>> batch.permute_along_seq([2, 1, 3, 0, 4])
             BatchDict(
-              (key1) tensor([[2, 1, 3, 0, 4],
+              (key1): tensor([[2, 1, 3, 0, 4],
                              [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
-              (key2) BatchList(data=['a', 'b'])
+              (key2): BatchList(data=['a', 'b'])
             )
         """
         out = {}
@@ -204,9 +204,9 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             >>> batch.permute_along_seq_([2, 1, 3, 0, 4])
             >>> batch
             BatchDict(
-              (key1) tensor([[2, 1, 3, 0, 4],
+              (key1): tensor([[2, 1, 3, 0, 4],
                              [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
-              (key2) BatchList(data=['a', 'b'])
+              (key2): BatchList(data=['a', 'b'])
             )
         """
         for val in self._data.values():
@@ -244,11 +244,10 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ...         "key2": BatchList(["a", "b"]),
             ...     }
             ... )
-            >>> batch.shuffle_along_seq()
+            >>> batch.shuffle_along_seq()  # doctest:+ELLIPSIS
             BatchDict(
-              (key1) tensor([[2, 1, 3, 0, 4],
-                             [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
-              (key2) BatchList(data=['a', 'b'])
+              (key1): tensor([[...]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
             )
         """
         seq_lens = get_seq_lens(self._data)
@@ -289,11 +288,10 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ...     }
             ... )
             >>> batch.shuffle_along_seq()
-            >>> batch
+            >>> batch  # doctest:+ELLIPSIS
             BatchDict(
-              (key1) tensor([[2, 1, 3, 0, 4],
-                             [7, 6, 8, 5, 9]], batch_dim=0, seq_dim=1)
-              (key2) BatchList(data=['a', 'b'])
+              (key1): tensor([[...]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
             )
         """
         seq_lens = get_seq_lens(self._data)
@@ -354,9 +352,9 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ...     BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))})
             ... )
             BatchDict(
-              (key1) tensor([[ 0,  1,  2,  3,  4, 10, 11, 12],
-                             [ 5,  6,  7,  8,  9, 20, 21, 22]], batch_dim=0, seq_dim=1)
-              (key2) BatchList(data=['a', 'b'])
+              (key1): tensor([[ 0,  1,  2,  3,  4, 10, 11, 12],
+                        [ 5,  6,  7,  8,  9, 20, 21, 22]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
             )
         """
         if isinstance(batches, BatchDict):
@@ -396,9 +394,9 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ... )
             >>> b
             BatchDict(
-              (key1) tensor([[ 0,  1,  2,  3,  4, 10, 11, 12],
-                             [ 5,  6,  7,  8,  9, 20, 21, 22]], batch_dim=0, seq_dim=1)
-              (key2) BatchList(data=['a', 'b'])
+              (key1): tensor([[ 0,  1,  2,  3,  4, 10, 11, 12],
+                        [ 5,  6,  7,  8,  9, 20, 21, 22]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
             )
         """
         if isinstance(batches, BatchDict):

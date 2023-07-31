@@ -1819,7 +1819,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [5, 5, 5, 5, 5]], batch_dim=0)
             >>> batch.clamp(min=2)
             tensor([[2, 2, 2, 3, 4],
-                    [5, 6, 7, 8, 9]])
+                    [5, 6, 7, 8, 9]], batch_dim=0)
             >>> batch.clamp(max=7)
             tensor([[0, 1, 2, 3, 4],
                     [5, 6, 7, 7, 7]], batch_dim=0)
