@@ -3155,6 +3155,70 @@ def test_batched_tensor_seq_log1p__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_log2() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+        .log2()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log2_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .log2()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log2_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+    batch.log2_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log2__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.log2_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 @mark.parametrize(
     "other",
     (

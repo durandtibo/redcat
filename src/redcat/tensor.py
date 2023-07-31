@@ -1882,8 +1882,8 @@ class BatchedTensor(BaseBatch[Tensor]):
             ...     torch.tensor([[0.0, 1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0, 9.0]])
             ... )
             >>> batch.log10()
-            tensor([[  -inf, 0.0000, 0.6931, 1.0986, 1.3863],
-                    [1.6094, 1.7918, 1.9459, 2.0794, 2.1972]], batch_dim=0)
+            tensor([[  -inf, 0.0000, 0.3010, 0.4771, 0.6021],
+                    [0.6990, 0.7782, 0.8451, 0.9031, 0.9542]], batch_dim=0)
         """
         return torch.log10(self)
 
@@ -1903,8 +1903,8 @@ class BatchedTensor(BaseBatch[Tensor]):
             ... )
             >>> batch.log10_()
             >>> batch
-            tensor([[  -inf, 0.0000, 0.6931, 1.0986, 1.3863],
-                    [1.6094, 1.7918, 1.9459, 2.0794, 2.1972]], batch_dim=0)
+            tensor([[  -inf, 0.0000, 0.3010, 0.4771, 0.6021],
+                    [0.6990, 0.7782, 0.8451, 0.9031, 0.9542]], batch_dim=0)
         """
         self._data.log10_()
 
@@ -1950,6 +1950,49 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [1.7918, 1.9459, 2.0794, 2.1972, 2.3026]], batch_dim=0)
         """
         self._data.log1p_()
+
+    def log2(self) -> BatchedTensor:
+        r"""Computes the logarithm to the base 2 of the elements.
+
+        Return:
+            ``BatchedTensor``: A batch with the logarithm to the
+                base 2 of the elements of the current batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0, 9.0]])
+            ... )
+            >>> batch.log2()
+            tensor([[  -inf, 0.0000, 1.0000, 1.5850, 2.0000],
+                    [2.3219, 2.5850, 2.8074, 3.0000, 3.1699]], batch_dim=0)
+        """
+        return torch.log2(self)
+
+    def log2_(self) -> None:
+        r"""Computes the logarithm to the base 2 of the elements.
+
+        In-place version of ``log2()``.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0, 9.0]])
+            ... )
+            >>> batch.log2_()
+            >>> batch
+            tensor([[  -inf, 0.0000, 1.0000, 1.5850, 2.0000],
+                    [2.3219, 2.5850, 2.8074, 3.0000, 3.1699]], batch_dim=0)
+        """
+        self._data.log2_()
 
     def maximum(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
         r"""Computes the element-wise maximum of ``self`` and ``other``.
