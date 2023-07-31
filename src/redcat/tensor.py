@@ -1865,6 +1865,49 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         self._data.log_()
 
+    def log10(self) -> BatchedTensor:
+        r"""Computes the logarithm to the base 10 of the elements.
+
+        Return:
+            ``BatchedTensor``: A batch with the logarithm to the
+                base 10 of the elements of the current batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0, 9.0]])
+            ... )
+            >>> batch.log10()
+            tensor([[  -inf, 0.0000, 0.6931, 1.0986, 1.3863],
+                    [1.6094, 1.7918, 1.9459, 2.0794, 2.1972]], batch_dim=0)
+        """
+        return torch.log10(self)
+
+    def log10_(self) -> None:
+        r"""Computes the logarithm to the base 10 of the elements.
+
+        In-place version of ``log10()``.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(
+            ...     torch.tensor([[0.0, 1.0, 2.0, 3.0, 4.0], [5.0, 6.0, 7.0, 8.0, 9.0]])
+            ... )
+            >>> batch.log10_()
+            >>> batch
+            tensor([[  -inf, 0.0000, 0.6931, 1.0986, 1.3863],
+                    [1.6094, 1.7918, 1.9459, 2.0794, 2.1972]], batch_dim=0)
+        """
+        self._data.log10_()
+
     def log1p(self) -> BatchedTensor:
         r"""Computes the natural logarithm of ``self + 1``.
 

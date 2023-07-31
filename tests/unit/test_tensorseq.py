@@ -3005,6 +3005,82 @@ def test_batched_tensor_seq_log__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_log10() -> None:
+    assert (
+        BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+        .log10()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 0.3010300099849701, 0.4771212637424469],
+                        [0.6020600199699402, 0.6989700198173523, 0.778151273727417],
+                    ]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log10_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq(
+            torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float),
+            batch_dim=1,
+            seq_dim=0,
+        )
+        .log10()
+        .allclose(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [0.0, 0.3010300099849701, 0.4771212637424469],
+                        [0.6020600199699402, 0.6989700198173523, 0.778151273727417],
+                    ]
+                ),
+                batch_dim=1,
+                seq_dim=0,
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log10_() -> None:
+    batch = BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+    batch.log10_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 0.3010300099849701, 0.4771212637424469],
+                    [0.6020600199699402, 0.6989700198173523, 0.778151273727417],
+                ]
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_log10__custom_dims() -> None:
+    batch = BatchedTensorSeq(
+        torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float),
+        batch_dim=1,
+        seq_dim=0,
+    )
+    batch.log10_()
+    assert batch.allclose(
+        BatchedTensorSeq(
+            torch.tensor(
+                [
+                    [0.0, 0.3010300099849701, 0.4771212637424469],
+                    [0.6020600199699402, 0.6989700198173523, 0.778151273727417],
+                ]
+            ),
+            batch_dim=1,
+            seq_dim=0,
+        )
+    )
+
+
 def test_batched_tensor_seq_log1p() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[0, 1, 2], [3, 4, 5]], dtype=torch.float))
