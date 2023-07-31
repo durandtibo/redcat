@@ -2507,6 +2507,60 @@ def test_batched_tensor_log1p__custom_dims() -> None:
     )
 
 
+def test_batched_tensor_log2() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+        .log2()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+                )
+            )
+        )
+    )
+
+
+def test_batched_tensor_log2_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float), batch_dim=1)
+        .log2()
+        .allclose(
+            BatchedTensor(
+                torch.tensor(
+                    [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_tensor_log2_() -> None:
+    batch = BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
+    batch.log2_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+            )
+        )
+    )
+
+
+def test_batched_tensor_log2__custom_dims() -> None:
+    batch = BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float), batch_dim=1)
+    batch.log2_()
+    assert batch.allclose(
+        BatchedTensor(
+            torch.tensor(
+                [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+            ),
+            batch_dim=1,
+        )
+    )
+
+
 @mark.parametrize(
     "other",
     (
