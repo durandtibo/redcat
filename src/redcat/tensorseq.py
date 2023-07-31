@@ -42,6 +42,7 @@ class BatchedTensorSeq(BatchedTensor):
     sequences.
 
     Args:
+    ----
         data (array_like): Specifies the data for the tensor. It can
             be a torch.Tensor, list, tuple, NumPy ndarray, scalar,
             and other types.
@@ -108,6 +109,7 @@ class BatchedTensorSeq(BatchedTensor):
         the current batch.
 
         Args:
+        ----
             fill_value (float or int or bool): Specifies the number
                 to fill the batch with.
             batch_size (int or ``None``): Specifies the batch size.
@@ -120,6 +122,7 @@ class BatchedTensorSeq(BatchedTensor):
                 ``torch.Tensor.new_full``.
 
         Returns:
+        -------
             ``BaseBatchedTensor``: A batch filled with the scalar value.
 
         Example usage:
@@ -164,6 +167,7 @@ class BatchedTensorSeq(BatchedTensor):
         the current batch.
 
         Args:
+        ----
             batch_size (int or ``None``): Specifies the batch size.
                 If ``None``, the batch size of the current batch is
                 used. Default: ``None``.
@@ -174,6 +178,7 @@ class BatchedTensorSeq(BatchedTensor):
                 ``torch.Tensor.new_ones``.
 
         Returns:
+        -------
             ``BaseBatchedTensor``: A batch filled with the scalar
                 value ``1``.
 
@@ -219,6 +224,7 @@ class BatchedTensorSeq(BatchedTensor):
         in the current batch.
 
         Args:
+        ----
             batch_size (int or ``None``): Specifies the batch size.
                 If ``None``, the batch size of the current batch is
                 used. Default: ``None``.
@@ -229,6 +235,7 @@ class BatchedTensorSeq(BatchedTensor):
                 ``torch.Tensor.new_zeros``.
 
         Returns:
+        -------
             ``BaseBatchedTensor``: A batch filled with the scalar
                 value ``0``.
 
@@ -267,6 +274,7 @@ class BatchedTensorSeq(BatchedTensor):
         dimension and the second dimension is the batch dimension.
 
         Args:
+        ----
             data (array_like): Specifies the data for the tensor. It can
                 be a torch.Tensor, list, tuple, NumPy ndarray, scalar,
                 and other types.
@@ -279,7 +287,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))
+            >>> batch = BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))
+            >>> batch
             tensor([[1., 1., 1.],
                     [1., 1., 1.]], batch_dim=1, seq_dim=0)
         """
@@ -352,9 +361,11 @@ class BatchedTensorSeq(BatchedTensor):
         in the sequence dimension.
 
         Args:
+        ----
             **kwargs: see ``torch.cumsum`` documentation
 
         Returns:
+        -------
             ``BatchedTensorSeq``: A batch with the cumulative sum of
                 elements of the current batch in the sequence dimension.
 
@@ -395,6 +406,7 @@ class BatchedTensorSeq(BatchedTensor):
         dimension.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: A batch with the cumulative
                 summation of the exponentiation of elements of the
                 current batch in the sequence dimension.
@@ -434,12 +446,14 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Permutes the data along the sequence dimension.
 
         Args:
+        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: A new batch with permuted data.
 
         Example usage:
@@ -459,6 +473,7 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Permutes the data along the sequence dimension.
 
         Args:
+        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
@@ -482,11 +497,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Shuffles the data along the sequence dimension.
 
         Args:
+        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Returns:
+        -------
             ``BatchedTensorSeq``:  A new batch with shuffled data.
 
         Example usage:
@@ -495,9 +512,9 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).shuffle_along_seq()
-            tensor([[2, 1, 4, 0, 3],
-                    [7, 6, 9, 5, 8]], batch_dim=0, seq_dim=1)
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.shuffle_along_seq()  # doctest:+ELLIPSIS
+            tensor([[...]], batch_dim=0, seq_dim=1)
         """
         return self.permute_along_seq(torch.randperm(self.seq_len, generator=generator))
 
@@ -505,6 +522,7 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Shuffles the data along the sequence dimension.
 
         Args:
+        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -517,9 +535,8 @@ class BatchedTensorSeq(BatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.shuffle_along_seq_()
-            >>> batch
-            tensor([[2, 1, 4, 0, 3],
-                    [7, 6, 9, 5, 8]], batch_dim=0, seq_dim=1)
+            >>> batch  # doctest:+ELLIPSIS
+            tensor([[...]], batch_dim=0, seq_dim=1)
         """
         self.permute_along_seq_(torch.randperm(self.seq_len, generator=generator))
 
@@ -530,6 +547,7 @@ class BatchedTensorSeq(BatchedTensor):
         in monotonic order by value.
 
         Args:
+        ----
             descending (bool, optional): Controls the sorting order.
                 If ``True``, the elements are sorted in descending
                 order by value. Default: ``False``
@@ -538,6 +556,7 @@ class BatchedTensorSeq(BatchedTensor):
                 is preserved. Default: ``False``
 
         Returns:
+        -------
             (``BatchedTensorSeq``, ``BatchedTensorSeq``): A tuple with
                 two values:
                     - The first batch contains the batch values sorted
@@ -551,12 +570,13 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.rand(2, 5)).sort_along_seq()
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.sort_along_seq(descending=True)
             torch.return_types.sort(
-            values=tensor([[0.2884, 0.4014, 0.5857, 0.6949, 0.8264],
-                    [0.3811, 0.4431, 0.4857, 0.6009, 0.7207]], batch_dim=0, seq_dim=1),
-            indices=tensor([[2, 4, 3, 0, 1],
-                    [1, 0, 4, 2, 3]], batch_dim=0, seq_dim=1))
+            values=tensor([[4, 3, 2, 1, 0],
+                    [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1),
+            indices=tensor([[4, 3, 2, 1, 0],
+                    [4, 3, 2, 1, 0]], batch_dim=0, seq_dim=1))
         """
         return self.sort(dim=self._seq_dim, descending=descending, stable=stable)
 
@@ -592,11 +612,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the maximum values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not.
                 Default: ``False``
 
         Returns:
+        -------
             ``torch.return_types.max``: A batch with
                 the maximum values along the sequence dimension.
 
@@ -606,11 +628,13 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).max_along_seq()
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.max_along_seq()
             torch.return_types.max(
             values=tensor([4, 9]),
             indices=tensor([4, 4]))
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).max_along_seq(keepdim=True)
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.max_along_seq(keepdim=True)
             torch.return_types.max(
             values=tensor([[4], [9]]),
             indices=tensor([[4], [4]]))
@@ -621,12 +645,14 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the mean values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not. If ``False``
                 the returned type is ``BatchedTensor``, otherwise it
                 is ``BatchedTensorSeq``. Default: ``False``
 
         Returns:
+        -------
             ``BatchedTensor`` or ``BatchedTensorSeq``: A batch with
                 the mean values along the sequence dimension.
 
@@ -636,10 +662,12 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5).float()).mean_along_seq()
-            tensor([2.0, 7.0])
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5).float()).mean_along_seq(keepdim=True)
-            tensor([[2.0], [7.0]])
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5).float())
+            >>> batch.mean_along_seq()
+            tensor([2., 7.])
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5).float())
+            >>> batch.mean_along_seq(keepdim=True)
+            tensor([[2.], [7.]])
         """
         return self.mean(dim=self._seq_dim, keepdim=keepdim)
 
@@ -647,11 +675,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the median values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not.
                 Default: ``False``
 
         Returns:
+        -------
             ``torch.return_types.median``:  The first tensor will
                 be populated with the median values and the second
                 tensor, which must have dtype long, with their indices
@@ -663,7 +693,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).median_along_seq()
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.median_along_seq()
             torch.return_types.median(
             values=tensor([2, 7]),
             indices=tensor([2, 2]))
@@ -674,11 +705,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the minimum values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not.
                 Default: ``False``
 
         Returns:
+        -------
             ``torch.return_types.min``: A batch with
                 the minimum values along the sequence dimension.
 
@@ -688,11 +721,13 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).min_along_seq()
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.min_along_seq()
             torch.return_types.min(
             values=tensor([0, 5]),
             indices=tensor([0, 0]))
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).min_along_seq(keepdim=True)
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.min_along_seq(keepdim=True)
             torch.return_types.min(
             values=tensor([[0], [5]]),
             indices=tensor([[0], [0]]))
@@ -703,11 +738,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the mean values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the batch dimension retained or not.
                 Default: ``False``
 
         Returns:
+        -------
             ``torch.Tensor``: A batch with
                 the mean values along the sequence dimension.
 
@@ -717,14 +754,11 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(
-            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
-            ... ).nanmean_along_seq()
-            tensor([2.0, 6.5])
-            >>> BatchedTensorSeq(
-            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
-            ... ).nanmean_along_seq(keepdim=True)
-            tensor([[2.0], [6.5]])
+            >>> batch = BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+            >>> batch.nanmean_along_seq()
+            tensor([2.0000, 6.5000])
+            >>> batch.nanmean_along_seq(keepdim=True)
+            tensor([[2.0000], [6.5000]])
         """
         return self.nanmean(dim=self._seq_dim, keepdim=keepdim)
 
@@ -732,11 +766,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the median values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not.
                 Default: ``False``
 
         Returns:
+        -------
             ``torch.return_types.nanmedian``:  The first tensor will
                 be populated with the median values and the second
                 tensor, which must have dtype long, with their indices
@@ -748,9 +784,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(
-            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
-            ... ).nanmedian_along_seq()
+            >>> batch = BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+            >>> batch.nanmedian_along_seq()
             torch.return_types.nanmedian(
             values=tensor([2., 6.]),
             indices=tensor([2, 1]))
@@ -761,11 +796,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the sum values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not.
                 Default: ``False``
 
         Returns:
+        -------
             ``torch.Tensor``: A tensor with the sum values along the
                 sequence dimension.
 
@@ -775,10 +812,9 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(
-            ...     torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])
-            ... ).nansum_along_seq()
-            tensor([20., 26.])
+            >>> batch = BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
+            >>> batch.nansum_along_seq()
+            tensor([10., 26.])
         """
         return self.nansum(dim=self._seq_dim, keepdim=keepdim)
 
@@ -786,11 +822,13 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the product values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not.
                 Default: ``False``
 
         Returns:
+        -------
             ``torch.Tensor``: A batch with
                 the product values along the sequence dimension.
 
@@ -800,11 +838,10 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_seq()
+            >>> batch = BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]]))
+            >>> batch.prod_along_seq()
             tensor([ 120, 3024])
-            >>> BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 1]])).prod_along_seq(
-            ...     keepdim=True
-            ... )
+            >>> batch.prod_along_seq(keepdim=True)
             tensor([[ 120], [3024]])
         """
         return self.prod(dim=self._seq_dim, keepdim=keepdim)
@@ -813,12 +850,14 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the sum values along the sequence dimension.
 
         Args:
+        ----
             keepdim (bool): Indicates whether the output tensor has
                 the sequence dimension retained or not. If ``False``
                 the returned type is ``BatchedTensor``, otherwise it
                 is ``BatchedTensorSeq``. Default: ``False``
 
         Returns:
+        -------
             ``torch.Tensor``: A tensor with the sum values along the
                 sequence dimension.
 
@@ -828,7 +867,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).sum_along_seq()
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.sum_along_seq()
             tensor([10, 35])
         """
         return self.sum(dim=self._seq_dim, keepdim=keepdim)
@@ -844,10 +884,12 @@ class BatchedTensorSeq(BatchedTensor):
         are aligned.
 
         Args:
+        ----
             other (``BatchedTensorSeq``): Specifies the batch to use to
                 align the current batch.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: The aligned batch.
 
         Example usage:
@@ -856,21 +898,21 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            # batch-sequence -> sequence-batch
+            >>> # batch-sequence -> sequence-batch
             >>> seq_batch = BatchedTensorSeq(torch.ones(2, 3), batch_dim=1, seq_dim=0)
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).align_as(seq_batch)
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.align_as(seq_batch)
             tensor([[0, 5],
                     [1, 6],
                     [2, 7],
                     [3, 8],
-                    [4, 9]], batch_dim=0, seq_dim=1)
-            # sequence-batch -> batch-sequence
+                    [4, 9]], batch_dim=1, seq_dim=0)
+            >>> # sequence-batch -> batch-sequence
             >>> batch_seq = BatchedTensorSeq(torch.ones(2, 3))
-            >>> BatchedTensorSeq.from_seq_batch(
-            ...     torch.arange(10).view(5, 2), batch_dim=1, seq_dim=0
-            ... ).align_as(batch_seq)
+            >>> batch = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+            >>> batch.align_as(batch_seq)
             tensor([[0, 2, 4, 6, 8],
-                    [1, 3, 5, 7, 9]], batch_dim=1, seq_dim=0)
+                    [1, 3, 5, 7, 9]], batch_dim=0, seq_dim=1)
         """
         if not isinstance(other, self.__class__):
             raise TypeError(
@@ -895,6 +937,7 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Aligns the current batch to the batch-sequence format.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: The batch in the batch-sequence
                 format.
 
@@ -919,6 +962,7 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Aligns the current batch to the sequence-batch format.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: The batch in the sequence-batch format.
 
         Example usage:
@@ -948,10 +992,12 @@ class BatchedTensorSeq(BatchedTensor):
         along the sequence dimension and creates a new batch.
 
         Args:
+        ----
             tensors (``BatchedTensorSeq`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: A batch with the concatenated data
                 along the sequence dimension.
 
@@ -961,16 +1007,12 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]])).cat_along_seq(
-            ...     BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]]))
-            ... )
+            >>> batch = BatchedTensorSeq(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.cat_along_seq(BatchedTensorSeq(torch.tensor([[10, 11], [12, 13]])))
             tensor([[ 0,  1,  2, 10, 11],
                     [ 4,  5,  6, 12, 13]], batch_dim=0, seq_dim=1)
-            >>> BatchedTensorSeq(
-            ...     torch.tensor([[0, 4], [1, 5], [2, 6]]),
-            ...     batch_dim=1,
-            ...     seq_dim=0,
-            ... ).cat_along_seq(
+            >>> batch = BatchedTensorSeq(torch.tensor([[0, 4], [1, 5], [2, 6]]), batch_dim=1, seq_dim=0)
+            >>> batch.cat_along_seq(
             ...     [
             ...         BatchedTensorSeq(torch.tensor([[10, 12], [11, 13]]), batch_dim=1, seq_dim=0),
             ...         BatchedTensorSeq(torch.tensor([[20, 22], [21, 23]]), batch_dim=1, seq_dim=0),
@@ -995,6 +1037,7 @@ class BatchedTensorSeq(BatchedTensor):
         In-place version of ``cat_along_seq()``.
 
         Args:
+        ----
             tensors (``BatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
@@ -1014,7 +1057,7 @@ class BatchedTensorSeq(BatchedTensor):
             ...     batch_dim=1,
             ...     seq_dim=0,
             ... )
-            >>> batch.cat_along_seq(
+            >>> batch.cat_along_seq_(
             ...     [
             ...         BatchedTensorSeq(torch.tensor([[10, 12], [11, 13]]), batch_dim=1, seq_dim=0),
             ...         BatchedTensorSeq(torch.tensor([[20, 22], [21, 23]]), batch_dim=1, seq_dim=0),
@@ -1035,9 +1078,11 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Splits the batch into chunks along the sequence dimension.
 
         Args:
+        ----
             chunks (int): Specifies the number of chunks.
 
         Returns:
+        -------
             tuple: The batch split into chunks along the sequence
                 dimension.
 
@@ -1047,7 +1092,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).chunk_along_seq(chunks=3)
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.chunk_along_seq(chunks=3)
             (tensor([[0, 1], [5, 6]], batch_dim=0, seq_dim=1),
              tensor([[2, 3], [7, 8]], batch_dim=0, seq_dim=1),
              tensor([[4], [9]], batch_dim=0, seq_dim=1))
@@ -1059,10 +1105,12 @@ class BatchedTensorSeq(BatchedTensor):
         indices.
 
         Args:
+        ----
             index (``torch.Tensor`` or list or tuple): Specifies the
                 indices to select.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: A new batch sliced along the sequence
                 dimension at the given indices.
 
@@ -1095,10 +1143,12 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Repeats the batch along the sequence dimension.
 
         Args:
+        ----
             repeats (int): Specifies the number of times to repeat
                 the batch along the sequence dimension.
 
         Returns:
+        -------
             ``BatchedTensorSeq``: A repeated version of the input batch.
 
         Example usage:
@@ -1107,7 +1157,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).repeat_along_seq(2)
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.repeat_along_seq(2)
             tensor([[0, 1, 2, 3, 4, 0, 1, 2, 3, 4],
                     [5, 6, 7, 8, 9, 5, 6, 7, 8, 9]], batch_dim=0, seq_dim=1)
         """
@@ -1120,10 +1171,12 @@ class BatchedTensorSeq(BatchedTensor):
         index.
 
         Args:
+        ----
             index (int): Specifies the index to select.
 
         Returns:
-            ``BatchedTensorSeq``: The batch sliced along the sequence
+        -------
+            ``BatchedTensor``: The batch sliced along the sequence
                 dimension at the given index.
 
         Example usage:
@@ -1132,7 +1185,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).select_along_seq(2)
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.select_along_seq(2)
             tensor([2, 7], batch_dim=0)
         """
         return BatchedTensor(
@@ -1146,6 +1200,7 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Slices the batch in the sequence dimension.
 
         Args:
+        ----
             start (int, optional): Specifies the index where the
                 slicing of object starts. Default: ``0``
             stop (int, optional): Specifies the index where the
@@ -1155,6 +1210,7 @@ class BatchedTensorSeq(BatchedTensor):
                 each index for slicing. Default: ``1``
 
         Returns:
+        -------
             ``BatchedTensorSeq``: A slice of the current batch.
 
         Example usage:
@@ -1185,12 +1241,14 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Takes values along the sequence dimension.
 
         Args:
+        ----
             indices (``BaseBatch`` or ``Tensor`` or sequence):
                 Specifies the indices to take along the sequence
                 dimension.
 
         Returns:
-            ``BaseBatch``: The sequence with the selected data.
+        -------
+            ``BatchedTensorSeq``: The sequence with the selected data.
 
         Example usage:
 
@@ -1198,9 +1256,8 @@ class BatchedTensorSeq(BatchedTensor):
 
             >>> import torch
             >>> from redcat import BatchedTensorSeq
-            >>> BatchedTensorSeq(torch.arange(10).view(2, 5)).take_along_seq(
-            ...     BatchedTensorSeq(torch.tensor([[3, 0, 1], [2, 3, 4]]))
-            ... )
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.take_along_seq(BatchedTensorSeq(torch.tensor([[3, 0, 1], [2, 3, 4]])))
             tensor([[3, 0, 1],
                     [7, 8, 9]], batch_dim=0, seq_dim=1)
         """
@@ -1229,6 +1286,7 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
     correct.
 
     Args:
+    ----
         data (``torch.Tensor``): Specifies the tensor in the batch.
         batch_dim (int): Specifies the batch dimension in the
             ``torch.Tensor`` object.
@@ -1236,7 +1294,16 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
             the ``torch.Tensor`` object.
 
     Raises:
+    ------
         RuntimeError: if one of the input is incorrect.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import torch
+        >>> from redcat.tensorseq import check_data_and_dims
+        >>> check_data_and_dims(torch.ones(2, 3), batch_dim=0, seq_dim=1)
     """
     if data.dim() < 2:
         raise RuntimeError(f"data needs at least 2 dimensions (received: {data.dim()})")
@@ -1256,10 +1323,20 @@ def check_seq_dims(dims: set[int]) -> None:
     r"""Gets the sequence dimensions from the inputs.
 
     Args:
+    ----
         dims (set): Specifies the sequence dims to check.
 
     Raises:
+    ------
         RuntimeError if there are more than one sequence dimension.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat import BatchedTensorSeq
+        >>> from redcat.tensorseq import get_seq_dims
+        >>> get_seq_dims({1})
     """
     if len(dims) != 1:
         raise RuntimeError(
@@ -1271,11 +1348,25 @@ def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = No
     r"""Gets the sequence dimensions from the inputs.
 
     Args:
+    ----
         args: Variable length argument list.
         kwargs: Arbitrary keyword arguments.
 
     Returns:
+    -------
         set: The sequence dimensions.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat import BatchedTensorSeq
+        >>> from redcat.tensorseq import get_seq_dims
+        >>> get_seq_dims(
+        ...     args=(BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq(torch.ones(2, 6))),
+        ...     kwargs={"batch": BatchedTensorSeq(torch.ones(4, 2))},
+        ... )
+        {1}
     """
     kwargs = kwargs or {}
     dims = {val._seq_dim for val in args if hasattr(val, "_seq_dim")}
@@ -1424,6 +1515,7 @@ def from_sequences(
     r"""Converts variable length sequences to a single padded tensor.
 
     Args:
+    ----
         sequences (iterable): Specifies an iterable over the variable
             length sequences. Each sequence is a ``torch.Tensor`` of
             shape ``(sequence_length, *)``. This function assumes
@@ -1433,6 +1525,7 @@ def from_sequences(
         padding value. Default: ``0``
 
     Returns:
+    -------
         ``BatchedTensorSeq``: A padded tensor. The underlying data is
             a ``torch.Tensor`` of shape
             ``(batch_size, sequence_length, *)``.

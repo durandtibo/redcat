@@ -21,6 +21,7 @@ class BatchShufflerIterDataPipe(IterDataPipe[BaseBatch[T]]):
     r"""Implements a DataPipe to shuffle data in ``BaseBatch`` objects.
 
     Args:
+    ----
         datapipe (``IterDataPipe``): Specifies the source DataPipe.
             The DataPipe has to return ``BaseBatch`` objects.
         random_seed (int, optional): Specifies the random seed used
