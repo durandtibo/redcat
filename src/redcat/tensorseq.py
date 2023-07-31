@@ -1334,7 +1334,6 @@ def check_seq_dims(dims: set[int]) -> None:
 
     .. code-block:: pycon
 
-        >>> from redcat import BatchedTensorSeq
         >>> from redcat.tensorseq import get_seq_dims
         >>> get_seq_dims({1})
     """
@@ -1364,7 +1363,7 @@ def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = No
         >>> from redcat.tensorseq import get_seq_dims
         >>> get_seq_dims(
         ...     args=(BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq(torch.ones(2, 6))),
-        ...     kwargs={"batch": BatchedTensorSeq(torch.ones(4, 2))},
+        ...     kwargs={"batch": BatchedTensorSeq(torch.ones(2, 4))},
         ... )
         {1}
     """
