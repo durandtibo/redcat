@@ -8,6 +8,7 @@ from itertools import chain
 from typing import Any, TypeVar, Union, overload
 
 import torch
+from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
 from redcat.base import BaseBatch
@@ -556,7 +557,9 @@ class BatchedTensor(BaseBatch[Tensor]):
             return False
         if self._data.shape != other.data.shape:
             return False
-        return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
+        return objects_are_allclose(
+            self._data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
+        )
 
     def eq(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes element-wise equality.
@@ -595,7 +598,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             return False
         if self._batch_dim != other.batch_dim:
             return False
-        return self._data.equal(other.data)
+        return objects_are_equal(self._data, other.data)
 
     def ge(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self >= other`` element-wise.
