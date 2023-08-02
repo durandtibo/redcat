@@ -13,6 +13,7 @@ from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Any, overload
 
 import torch
+from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 from torch.nn.utils.rnn import pad_sequence
 
@@ -315,14 +316,16 @@ class BatchedTensorSeq(BatchedTensor):
             return False
         if self._data.shape != other.data.shape:
             return False
-        return self._data.allclose(other.data, rtol=rtol, atol=atol, equal_nan=equal_nan)
+        return objects_are_allclose(
+            self._data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
+        )
 
     def equal(self, other: Any) -> bool:
         if not isinstance(other, BatchedTensorSeq):
             return False
         if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:
             return False
-        return self._data.equal(other.data)
+        return objects_are_equal(self._data, other.data)
 
     ##################################################
     #     Mathematical | arithmetical operations     #

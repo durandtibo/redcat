@@ -635,7 +635,9 @@ def test_batched_tensor_seq_allclose_true() -> None:
 
 
 def test_batched_tensor_seq_allclose_false_different_type() -> None:
-    assert not BatchedTensorSeq(torch.ones(2, 3)).allclose(torch.zeros(2, 3))
+    assert not BatchedTensorSeq(torch.ones(2, 3, dtype=torch.float)).allclose(
+        torch.ones(2, 3, dtype=torch.long)
+    )
 
 
 def test_batched_tensor_seq_allclose_false_different_data() -> None:
@@ -730,7 +732,9 @@ def test_batched_tensor_seq_equal_true() -> None:
 
 
 def test_batched_tensor_seq_equal_false_different_type() -> None:
-    assert not BatchedTensorSeq(torch.ones(2, 3)).equal(torch.zeros(2, 3))
+    assert not BatchedTensorSeq(torch.ones(2, 3, dtype=torch.float)).equal(
+        torch.ones(2, 3, dtype=torch.long)
+    )
 
 
 def test_batched_tensor_seq_equal_false_different_data() -> None:
@@ -4539,9 +4543,7 @@ def test_batched_tensor_seq_logical_and_(other: BatchedTensor | Tensor, dtype: t
     batch.logical_and_(other)
     assert batch.equal(
         BatchedTensorSeq(
-            torch.tensor(
-                [[True, False, False, False], [True, False, True, False]], dtype=torch.bool
-            )
+            torch.tensor([[True, False, False, False], [True, False, True, False]], dtype=dtype)
         )
     )
 
@@ -4596,7 +4598,9 @@ def test_batched_tensor_seq_logical_not(dtype: torch.dtype) -> None:
         .logical_not()
         .equal(
             BatchedTensorSeq(
-                torch.tensor([[False, False, True, True], [False, True, False, True]], dtype=dtype)
+                torch.tensor(
+                    [[False, False, True, True], [False, True, False, True]], dtype=torch.bool
+                )
             )
         )
     )
@@ -4757,7 +4761,7 @@ def test_batched_tensor_seq_logical_or_(other: BatchedTensor | Tensor, dtype: to
     batch.logical_or_(other)
     assert batch.equal(
         BatchedTensorSeq(
-            torch.tensor([[True, True, True, False], [True, True, True, True]], dtype=torch.bool)
+            torch.tensor([[True, True, True, False], [True, True, True, True]], dtype=dtype)
         )
     )
 
@@ -4903,7 +4907,7 @@ def test_batched_tensor_seq_logical_xor_(other: BatchedTensor | Tensor, dtype: t
     batch.logical_xor_(other)
     assert batch.equal(
         BatchedTensorSeq(
-            torch.tensor([[False, True, True, False], [False, True, False, True]], dtype=torch.bool)
+            torch.tensor([[False, True, True, False], [False, True, False, True]], dtype=dtype)
         )
     )
 
