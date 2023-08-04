@@ -1,0 +1,367 @@
+from __future__ import annotations
+
+__all__ = ["BatchedArray", "check_data_and_dim"]
+
+from collections.abc import Callable
+from typing import Any, TypeVar
+
+import numpy as np
+from coola import objects_are_allclose, objects_are_equal
+from numpy import ndarray
+
+# Workaround because Self is not available for python 3.9 and 3.10
+# https://peps.python.org/pep-0673/
+TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
+
+HANDLED_FUNCTIONS = {}
+
+
+class BatchedArray:  # (BaseBatch[ndarray]):
+    r"""Implements a batched array to easily manipulate a batch of
+    examples.
+
+    Args:
+    ----
+        data (array_like): Specifies the data for the array. It can
+            be a list, tuple, NumPy ndarray, scalar, and other types.
+        batch_dim (int, optional): Specifies the batch dimension
+            in the ``torch.Tensor`` object. Default: ``0``
+        kwargs: Keyword arguments that are passed to
+            ``torch.as_array``.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+    """
+
+    def __init__(self, data: Any, *, batch_dim: int = 0, **kwargs) -> None:
+        super().__init__()
+        self._data = np.array(data, **kwargs)
+        check_data_and_dim(self._data, batch_dim)
+        self._batch_dim = int(batch_dim)
+
+    def __repr__(self) -> str:
+        return repr(self._data)[:-1] + f", batch_dim={self._batch_dim})"
+
+    def __array_function__(
+        self,
+        func: Callable,
+        types: tuple[type, ...],
+        args: tuple[Any, ...] = (),
+        kwargs: dict[str, Any] | None = None,
+    ) -> TBatchedArray:
+        # if func not in HANDLED_FUNCTIONS:
+        #     return NotImplemented
+        #     # Note: this allows subclasses that don't override
+        #     # __array_function__ to handle BatchedArray objects
+        # if not all(issubclass(t, BatchedArray) for t in types):
+        #     return NotImplemented
+        return HANDLED_FUNCTIONS[func](*args, **kwargs)
+
+    @property
+    def batch_dim(self) -> int:
+        r"""int: The batch dimension in the ``torch.Tensor`` object."""
+        return self._batch_dim
+
+    @property
+    def batch_size(self) -> int:
+        return self._data.shape[self._batch_dim]
+
+    @property
+    def data(self) -> ndarray:
+        return self._data
+
+    @property
+    def dtype(self) -> np.dtype:
+        r"""``numpy.dtype``: The data type."""
+        return self._data.dtype
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        r"""``tuple``: The shape of the array."""
+        return self._data.shape
+
+    def dim(self) -> int:
+        r"""Gets the number of dimensions.
+
+        Returns:
+        -------
+            int: The number of dimensions
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.dim()
+            2
+        """
+        return self._data.ndim
+
+    def ndimension(self) -> int:
+        r"""Gets the number of dimensions.
+
+        Returns:
+        -------
+            int: The number of dimensions
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.ndimension()
+            2
+        """
+        return self.dim()
+
+    def numel(self) -> int:
+        r"""Gets the total number of elements in the array.
+
+        Returns:
+        -------
+            int: The total number of elements
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.numel()
+            6
+        """
+        return np.prod(self._data.shape).item()
+
+    ###############################
+    #     Creation operations     #
+    ###############################
+
+    def clone(self, *args, **kwargs) -> TBatchedArray:
+        r"""Creates a copy of the current batch.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.copy``
+            **kwargs: See the documentation of ``numpy.copy``
+
+        Returns:
+        -------
+            ``BatchedArray``: A copy of the current batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch_copy = batch.clone()
+            >>> batch_copy
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+        """
+        return self._create_new_batch(self._data.copy(*args, **kwargs))
+
+    def copy(self, *args, **kwargs) -> TBatchedArray:
+        r"""Creates a copy of the current batch.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.copy``
+            **kwargs: See the documentation of ``numpy.copy``
+
+        Returns:
+        -------
+            ``BatchedArray``: A copy of the current batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch_copy = batch.copy()
+            >>> batch_copy
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+        """
+        return self.clone(*args, **kwargs)
+
+    #################################
+    #     Comparison operations     #
+    #################################
+
+    def allclose(
+        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
+    ) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        if self._batch_dim != other.batch_dim:
+            return False
+        if self._data.shape != other.data.shape:
+            return False
+        return objects_are_allclose(
+            self._data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
+        )
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        if self._batch_dim != other.batch_dim:
+            return False
+        return objects_are_equal(self._data, other.data)
+
+    # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
+    #     return self.permute_along_dim(permutation, dim=self._batch_dim)
+    #
+    # def permute_along_batch_(self, permutation: IndicesType) -> None:
+    #     self.permute_along_dim_(permutation, dim=self._batch_dim)
+
+    ##########################################################
+    #    Indexing, slicing, joining, mutating operations     #
+    ##########################################################
+
+    # def append(self, other: BaseBatch) -> None:
+    #     pass
+    #
+    # def chunk_along_batch(self, chunks: int) -> tuple[TBatchedArray, ...]:
+    #     pass
+    #
+    # def extend(self, other: Iterable[BaseBatch]) -> None:
+    #     pass
+    #
+    # def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BaseBatch:
+    #     pass
+    #
+    # def slice_along_batch(
+    #     self, start: int = 0, stop: int | None = None, step: int = 1
+    # ) -> TBatchedArray:
+    #     pass
+    #
+    # def split(
+    #     self, split_size_or_sections: int | Sequence[int], dim: int = 0
+    # ) -> tuple[TBatchedArray, ...]:
+    #     r"""Splits the batch into chunks along a given dimension.
+    #
+    #     Args:
+    #     ----
+    #         split_size_or_sections (int or sequence): Specifies the
+    #             size of a single chunk or list of sizes for each chunk.
+    #         dim (int, optional): Specifies the dimension along which
+    #             to split the array. Default: ``0``
+    #
+    #     Returns:
+    #     -------
+    #         tuple: The batch split into chunks along the given
+    #             dimension.
+    #
+    #     Example usage:
+    #
+    #     .. code-block:: pycon
+    #
+    #         >>> import torch
+    #         >>> from redcat import BatchedArray
+    #         >>> batch = BatchedArray(torch.arange(10).view(5, 2))
+    #         >>> batch.split(2, dim=0)
+    #         (array([[0, 1], [2, 3]], batch_dim=0),
+    #          array([[4, 5], [6, 7]], batch_dim=0),
+    #          array([[8, 9]], batch_dim=0))
+    #     """
+    #     if isinstance(split_size_or_sections, int):
+    #         split_size_or_sections = np.arange(
+    #             split_size_or_sections, self._data.shape[dim], split_size_or_sections
+    #         )
+    #     return np.split(self, split_size_or_sections)
+    #
+    # def split_along_batch(
+    #     self, split_size_or_sections: int | Sequence[int]
+    # ) -> tuple[TBatchedArray, ...]:
+    #     return self.split(split_size_or_sections, dim=self._batch_dim)
+
+    #################
+    #     Other     #
+    #################
+
+    def summary(self) -> str:
+        dims = ", ".join([f"{key}={value}" for key, value in self._get_kwargs().items()])
+        return f"{self.__class__.__qualname__}(dtype={self.dtype}, shape={self.shape}, {dims})"
+
+    def _create_new_batch(self, data: ndarray) -> TBatchedArray:
+        return self.__class__(data, **self._get_kwargs())
+
+    def _get_kwargs(self) -> dict:
+        return {"batch_dim": self._batch_dim}
+
+
+def check_data_and_dim(data: ndarray, batch_dim: int) -> None:
+    r"""Checks if the array ``data`` and ``batch_dim`` are correct.
+
+    Args:
+    ----
+        data (``numpy.ndarray``): Specifies the array in the batch.
+        batch_dim (int): Specifies the batch dimension in the
+            ``numpy.ndarray`` object.
+
+    Raises:
+    ------
+        RuntimeError: if one of the input is incorrect.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import numpy as np
+        >>> from redcat.array import check_data_and_dim
+        >>> check_data_and_dim(np.ones((2, 3)), batch_dim=0)
+    """
+    ndim = data.ndim
+    if ndim < 1:
+        raise RuntimeError(f"data needs at least 1 dimensions (received: {ndim})")
+    if batch_dim < 0 or batch_dim >= ndim:
+        raise RuntimeError(
+            f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {ndim - 1}]"
+        )
+
+
+def implements(np_function: Callable) -> Callable:
+    r"""Register an `__array_function__` implementation for DiagonalArray
+    objects.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import numpy as np
+        >>> from redcat.array import BatchedArray, implements
+        >>> @implements(np.sum)
+        ... def mysum(input: BatchedArray, *args, **kwargs) -> np.ndarray:
+        ...     return np.sum(input.data, *args, **kwargs)
+        >>> np.sum(BatchedArray(np.ones((2, 3))))
+        6.0
+    """
+
+    def decorator(func: Callable) -> Callable:
+        HANDLED_FUNCTIONS[np_function] = func
+        return func
+
+    return decorator
+
+
+@implements(np.sum)
+def numpysum(input: BatchedArray, *args, **kwargs) -> ndarray:  # noqa: A002
+    r"""See ``np.sum`` documentation.
+
+    Use the name ``numpysum`` to avoid shadowing `sum` python builtin.
+    """
+    return np.sum(input.data, *args, **kwargs)
