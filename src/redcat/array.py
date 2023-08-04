@@ -335,8 +335,17 @@ def check_data_and_dim(data: ndarray, batch_dim: int) -> None:
 
 
 def implements(np_function: Callable) -> Callable:
-    r"""Register an `__array_function__` implementation for DiagonalArray
-    objects.
+    r"""Register an `__array_function__` implementation for
+    ``BatchedArray`` objects.
+
+    Args:
+    ----
+        np_function (``Callable``):  Specifies the numpy function
+            to override.
+
+    Returns:
+    -------
+        ``Callable``: The decorated function.
 
     Example usage:
 
@@ -347,6 +356,7 @@ def implements(np_function: Callable) -> Callable:
         >>> @implements(np.sum)
         ... def mysum(input: BatchedArray, *args, **kwargs) -> np.ndarray:
         ...     return np.sum(input.data, *args, **kwargs)
+        ...
         >>> np.sum(BatchedArray(np.ones((2, 3))))
         6.0
     """

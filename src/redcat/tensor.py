@@ -63,7 +63,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
     ) -> TBatchedTensor:
-        # print(func, types, args, kwargs)
         kwargs = kwargs or {}
         if handled_func := HANDLED_FUNCTIONS.get(func, None):
             return handled_func(*args, **kwargs)
@@ -92,6 +91,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""``torch.device``: The device where the batch data/tensor
         is."""
         return self._data.device
+
+    @property
+    def dtype(self) -> torch.dtype:
+        r"""``torch.dtype``: The data type."""
+        return self._data.dtype
 
     @property
     def shape(self) -> torch.Size:
@@ -831,11 +835,6 @@ class BatchedTensor(BaseBatch[Tensor]):
     #################
     #     dtype     #
     #################
-
-    @property
-    def dtype(self) -> torch.dtype:
-        r"""``torch.dtype``: The data type."""
-        return self._data.dtype
 
     def bool(self) -> TBatchedTensor:
         r"""Converts the current batch to bool data type.
@@ -4344,7 +4343,30 @@ def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
 
 
 def implements(torch_function: Callable) -> Callable:
-    """Register a torch function override for BatchedTensor."""
+    """Registers a torch function override for BatchedTensor.
+
+    Args:
+    ----
+        torch_function (``Callable``):  Specifies the torch function
+            to override.
+
+    Returns:
+    -------
+        ``Callable``: The decorated function.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import torch
+        >>> from redcat.tensor import BatchedTensor, implements
+        >>> @implements(torch.sum)
+        ... def torchsum(input: BatchedTensor, *args, **kwargs) -> torch.Tensor:
+        ...     return torch.sum(input.data, *args, **kwargs)
+        ...
+        >>> torch.sum(BatchedTensor(torch.ones(2, 3)))
+        tensor(6.)
+    """
 
     def decorator(func: Callable) -> Callable:
         functools.update_wrapper(func, torch_function)

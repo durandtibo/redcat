@@ -630,7 +630,7 @@ def test_batched_tensor_equal_true() -> None:
     assert BatchedTensor(torch.ones(2, 3)).equal(BatchedTensor(torch.ones(2, 3)))
 
 
-def test_batched_tensor_equal_false_different_type() -> None:
+def test_batched_tensor_equal_false_different_dtype() -> None:
     assert not BatchedTensor(torch.ones(2, 3, dtype=torch.float)).equal(
         torch.ones(2, 3, dtype=torch.long)
     )
