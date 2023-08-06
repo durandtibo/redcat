@@ -884,7 +884,7 @@ def test_batched_array_add_batch_dim_1() -> None:
 
 def test_batched_array_add_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedArray(np.ones((2, 3))).add(BatchedArray(np.ones((2, 3)), batch_dim=1))
+        BatchedArray(np.ones((2, 2))).add(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 @mark.parametrize(
@@ -922,9 +922,64 @@ def test_batched_array_add__custom_batch_dim() -> None:
 
 
 def test_batched_array_add__incorrect_batch_dim() -> None:
-    batch = BatchedArray(np.ones((2, 3)))
+    batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.add_(BatchedArray(np.ones((2, 3)), batch_dim=1))
+        batch.add_(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_mul(other: BatchedArray | ndarray | int | float) -> None:
+    assert BatchedArray(np.ones((2, 3))).mul(other).equal(BatchedArray(np.full((2, 3), 2.0)))
+
+
+def test_batched_tensor_mul_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .mul(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+        .equal(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+    )
+
+
+def test_batched_tensor_mul_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedArray(np.ones((2, 2))).mul(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor_mul_(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.mul_(other)
+    assert batch.equal(BatchedArray(np.full((2, 3), 2.0)))
+
+
+def test_batched_tensor_mul__custom_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 3)), batch_dim=1)
+    batch.mul_(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+    assert batch.equal(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+
+
+def test_batched_tensor_mul__incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
+    with raises(RuntimeError):
+        batch.mul_(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 ##########################################################

@@ -895,6 +895,74 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             other = other.data
         self._data = np.add(self._data.data, other * alpha)
 
+    def mul(self, other: BatchedArray | ndarray | int | float) -> TBatchedArray:
+        r"""Multiplies the ``self`` batch by the input ``other`.
+
+        Similar to ``out = self * other``
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the value to multiply.
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch containing the
+                multiplication of the two batches.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> out = batch.mul(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+            >>> out
+            array([[2., 2., 2.],
+                   [2., 2., 2.]], batch_dim=0)
+        """
+        batch_dims = get_batch_dims((self, other))
+        check_batch_dims(batch_dims)
+        if isinstance(other, BatchedArray):
+            other = other.data
+        return self.__class__(self.data * other, batch_dim=batch_dims.pop())
+
+    def mul_(self, other: BatchedArray | ndarray | int | float) -> None:
+        r"""Multiplies the ``self`` batch by the input ``other`.
+
+        Similar to ``self *= other`` (in-place)
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the value to multiply.
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch containing the
+                multiplication of the two batches.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.mul_(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[2., 2., 2.],
+                   [2., 2., 2.]], batch_dim=0)
+        """
+        check_batch_dims(get_batch_dims((self, other)))
+        if isinstance(other, BatchedArray):
+            other = other.data
+        self._data = self._data * other
+
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)
     #
