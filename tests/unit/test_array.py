@@ -883,8 +883,9 @@ def test_batched_array_add_batch_dim_1() -> None:
 
 
 def test_batched_array_add_incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedArray(np.ones((2, 2))).add(BatchedArray(np.ones((2, 2)), batch_dim=1))
+        batch.add(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 @mark.parametrize(
@@ -958,8 +959,9 @@ def test_batched_array_div_custom_batch_dim() -> None:
 
 
 def test_batched_array_div_incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedArray(np.ones((2, 2))).div(BatchedArray(np.ones((2, 2)), batch_dim=1))
+        batch.div(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1019,8 +1021,9 @@ def test_batched_array_fmod_custom_dims() -> None:
 
 
 def test_batched_array_fmod_incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedArray(np.ones((2, 2))).fmod(BatchedArray(np.ones((2, 2)), batch_dim=1))
+        batch.fmod(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1074,8 +1077,9 @@ def test_batched_array_mul_custom_batch_dim() -> None:
 
 
 def test_batched_array_mul_incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedArray(np.ones((2, 2))).mul(BatchedArray(np.ones((2, 2)), batch_dim=1))
+        batch.mul(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1157,8 +1161,9 @@ def test_batched_array_sub_custom_batch_dims() -> None:
 
 
 def test_batched_array_sub_incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedArray(np.ones((2, 2))).sub(BatchedArray(np.ones((2, 2)), batch_dim=1))
+        batch.sub(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1435,8 +1440,8 @@ def test_numpy_concatenate_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         np.concatenate(
             [
-                BatchedArray(np.ones((2, 3))),
-                BatchedArray(np.zeros((2, 3)), batch_dim=1),
+                BatchedArray(np.ones((2, 2))),
+                BatchedArray(np.zeros((2, 2)), batch_dim=1),
             ]
         )
 

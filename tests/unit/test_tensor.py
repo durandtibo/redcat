@@ -1177,8 +1177,9 @@ def test_batched_tensor_add_batch_dim_1() -> None:
 
 
 def test_batched_tensor_add_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensor(torch.ones(2, 3)).add(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.add(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1216,9 +1217,9 @@ def test_batched_tensor_add__custom_batch_dim() -> None:
 
 
 def test_batched_tensor_add__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.add_(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.add_(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1252,8 +1253,9 @@ def test_batched_tensor_div_custom_batch_dim() -> None:
 
 
 def test_batched_tensor_div_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensor(torch.ones(2, 3)).div(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.div(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1285,9 +1287,9 @@ def test_batched_tensor_div__custom_batch_dim() -> None:
 
 
 def test_batched_tensor_div__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.div_(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.div_(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1313,8 +1315,9 @@ def test_batched_tensor_fmod_custom_dims() -> None:
 
 
 def test_batched_tensor_fmod_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensor(torch.ones(2, 3)).fmod(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.fmod(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1340,9 +1343,9 @@ def test_batched_tensor_fmod__custom_dims() -> None:
 
 
 def test_batched_tensor_fmod__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3, 1))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.fmod_(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.fmod_(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1368,8 +1371,9 @@ def test_batched_tensor_mul_custom_batch_dim() -> None:
 
 
 def test_batched_tensor_mul_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensor(torch.ones(2, 3)).mul(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.mul(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1451,8 +1455,9 @@ def test_batched_tensor_sub_custom_batch_dims() -> None:
 
 
 def test_batched_tensor_sub_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensor(torch.ones(2, 3)).sub(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.sub(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -1490,9 +1495,9 @@ def test_batched_tensor_sub__custom_batch_dim() -> None:
 
 
 def test_batched_tensor_sub__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3, 1))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.sub_(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+        batch.sub_(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 ###########################################################
@@ -2584,9 +2589,9 @@ def test_batched_tensor_maximum_custom_dims() -> None:
 
 
 def test_batched_tensor_maximum_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.maximum(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.maximum(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -2613,9 +2618,9 @@ def test_batched_tensor_minimum_custom_dims() -> None:
 
 
 def test_batched_tensor_minimum_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.minimum(BatchedTensor(torch.ones(2, 3), batch_dim=1))
+        batch.minimum(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -2669,8 +2674,9 @@ def test_batched_tensor_pow_custom_dims() -> None:
 
 
 def test_batched_tensor_pow_incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensor(torch.ones(2, 3, 1)).pow(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+        batch.pow(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -2715,8 +2721,9 @@ def test_batched_tensor_pow__custom_dims() -> None:
 
 
 def test_batched_tensor_pow__incorrect_batch_dim() -> None:
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensor(torch.ones(2, 3, 1)).pow_(BatchedTensor(torch.ones(2, 3, 1), batch_dim=2))
+        batch.pow_(BatchedTensor(torch.ones(2, 2), batch_dim=1))
 
 
 def test_batched_tensor_rsqrt() -> None:
@@ -4223,11 +4230,11 @@ def test_batched_tensor_logical_and_custom_dims() -> None:
 
 
 def test_batched_tensor_logical_and_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.zeros(2, 3, dtype=torch.bool))
+    batch = BatchedTensor(torch.zeros(2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_and(
             BatchedTensor(
-                torch.zeros(2, 3, dtype=torch.bool),
+                torch.zeros(2, 2, dtype=torch.bool),
                 batch_dim=1,
             )
         )
@@ -4279,11 +4286,11 @@ def test_batched_tensor_logical_and__custom_dims() -> None:
 
 
 def test_batched_tensor_logical_and__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.zeros(2, 3, dtype=torch.bool))
+    batch = BatchedTensor(torch.zeros(2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_and_(
             BatchedTensor(
-                torch.zeros(2, 3, dtype=torch.bool),
+                torch.zeros(2, 2, dtype=torch.bool),
                 batch_dim=1,
             )
         )
@@ -4411,11 +4418,11 @@ def test_batched_tensor_logical_or_custom_dims() -> None:
 
 
 def test_batched_tensor_logical_or_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.zeros(2, 3, dtype=torch.bool))
+    batch = BatchedTensor(torch.zeros(2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_or(
             BatchedTensor(
-                torch.zeros(2, 3, dtype=torch.bool),
+                torch.zeros(2, 2, dtype=torch.bool),
                 batch_dim=1,
             )
         )
@@ -4465,11 +4472,11 @@ def test_batched_tensor_logical_or__custom_dims() -> None:
 
 
 def test_batched_tensor_logical_or__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.zeros(2, 3, dtype=torch.bool))
+    batch = BatchedTensor(torch.zeros(2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_or_(
             BatchedTensor(
-                torch.zeros(2, 3, dtype=torch.bool),
+                torch.zeros(2, 2, dtype=torch.bool),
                 batch_dim=1,
             )
         )
@@ -4531,11 +4538,11 @@ def test_batched_tensor_logical_xor_custom_dims() -> None:
 
 
 def test_batched_tensor_logical_xor_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.zeros(2, 3, dtype=torch.bool))
+    batch = BatchedTensor(torch.zeros(2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_xor(
             BatchedTensor(
-                torch.zeros(2, 3, dtype=torch.bool),
+                torch.zeros(2, 2, dtype=torch.bool),
                 batch_dim=1,
             )
         )
@@ -4587,11 +4594,11 @@ def test_batched_tensor_logical_xor__custom_dims() -> None:
 
 
 def test_batched_tensor_logical_xor__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.zeros(2, 3, dtype=torch.bool))
+    batch = BatchedTensor(torch.zeros(2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_xor_(
             BatchedTensor(
-                torch.zeros(2, 3, dtype=torch.bool),
+                torch.zeros(2, 2, dtype=torch.bool),
                 batch_dim=1,
             )
         )
@@ -4702,9 +4709,9 @@ def test_batched_tensor_append_custom_dims_2() -> None:
 
 
 def test_batched_tensor_append_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.append(BatchedTensor(torch.zeros(2, 3), batch_dim=1))
+        batch.append(BatchedTensor(torch.zeros(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -4763,9 +4770,9 @@ def test_batched_tensor_cat_empty() -> None:
 
 
 def test_batched_tensor_cat_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
+        batch.cat([BatchedTensor(torch.zeros(2, 2), batch_dim=1)])
 
 
 @mark.parametrize(
@@ -4822,9 +4829,9 @@ def test_batched_tensor_cat__empty() -> None:
 
 
 def test_batched_tensor_cat__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
+        batch.cat_([BatchedTensor(torch.zeros(2, 2), batch_dim=1)])
 
 
 @mark.parametrize(
@@ -4894,9 +4901,9 @@ def test_batched_tensor_cat_along_batch_empty() -> None:
 
 
 def test_batched_tensor_cat_along_batch_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_along_batch([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
+        batch.cat_along_batch([BatchedTensor(torch.zeros(2, 2), batch_dim=1)])
 
 
 @mark.parametrize(
@@ -4960,9 +4967,9 @@ def test_batched_tensor_cat_along_batch__empty() -> None:
 
 
 def test_batched_tensor_cat_along_batch__incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_along_batch_([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
+        batch.cat_along_batch_([BatchedTensor(torch.zeros(2, 2), batch_dim=1)])
 
 
 def test_batched_tensor_chunk_3() -> None:
@@ -5101,9 +5108,9 @@ def test_batched_tensor_extend_empty() -> None:
 
 
 def test_batched_tensor_extend_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.extend([BatchedTensor(torch.zeros(2, 3), batch_dim=1)])
+        batch.extend([BatchedTensor(torch.zeros(2, 2), batch_dim=1)])
 
 
 @mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
@@ -5159,9 +5166,9 @@ def test_batched_tensor_masked_fill_custom_dims() -> None:
 
 
 def test_batched_tensor_masked_fill_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.masked_fill(BatchedTensor(torch.zeros(2, 3), batch_dim=1), 0)
+        batch.masked_fill(BatchedTensor(torch.zeros(2, 2), batch_dim=1), 0)
 
 
 def test_batched_tensor_select_dim_0() -> None:
@@ -5507,9 +5514,9 @@ def test_batched_tensor_take_along_batch_extra_dim_end() -> None:
 
 
 def test_batched_tensor_take_along_batch_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.take_along_batch(BatchedTensor(torch.zeros(1, 3), batch_dim=1))
+        batch.take_along_batch(BatchedTensor(torch.zeros(2, 2), batch_dim=1))
 
 
 @mark.parametrize(
@@ -5577,9 +5584,9 @@ def test_batched_tensor_take_along_dim_extra_dim_end() -> None:
 
 
 def test_batched_tensor_take_along_dim_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.take_along_dim(BatchedTensor(torch.zeros(1, 3), batch_dim=1), dim=0)
+        batch.take_along_dim(BatchedTensor(torch.zeros(2, 2), batch_dim=1), dim=0)
 
 
 def test_batched_tensor_unsqueeze_dim_0() -> None:
@@ -5649,9 +5656,9 @@ def test_batched_tensor_view_as_custom_dims() -> None:
 
 
 def test_batched_tensor_view_as_incorrect_batch_dim() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
+    batch = BatchedTensor(torch.ones(2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.view_as(BatchedTensor(torch.zeros(2, 1), batch_dim=1))
+        batch.view_as(BatchedTensor(torch.zeros(2, 2), batch_dim=1))
 
 
 ########################
@@ -5884,8 +5891,8 @@ def test_torch_cat_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.cat(
             [
-                BatchedTensor(torch.ones(2, 3)),
-                BatchedTensor(torch.zeros(2, 3), batch_dim=1),
+                BatchedTensor(torch.ones(2, 2)),
+                BatchedTensor(torch.zeros(2, 2), batch_dim=1),
             ]
         )
 
@@ -5992,8 +5999,8 @@ def test_torch_maximum_custom_dims() -> None:
 def test_torch_maximum_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.maximum(
-            BatchedTensor(torch.ones(2, 3)),
-            BatchedTensor(torch.ones(2, 3), batch_dim=1),
+            BatchedTensor(torch.ones(2, 2)),
+            BatchedTensor(torch.ones(2, 2), batch_dim=1),
         )
 
 
@@ -6096,8 +6103,8 @@ def test_torch_minimum_custom_dims() -> None:
 def test_torch_minimum_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.minimum(
-            BatchedTensor(torch.ones(2, 3)),
-            BatchedTensor(torch.ones(2, 3), batch_dim=1),
+            BatchedTensor(torch.ones(2, 2)),
+            BatchedTensor(torch.ones(2, 2), batch_dim=1),
         )
 
 
@@ -6485,6 +6492,6 @@ def test_torch_take_along_dim_tensor2() -> None:
 def test_torch_take_along_dim_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.take_along_dim(
-            BatchedTensor(torch.ones(2, 3)),
-            BatchedTensor(torch.zeros(2, 1), batch_dim=1),
+            BatchedTensor(torch.ones(2, 2)),
+            BatchedTensor(torch.zeros(2, 2), batch_dim=1),
         )
