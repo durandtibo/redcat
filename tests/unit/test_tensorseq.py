@@ -1315,15 +1315,15 @@ def test_batched_tensor_seq_add_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_add_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3)).add(BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=2))
+        batch.add(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_add_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 4)).add(
-            BatchedTensorSeq(torch.ones(2, 3, 4), batch_dim=0, seq_dim=2)
-        )
+        batch.add(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=0, seq_dim=2))
 
 
 @mark.parametrize(
@@ -1361,15 +1361,15 @@ def test_batched_tensor_seq_add__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_add__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.add_(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+        batch.add_(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_add__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.add_(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
+        batch.add_(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1407,15 +1407,15 @@ def test_batched_tensor_seq_div_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_div_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).div(
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
-        )
+        batch.div(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_div_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).div(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.div(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1447,15 +1447,15 @@ def test_batched_tensor_seq_div__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_div__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.div_(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+        batch.div_(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_div__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.div_(BatchedTensorSeq(torch.ones(2, 3, 1), seq_dim=2))
+        batch.div_(BatchedTensorSeq(torch.ones(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1481,17 +1481,15 @@ def test_batched_tensor_seq_fmod_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_fmod_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).fmod(
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
-        )
+        batch.fmod(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_fmod_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).fmod(
-            BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2)
-        )
+        batch.fmod(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1510,15 +1508,15 @@ def test_batched_tensor_seq_fmod__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_fmod__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.fmod_(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+        batch.fmod_(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_fmod__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.fmod_(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.fmod_(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1548,15 +1546,15 @@ def test_batched_tensor_seq_mul_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_mul_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).mul(
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
-        )
+        batch.mul(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_mul_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).mul(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.mul(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1582,15 +1580,15 @@ def test_batched_tensor_seq_mul__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_mul__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
-    with raises(RuntimeError):
-        batch.mul_(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.mul_(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_mul__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
-    with raises(RuntimeError):
-        batch.mul_(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        batch.mul_(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 def test_batched_tensor_seq_neg() -> None:
@@ -1644,15 +1642,15 @@ def test_batched_tensor_seq_sub_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_sub_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).sub(
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
-        )
+        batch.sub(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_sub_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).sub(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
+        batch.sub(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -1690,15 +1688,15 @@ def test_batched_tensor_seq_sub__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_sub__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.sub_(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+        batch.sub_(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_sub__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.sub_(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.sub_(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 ###########################################################
@@ -3248,15 +3246,15 @@ def test_batched_tensor_seq_maximum_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_maximum_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.maximum(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+        batch.maximum(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_maximum_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.maximum(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.maximum(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -3284,15 +3282,15 @@ def test_batched_tensor_seq_minimum_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_minimum_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.minimum(BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2))
+        batch.minimum(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_minimum_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.minimum(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.minimum(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -3354,15 +3352,15 @@ def test_batched_tensor_seq_pow_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_pow_incorrect_batch_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).pow(
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
-        )
+        batch.pow(BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_pow_incorrect_seq_dim() -> None:
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).pow(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
+        batch.pow(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -3409,15 +3407,15 @@ def test_batched_tensor_seq_pow__custom_dims() -> None:
 
 def test_batched_tensor_seq_pow__incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).pow_(
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2)
+        BatchedTensorSeq(torch.ones(2, 2, 2)).pow_(
+            BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2)
         )
 
 
 def test_batched_tensor_seq_pow__incorrect_seq_dim() -> None:
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        BatchedTensorSeq(torch.ones(2, 3, 1)).pow_(
-            BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)
+        BatchedTensorSeq(torch.ones(2, 2, 2)).pow_(
+            BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)
         )
 
 
@@ -4504,20 +4502,20 @@ def test_batched_tensor_seq_logical_and_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_logical_and_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_and(
             BatchedTensorSeq(
-                torch.zeros(2, 3, 1, dtype=torch.bool),
+                torch.zeros(2, 2, 2, dtype=torch.bool),
                 batch_dim=2,
             )
         )
 
 
 def test_batched_tensor_seq_logical_and_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.logical_and(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+        batch.logical_and(BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool), seq_dim=2))
 
 
 @mark.parametrize(
@@ -4573,20 +4571,20 @@ def test_batched_tensor_seq_logical_and__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_logical_and__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_and_(
             BatchedTensorSeq(
-                torch.zeros(2, 3, 1, dtype=torch.bool),
+                torch.zeros(2, 2, 2, dtype=torch.bool),
                 batch_dim=2,
             )
         )
 
 
 def test_batched_tensor_seq_logical_and__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.logical_and_(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+        batch.logical_and_(BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool), seq_dim=2))
 
 
 @mark.parametrize("dtype", (torch.bool, torch.float, torch.long))
@@ -4722,20 +4720,20 @@ def test_batched_tensor_seq_logical_or_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_logical_or_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_or(
             BatchedTensorSeq(
-                torch.zeros(2, 3, 1, dtype=torch.bool),
+                torch.zeros(2, 2, 2, dtype=torch.bool),
                 batch_dim=2,
             )
         )
 
 
 def test_batched_tensor_seq_logical_or_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.logical_or(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+        batch.logical_or(BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool), seq_dim=2))
 
 
 @mark.parametrize(
@@ -4789,20 +4787,20 @@ def test_batched_tensor_seq_logical_or__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_logical_or__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_or_(
             BatchedTensorSeq(
-                torch.zeros(2, 3, 1, dtype=torch.bool),
+                torch.zeros(2, 2, 2, dtype=torch.bool),
                 batch_dim=2,
             )
         )
 
 
 def test_batched_tensor_seq_logical_or__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.logical_or_(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+        batch.logical_or_(BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool), seq_dim=2))
 
 
 @mark.parametrize(
@@ -4868,20 +4866,20 @@ def test_batched_tensor_seq_logical_xor_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_logical_xor_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_xor(
             BatchedTensorSeq(
-                torch.zeros(2, 3, 1, dtype=torch.bool),
+                torch.zeros(2, 2, 2, dtype=torch.bool),
                 batch_dim=2,
             )
         )
 
 
 def test_batched_tensor_seq_logical_xor_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.logical_xor(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+        batch.logical_xor(BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool), seq_dim=2))
 
 
 @mark.parametrize(
@@ -4937,20 +4935,20 @@ def test_batched_tensor_seq_logical_xor__custom_dims() -> None:
 
 
 def test_batched_tensor_seq_logical_xor__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.logical_xor_(
             BatchedTensorSeq(
-                torch.zeros(2, 3, 1, dtype=torch.bool),
+                torch.zeros(2, 2, 2, dtype=torch.bool),
                 batch_dim=2,
             )
         )
 
 
 def test_batched_tensor_seq_logical_xor__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1, dtype=torch.bool))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2, dtype=torch.bool))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.logical_xor_(BatchedTensorSeq(torch.zeros(2, 3, 1, dtype=torch.bool), seq_dim=2))
+        batch.logical_xor_(BatchedTensorSeq(torch.zeros(2, 2, 2, dtype=torch.bool), seq_dim=2))
 
 
 ################################
@@ -5927,15 +5925,15 @@ def test_batched_tensor_seq_append_custom_dims_seq_dim_2() -> None:
 
 
 def test_batched_tensor_seq_append_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.append(BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2))
+        batch.append(BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_append_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.append(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
+        batch.append(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -5980,15 +5978,15 @@ def test_batched_tensor_seq_cat_empty() -> None:
 
 
 def test_batched_tensor_seq_cat_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+        batch.cat([BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2)])
 
 
 def test_batched_tensor_seq_cat_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.cat([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+        batch.cat([BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)])
 
 
 @mark.parametrize(
@@ -6049,15 +6047,15 @@ def test_batched_tensor_seq_cat__empty() -> None:
 
 
 def test_batched_tensor_cat__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+        batch.cat_([BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2)])
 
 
 def test_batched_tensor_seq_cat__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.cat_([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+        batch.cat_([BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)])
 
 
 @mark.parametrize(
@@ -6133,15 +6131,15 @@ def test_batched_tensor_seq_cat_along_batch_empty() -> None:
 
 
 def test_batched_tensor_seq_cat_along_batch_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_along_batch([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+        batch.cat_along_batch([BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2)])
 
 
 def test_batched_tensor_seq_cat_along_batch_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.cat_along_batch([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+        batch.cat_along_batch([BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)])
 
 
 @mark.parametrize(
@@ -6209,15 +6207,15 @@ def test_batched_tensor_seq_cat_along_batch__empty() -> None:
 
 
 def test_batched_tensor_seq_cat_along_batch__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_along_batch_([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+        batch.cat_along_batch_([BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2)])
 
 
 def test_batched_tensor_seq_cat_along_batch__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.cat_along_batch_([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+        batch.cat_along_batch_([BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)])
 
 
 @mark.parametrize(
@@ -6289,15 +6287,15 @@ def test_batched_tensor_seq_cat_along_seq_empty() -> None:
 
 
 def test_batched_tensor_seq_cat_along_seq_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_along_seq([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+        batch.cat_along_seq([BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2)])
 
 
 def test_batched_tensor_seq_cat_along_seq_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.cat_along_seq([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+        batch.cat_along_seq([BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)])
 
 
 @mark.parametrize(
@@ -6359,15 +6357,15 @@ def test_batched_tensor_seq_cat_along_seq__empty() -> None:
 
 
 def test_batched_tensor_seq_cat_along_seq__incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.cat_along_seq_([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+        batch.cat_along_seq_([BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2)])
 
 
 def test_batched_tensor_seq_cat_along_seq__incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.cat_along_seq_([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+        batch.cat_along_seq_([BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)])
 
 
 def test_batched_tensor_seq_chunk_3() -> None:
@@ -6546,15 +6544,15 @@ def test_batched_tensor_seq_extend_empty() -> None:
 
 
 def test_batched_tensor_seq_extend_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.extend([BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2)])
+        batch.extend([BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2)])
 
 
 def test_batched_tensor_seq_extend_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.extend([BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2)])
+        batch.extend([BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)])
 
 
 @mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
@@ -6683,15 +6681,15 @@ def test_batched_tensor_seq_masked_fill_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_masked_fill_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2), 0)
+        batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2), 0)
 
 
 def test_batched_tensor_seq_masked_fill_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2), 0)
+        batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2), 0)
 
 
 def test_batched_tensor_seq_repeat_along_seq_repeats_1() -> None:
@@ -7255,15 +7253,15 @@ def test_batched_tensor_seq_take_along_batch_extra_dim_end() -> None:
 
 
 def test_batched_tensor_seq_take_along_batch_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 4))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.take_along_batch(BatchedTensorSeq(torch.zeros(2, 1, 4), batch_dim=2))
+        batch.take_along_batch(BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_take_along_batch_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 4))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.take_along_batch(BatchedTensorSeq(torch.zeros(2, 1, 4), seq_dim=2))
+        batch.take_along_batch(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -7338,15 +7336,15 @@ def test_batched_tensor_seq_take_along_dim_extra_dim_end() -> None:
 
 
 def test_batched_tensor_seq_take_along_dim_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.take_along_dim(BatchedTensorSeq(torch.zeros(1, 3, 1), batch_dim=2), dim=0)
+        batch.take_along_dim(BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2), dim=0)
 
 
 def test_batched_tensor_seq_take_along_dim_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 4))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.take_along_batch(BatchedTensorSeq(torch.zeros(2, 1, 4), seq_dim=2))
+        batch.take_along_batch(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 @mark.parametrize(
@@ -7403,15 +7401,15 @@ def test_batched_tensor_seq_take_along_seq_extra_dim_first() -> None:
 
 
 def test_batched_tensor_seq_take_along_seq_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.take_along_seq(BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2))
+        batch.take_along_seq(BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_take_along_seq_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.take_along_seq(BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2))
+        batch.take_along_seq(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 def test_batched_tensor_seq_unsqueeze_dim_0() -> None:
@@ -7491,15 +7489,15 @@ def test_batched_tensor_seq_view_as_custom_dims() -> None:
 
 
 def test_batched_tensor_seq_view_as_incorrect_batch_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.view_as(BatchedTensorSeq(torch.zeros(2, 1), batch_dim=1, seq_dim=0))
+        batch.view_as(BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2))
 
 
 def test_batched_tensor_seq_view_as_incorrect_seq_dim() -> None:
-    batch = BatchedTensorSeq(torch.ones(2, 3, 1))
+    batch = BatchedTensorSeq(torch.ones(2, 2, 2))
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        batch.view_as(BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2))
+        batch.view_as(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2))
 
 
 ########################
@@ -7815,8 +7813,8 @@ def test_torch_cat_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.cat(
             [
-                BatchedTensorSeq(torch.ones(2, 3, 1)),
-                BatchedTensorSeq(torch.zeros(2, 3, 1), batch_dim=2),
+                BatchedTensorSeq(torch.ones(2, 2, 2)),
+                BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2),
             ]
         )
 
@@ -7825,8 +7823,8 @@ def test_torch_cat_incorrect_seq_dim() -> None:
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
         torch.cat(
             [
-                BatchedTensorSeq(torch.ones(2, 3, 1)),
-                BatchedTensorSeq(torch.zeros(2, 3, 1), seq_dim=2),
+                BatchedTensorSeq(torch.ones(2, 2, 2)),
+                BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2),
             ]
         )
 
@@ -7936,15 +7934,15 @@ def test_torch_maximum_custom_dims() -> None:
 def test_torch_maximum_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.maximum(
-            BatchedTensorSeq(torch.ones(2, 3, 1)),
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2),
+            BatchedTensorSeq(torch.ones(2, 2, 2)),
+            BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2),
         )
 
 
 def test_torch_maximum_incorrect_seq_dim() -> None:
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
         torch.maximum(
-            BatchedTensorSeq(torch.ones(2, 3, 1)), BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2)
+            BatchedTensorSeq(torch.ones(2, 2, 2)), BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2)
         )
 
 
@@ -8046,15 +8044,15 @@ def test_torch_minimum_custom_dims() -> None:
 def test_torch_minimum_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.minimum(
-            BatchedTensorSeq(torch.ones(2, 3, 1)),
-            BatchedTensorSeq(torch.ones(2, 3, 1), batch_dim=2),
+            BatchedTensorSeq(torch.ones(2, 2, 2)),
+            BatchedTensorSeq(torch.ones(2, 2, 2), batch_dim=2),
         )
 
 
 def test_torch_minimum_incorrect_seq_dim() -> None:
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
         torch.minimum(
-            BatchedTensorSeq(torch.ones(2, 3, 1)), BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2)
+            BatchedTensorSeq(torch.ones(2, 2, 2)), BatchedTensorSeq(torch.zeros(2, 1, 3), seq_dim=2)
         )
 
 
@@ -8449,15 +8447,15 @@ def test_torch_take_along_dim_tensor2() -> None:
 def test_torch_take_along_dim_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         torch.take_along_dim(
-            BatchedTensorSeq(torch.ones(2, 3, 4)),
-            BatchedTensorSeq(torch.zeros(2, 1, 4), batch_dim=2),
+            BatchedTensorSeq(torch.ones(2, 2, 2)),
+            BatchedTensorSeq(torch.zeros(2, 2, 2), batch_dim=2),
         )
 
 
 def test_torch_take_along_dim_incorrect_seq_dim() -> None:
     with raises(RuntimeError, match=r"The sequence dimensions do not match."):
         torch.take_along_dim(
-            BatchedTensorSeq(torch.ones(2, 3, 4)), BatchedTensorSeq(torch.zeros(2, 1, 4), seq_dim=2)
+            BatchedTensorSeq(torch.ones(2, 2, 2)), BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2)
         )
 
 
