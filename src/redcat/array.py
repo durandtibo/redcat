@@ -396,6 +396,64 @@ class BatchedArray:  # (BaseBatch[ndarray]):
         kwargs["dtype"] = kwargs.get("dtype", self.dtype)
         return self._create_new_batch(np.zeros(shape, **kwargs))
 
+    def ones_like(self, *args, **kwargs) -> TBatchedArray:
+        r"""Creates a batch filled with the scalar value ``1``, with the
+        same shape as the current batch.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.ones_like``
+            **kwargs: See the documentation of
+                ``numpy.ones_like``
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch filled with the scalar
+                value ``1``, with the same shape as the current
+                batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.ones_like()
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+        """
+        return self._create_new_batch(np.ones_like(self._data, *args, **kwargs))
+
+    def zeros_like(self, *args, **kwargs) -> TBatchedArray:
+        r"""Creates a batch filled with the scalar value ``0``, with the
+        same shape as the current batch.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.zeros_like``
+            **kwargs: See the documentation of
+                ``numpy.zeros_like``
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch filled with the scalar
+                value ``0``, with the same shape as the current
+                batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.zeros_like()
+            array([[0., 0., 0.],
+                   [0., 0., 0.]], batch_dim=0)
+        """
+        return self._create_new_batch(np.zeros_like(self._data, *args, **kwargs))
+
     #################################
     #     Comparison operations     #
     #################################
