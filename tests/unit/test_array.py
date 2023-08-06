@@ -866,7 +866,7 @@ def test_batched_array_add_alpha_2_float() -> None:
     )
 
 
-def test_batched_array_add_alpha_2_long() -> None:
+def test_batched_array_add_alpha_2_int() -> None:
     assert (
         BatchedArray(np.ones((2, 3), dtype=int))
         .add(BatchedArray(np.full((2, 3), 2.0, dtype=int)), alpha=2)
@@ -909,7 +909,7 @@ def test_batched_array_add__alpha_2_float() -> None:
     assert batch.equal(BatchedArray(np.full((2, 3), 5.0)))
 
 
-def test_batched_array_add__alpha_2_long() -> None:
+def test_batched_array_add__alpha_2_int() -> None:
     batch = BatchedArray(np.ones((2, 3), dtype=int))
     batch.add_(BatchedArray(np.full((2, 3), 2, dtype=int)), alpha=2)
     assert batch.equal(BatchedArray(np.full((2, 3), 5, dtype=int)))
@@ -1104,6 +1104,101 @@ def test_batched_array_mul__incorrect_batch_dim() -> None:
     batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError):
         batch.mul_(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+def test_batched_array_neg() -> None:
+    assert BatchedArray(np.ones((2, 3))).neg().equal(BatchedArray(-np.ones((2, 3))))
+
+
+def test_batched_array_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .neg()
+        .equal(BatchedArray(-np.ones((2, 3)), batch_dim=1))
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array_sub(other: BatchedArray | ndarray | int | float) -> None:
+    assert BatchedArray(np.ones((2, 3))).sub(other).equal(BatchedArray(-np.ones((2, 3))))
+
+
+def test_batched_array_sub_alpha_2_float() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)))
+        .sub(BatchedArray(np.full((2, 3), 2.0)), alpha=2.0)
+        .equal(BatchedArray(-np.full((2, 3), 3.0)))
+    )
+
+
+def test_batched_array_sub_alpha_2_int() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=int))
+        .sub(BatchedArray(np.full((2, 3), 2, dtype=int)), alpha=2)
+        .equal(BatchedArray(np.full((2, 3), -3, dtype=int)))
+    )
+
+
+def test_batched_array_sub_custom_batch_dims() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .sub(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+        .equal(BatchedArray(-np.ones((2, 3)), batch_dim=1))
+    )
+
+
+def test_batched_array_sub_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedArray(np.ones((2, 2))).sub(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array_sub_(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.sub_(other)
+    assert batch.equal(BatchedArray(-np.ones((2, 3))))
+
+
+def test_batched_array_sub__alpha_2_float() -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.sub_(BatchedArray(np.full((2, 3), 2.0)), alpha=2.0)
+    assert batch.equal(BatchedArray(np.full((2, 3), -3.0)))
+
+
+def test_batched_array_sub__alpha_2_int() -> None:
+    batch = BatchedArray(np.ones((2, 3), dtype=int))
+    batch.sub_(BatchedArray(np.full((2, 3), 2, dtype=int)), alpha=2)
+    assert batch.equal(BatchedArray(np.full((2, 3), -3, dtype=int)))
+
+
+def test_batched_array_sub__custom_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 3)), batch_dim=1)
+    batch.sub_(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+    assert batch.equal(BatchedArray(-np.ones((2, 3)), batch_dim=1))
+
+
+def test_batched_array_sub__incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.sub_(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
 ##########################################################
