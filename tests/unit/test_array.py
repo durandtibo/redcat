@@ -73,6 +73,41 @@ def test_batched_array_numel() -> None:
     assert BatchedArray(np.ones((2, 3))).numel() == 6
 
 
+#################################
+#     Conversion operations     #
+#################################
+
+
+def test_batched_array_astype() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3))).astype(bool).equal(BatchedArray(np.ones((2, 3), dtype=bool)))
+    )
+
+
+def test_batched_array_astype_custom_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .astype(bool)
+        .equal(BatchedArray(np.ones((2, 3), dtype=bool), batch_dim=1))
+    )
+
+
+def test_batched_array_to() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)))
+        .to(dtype=bool)
+        .equal(BatchedArray(np.ones((2, 3), dtype=bool)))
+    )
+
+
+def test_batched_array_to_custom_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .to(dtype=bool)
+        .equal(BatchedArray(np.ones((2, 3), dtype=bool), batch_dim=1))
+    )
+
+
 ###############################
 #     Creation operations     #
 ###############################
