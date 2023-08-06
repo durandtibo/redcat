@@ -19,7 +19,7 @@ TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 HANDLED_FUNCTIONS = {}
 
 
-class BatchedArray:  # (BaseBatch[ndarray]):
+class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray]):
     r"""Implements a batched array to easily manipulate a batch of
     examples.
 
@@ -49,6 +49,14 @@ class BatchedArray:  # (BaseBatch[ndarray]):
 
     def __repr__(self) -> str:
         return repr(self._data)[:-1] + f", batch_dim={self._batch_dim})"
+
+    def __array_ufunc__(self, ufunc: Callable, method: str, *inputs, **kwargs) -> TBatchedArray:
+        # if method != "__call__":
+        #     raise NotImplementedError
+        batch_dims = get_batch_dims(inputs, kwargs)
+        check_batch_dims(batch_dims)
+        args = [a._data if hasattr(a, "_data") else a for a in inputs]
+        return self.__class__(ufunc(*args, **kwargs), batch_dim=batch_dims.pop())
 
     def __array_function__(
         self,
@@ -471,12 +479,109 @@ class BatchedArray:  # (BaseBatch[ndarray]):
             self._data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
         )
 
+    def eq(self, other: BatchedArray | ndarray | bool | int | float) -> TBatchedArray:
+        r"""Computes element-wise equality.
+
+        Args:
+        ----
+            other: Specifies the batch to compare.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch containing the element-wise
+                equality.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.eq(batch2)
+            array([[False,  True, False],
+                   [ True, False,  True]], batch_dim=0)
+            >>> batch1.eq(np.array([[5, 3, 2], [0, 1, 2]]))
+            array([[False,  True, False],
+                   [ True, False,  True]], batch_dim=0)
+            >>> batch1.eq(2)
+            array([[False, False, False],
+                   [False,  True,  True]], batch_dim=0)
+        """
+        return np.equal(self, other)
+
     def equal(self, other: Any) -> bool:
         if not isinstance(other, self.__class__):
             return False
         if self._batch_dim != other.batch_dim:
             return False
         return objects_are_equal(self._data, other.data)
+
+    def ge(self, other: BatchedArray | ndarray | bool | int | float) -> TBatchedArray:
+        r"""Computes ``self >= other`` element-wise.
+
+        Args:
+        ----
+            other: Specifies the value to compare
+                with.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch containing the element-wise
+                comparison.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.ge(batch2)
+            array([[False,  True,  True],
+                   [ True,  True,  True]], batch_dim=0)
+            >>> batch1.ge(np.array([[5, 3, 2], [0, 1, 2]]))
+            array([[False,  True,  True],
+                   [ True,  True,  True]], batch_dim=0)
+            >>> batch1.ge(2)
+            array([[False,  True,  True],
+                   [False,  True,  True]], batch_dim=0)
+        """
+        return np.greater_equal(self, other)
+
+    def gt(self, other: BatchedArray | ndarray | bool | int | float) -> TBatchedArray:
+        r"""Computes ``self > other`` element-wise.
+
+        Args:
+        ----
+            other: Specifies the batch to compare.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch containing the element-wise
+                comparison.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.gt(batch2)
+            array([[False, False,  True],
+                   [False,  True, False]], batch_dim=0)
+            >>> batch1.gt(np.array([[5, 3, 2], [0, 1, 2]]))
+            array([[False, False,  True],
+                   [False,  True, False]], batch_dim=0)
+            >>> batch1.gt(2)
+            array([[False,  True,  True],
+                   [False, False, False]], batch_dim=0)
+        """
+        return np.greater(self, other)
 
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)
