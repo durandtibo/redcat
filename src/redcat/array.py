@@ -10,8 +10,7 @@ import numpy as np
 from coola import objects_are_allclose, objects_are_equal
 from numpy import ndarray
 
-from redcat.tensor import check_batch_dims, get_batch_dims
-from redcat.utils.array import check_data_and_dim
+from redcat.utils.array import check_batch_dims, check_data_and_dim, get_batch_dims
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/

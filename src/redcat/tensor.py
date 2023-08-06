@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-__all__ = ["BatchedTensor", "check_batch_dims", "get_batch_dims"]
+__all__ = ["BatchedTensor"]
 
 import functools
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
 from typing import Any, TypeVar, Union, overload
 
@@ -12,7 +12,7 @@ from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.utils.array import check_data_and_dim
+from redcat.utils.array import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.tensor import permute_along_dim
 
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -4260,58 +4260,6 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
-
-
-def check_batch_dims(dims: set[int]) -> None:
-    r"""Gets the batch dimensions from the inputs.
-
-    Args:
-    ----
-        dims (set): Specifies the batch dims to check.
-
-    Raises:
-    ------
-        RuntimeError if there are more than one batch dimension.
-
-    Example usage:
-
-    .. code-block:: pycon
-
-        >>> from redcat.tensor import check_batch_dims
-        >>> check_batch_dims({0})
-    """
-    if len(dims) != 1:
-        raise RuntimeError(f"The batch dimensions do not match. Received multiple values: {dims}")
-
-
-def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:
-    r"""Gets the batch dimensions from the inputs.
-
-    Args:
-    ----
-        args: Variable length argument list.
-        kwargs: Arbitrary keyword arguments.
-
-    Returns:
-    -------
-        set: The batch dimensions.
-
-    Example usage:
-
-    .. code-block:: pycon
-
-        >>> from redcat import BatchedTensor
-        >>> from redcat.tensor import get_batch_dims
-        >>> get_batch_dims(
-        ...     args=(BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 6))),
-        ...     kwargs={"batch": BatchedTensor(torch.ones(2, 4))},
-        ... )
-        {0}
-    """
-    kwargs = kwargs or {}
-    dims = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
-    dims.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
-    return dims
 
 
 def implements(torch_function: Callable) -> Callable:
