@@ -676,7 +676,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            BatchedTensor:  A batch containing a boolean tensor
+            ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is infinite
                 and ``False`` elsewhere.
 
@@ -701,7 +701,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            BatchedTensor:  A batch containing a boolean tensor
+            ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is negative
                 infinity and ``False`` elsewhere.
 
@@ -726,7 +726,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            BatchedTensor:  A batch containing a boolean tensor
+            ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is positive
                 infinity and ``False`` elsewhere.
 
@@ -750,7 +750,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            BatchedTensor:  A batch containing a boolean tensor
+            ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is infinite
                 and ``False`` elsewhere.
 

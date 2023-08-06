@@ -583,6 +583,97 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         return np.greater(self, other)
 
+    def isinf(self) -> TBatchedArray:
+        r"""Indicates if each element of the batch is infinite (positive
+        or negative infinity) or not.
+
+        Returns:
+        -------
+            ``BatchedArray``:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is infinite
+                and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+            >>> batch.isinf()
+            array([[False, False, True],
+                   [False, False, True]], batch_dim=0)
+        """
+        return np.isinf(self)
+
+    def isneginf(self) -> TBatchedArray:
+        r"""Indicates if each element of the batch is negative infinity
+        or not.
+
+        Returns:
+        -------
+            BatchedArray:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is negative
+                infinity and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+            >>> batch.isneginf()
+            array([[False, False, False],
+                   [False, False,  True]], batch_dim=0)
+        """
+        return np.isneginf(self)
+
+    def isposinf(self) -> TBatchedArray:
+        r"""Indicates if each element of the batch is positive infinity
+        or not.
+
+        Returns:
+        -------
+            ``BatchedArray``:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is positive
+                infinity and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+            >>> batch.isposinf()
+            array([[False, False,   True],
+                   [False, False,  False]], batch_dim=0)
+        """
+        return np.isposinf(self)
+
+    def isnan(self) -> TBatchedArray:
+        r"""Indicates if each element in the batch is NaN or not.
+
+        Returns:
+        -------
+            ``BatchedArray``:  A batch containing a boolean tensor
+                that is ``True`` where the current batch is infinite
+                and ``False`` elsewhere.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]))
+            >>> batch.isnan()
+            array([[False, False,  True],
+                   [ True, False, False]], batch_dim=0)
+        """
+        return np.isnan(self)
+
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)
     #
@@ -784,6 +875,18 @@ def concatenate(arrays: Sequence[BatchedArray | ndarray], axis: int = 0) -> Batc
         ),
         batch_dim=batch_dims.pop(),
     )
+
+
+@implements(np.isneginf)
+def isneginf(x: BatchedArray) -> BatchedArray:
+    r"""See ``np.isneginf`` documentation."""
+    return x.__class__(np.isneginf(x.data), batch_dim=x.batch_dim)
+
+
+@implements(np.isposinf)
+def isposinf(x: BatchedArray) -> BatchedArray:
+    r"""See ``np.isposinf`` documentation."""
+    return x.__class__(np.isposinf(x.data), batch_dim=x.batch_dim)
 
 
 @implements(np.sum)
