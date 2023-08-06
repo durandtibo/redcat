@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["BatchedArray", "check_data_and_dim"]
+__all__ = ["BatchedArray"]
 
 from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
@@ -11,6 +11,7 @@ from coola import objects_are_allclose, objects_are_equal
 from numpy import ndarray
 
 from redcat.tensor import check_batch_dims, get_batch_dims
+from redcat.utils.array import check_data_and_dim
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -379,36 +380,6 @@ class BatchedArray:  # (BaseBatch[ndarray]):
     # TODO: remove later. Temporary hack because BatchedArray is not a BaseBatch yet
     def __eq__(self, other: Any) -> bool:
         return self.equal(other)
-
-
-def check_data_and_dim(data: ndarray, batch_dim: int) -> None:
-    r"""Checks if the array ``data`` and ``batch_dim`` are correct.
-
-    Args:
-    ----
-        data (``numpy.ndarray``): Specifies the array in the batch.
-        batch_dim (int): Specifies the batch dimension in the
-            ``numpy.ndarray`` object.
-
-    Raises:
-    ------
-        RuntimeError: if one of the input is incorrect.
-
-    Example usage:
-
-    .. code-block:: pycon
-
-        >>> import numpy as np
-        >>> from redcat.array import check_data_and_dim
-        >>> check_data_and_dim(np.ones((2, 3)), batch_dim=0)
-    """
-    ndim = data.ndim
-    if ndim < 1:
-        raise RuntimeError(f"data needs at least 1 dimensions (received: {ndim})")
-    if batch_dim < 0 or batch_dim >= ndim:
-        raise RuntimeError(
-            f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {ndim - 1}]"
-        )
 
 
 def implements(np_function: Callable) -> Callable:
