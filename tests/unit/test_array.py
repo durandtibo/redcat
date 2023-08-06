@@ -10,6 +10,8 @@ from pytest import mark, raises
 
 from redcat.array import BatchedArray
 
+DTYPES = (bool, int, float)
+
 
 def test_batched_array_repr() -> None:
     assert repr(BatchedArray(np.arange(3))) == "array([0, 1, 2], batch_dim=0)"
@@ -105,6 +107,64 @@ def test_batched_array_copy_custom_batch_dim() -> None:
         BatchedArray(np.ones((2, 3)), batch_dim=1)
         .copy()
         .equal(BatchedArray(np.ones((2, 3)), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_empty_like(dtype: np.dtype) -> None:
+    batch = BatchedArray(np.zeros((2, 3), dtype=dtype)).empty_like()
+    assert isinstance(batch, BatchedArray)
+    assert batch.data.shape == (2, 3)
+    assert batch.dtype == dtype
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_empty_like_target_dtype(dtype: np.dtype) -> None:
+    batch = BatchedArray(np.zeros((2, 3))).empty_like(dtype=dtype)
+    assert isinstance(batch, BatchedArray)
+    assert batch.data.shape == (2, 3)
+    assert batch.dtype == dtype
+
+
+def test_batched_tensor_empty_like_custom_batch_dim() -> None:
+    batch = BatchedArray(np.zeros((3, 2)), batch_dim=1).empty_like()
+    assert isinstance(batch, BatchedArray)
+    assert batch.data.shape == (3, 2)
+    assert batch.batch_dim == 1
+
+
+@mark.parametrize("fill_value", (1.5, 2.0, -1.0))
+def test_batched_tensor_full_like(fill_value: float) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .full_like(fill_value)
+        .equal(BatchedArray(np.full((2, 3), fill_value=fill_value)))
+    )
+
+
+def test_batched_tensor_full_like_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.zeros((3, 2)), batch_dim=1)
+        .full_like(fill_value=2.0)
+        .equal(BatchedArray(np.full((3, 2), fill_value=2.0), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_full_like_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3), dtype=dtype))
+        .full_like(fill_value=2.0)
+        .equal(BatchedArray(np.full((2, 3), fill_value=2.0, dtype=dtype)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_full_like_target_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .full_like(fill_value=2.0, dtype=dtype)
+        .equal(BatchedArray(np.full((2, 3), fill_value=2.0, dtype=dtype)))
     )
 
 
