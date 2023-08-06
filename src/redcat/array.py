@@ -2,12 +2,15 @@ from __future__ import annotations
 
 __all__ = ["BatchedArray", "check_data_and_dim"]
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable, Sequence
+from itertools import chain
 from typing import Any, TypeVar
 
 import numpy as np
 from coola import objects_are_allclose, objects_are_equal
 from numpy import ndarray
+
+from redcat.tensor import check_batch_dims, get_batch_dims
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -234,7 +237,77 @@ class BatchedArray:  # (BaseBatch[ndarray]):
 
     # def append(self, other: BaseBatch) -> None:
     #     pass
-    #
+
+    def cat(
+        self,
+        arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+        dim: int = 0,
+    ) -> TBatchedArray:
+        r"""Concatenates the data of the batch(es) to the current batch
+        along a given dimension and creates a new batch.
+
+        Args:
+        ----
+            arrays (``BatchedArray`` or ``numpy.ndarray`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the concatenated data
+                in the given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.cat(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
+            array([[ 0,  1,  2],
+                   [ 4,  5,  6],
+                   [10, 11, 12],
+                   [13, 14, 15]], batch_dim=0)
+        """
+        return self.concatenate(arrays, dim)
+
+    def concatenate(
+        self,
+        arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+        axis: int = 0,
+    ) -> TBatchedArray:
+        r"""Concatenates the data of the batch(es) to the current batch
+        along a given dimension and creates a new batch.
+
+        Args:
+        ----
+            arrays (``BatchedArray`` or ``numpy.ndarray`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+            axis (int, optional): Specifies the axis along which the
+                arrays will be concatenated. Default: ``0``
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the concatenated data
+                in the given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.concatenate(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
+            array([[ 0,  1,  2],
+                   [ 4,  5,  6],
+                   [10, 11, 12],
+                   [13, 14, 15]], batch_dim=0)
+        """
+        if isinstance(arrays, (BatchedArray, ndarray)):
+            arrays = [arrays]
+        return np.concatenate(list(chain([self], arrays)), axis=axis)
+
     # def chunk_along_batch(self, chunks: int) -> tuple[TBatchedArray, ...]:
     #     pass
     #
@@ -303,6 +376,10 @@ class BatchedArray:  # (BaseBatch[ndarray]):
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
 
+    # TODO: remove later. Temporary hack because BatchedArray is not a BaseBatch yet
+    def __eq__(self, other: Any) -> bool:
+        return self.equal(other)
+
 
 def check_data_and_dim(data: ndarray, batch_dim: int) -> None:
     r"""Checks if the array ``data`` and ``batch_dim`` are correct.
@@ -366,6 +443,19 @@ def implements(np_function: Callable) -> Callable:
         return func
 
     return decorator
+
+
+@implements(np.concatenate)
+def concatenate(arrays: Sequence[BatchedArray | ndarray], axis: int = 0) -> BatchedArray:
+    r"""See ``numpy.concatenate`` documentation."""
+    batch_dims = get_batch_dims(arrays)
+    check_batch_dims(batch_dims)
+    return BatchedArray(
+        np.concatenate(
+            [array._data if hasattr(array, "_data") else array for array in arrays], axis=axis
+        ),
+        batch_dim=batch_dims.pop(),
+    )
 
 
 @implements(np.sum)
