@@ -524,6 +524,18 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     #     Comparison operations     #
     #################################
 
+    def __ge__(self, other: Any) -> TBatchedArray:
+        return self.ge(other)
+
+    def __gt__(self, other: Any) -> TBatchedArray:
+        return self.gt(other)
+
+    def __le__(self, other: Any) -> TBatchedArray:
+        return self.le(other)
+
+    def __lt__(self, other: Any) -> TBatchedArray:
+        return self.lt(other)
+
     def allclose(
         self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
     ) -> bool:

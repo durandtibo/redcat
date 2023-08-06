@@ -390,6 +390,90 @@ def test_batched_array_zeros_like_target_dtype(dtype: np.dtype) -> None:
 #################################
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__ge__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.arange(10).reshape(2, 5)) >= other).equal(
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__gt__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.arange(10).reshape(2, 5)) > other).equal(
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__le__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.arange(10).reshape(2, 5)) <= other).equal(
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__lt__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.arange(10).reshape(2, 5)) < other).equal(
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, False, False, False, False]],
+                dtype=bool,
+            ),
+        )
+    )
+
+
 def test_batched_array_allclose_true() -> None:
     assert BatchedArray(np.ones((2, 3))).allclose(BatchedArray(np.ones((2, 3))))
 
