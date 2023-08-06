@@ -1117,6 +1117,108 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             other = other.data
         self._data = self._data * other
 
+    def neg(self) -> TBatchedArray:
+        r"""Returns a new batch with the negative of the elements.
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch with the negative of
+                the elements.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> out = batch.neg()
+            >>> batch
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+            >>> out
+            array([[-1., -1., -1.],
+                   [-1., -1., -1.]], batch_dim=0)
+        """
+        return self.__class__(np.negative(self.data), batch_dim=self._batch_dim)
+
+    def sub(
+        self,
+        other: BatchedArray | ndarray | int | float,
+        alpha: int | float = 1,
+    ) -> TBatchedArray:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
+
+        Similar to ``out = self - alpha * other``
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the value to subtract.
+            alpha (int or float, optional): Specifies the scale of the
+                batch to substract. Default: ``1``
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch containing the diffence of
+                the two batches.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> out = batch.sub(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+            >>> out
+            array([[-1., -1., -1.],
+                   [-1., -1., -1.]], batch_dim=0)
+        """
+        batch_dims = get_batch_dims((self, other))
+        check_batch_dims(batch_dims)
+        if isinstance(other, BatchedArray):
+            other = other.data
+        return self.__class__(np.subtract(self.data, other * alpha), batch_dim=batch_dims.pop())
+
+    def sub_(
+        self,
+        other: BatchedArray | ndarray | int | float,
+        alpha: int | float = 1,
+    ) -> None:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
+
+        Similar to ``self -= alpha * other`` (in-place)
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the value to subtract.
+            alpha (int or float, optional): Specifies the scale of the
+                batch to substract. Default: ``1``
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.sub_(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[-1., -1., -1.],
+                   [-1., -1., -1.]], batch_dim=0)
+        """
+        check_batch_dims(get_batch_dims((self, other)))
+        if isinstance(other, BatchedArray):
+            other = other.data
+        self._data = np.subtract(self._data.data, other * alpha)
+
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)
     #
