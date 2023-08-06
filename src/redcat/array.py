@@ -923,10 +923,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         .. code-block:: pycon
 
-            >>> import torch
+            >>> import numpy
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> out = batch.div(BatchedArray(torch.full((2, 3), 2.0)))
+            >>> out = batch.div(BatchedArray(numpy.full((2, 3), 2.0)))
             >>> batch
             array([[1., 1., 1.],
                    [1., 1., 1.]], batch_dim=0)
@@ -979,6 +979,75 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         if isinstance(other, BatchedArray):
             other = other.data
         self._data = get_div_rounding_operator(rounding_mode)(self.data, other)
+
+    def fmod(
+        self,
+        divisor: BatchedArray | ndarray | int | float,
+    ) -> TBatchedArray:
+        r"""Computes the element-wise remainder of division.
+
+        The current batch is the dividend.
+
+        Args:
+        ----
+            divisor (``BatchedArray`` or ``numpy.ndarray`` or int
+                or float): Specifies the divisor.
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch containing the
+                element-wise remainder of division.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> out = batch.fmod(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+            >>> out
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+        """
+        batch_dims = get_batch_dims((self, divisor))
+        check_batch_dims(batch_dims)
+        if isinstance(divisor, BatchedArray):
+            divisor = divisor.data
+        return self.__class__(
+            np.fmod(self.data, divisor),
+            batch_dim=batch_dims.pop(),
+        )
+
+    def fmod_(self, divisor: BatchedArray | ndarray | int | float) -> None:
+        r"""Computes the element-wise remainder of division.
+
+        The current batch is the dividend.
+
+        Args:
+        ----
+            divisor (``BatchedArray`` or ``numpy.ndarray`` or int
+                or float): Specifies the divisor.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.fmod_(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+        """
+        check_batch_dims(get_batch_dims((self, divisor)))
+        if isinstance(divisor, BatchedArray):
+            divisor = divisor.data
+        self._data = np.fmod(self._data, divisor)
 
     def mul(self, other: BatchedArray | ndarray | int | float) -> TBatchedArray:
         r"""Multiplies the ``self`` batch by the input ``other`.
@@ -1166,9 +1235,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     #
     #     .. code-block:: pycon
     #
-    #         >>> import torch
+    #         >>> import numpy
     #         >>> from redcat import BatchedArray
-    #         >>> batch = BatchedArray(torch.arange(10).view(5, 2))
+    #         >>> batch = BatchedArray(numpy.arange(10).view(5, 2))
     #         >>> batch.split(2, dim=0)
     #         (array([[0, 1], [2, 3]], batch_dim=0),
     #          array([[4, 5], [6, 7]], batch_dim=0),

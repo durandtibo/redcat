@@ -1006,6 +1006,61 @@ def test_batched_array_div__incorrect_batch_dim() -> None:
         2.0,
     ),
 )
+def test_batched_array_fmod(other: BatchedArray | ndarray | int | float) -> None:
+    assert BatchedArray(np.ones((2, 3))).fmod(other).equal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_fmod_custom_dims() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .fmod(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+        .equal(BatchedArray(np.ones((2, 3)), batch_dim=1))
+    )
+
+
+def test_batched_array_fmod_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedArray(np.ones((2, 2))).fmod(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array_fmod_(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.fmod_(other)
+    assert batch.equal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_fmod__custom_dims() -> None:
+    batch = BatchedArray(np.ones((2, 3)), batch_dim=1)
+    batch.fmod_(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+    assert batch.equal(BatchedArray(np.ones((2, 3)), batch_dim=1))
+
+
+def test_batched_array_fmod__incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.fmod_(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
 def test_batched_array_mul(other: BatchedArray | ndarray | int | float) -> None:
     assert BatchedArray(np.ones((2, 3))).mul(other).equal(BatchedArray(np.full((2, 3), 2.0)))
 
