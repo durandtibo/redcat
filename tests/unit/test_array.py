@@ -111,7 +111,7 @@ def test_batched_array_copy_custom_batch_dim() -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_empty_like(dtype: np.dtype) -> None:
+def test_batched_array_empty_like(dtype: np.dtype) -> None:
     batch = BatchedArray(np.zeros((2, 3), dtype=dtype)).empty_like()
     assert isinstance(batch, BatchedArray)
     assert batch.data.shape == (2, 3)
@@ -119,14 +119,14 @@ def test_batched_tensor_empty_like(dtype: np.dtype) -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_empty_like_target_dtype(dtype: np.dtype) -> None:
+def test_batched_array_empty_like_target_dtype(dtype: np.dtype) -> None:
     batch = BatchedArray(np.zeros((2, 3))).empty_like(dtype=dtype)
     assert isinstance(batch, BatchedArray)
     assert batch.data.shape == (2, 3)
     assert batch.dtype == dtype
 
 
-def test_batched_tensor_empty_like_custom_batch_dim() -> None:
+def test_batched_array_empty_like_custom_batch_dim() -> None:
     batch = BatchedArray(np.zeros((3, 2)), batch_dim=1).empty_like()
     assert isinstance(batch, BatchedArray)
     assert batch.data.shape == (3, 2)
@@ -134,7 +134,7 @@ def test_batched_tensor_empty_like_custom_batch_dim() -> None:
 
 
 @mark.parametrize("fill_value", (1.5, 2.0, -1.0))
-def test_batched_tensor_full_like(fill_value: float) -> None:
+def test_batched_array_full_like(fill_value: float) -> None:
     assert (
         BatchedArray(np.zeros((2, 3)))
         .full_like(fill_value)
@@ -142,7 +142,7 @@ def test_batched_tensor_full_like(fill_value: float) -> None:
     )
 
 
-def test_batched_tensor_full_like_custom_batch_dim() -> None:
+def test_batched_array_full_like_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.zeros((3, 2)), batch_dim=1)
         .full_like(fill_value=2.0)
@@ -151,7 +151,7 @@ def test_batched_tensor_full_like_custom_batch_dim() -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_full_like_dtype(dtype: np.dtype) -> None:
+def test_batched_array_full_like_dtype(dtype: np.dtype) -> None:
     assert (
         BatchedArray(np.zeros((2, 3), dtype=dtype))
         .full_like(fill_value=2.0)
@@ -160,11 +160,133 @@ def test_batched_tensor_full_like_dtype(dtype: np.dtype) -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_full_like_target_dtype(dtype: np.dtype) -> None:
+def test_batched_array_full_like_target_dtype(dtype: np.dtype) -> None:
     assert (
         BatchedArray(np.zeros((2, 3)))
         .full_like(fill_value=2.0, dtype=dtype)
         .equal(BatchedArray(np.full((2, 3), fill_value=2.0, dtype=dtype)))
+    )
+
+
+@mark.parametrize("fill_value", (1, 2.0, True))
+def test_batched_array_new_full_fill_value(fill_value: float | int | bool) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .new_full(fill_value)
+        .equal(BatchedArray(np.full((2, 3), fill_value, dtype=float)))
+    )
+
+
+def test_batched_array_new_full_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.zeros((3, 2)), batch_dim=1)
+        .new_full(2.0)
+        .equal(BatchedArray(np.full((3, 2), 2.0), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_full_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3), dtype=dtype))
+        .new_full(2.0)
+        .equal(BatchedArray(np.full((2, 3), 2.0, dtype=dtype)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_array_new_full_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .new_full(2.0, batch_size=batch_size)
+        .equal(BatchedArray(np.full((batch_size, 3), 2.0)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_full_custom_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .new_full(2.0, dtype=dtype)
+        .equal(BatchedArray(np.full((2, 3), 2.0, dtype=dtype)))
+    )
+
+
+def test_batched_array_new_ones() -> None:
+    assert BatchedArray(np.zeros((2, 3))).new_ones().equal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_new_ones_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.zeros((3, 2)), batch_dim=1)
+        .new_ones()
+        .equal(BatchedArray(np.ones((3, 2)), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_ones_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3), dtype=dtype))
+        .new_ones()
+        .equal(BatchedArray(np.ones((2, 3), dtype=dtype)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_array_new_ones_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .new_ones(batch_size=batch_size)
+        .equal(BatchedArray(np.ones((batch_size, 3))))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_ones_custom_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .new_ones(dtype=dtype)
+        .equal(BatchedArray(np.ones((2, 3), dtype=dtype)))
+    )
+
+
+def test_batched_array_new_zeros() -> None:
+    assert BatchedArray(np.ones((2, 3))).new_zeros().equal(BatchedArray(np.zeros((2, 3))))
+
+
+def test_batched_array_new_zeros_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((3, 2)), batch_dim=1)
+        .new_zeros()
+        .equal(BatchedArray(np.zeros((3, 2)), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_zeros_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=dtype))
+        .new_zeros()
+        .equal(BatchedArray(np.zeros((2, 3), dtype=dtype)))
+    )
+
+
+@mark.parametrize("batch_size", (1, 2))
+def test_batched_array_new_zeros_custom_batch_size(batch_size: int) -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)))
+        .new_zeros(batch_size=batch_size)
+        .equal(BatchedArray(np.zeros((batch_size, 3))))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_zeros_custom_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)))
+        .new_zeros(dtype=dtype)
+        .equal(BatchedArray(np.zeros((2, 3), dtype=dtype)))
     )
 
 
@@ -243,7 +365,7 @@ def test_batched_array_equal_false_different_batch_dim() -> None:
 
 
 @mark.parametrize(
-    "tensors",
+    "arrays",
     (
         BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
         np.array([[10, 11, 12], [13, 14, 15]]),
@@ -251,18 +373,18 @@ def test_batched_array_equal_false_different_batch_dim() -> None:
         (BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),),
     ),
 )
-def test_batched_tensor_cat_dim_0(
-    tensors: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+def test_batched_array_cat_dim_0(
+    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
 ) -> None:
     assert (
         BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-        .cat(tensors, dim=0)
+        .cat(arrays, dim=0)
         .equal(BatchedArray(np.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])))
     )
 
 
 @mark.parametrize(
-    "tensors",
+    "arrays",
     (
         BatchedArray(np.array([[10, 11], [12, 13]])),
         np.array([[10, 11], [12, 13]]),
@@ -270,17 +392,17 @@ def test_batched_tensor_cat_dim_0(
         (BatchedArray(np.array([[10, 11], [12, 13]])),),
     ),
 )
-def test_batched_tensor_cat_dim_1(
-    tensors: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+def test_batched_array_cat_dim_1(
+    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
 ) -> None:
     assert (
         BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-        .cat(tensors, dim=1)
+        .cat(arrays, dim=1)
         .equal(BatchedArray(np.array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]])))
     )
 
 
-def test_batched_tensor_cat_custom_dims() -> None:
+def test_batched_array_cat_custom_dims() -> None:
     assert (
         BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
         .cat(BatchedArray(np.array([[10, 12], [11, 13], [14, 15]]), batch_dim=1), dim=1)
@@ -293,18 +415,18 @@ def test_batched_tensor_cat_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_cat_empty() -> None:
+def test_batched_array_cat_empty() -> None:
     assert BatchedArray(np.ones((2, 3))).cat([]).equal(BatchedArray(np.ones((2, 3))))
 
 
-def test_batched_tensor_cat_incorrect_batch_dim() -> None:
+def test_batched_array_cat_incorrect_batch_dim() -> None:
     batch = BatchedArray(np.ones((2, 3)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.cat([BatchedArray(np.ones((2, 3)), batch_dim=1)])
 
 
 @mark.parametrize(
-    "tensors",
+    "arrays",
     (
         BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
         np.array([[10, 11, 12], [13, 14, 15]]),
@@ -312,18 +434,18 @@ def test_batched_tensor_cat_incorrect_batch_dim() -> None:
         (BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),),
     ),
 )
-def test_batched_tensor_concatenate_dim_0(
-    tensors: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+def test_batched_array_concatenate_dim_0(
+    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
 ) -> None:
     assert (
         BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-        .concatenate(tensors, axis=0)
+        .concatenate(arrays, axis=0)
         .equal(BatchedArray(np.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])))
     )
 
 
 @mark.parametrize(
-    "tensors",
+    "arrays",
     (
         BatchedArray(np.array([[10, 11], [12, 13]])),
         np.array([[10, 11], [12, 13]]),
@@ -331,17 +453,17 @@ def test_batched_tensor_concatenate_dim_0(
         (BatchedArray(np.array([[10, 11], [12, 13]])),),
     ),
 )
-def test_batched_tensor_concatenate_dim_1(
-    tensors: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+def test_batched_array_concatenate_dim_1(
+    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
 ) -> None:
     assert (
         BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-        .concatenate(tensors, axis=1)
+        .concatenate(arrays, axis=1)
         .equal(BatchedArray(np.array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]])))
     )
 
 
-def test_batched_tensor_concatenate_custom_dims() -> None:
+def test_batched_array_concatenate_custom_dims() -> None:
     assert (
         BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
         .concatenate(BatchedArray(np.array([[10, 12], [11, 13], [14, 15]]), batch_dim=1), axis=1)
@@ -354,11 +476,11 @@ def test_batched_tensor_concatenate_custom_dims() -> None:
     )
 
 
-def test_batched_tensor_concatenate_empty() -> None:
+def test_batched_array_concatenate_empty() -> None:
     assert BatchedArray(np.ones((2, 3))).concatenate([]).equal(BatchedArray(np.ones((2, 3))))
 
 
-def test_batched_tensor_concatenate_incorrect_batch_dim() -> None:
+def test_batched_array_concatenate_incorrect_batch_dim() -> None:
     batch = BatchedArray(np.ones((2, 3)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.concatenate([BatchedArray(np.ones((2, 3)), batch_dim=1)])

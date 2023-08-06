@@ -28,9 +28,9 @@ class BatchedArray:  # (BaseBatch[ndarray]):
         data (array_like): Specifies the data for the array. It can
             be a list, tuple, NumPy ndarray, scalar, and other types.
         batch_dim (int, optional): Specifies the batch dimension
-            in the ``torch.Tensor`` object. Default: ``0``
+            in the ``numpy.ndarray`` object. Default: ``0``
         kwargs: Keyword arguments that are passed to
-            ``torch.as_array``.
+            ``numpy.asarray``.
 
     Example usage:
 
@@ -43,7 +43,7 @@ class BatchedArray:  # (BaseBatch[ndarray]):
 
     def __init__(self, data: Any, *, batch_dim: int = 0, **kwargs) -> None:
         super().__init__()
-        self._data = np.array(data, **kwargs)
+        self._data = np.asarray(data, **kwargs)
         check_data_and_dim(self._data, batch_dim)
         self._batch_dim = int(batch_dim)
 
@@ -67,7 +67,7 @@ class BatchedArray:  # (BaseBatch[ndarray]):
 
     @property
     def batch_dim(self) -> int:
-        r"""int: The batch dimension in the ``torch.Tensor`` object."""
+        r"""int: The batch dimension in the ``numpy.ndarray`` object."""
         return self._batch_dim
 
     @property
@@ -209,7 +209,7 @@ class BatchedArray:  # (BaseBatch[ndarray]):
         ----
             *args: See the documentation of ``numpy.empty_like``
             **kwargs: See the documentation of
-                ``torch.Tensor.empty_like``
+                ``numpy.empty_like``
 
         Returns:
         -------
@@ -234,9 +234,9 @@ class BatchedArray:  # (BaseBatch[ndarray]):
 
         Args:
         ----
-            *args: See the documentation of ``torch.Tensor.full_like``
+            *args: See the documentation of ``numpy.full_like``
             **kwargs: See the documentation of
-                ``torch.Tensor.full_like``
+                ``numpy.full_like``
 
         Returns:
         -------
@@ -255,6 +255,146 @@ class BatchedArray:  # (BaseBatch[ndarray]):
                    [42., 42., 42.]], batch_dim=0)
         """
         return self._create_new_batch(np.full_like(self._data, *args, **kwargs))
+
+    def new_full(
+        self,
+        fill_value: float | int | bool,
+        batch_size: int | None = None,
+        **kwargs,
+    ) -> TBatchedArray:
+        r"""Creates a batch filled with a scalar value.
+
+        By default, the array in the returned batch has the same
+        shape, ``numpy.dtype`` as the array in the current batch.
+
+        Args:
+        ----
+            fill_value (float or int or bool): Specifies the number
+                to fill the batch with.
+            batch_size (int or ``None``): Specifies the batch size.
+                If ``None``, the batch size of the current batch is
+                used. Default: ``None``.
+            **kwargs: See the documentation of
+                ``numpy.new_full``.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch filled with the scalar value.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.new_full(42)
+            array([[42., 42., 42.],
+                   [42., 42., 42.]], batch_dim=0)
+            >>> batch.new_full(42, batch_size=5)
+            array([[42., 42., 42.],
+                   [42., 42., 42.],
+                   [42., 42., 42.],
+                   [42., 42., 42.],
+                   [42., 42., 42.]], batch_dim=0)
+        """
+        shape = list(self._data.shape)
+        if batch_size is not None:
+            shape[self._batch_dim] = batch_size
+        kwargs["dtype"] = kwargs.get("dtype", self.dtype)
+        return self._create_new_batch(np.full(shape, fill_value=fill_value, **kwargs))
+
+    def new_ones(
+        self,
+        batch_size: int | None = None,
+        **kwargs,
+    ) -> BatchedArray:
+        r"""Creates a batch filled with the scalar value ``1``.
+
+        By default, the array in the returned batch has the same
+        shape, ``numpy.dtype`` as the array in the current batch.
+
+        Args:
+        ----
+            batch_size (int or ``None``): Specifies the batch size.
+                If ``None``, the batch size of the current batch is
+                used. Default: ``None``.
+            **kwargs: See the documentation of
+                ``numpy.new_ones``.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch filled with the scalar
+                value ``1``.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.zeros((2, 3)))
+            >>> batch.new_ones()
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+            >>> batch.new_ones(batch_size=5)
+            array([[1., 1., 1.],
+                   [1., 1., 1.],
+                   [1., 1., 1.],
+                   [1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+        """
+        shape = list(self._data.shape)
+        if batch_size is not None:
+            shape[self._batch_dim] = batch_size
+        kwargs["dtype"] = kwargs.get("dtype", self.dtype)
+        return self._create_new_batch(np.ones(shape, **kwargs))
+
+    def new_zeros(
+        self,
+        batch_size: int | None = None,
+        **kwargs,
+    ) -> TBatchedArray:
+        r"""Creates a batch filled with the scalar value ``0``.
+
+        By default, the array in the returned batch has the same
+        shape, ``numpy.dtype``  as the array in the current batch.
+
+        Args:
+        ----
+            batch_size (int or ``None``): Specifies the batch size.
+                If ``None``, the batch size of the current batch is
+                used. Default: ``None``.
+            **kwargs: See the documentation of
+                ``numpy.new_zeros``.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch filled with the scalar
+                value ``0``.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.new_zeros()
+            array([[0., 0., 0.],
+                   [0., 0., 0.]], batch_dim=0)
+            >>> batch.new_zeros(batch_size=5)
+            array([[0., 0., 0.],
+                   [0., 0., 0.],
+                   [0., 0., 0.],
+                   [0., 0., 0.],
+                   [0., 0., 0.]], batch_dim=0)
+        """
+        shape = list(self._data.shape)
+        if batch_size is not None:
+            shape[self._batch_dim] = batch_size
+        kwargs["dtype"] = kwargs.get("dtype", self.dtype)
+        return self._create_new_batch(np.zeros(shape, **kwargs))
 
     #################################
     #     Comparison operations     #
