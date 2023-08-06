@@ -6219,7 +6219,6 @@ def test_torch_nanmedian_keepdim() -> None:
             keepdim=True,
         ),
         torch.return_types.nanmedian([torch.tensor([[2.0], [6.0]]), torch.tensor([[2], [1]])]),
-        show_difference=True,
     )
 
 

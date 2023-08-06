@@ -653,7 +653,6 @@ def test_batch_dict_chunk_along_batch_5() -> None:
             BatchDict({"key1": BatchList([4]), "key2": BatchList(["d"])}),
             BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
         ),
-        show_difference=True,
     )
 
 
@@ -808,7 +807,6 @@ def test_batch_dict_split_along_batch_5() -> None:
             BatchDict({"key1": BatchList([4]), "key2": BatchList(["d"])}),
             BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
         ),
-        show_difference=True,
     )
 
 

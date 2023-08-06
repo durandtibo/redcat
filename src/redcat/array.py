@@ -223,7 +223,7 @@ class BatchedArray:  # (BaseBatch[ndarray]):
             return False
         if self._batch_dim != other.batch_dim:
             return False
-        return objects_are_equal(self._data, other.data, show_difference=True)
+        return objects_are_equal(self._data, other.data)
 
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)

@@ -402,7 +402,6 @@ def test_numpy_concatenate_custom_dims() -> None:
             ]
         ),
         BatchedArray(np.ones((4, 3)), batch_dim=1),
-        show_difference=True,
     )
 
 
