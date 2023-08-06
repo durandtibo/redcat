@@ -488,9 +488,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> import numpy as np
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.astype(dtype=np.dtype(np.bool))
-            array([[True, True, True],
-                   [True, True, True]], batch_dim=0)
+            >>> batch.astype(dtype=bool)
+            array([[  True,  True,  True],
+                   [  True,  True,  True]], batch_dim=0)
         """
         return self._create_new_batch(self._data.astype(dtype, *args, **kwargs))
 
@@ -514,9 +514,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> import numpy as np
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.to(dtype=np.dtype(np.bool))
-            array([[True, True, True],
-                   [True, True, True]], batch_dim=0)
+            >>> batch.to(dtype=bool)
+            array([[  True,  True,  True],
+                   [  True,  True,  True]], batch_dim=0)
         """
         return self._create_new_batch(self._data.astype(*args, **kwargs))
 
