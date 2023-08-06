@@ -13,12 +13,7 @@ from torch import Tensor
 from torch.overrides import is_tensor_like
 
 from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq
-from redcat.tensor import (
-    IndexType,
-    check_batch_dims,
-    check_data_and_dim,
-    get_batch_dims,
-)
+from redcat.tensor import IndexType, check_batch_dims, get_batch_dims
 from redcat.utils.tensor import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
@@ -5823,29 +5818,6 @@ def test_batched_tensor_summary() -> None:
         BatchedTensor(torch.arange(10).view(2, 5)).summary()
         == "BatchedTensor(dtype=torch.int64, shape=torch.Size([2, 5]), device=cpu, batch_dim=0)"
     )
-
-
-########################################
-#     Tests for check_data_and_dim     #
-########################################
-
-
-def test_check_data_and_dim_correct() -> None:
-    check_data_and_dim(torch.ones(2, 3), batch_dim=0)
-    # will fail if an exception is raised
-
-
-def test_check_data_and_dim_incorrect_data_dim() -> None:
-    with raises(RuntimeError, match=r"data needs at least 1 dimensions \(received: 0\)"):
-        check_data_and_dim(torch.tensor(2), batch_dim=0)
-
-
-@mark.parametrize("batch_dim", (-1, 2, 3))
-def test_check_data_and_dim_incorrect_batch_dim(batch_dim: int) -> None:
-    with raises(
-        RuntimeError, match=r"Incorrect batch_dim \(.*\) but the value should be in \[0, 1\]"
-    ):
-        check_data_and_dim(torch.ones(2, 3), batch_dim=batch_dim)
 
 
 ######################################

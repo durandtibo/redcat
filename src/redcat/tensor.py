@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["BatchedTensor", "check_data_and_dim", "check_batch_dims", "get_batch_dims"]
+__all__ = ["BatchedTensor", "check_batch_dims", "get_batch_dims"]
 
 import functools
 from collections.abc import Callable, Iterable, Mapping, Sequence
@@ -12,6 +12,7 @@ from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
 from redcat.base import BaseBatch
+from redcat.utils.array import check_data_and_dim
 from redcat.utils.tensor import permute_along_dim
 
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -4259,35 +4260,6 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim}
-
-
-def check_data_and_dim(data: Tensor, batch_dim: int) -> None:
-    r"""Checks if the tensor ``data`` and ``batch_dim`` are correct.
-
-    Args:
-    ----
-        data (``torch.Tensor``): Specifies the tensor in the batch.
-        batch_dim (int): Specifies the batch dimension in the
-            ``torch.Tensor`` object.
-
-    Raises:
-    ------
-        RuntimeError: if one of the input is incorrect.
-
-    Example usage:
-
-    .. code-block:: pycon
-
-        >>> import torch
-        >>> from redcat.tensor import check_data_and_dim
-        >>> check_data_and_dim(torch.ones(2, 3), batch_dim=0)
-    """
-    if data.dim() < 1:
-        raise RuntimeError(f"data needs at least 1 dimensions (received: {data.dim()})")
-    if batch_dim < 0 or batch_dim >= data.dim():
-        raise RuntimeError(
-            f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {data.dim() - 1}]"
-        )
 
 
 def check_batch_dims(dims: set[int]) -> None:

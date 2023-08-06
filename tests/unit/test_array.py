@@ -8,7 +8,7 @@ from coola import objects_are_equal
 from numpy import ndarray
 from pytest import mark, raises
 
-from redcat.array import BatchedArray, check_data_and_dim
+from redcat.array import BatchedArray
 
 
 def test_batched_array_repr() -> None:
@@ -314,29 +314,6 @@ def test_batched_array_summary() -> None:
         BatchedArray(np.arange(10).reshape(2, 5)).summary()
         == "BatchedArray(dtype=int64, shape=(2, 5), batch_dim=0)"
     )
-
-
-########################################
-#     Tests for check_data_and_dim     #
-########################################
-
-
-def test_check_data_and_dim_correct() -> None:
-    check_data_and_dim(np.ones((2, 3)), batch_dim=0)
-    # will fail if an exception is raised
-
-
-def test_check_data_and_dim_incorrect_data_dim() -> None:
-    with raises(RuntimeError, match=r"data needs at least 1 dimensions \(received: 0\)"):
-        check_data_and_dim(np.array(2), batch_dim=0)
-
-
-@mark.parametrize("batch_dim", (-1, 2, 3))
-def test_check_data_and_dim_incorrect_batch_dim(batch_dim: int) -> None:
-    with raises(
-        RuntimeError, match=r"Incorrect batch_dim \(.*\) but the value should be in \[0, 1\]"
-    ):
-        check_data_and_dim(np.ones((2, 3)), batch_dim=batch_dim)
 
 
 #######################################
