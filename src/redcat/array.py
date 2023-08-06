@@ -808,6 +808,93 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         return np.less(self, other)
 
+    #################
+    #     dtype     #
+    #################
+
+    ##################################################
+    #     Mathematical | arithmetical operations     #
+    ##################################################
+
+    def add(
+        self,
+        other: BatchedArray | ndarray | int | float,
+        alpha: int | float = 1.0,
+    ) -> TBatchedArray:
+        r"""Adds the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
+
+        Similar to ``out = self + alpha * other``
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the other value to add to the
+                current batch.
+            alpha (int or float, optional): Specifies the scale of the
+                batch to add. Default: ``1.0``
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch containing the addition of
+                the two batches.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> out = batch.add(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+            >>> out
+            array([[3., 3., 3.],
+                   [3., 3., 3.]], batch_dim=0)
+        """
+        batch_dims = get_batch_dims((self, other))
+        check_batch_dims(batch_dims)
+        if isinstance(other, BatchedArray):
+            other = other.data
+        return self.__class__(np.add(self.data, other * alpha), batch_dim=batch_dims.pop())
+
+    def add_(
+        self,
+        other: BatchedArray | ndarray | int | float,
+        alpha: int | float = 1.0,
+    ) -> None:
+        r"""Adds the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
+
+        Similar to ``self += alpha * other`` (in-place)
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the other value to add to the
+                current batch.
+            alpha (int or float, optional): Specifies the scale of the
+                batch to add. Default: ``1.0``
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.add_(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[3., 3., 3.],
+                   [3., 3., 3.]], batch_dim=0)
+        """
+        check_batch_dims(get_batch_dims((self, other)))
+        if isinstance(other, BatchedArray):
+            other = other.data
+        self._data = np.add(self._data.data, other * alpha)
+
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)
     #
