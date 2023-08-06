@@ -839,6 +839,94 @@ def test_batched_array_lt_custom_batch_dim() -> None:
     )
 
 
+##################################################
+#     Mathematical | arithmetical operations     #
+##################################################
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array_add(other: BatchedArray | ndarray | int | float) -> None:
+    assert BatchedArray(np.ones((2, 3))).add(other).equal(BatchedArray(np.full((2, 3), 3.0)))
+
+
+def test_batched_array_add_alpha_2_float() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)))
+        .add(BatchedArray(np.full((2, 3), 2.0, dtype=float)), alpha=2.0)
+        .equal(BatchedArray(np.full((2, 3), 5.0, dtype=float)))
+    )
+
+
+def test_batched_array_add_alpha_2_long() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=int))
+        .add(BatchedArray(np.full((2, 3), 2.0, dtype=int)), alpha=2)
+        .equal(BatchedArray(np.full((2, 3), 5.0, dtype=int)))
+    )
+
+
+def test_batched_array_add_batch_dim_1() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .add(BatchedArray(np.full((2, 3), 2.0, dtype=float), batch_dim=1))
+        .equal(BatchedArray(np.full((2, 3), 3.0, dtype=float), batch_dim=1))
+    )
+
+
+def test_batched_array_add_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedArray(np.ones((2, 3))).add(BatchedArray(np.ones((2, 3)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array_add_(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.add_(other)
+    assert batch.equal(BatchedArray(np.full((2, 3), 3.0)))
+
+
+def test_batched_array_add__alpha_2_float() -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.add_(BatchedArray(np.full((2, 3), 2.0)), alpha=2.0)
+    assert batch.equal(BatchedArray(np.full((2, 3), 5.0)))
+
+
+def test_batched_array_add__alpha_2_long() -> None:
+    batch = BatchedArray(np.ones((2, 3), dtype=int))
+    batch.add_(BatchedArray(np.full((2, 3), 2, dtype=int)), alpha=2)
+    assert batch.equal(BatchedArray(np.full((2, 3), 5, dtype=int)))
+
+
+def test_batched_array_add__custom_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 3)), batch_dim=1)
+    batch.add_(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+    assert batch.equal(BatchedArray(np.full((2, 3), 3.0), batch_dim=1))
+
+
+def test_batched_array_add__incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.add_(BatchedArray(np.ones((2, 3)), batch_dim=1))
+
+
 ##########################################################
 #    Indexing, slicing, joining, mutating operations     #
 ##########################################################
@@ -976,6 +1064,31 @@ def test_batched_array_summary() -> None:
         BatchedArray(np.arange(10).reshape(2, 5)).summary()
         == "BatchedArray(dtype=int64, shape=(2, 5), batch_dim=0)"
     )
+
+
+###############################
+#     Tests for numpy.add     #
+###############################
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_numpy_add(other: BatchedArray | ndarray | int | float) -> None:
+    assert np.add(BatchedArray(np.ones((2, 3))), other).equal(BatchedArray(np.full((2, 3), 3.0)))
+
+
+def test_numpy_add_custom_dims() -> None:
+    assert np.add(
+        BatchedArray(np.ones((2, 3)), batch_dim=1), BatchedArray(np.full((2, 3), 2.0), batch_dim=1)
+    ).equal(BatchedArray(np.full((2, 3), 3.0), batch_dim=1))
 
 
 #######################################
