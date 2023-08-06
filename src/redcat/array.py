@@ -264,10 +264,10 @@ class BatchedArray:  # (BaseBatch[ndarray]):
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
             >>> batch.cat(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
-            tensor([[ 0,  1,  2],
-                    [ 4,  5,  6],
-                    [10, 11, 12],
-                    [13, 14, 15]], batch_dim=0)
+            array([[ 0,  1,  2],
+                   [ 4,  5,  6],
+                   [10, 11, 12],
+                   [13, 14, 15]], batch_dim=0)
         """
         return self.concatenate(arrays, dim)
 
@@ -299,10 +299,10 @@ class BatchedArray:  # (BaseBatch[ndarray]):
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
             >>> batch.concatenate(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
-            tensor([[ 0,  1,  2],
-                    [ 4,  5,  6],
-                    [10, 11, 12],
-                    [13, 14, 15]], batch_dim=0)
+            array([[ 0,  1,  2],
+                   [ 4,  5,  6],
+                   [10, 11, 12],
+                   [13, 14, 15]], batch_dim=0)
         """
         if isinstance(arrays, (BatchedArray, ndarray)):
             arrays = [arrays]
