@@ -290,11 +290,11 @@ def test_batched_array_new_zeros_custom_dtype(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_tensor_ones_like() -> None:
+def test_batched_array_ones_like() -> None:
     assert BatchedArray(np.zeros((2, 3))).ones_like().equal(BatchedArray(np.ones((2, 3))))
 
 
-def test_batched_tensor_ones_like_custom_batch_dim() -> None:
+def test_batched_array_ones_like_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.zeros((3, 2)), batch_dim=1)
         .ones_like()
@@ -303,7 +303,7 @@ def test_batched_tensor_ones_like_custom_batch_dim() -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_ones_like_dtype(dtype: np.dtype) -> None:
+def test_batched_array_ones_like_dtype(dtype: np.dtype) -> None:
     assert (
         BatchedArray(np.zeros((2, 3), dtype=dtype))
         .ones_like()
@@ -312,7 +312,7 @@ def test_batched_tensor_ones_like_dtype(dtype: np.dtype) -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_ones_like_target_dtype(dtype: np.dtype) -> None:
+def test_batched_array_ones_like_target_dtype(dtype: np.dtype) -> None:
     assert (
         BatchedArray(np.zeros((2, 3)))
         .ones_like(dtype=dtype)
@@ -320,11 +320,11 @@ def test_batched_tensor_ones_like_target_dtype(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_tensor_zeros_like() -> None:
+def test_batched_array_zeros_like() -> None:
     assert BatchedArray(np.ones((2, 3))).zeros_like().equal(BatchedArray(np.zeros((2, 3))))
 
 
-def test_batched_tensor_zeros_like_custom_batch_dim() -> None:
+def test_batched_array_zeros_like_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.ones((3, 2)), batch_dim=1)
         .zeros_like()
@@ -333,7 +333,7 @@ def test_batched_tensor_zeros_like_custom_batch_dim() -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_zeros_like_dtype(dtype: np.dtype) -> None:
+def test_batched_array_zeros_like_dtype(dtype: np.dtype) -> None:
     assert (
         BatchedArray(np.ones((2, 3), dtype=dtype))
         .zeros_like()
@@ -342,7 +342,7 @@ def test_batched_tensor_zeros_like_dtype(dtype: np.dtype) -> None:
 
 
 @mark.parametrize("dtype", DTYPES)
-def test_batched_tensor_zeros_like_target_dtype(dtype: np.dtype) -> None:
+def test_batched_array_zeros_like_target_dtype(dtype: np.dtype) -> None:
     assert (
         BatchedArray(np.ones((2, 3)))
         .zeros_like(dtype=dtype)
@@ -399,6 +399,47 @@ def test_batched_array_allclose_true_rtol(batch: BatchedArray, rtol: float) -> N
     assert BatchedArray(np.ones((2, 3))).allclose(batch, rtol=rtol)
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5.0)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array_eq(other: BatchedArray | ndarray | int | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .eq(other)
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, False, False, False, False]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_eq_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_dim=1)
+        .eq(BatchedArray(np.full((2, 5), 5), batch_dim=1))
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, False, False, False, False]],
+                    dtype=bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
 def test_batched_array_equal_true() -> None:
     assert BatchedArray(np.ones((2, 3))).equal(BatchedArray(np.ones((2, 3))))
 
@@ -417,6 +458,88 @@ def test_batched_array_equal_false_different_shape() -> None:
 
 def test_batched_array_equal_false_different_batch_dim() -> None:
     assert not BatchedArray(np.ones((2, 3)), batch_dim=1).equal(BatchedArray(np.ones((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array_ge(other: BatchedArray | ndarray | int | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .ge(other)
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, True, True, True, True]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_ge_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_dim=1)
+        .ge(BatchedArray(np.full((2, 5), 5.0), batch_dim=1))
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, True, True, True, True]],
+                    dtype=bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array_gt(other: BatchedArray | ndarray | int | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .gt(other)
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [False, True, True, True, True]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_gt_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_dim=1)
+        .gt(BatchedArray(np.full((2, 5), 5.0), batch_dim=1))
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [False, True, True, True, True]],
+                    dtype=bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
 
 
 ##########################################################
