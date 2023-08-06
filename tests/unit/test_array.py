@@ -847,6 +847,130 @@ def test_batched_array_lt_custom_batch_dim() -> None:
 @mark.parametrize(
     "other",
     (
+        BatchedArray(np.ones((2, 3))),
+        np.ones((2, 3)),
+        BatchedArray(np.ones((2, 1))),
+        1,
+        1.0,
+    ),
+)
+def test_batched_array__add__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.zeros((2, 3))) + other).equal(BatchedArray(np.ones((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.ones((2, 3))),
+        np.ones((2, 3)),
+        BatchedArray(np.ones((2, 1))),
+        1,
+        1.0,
+    ),
+)
+def test_batched_array__iadd__(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.zeros((2, 3)))
+    batch += other
+    assert batch.equal(BatchedArray(np.ones((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__mul__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.ones((2, 3))) * other).equal(BatchedArray(np.full((2, 3), 2.0)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__imul__(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch *= other
+    assert batch.equal(BatchedArray(np.full((2, 3), 2.0)))
+
+
+def test_batched_array__neg__() -> None:
+    assert (-BatchedArray(np.ones((2, 3)))).equal(BatchedArray(-np.ones((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__sub__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.ones((2, 3))) - other).equal(BatchedArray(-np.ones((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__isub__(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch -= other
+    assert batch.equal(BatchedArray(-np.ones((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__truediv__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.ones((2, 3))) / other).equal(BatchedArray(np.full((2, 3), 0.5)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__itruediv__(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch /= other
+    assert batch.equal(BatchedArray(np.full((2, 3), 0.5)))
+
+
+@mark.parametrize(
+    "other",
+    (
         BatchedArray(np.full((2, 3), 2.0)),
         np.full((2, 3), 2.0),
         BatchedArray(np.full((2, 1), 2.0)),
