@@ -187,17 +187,17 @@ files = [
 
 [[package]]
 name = "coola"
-version = "0.0.15"
+version = "0.0.18"
 description = "A library to check if two complex/nested objects are equal or not"
 optional = false
 python-versions = ">=3.9,<4.0"
 files = [
-    {file = "coola-0.0.15-py3-none-any.whl", hash = "sha256:313530101d31313d981bf3282e1d998b0d902fa566fdd369ed7d8050eeeeb93d"},
-    {file = "coola-0.0.15.tar.gz", hash = "sha256:b0345af37fe9ebac459b5874d43c578c7d2c6c7389470a4a68f61b8e35165406"},
+    {file = "coola-0.0.18-py3-none-any.whl", hash = "sha256:dac9ef5be59158bb9641dc9a0947584f7c8ed40342b7dde62a95590caa4462f5"},
+    {file = "coola-0.0.18.tar.gz", hash = "sha256:56635f937a772ba7281d0f2493af231e929bc85e3d19e2031c90a6f888ddfe81"},
 ]
 
 [package.extras]
-all = ["numpy (>=1.20,<2.0)", "pandas (>=1.3,<3.0)", "polars (>=0.18.3,<1.0)", "torch (>=1.10,<3.0)", "xarray (>=2023.3.0)"]
+all = ["jax (>=0.3.0)", "jaxlib (>=0.3.0)", "numpy (>=1.20,<2.0)", "pandas (>=1.3,<3.0)", "polars (>=0.18.3,<1.0)", "torch (>=1.10,<3.0)", "xarray (>=2023.3.0)"]
 
 [[package]]
 name = "coverage"
@@ -1114,4 +1114,4 @@ tests-strict = ["codecov (==2.0.15)", "pytest (==4.6.0)", "pytest (==4.6.0)", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a47ba4689f31fe1c419387fc507e505a8d8b95b1dd5d3cfe83fd93a585bb2755"
+content-hash = "e1cb2f27b13a0c1aa2214c003a249dad3d0134891cfb6718917ceab2d5141d5b"
