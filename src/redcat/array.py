@@ -463,6 +463,64 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         return self._create_new_batch(np.zeros_like(self._data, *args, **kwargs))
 
     #################################
+    #     Conversion operations     #
+    #################################
+
+    def astype(
+        self, dtype: np.dtype | type[int] | type[float] | type[bool], *args, **kwargs
+    ) -> TBatchedArray:
+        r"""Moves and/or casts the data.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.astype``
+            **kwargs: See the documentation of ``numpy.astype``
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch with the data after
+                dtype and/or device conversion.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.astype(dtype=bool)
+            array([[  True,  True,  True],
+                   [  True,  True,  True]], batch_dim=0)
+        """
+        return self._create_new_batch(self._data.astype(dtype, *args, **kwargs))
+
+    def to(self, *args, **kwargs) -> TBatchedArray:
+        r"""Moves and/or casts the data.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.astype``
+            **kwargs: See the documentation of ``numpy.astype``
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch with the data after
+                dtype and/or device conversion.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.to(dtype=bool)
+            array([[  True,  True,  True],
+                   [  True,  True,  True]], batch_dim=0)
+        """
+        return self._create_new_batch(self._data.astype(*args, **kwargs))
+
+    #################################
     #     Comparison operations     #
     #################################
 
