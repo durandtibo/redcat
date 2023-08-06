@@ -589,7 +589,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Returns:
         -------
-            ``BatchedArray``:  A batch containing a boolean tensor
+            ``BatchedArray``:  A batch containing a boolean array
                 that is ``True`` where the current batch is infinite
                 and ``False`` elsewhere.
 
@@ -612,7 +612,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Returns:
         -------
-            BatchedArray:  A batch containing a boolean tensor
+            BatchedArray:  A batch containing a boolean array
                 that is ``True`` where the current batch is negative
                 infinity and ``False`` elsewhere.
 
@@ -635,7 +635,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Returns:
         -------
-            ``BatchedArray``:  A batch containing a boolean tensor
+            ``BatchedArray``:  A batch containing a boolean array
                 that is ``True`` where the current batch is positive
                 infinity and ``False`` elsewhere.
 
@@ -657,7 +657,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Returns:
         -------
-            ``BatchedArray``:  A batch containing a boolean tensor
+            ``BatchedArray``:  A batch containing a boolean array
                 that is ``True`` where the current batch is infinite
                 and ``False`` elsewhere.
 
@@ -673,6 +673,70 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [ True, False, False]], batch_dim=0)
         """
         return np.isnan(self)
+
+    def le(self, other: BatchedArray | ndarray | bool | int | float) -> TBatchedArray:
+        r"""Computes ``self <= other`` element-wise.
+
+        Args:
+        ----
+            other: Specifies the batch to compare.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch containing the element-wise
+                comparison.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.le(batch2)
+            array([[ True,  True, False],
+                   [ True, False,  True]], batch_dim=0)
+            >>> batch1.le(np.array([[5, 3, 2], [0, 1, 2]]))
+            array([[ True,  True, False],
+                   [ True, False,  True]], batch_dim=0)
+            >>> batch1.le(2)
+            array([[ True, False, False],
+                   [ True,  True,  True]], batch_dim=0)
+        """
+        return np.less_equal(self, other)
+
+    def lt(self, other: BatchedArray | ndarray | bool | int | float) -> TBatchedArray:
+        r"""Computes ``self < other`` element-wise.
+
+        Args:
+        ----
+            other: Specifies the batch to compare.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch containing the element-wise
+                comparison.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+            >>> batch1.lt(batch2)
+            array([[ True, False, False],
+                   [False, False, False]], batch_dim=0)
+            >>> batch1.lt(np.array([[5, 3, 2], [0, 1, 2]]))
+            array([[ True, False, False],
+                  [False, False, False]], batch_dim=0)
+            >>> batch1.lt(2)
+            array([[ True, False, False],
+                   [ True, False, False]], batch_dim=0)
+        """
+        return np.less(self, other)
 
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)

@@ -638,6 +638,88 @@ def test_batched_array_isnan_custom_batch_dim() -> None:
     )
 
 
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array_le(other: BatchedArray | ndarray | int | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .le(other)
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [True, False, False, False, False]],
+                    dtype=bool,
+                )
+            )
+        )
+    )
+
+
+def test_batched_array_le_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_dim=1)
+        .le(BatchedArray(np.full((2, 5), 5.0), batch_dim=1))
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [True, False, False, False, False]],
+                    dtype=bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 5), 5.0)),
+        np.full((2, 5), 5.0),
+        BatchedArray(np.full((2, 1), 5)),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array_lt(other: BatchedArray | ndarray | int | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .lt(other)
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [False, False, False, False, False]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_lt_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_dim=1)
+        .lt(BatchedArray(np.full((2, 5), 5.0), batch_dim=1))
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [False, False, False, False, False]],
+                    dtype=bool,
+                ),
+                batch_dim=1,
+            )
+        )
+    )
+
+
 ##########################################################
 #    Indexing, slicing, joining, mutating operations     #
 ##########################################################
