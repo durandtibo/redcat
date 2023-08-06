@@ -290,6 +290,66 @@ def test_batched_array_new_zeros_custom_dtype(dtype: np.dtype) -> None:
     )
 
 
+def test_batched_tensor_ones_like() -> None:
+    assert BatchedArray(np.zeros((2, 3))).ones_like().equal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_tensor_ones_like_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.zeros((3, 2)), batch_dim=1)
+        .ones_like()
+        .equal(BatchedArray(np.ones((3, 2)), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_ones_like_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3), dtype=dtype))
+        .ones_like()
+        .equal(BatchedArray(np.ones((2, 3), dtype=dtype)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_ones_like_target_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.zeros((2, 3)))
+        .ones_like(dtype=dtype)
+        .equal(BatchedArray(np.ones((2, 3), dtype=dtype)))
+    )
+
+
+def test_batched_tensor_zeros_like() -> None:
+    assert BatchedArray(np.ones((2, 3))).zeros_like().equal(BatchedArray(np.zeros((2, 3))))
+
+
+def test_batched_tensor_zeros_like_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((3, 2)), batch_dim=1)
+        .zeros_like()
+        .equal(BatchedArray(np.zeros((3, 2)), batch_dim=1))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_zeros_like_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=dtype))
+        .zeros_like()
+        .equal(BatchedArray(np.zeros((2, 3), dtype=dtype)))
+    )
+
+
+@mark.parametrize("dtype", DTYPES)
+def test_batched_tensor_zeros_like_target_dtype(dtype: np.dtype) -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)))
+        .zeros_like(dtype=dtype)
+        .equal(BatchedArray(np.zeros((2, 3), dtype=dtype)))
+    )
+
+
 #################################
 #     Comparison operations     #
 #################################
