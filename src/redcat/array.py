@@ -816,6 +816,37 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     #     Mathematical | arithmetical operations     #
     ##################################################
 
+    def __add__(self, other: Any) -> TBatchedArray:
+        return self.add(other)
+
+    def __iadd__(self, other: Any) -> TBatchedArray:
+        self.add_(other)
+        return self
+
+    def __mul__(self, other: Any) -> TBatchedArray:
+        return self.mul(other)
+
+    def __imul__(self, other: Any) -> TBatchedArray:
+        self.mul_(other)
+        return self
+
+    def __neg__(self) -> TBatchedArray:
+        return self.neg()
+
+    def __sub__(self, other: Any) -> TBatchedArray:
+        return self.sub(other)
+
+    def __isub__(self, other: Any) -> TBatchedArray:
+        self.sub_(other)
+        return self
+
+    def __truediv__(self, other: Any) -> TBatchedArray:
+        return self.div(other)
+
+    def __itruediv__(self, other: Any) -> TBatchedArray:
+        self.div_(other)
+        return self
+
     def add(
         self,
         other: BatchedArray | ndarray | int | float,
