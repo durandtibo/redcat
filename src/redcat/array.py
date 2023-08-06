@@ -201,6 +201,61 @@ class BatchedArray:  # (BaseBatch[ndarray]):
         """
         return self.clone(*args, **kwargs)
 
+    def empty_like(self, *args, **kwargs) -> TBatchedArray:
+        r"""Creates an uninitialized batch, with the same shape as the
+        current batch.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.empty_like``
+            **kwargs: See the documentation of
+                ``torch.Tensor.empty_like``
+
+        Returns:
+        -------
+            ``BatchedArray``: A uninitialized batch with the same
+                shape as the current batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.empty_like()  # doctest:+ELLIPSIS
+            array([[...]], batch_dim=0)
+        """
+        return self._create_new_batch(np.empty_like(self._data, *args, **kwargs))
+
+    def full_like(self, *args, **kwargs) -> TBatchedArray:
+        r"""Creates a batch filled with a given scalar value, with the
+        same shape as the current batch.
+
+        Args:
+        ----
+            *args: See the documentation of ``torch.Tensor.full_like``
+            **kwargs: See the documentation of
+                ``torch.Tensor.full_like``
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch filled with the scalar
+                value, with the same shape as the current batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.full_like(42)
+            array([[42., 42., 42.],
+                   [42., 42., 42.]], batch_dim=0)
+        """
+        return self._create_new_batch(np.full_like(self._data, *args, **kwargs))
+
     #################################
     #     Comparison operations     #
     #################################
