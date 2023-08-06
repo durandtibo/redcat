@@ -224,7 +224,7 @@ class BatchedArray:  # (BaseBatch[ndarray]):
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.ones((2, 3)))
             >>> batch.empty_like()  # doctest:+ELLIPSIS
-            tensor([[...]], batch_dim=0)
+            array([[...]], batch_dim=0)
         """
         return self._create_new_batch(np.empty_like(self._data, *args, **kwargs))
 
@@ -251,8 +251,8 @@ class BatchedArray:  # (BaseBatch[ndarray]):
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.ones((2, 3)))
             >>> batch.full_like(42)
-            tensor([[42., 42., 42.],
-                    [42., 42., 42.]], batch_dim=0)
+            array([[42., 42., 42.],
+                   [42., 42., 42.]], batch_dim=0)
         """
         return self._create_new_batch(np.full_like(self._data, *args, **kwargs))
 
