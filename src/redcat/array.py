@@ -895,6 +895,91 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             other = other.data
         self._data = np.add(self._data.data, other * alpha)
 
+    def div(
+        self,
+        other: BatchedArray | ndarray | int | float,
+        rounding_mode: str | None = None,
+    ) -> TBatchedArray:
+        r"""Divides the ``self`` batch by the input ``other`.
+
+        Similar to ``out = self / other``
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the dividend.
+            rounding_mode (str or ``None``, optional): Specifies the
+                type of rounding applied to the result.
+                - ``None``: true division.
+                - ``"floor"``: floor division.
+                Default: ``None``
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch containing the division
+                of the two batches.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> out = batch.div(BatchedArray(torch.full((2, 3), 2.0)))
+            >>> batch
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+            >>> out
+            array([[0.5, 0.5, 0.5],
+                   [0.5, 0.5, 0.5]], batch_dim=0)
+        """
+
+        batch_dims = get_batch_dims((self, other))
+        check_batch_dims(batch_dims)
+        if isinstance(other, BatchedArray):
+            other = other.data
+        return self.__class__(
+            get_div_rounding_operator(rounding_mode)(self.data, other),
+            batch_dim=batch_dims.pop(),
+        )
+
+    def div_(
+        self,
+        other: BatchedArray | ndarray | int | float,
+        rounding_mode: str | None = None,
+    ) -> None:
+        r"""Divides the ``self`` batch by the input ``other`.
+
+        Similar to ``self /= other`` (in-place)
+
+        Args:
+        ----
+            other (``BatchedArray`` or ``numpy.ndarray`` or int or
+                float): Specifies the dividend.
+            rounding_mode (str or ``None``, optional): Specifies the
+                type of rounding applied to the result.
+                - ``None``: true division.
+                - ``"floor"``: floor division.
+                Default: ``None``
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.div_(BatchedArray(np.full((2, 3), 2.0)))
+            >>> batch
+            array([[0.5, 0.5, 0.5],
+                   [0.5, 0.5, 0.5]], batch_dim=0)
+        """
+        check_batch_dims(get_batch_dims((self, other)))
+        if isinstance(other, BatchedArray):
+            other = other.data
+        self._data = get_div_rounding_operator(rounding_mode)(self.data, other)
+
     def mul(self, other: BatchedArray | ndarray | int | float) -> TBatchedArray:
         r"""Multiplies the ``self`` batch by the input ``other`.
 
@@ -1185,3 +1270,33 @@ def numpysum(input: BatchedArray, *args, **kwargs) -> ndarray:  # noqa: A002
     Use the name ``numpysum`` to avoid shadowing `sum` python builtin.
     """
     return np.sum(input.data, *args, **kwargs)
+
+
+def get_div_rounding_operator(mode: str | None) -> Callable:
+    r"""Gets the rounding operator for a division.
+
+    Args:
+    ----
+        mode (str or ``None``, optional): Specifies the
+            type of rounding applied to the result.
+            - ``None``: true division.
+            - ``"floor"``: floor division.
+            Default: ``None``
+
+    Returns:
+    -------
+        ``Callable``: The rounding operator for a division
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat.array import get_div_rounding_operator
+        >>> get_div_rounding_operator(None)
+        <ufunc 'divide'>
+    """
+    if mode is None:
+        return np.true_divide
+    if mode == "floor":
+        return np.floor_divide
+    raise RuntimeError(f"Incorrect `rounding_mode` {mode}. Valid values are: None and 'floor'")

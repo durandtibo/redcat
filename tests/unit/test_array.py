@@ -8,7 +8,7 @@ from coola import objects_are_equal
 from numpy import ndarray
 from pytest import mark, raises
 
-from redcat.array import BatchedArray
+from redcat.array import BatchedArray, get_div_rounding_operator
 
 DTYPES = (bool, int, float)
 
@@ -937,11 +937,80 @@ def test_batched_array_add__incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_mul(other: BatchedArray | ndarray | int | float) -> None:
+def test_batched_array_div(other: BatchedArray | ndarray | int | float) -> None:
+    assert BatchedArray(np.ones((2, 3))).div(other).equal(BatchedArray(np.full((2, 3), 0.5)))
+
+
+def test_batched_array_div_rounding_mode_floor() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)))
+        .div(BatchedArray(np.full((2, 3), 2.0)), rounding_mode="floor")
+        .equal(BatchedArray(np.zeros((2, 3))))
+    )
+
+
+def test_batched_array_div_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .div(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+        .equal(BatchedArray(np.full((2, 3), 0.5), batch_dim=1))
+    )
+
+
+def test_batched_array_div_incorrect_batch_dim() -> None:
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        BatchedArray(np.ones((2, 2))).div(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array_div_(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.div_(other)
+    assert batch.equal(BatchedArray(np.full((2, 3), 0.5)))
+
+
+def test_batched_array_div__rounding_mode_floor() -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.div_(BatchedArray(np.full((2, 3), 2.0)), rounding_mode="floor")
+    assert batch.equal(BatchedArray(np.zeros((2, 3))))
+
+
+def test_batched_array_div__custom_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 3)), batch_dim=1)
+    batch.div_(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
+    assert batch.equal(BatchedArray(np.full((2, 3), 0.5), batch_dim=1))
+
+
+def test_batched_array_div__incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.div_(BatchedArray(np.ones((2, 3)), batch_dim=1))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array_mul(other: BatchedArray | ndarray | int | float) -> None:
     assert BatchedArray(np.ones((2, 3))).mul(other).equal(BatchedArray(np.full((2, 3), 2.0)))
 
 
-def test_batched_tensor_mul_custom_batch_dim() -> None:
+def test_batched_array_mul_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.ones((2, 3)), batch_dim=1)
         .mul(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
@@ -949,7 +1018,7 @@ def test_batched_tensor_mul_custom_batch_dim() -> None:
     )
 
 
-def test_batched_tensor_mul_incorrect_batch_dim() -> None:
+def test_batched_array_mul_incorrect_batch_dim() -> None:
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         BatchedArray(np.ones((2, 2))).mul(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
@@ -964,19 +1033,19 @@ def test_batched_tensor_mul_incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_mul_(other: BatchedArray | ndarray | int | float) -> None:
+def test_batched_array_mul_(other: BatchedArray | ndarray | int | float) -> None:
     batch = BatchedArray(np.ones((2, 3)))
     batch.mul_(other)
     assert batch.equal(BatchedArray(np.full((2, 3), 2.0)))
 
 
-def test_batched_tensor_mul__custom_batch_dim() -> None:
+def test_batched_array_mul__custom_batch_dim() -> None:
     batch = BatchedArray(np.ones((2, 3)), batch_dim=1)
     batch.mul_(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
     assert batch.equal(BatchedArray(np.full((2, 3), 2.0), batch_dim=1))
 
 
-def test_batched_tensor_mul__incorrect_batch_dim() -> None:
+def test_batched_array_mul__incorrect_batch_dim() -> None:
     batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError):
         batch.mul_(BatchedArray(np.ones((2, 2)), batch_dim=1))
@@ -1284,3 +1353,21 @@ def test_numpy_sum_keepdim() -> None:
         np.sum(BatchedArray(np.arange(10).reshape(2, 5)), axis=1, keepdims=True),
         np.array([[10], [35]]),
     )
+
+
+###############################################
+#     Tests for get_div_rounding_operator     #
+###############################################
+
+
+def test_get_div_rounding_operator_mode_none() -> None:
+    assert get_div_rounding_operator(None) == np.true_divide
+
+
+def test_get_div_rounding_operator_mode_floor() -> None:
+    assert get_div_rounding_operator("floor") == np.floor_divide
+
+
+def test_get_div_rounding_operator_mode_incorrect() -> None:
+    with raises(RuntimeError, match="Incorrect `rounding_mode`"):
+        get_div_rounding_operator("incorrect")
