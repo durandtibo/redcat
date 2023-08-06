@@ -542,6 +542,102 @@ def test_batched_array_gt_custom_batch_dim() -> None:
     )
 
 
+def test_batched_array_isinf() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isinf()
+        .equal(BatchedArray(np.array([[False, False, True], [False, False, True]], dtype=bool)))
+    )
+
+
+def test_batched_array_isinf_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_dim=1,
+        )
+        .isinf()
+        .equal(
+            BatchedArray(
+                np.array([[False, False, True], [False, False, True]], dtype=bool),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_array_isneginf() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isneginf()
+        .equal(BatchedArray(np.array([[False, False, False], [False, False, True]], dtype=bool)))
+    )
+
+
+def test_batched_array_isneginf_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_dim=1,
+        )
+        .isneginf()
+        .equal(
+            BatchedArray(
+                np.array([[False, False, False], [False, False, True]], dtype=bool),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_array_isposinf() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isposinf()
+        .equal(BatchedArray(np.array([[False, False, True], [False, False, False]], dtype=bool)))
+    )
+
+
+def test_batched_array_isposinf_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_dim=1,
+        )
+        .isposinf()
+        .equal(
+            BatchedArray(
+                np.array([[False, False, True], [False, False, False]], dtype=bool),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_array_isnan() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]))
+        .isnan()
+        .equal(BatchedArray(np.array([[False, False, True], [True, False, False]], dtype=bool)))
+    )
+
+
+def test_batched_array_isnan_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]),
+            batch_dim=1,
+        )
+        .isnan()
+        .equal(
+            BatchedArray(
+                np.array([[False, False, True], [True, False, False]], dtype=bool),
+                batch_dim=1,
+            )
+        )
+    )
+
+
 ##########################################################
 #    Indexing, slicing, joining, mutating operations     #
 ##########################################################
@@ -755,6 +851,48 @@ def test_numpy_concatenate_incorrect_batch_dim() -> None:
                 BatchedArray(np.zeros((2, 3)), batch_dim=1),
             ]
         )
+
+
+####################################
+#     Tests for numpy.isneginf     #
+####################################
+
+
+def test_numpy_isneginf() -> None:
+    assert np.isneginf(
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+    ).equal(BatchedArray(np.array([[False, False, False], [False, False, True]], dtype=bool)))
+
+
+def test_numpy_isneginf_custom_dims() -> None:
+    assert np.isneginf(
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]), batch_dim=1)
+    ).equal(
+        BatchedArray(
+            np.array([[False, False, False], [False, False, True]], dtype=bool), batch_dim=1
+        )
+    )
+
+
+####################################
+#     Tests for numpy.isposinf     #
+####################################
+
+
+def test_numpy_isposinf() -> None:
+    assert np.isposinf(
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+    ).equal(BatchedArray(np.array([[False, False, True], [False, False, False]], dtype=bool)))
+
+
+def test_numpy_isposinf_custom_dims() -> None:
+    assert np.isposinf(
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]), batch_dim=1)
+    ).equal(
+        BatchedArray(
+            np.array([[False, False, True], [False, False, False]], dtype=bool), batch_dim=1
+        )
+    )
 
 
 ###############################
