@@ -1054,6 +1054,36 @@ def test_batched_tensor__iadd__(other: BatchedTensor | Tensor | int | float) -> 
         2.0,
     ),
 )
+def test_batched_tensor__floordiv__(other: BatchedTensor | Tensor | int | float) -> None:
+    assert (BatchedTensor(torch.ones(2, 3)) // other).equal(BatchedTensor(torch.zeros(2, 3)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor__ifloordiv__(other: BatchedTensor | Tensor | int | float) -> None:
+    batch = BatchedTensor(torch.ones(2, 3))
+    batch //= other
+    assert batch.equal(BatchedTensor(torch.zeros(2, 3)))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedTensor(torch.full((2, 3), 2.0)),
+        torch.full((2, 3), 2.0),
+        BatchedTensor(torch.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
 def test_batched_tensor__mul__(other: BatchedTensor | Tensor | int | float) -> None:
     assert (BatchedTensor(torch.ones(2, 3)) * other).equal(BatchedTensor(torch.full((2, 3), 2.0)))
 
