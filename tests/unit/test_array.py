@@ -1433,7 +1433,6 @@ def test_batched_array_sub__incorrect_batch_dim() -> None:
         batch.sub_(BatchedArray(np.ones((2, 2)), batch_dim=1))
 
 
-
 ###########################################################
 #     Mathematical | advanced arithmetical operations     #
 ###########################################################
@@ -1521,7 +1520,6 @@ def test_batched_array_cumsum_along_batch__custom_dims() -> None:
     assert batch.equal(
         BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1)
     )
-
 
 
 ##########################################################
