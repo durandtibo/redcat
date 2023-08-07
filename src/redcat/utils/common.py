@@ -28,7 +28,7 @@ def check_batch_dims(dims: set[int]) -> None:
 
     .. code-block:: pycon
 
-        >>> from redcat.utils.array import check_batch_dims
+        >>> from redcat.utils.common import check_batch_dims
         >>> check_batch_dims({0})
     """
     if len(dims) != 1:
@@ -55,7 +55,7 @@ def check_data_and_dim(data: ndarray | Tensor, batch_dim: int) -> None:
 
         >>> import numpy as np
         >>> import torch
-        >>> from redcat.array import check_data_and_dim
+        >>> from redcat.utils.common import check_data_and_dim
         >>> check_data_and_dim(np.ones((2, 3)), batch_dim=0)
         >>> check_data_and_dim(torch.ones(2, 3), batch_dim=0)
     """
@@ -87,7 +87,7 @@ def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
         >>> import numpy as np
         >>> import torch
         >>> from redcat import BatchedArray, BatchedTensor
-        >>> from redcat.utils.array import get_batch_dims
+        >>> from redcat.utils.common import get_batch_dims
         >>> get_batch_dims(
         ...     args=(BatchedArray(torch.ones(2, 3)), BatchedArray(torch.ones(2, 6))),
         ...     kwargs={"batch": BatchedArray(torch.ones(2, 4))},

@@ -19,7 +19,7 @@ from torch.nn.utils.rnn import pad_sequence
 
 from redcat import BaseBatch, tensor
 from redcat.tensor import BatchedTensor, get_batch_dims
-from redcat.utils.array import check_batch_dims
+from redcat.utils.common import check_batch_dims
 from redcat.utils.tensor import (
     align_to_batch_seq,
     align_to_seq_batch,
