@@ -823,6 +823,13 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         self.add_(other)
         return self
 
+    def __floordiv__(self, other: Any) -> TBatchedArray:
+        return self.div(other, rounding_mode="floor")
+
+    def __ifloordiv__(self, other: Any) -> TBatchedArray:
+        self.div_(other, rounding_mode="floor")
+        return self
+
     def __mul__(self, other: Any) -> TBatchedArray:
         return self.mul(other)
 

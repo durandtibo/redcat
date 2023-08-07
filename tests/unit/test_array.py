@@ -884,6 +884,36 @@ def test_batched_array__iadd__(other: BatchedArray | ndarray | int | float) -> N
         2.0,
     ),
 )
+def test_batched_tensor__floordiv__(other: BatchedArray | ndarray | int | float) -> None:
+    assert (BatchedArray(np.ones((2, 3))) // other).equal(BatchedArray(np.zeros((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
+def test_batched_tensor__ifloordiv__(other: BatchedArray | ndarray | int | float) -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch //= other
+    assert batch.equal(BatchedArray(np.zeros((2, 3))))
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.full((2, 3), 2.0)),
+        np.full((2, 3), 2.0),
+        BatchedArray(np.full((2, 1), 2.0)),
+        2,
+        2.0,
+    ),
+)
 def test_batched_array__mul__(other: BatchedArray | ndarray | int | float) -> None:
     assert (BatchedArray(np.ones((2, 3))) * other).equal(BatchedArray(np.full((2, 3), 2.0)))
 
