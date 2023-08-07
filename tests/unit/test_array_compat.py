@@ -119,13 +119,30 @@ PAIRWISE_FUNCTIONS = (
 @mark.parametrize("func", UNARY_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_unary(func: Callable, cls: type[BatchedArray]) -> None:
-    array = np.multiply(np.random.rand(2, 3), 2.0)
+    array = np.random.rand(2, 3) * 2.0
     assert func(cls(array)).allclose(cls(func(array)), equal_nan=True)
 
 
 @mark.parametrize("func", UNARY_FUNCTIONS)
 def test_unary_batched_array_custom_dims(func: Callable) -> None:
-    array = np.multiply(np.random.rand(2, 3), 2.0)
+    array = np.random.rand(2, 3) * 2.0
     assert func(BatchedArray(array, batch_dim=1)).allclose(
         BatchedArray(func(array), batch_dim=1), equal_nan=True
+    )
+
+
+@mark.parametrize("func", PAIRWISE_FUNCTIONS)
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_pairwise(func: Callable, cls: type[BatchedArray]) -> None:
+    tensor1 = np.random.rand(2, 3)
+    tensor2 = np.random.rand(2, 3) + 1.0
+    assert func(cls(tensor1), cls(tensor2)).allclose(cls(func(tensor1, tensor2)), equal_nan=True)
+
+
+@mark.parametrize("func", PAIRWISE_FUNCTIONS)
+def test_pairwise_batched_tensor_custom_dims(func: Callable) -> None:
+    tensor1 = np.random.rand(2, 3)
+    tensor2 = np.random.rand(2, 3) + 1.0
+    assert func(BatchedArray(tensor1, batch_dim=1), BatchedArray(tensor2, batch_dim=1)).allclose(
+        BatchedArray(func(tensor1, tensor2), batch_dim=1), equal_nan=True
     )
