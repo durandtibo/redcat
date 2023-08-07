@@ -943,6 +943,13 @@ class BatchedTensor(BaseBatch[Tensor]):
         self.add_(other)
         return self
 
+    def __floordiv__(self, other: Any) -> TBatchedTensor:
+        return self.div(other, rounding_mode="floor")
+
+    def __ifloordiv__(self, other: Any) -> TBatchedTensor:
+        self.div_(other, rounding_mode="floor")
+        return self
+
     def __mul__(self, other: Any) -> TBatchedTensor:
         return self.mul(other)
 
