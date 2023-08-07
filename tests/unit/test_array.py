@@ -116,7 +116,7 @@ def test_batched_array_to_custom_dim() -> None:
 def test_batched_array_clone() -> None:
     batch = BatchedArray(np.ones((2, 3)))
     clone = batch.clone()
-    batch._data += 1
+    batch.add_(1)
     assert batch.equal(BatchedArray(np.full((2, 3), 2.0)))
     assert clone.equal(BatchedArray(np.ones((2, 3))))
 
@@ -132,7 +132,7 @@ def test_batched_array_clone_custom_batch_dim() -> None:
 def test_batched_array_copy() -> None:
     batch = BatchedArray(np.ones((2, 3)))
     clone = batch.copy()
-    batch._data += 1
+    batch.add_(1)
     assert batch.equal(BatchedArray(np.full((2, 3), 2.0)))
     assert clone.equal(BatchedArray(np.ones((2, 3))))
 
@@ -836,6 +836,79 @@ def test_batched_array_lt_custom_batch_dim() -> None:
                 batch_dim=1,
             )
         )
+    )
+
+
+#################
+#     dtype     #
+#################
+
+
+def test_batched_tensor_bool() -> None:
+    assert BatchedArray(np.ones((2, 3))).bool().equal(BatchedArray(np.ones((2, 3), dtype=bool)))
+
+
+def test_batched_tensor_bool_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .bool()
+        .equal(BatchedArray(np.ones((2, 3), dtype=bool), batch_dim=1))
+    )
+
+
+def test_batched_tensor_double() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=bool))
+        .double()
+        .equal(BatchedArray(np.ones((2, 3), dtype=float)))
+    )
+
+
+def test_batched_tensor_double_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=bool), batch_dim=1)
+        .double()
+        .equal(BatchedArray(np.ones((2, 3), dtype=float), batch_dim=1))
+    )
+
+
+def test_batched_tensor_float() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=int))
+        .float()
+        .equal(BatchedArray(np.ones((2, 3), dtype=np.single)))
+    )
+
+
+def test_batched_tensor_float_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3), dtype=int), batch_dim=1)
+        .float()
+        .equal(BatchedArray(np.ones((2, 3), dtype=np.single), batch_dim=1))
+    )
+
+
+def test_batched_tensor_int() -> None:
+    assert BatchedArray(np.ones((2, 3))).int().equal(BatchedArray(np.ones((2, 3), dtype=np.intc)))
+
+
+def test_batched_tensor_int_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .int()
+        .equal(BatchedArray(np.ones((2, 3), dtype=np.intc), batch_dim=1))
+    )
+
+
+def test_batched_tensor_long() -> None:
+    assert BatchedArray(np.ones((2, 3))).long().equal(BatchedArray(np.ones((2, 3), dtype=int)))
+
+
+def test_batched_tensor_long_custom_batch_dim() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3)), batch_dim=1)
+        .long()
+        .equal(BatchedArray(np.ones((2, 3), dtype=int), batch_dim=1))
     )
 
 

@@ -812,6 +812,106 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     #     dtype     #
     #################
 
+    def bool(self) -> TBatchedArray:
+        r"""Converts the current batch to bool data type.
+
+        Returns:
+        -------
+            ``BatchedArray``: The current batch to bool data type.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.bool()
+            array([[ True,  True,  True],
+                   [ True,  True,  True]], batch_dim=0)
+        """
+        return self._create_new_batch(self._data.astype(bool))
+
+    def double(self) -> TBatchedArray:
+        r"""Converts the current batch to double (``float64``) data type.
+
+        Returns:
+        -------
+            ``BatchedArray``: The current batch to double data type.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.double()
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], batch_dim=0)
+        """
+        return self._create_new_batch(self._data.astype(np.double))
+
+    def float(self) -> TBatchedArray:
+        r"""Converts the current batch to float (``float32``) data type.
+
+        Returns:
+        -------
+            ``BatchedArray``: The current batch to float data type.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.float()
+            array([[1., 1., 1.],
+                   [1., 1., 1.]], dtype=float32, batch_dim=0)
+        """
+        return self._create_new_batch(self._data.astype(np.single))
+
+    def int(self) -> TBatchedArray:
+        r"""Converts the current batch to int (``int32``) data type.
+
+        Returns:
+        -------
+            ``BatchedArray``: The current batch to int data type.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.int()
+            array([[1, 1, 1],
+                   [1, 1, 1]], dtype=int32, batch_dim=0)
+        """
+        return self._create_new_batch(self._data.astype(np.intc))
+
+    def long(self) -> TBatchedArray:
+        r"""Converts the current batch to long (``int64``) data type.
+
+        Returns:
+        -------
+            ``BatchedArray``: The current batch to long data type.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.ones((2, 3)))
+            >>> batch.long()
+            array([[1, 1, 1],
+                   [1, 1, 1]], batch_dim=0)
+        """
+        return self._create_new_batch(self._data.astype(np.int_))
+
     ##################################################
     #     Mathematical | arithmetical operations     #
     ##################################################

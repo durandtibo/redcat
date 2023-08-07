@@ -857,7 +857,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.bool())
 
     def double(self) -> TBatchedTensor:
-        r"""Converts the current batch to double data type.
+        r"""Converts the current batch to double (``float64``) data type.
 
         Returns:
         -------
@@ -876,7 +876,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.double())
 
     def float(self) -> TBatchedTensor:
-        r"""Converts the current batch to float data type.
+        r"""Converts the current batch to float (``float32``) data type.
 
         Returns:
         -------
@@ -895,7 +895,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.float())
 
     def int(self) -> TBatchedTensor:
-        r"""Converts the current batch to int data type.
+        r"""Converts the current batch to int (``int32``) data type.
 
         Returns:
         -------
@@ -914,7 +914,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.int())
 
     def long(self) -> TBatchedTensor:
-        r"""Converts the current batch to long data type.
+        r"""Converts the current batch to long (``int64``) data type.
 
         Returns:
         -------
