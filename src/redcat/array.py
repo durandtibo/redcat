@@ -1397,7 +1397,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         out = np.cumsum(self._data, dim, *args, **kwargs)
         if dim is None:
             return out
-        return self.__class__(out, batch_dim=self._batch_dim)
+        return self._create_new_batch(out)
 
     def cumsum_(self, dim: int) -> None:
         r"""Computes the cumulative sum of elements of the current batch
@@ -1465,6 +1465,106 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
         self.cumsum_(self._batch_dim)
+
+    def logcumsumexp(self, dim: int) -> TBatchedArray:
+        r"""Computes the logarithm of the cumulative summation of the
+        exponentiation of elements of the current batch in a given
+        dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the dimension of the cumulative sum.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the cumulative
+                summation of the exponentiation of elements of the
+                current batch in a given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5).astype(float))
+            >>> batch.logcumsumexp(dim=1)
+            array([[0.        , 1.31326169, 2.40760596, 3.4401897 , 4.4519144 ],
+                   [5.        , 6.31326169, 7.40760596, 8.4401897 , 9.4519144 ]], batch_dim=0)
+        """
+        return self._create_new_batch(np.log(np.cumsum(np.exp(self._data), axis=dim)))
+
+    def logcumsumexp_(self, dim: int) -> None:
+        r"""Computes the logarithm of the cumulative summation of the
+        exponentiation of elements of the current batch in a given
+        dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the dimension of the cumulative sum.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5).astype(float))
+            >>> batch.logcumsumexp_(dim=1)
+            >>> batch
+            array([[0.        , 1.31326169, 2.40760596, 3.4401897 , 4.4519144 ],
+                   [5.        , 6.31326169, 7.40760596, 8.4401897 , 9.4519144 ]], batch_dim=0)
+        """
+        self._data = self.logcumsumexp(dim=dim).data
+
+    def logcumsumexp_along_batch(self) -> TBatchedArray:
+        r"""Computes the logarithm of the cumulative summation of the
+        exponentiation of elements of the current batch in the batch
+        dimension.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the cumulative
+                summation of the exponentiation of elements of the
+                current batch in the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(5, 2).astype(float))
+            >>> batch.logcumsumexp_along_batch()
+            array([[0.        , 1.        ],
+                   [2.12692801, 3.12692801],
+                   [4.14293163, 5.14293163],
+                   [6.14507794, 7.14507794],
+                   [8.14536806, 9.14536806]], batch_dim=0)
+        """
+        return self.logcumsumexp(self._batch_dim)
+
+    def logcumsumexp_along_batch_(self) -> None:
+        r"""Computes the logarithm of the cumulative summation of the
+        exponentiation of elements of the current batch in the batch
+        dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(5, 2).astype(float))
+            >>> batch.logcumsumexp_along_batch_()
+            >>> batch
+            array([[0.        , 1.        ],
+                   [2.12692801, 3.12692801],
+                   [4.14293163, 5.14293163],
+                   [6.14507794, 7.14507794],
+                   [8.14536806, 9.14536806]], batch_dim=0)
+        """
+        self.logcumsumexp_(self._batch_dim)
 
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)
@@ -1676,7 +1776,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     #
     #         >>> import numpy
     #         >>> from redcat import BatchedArray
-    #         >>> batch = BatchedArray(numpy.arange(10).view(5, 2))
+    #         >>> batch = BatchedArray(numpy.arange(10).reshape(5, 2))
     #         >>> batch.split(2, dim=0)
     #         (array([[0, 1], [2, 3]], batch_dim=0),
     #          array([[4, 5], [6, 7]], batch_dim=0),
