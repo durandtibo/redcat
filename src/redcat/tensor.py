@@ -12,7 +12,7 @@ from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.utils.array import check_batch_dims, check_data_and_dim, get_batch_dims
+from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.tensor import permute_along_dim
 
 # Workaround because Self is not available for python 3.9 and 3.10

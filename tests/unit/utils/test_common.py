@@ -5,7 +5,7 @@ import torch
 from pytest import mark, raises
 
 from redcat import BatchedArray, BatchedTensor, BatchedTensorSeq
-from redcat.utils.array import check_batch_dims, check_data_and_dim, get_batch_dims
+from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 
 ######################################
 #     Tests for check_batch_dims     #
