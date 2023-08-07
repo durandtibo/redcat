@@ -697,7 +697,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[False, False, False],
                    [False, False,  True]], batch_dim=0)
         """
-        return np.isneginf(self)
+        return self.__class__(np.isneginf(self._data), batch_dim=self._batch_dim)
 
     def isposinf(self) -> TBatchedArray:
         r"""Indicates if each element of the batch is positive infinity
@@ -720,7 +720,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[False, False,   True],
                    [False, False,  False]], batch_dim=0)
         """
-        return np.isposinf(self)
+        return self.__class__(np.isposinf(self._data), batch_dim=self._batch_dim)
 
     def isnan(self) -> TBatchedArray:
         r"""Indicates if each element in the batch is NaN or not.
@@ -1646,7 +1646,7 @@ def cumsum(a: TBatchedArray, axis: int, *args, **kwargs) -> TBatchedArray:
 
 
 @implements(np.cumsum)
-def cumsum(a: TBatchedArray, axis: int | None, *args, **kwargs) -> TBatchedArray | ndarray:
+def cumsum(a: TBatchedArray, axis: int | None = None, *args, **kwargs) -> TBatchedArray | ndarray:
     r"""See ``np.cumsum`` documentation."""
     return a.cumsum(axis, *args, **kwargs)
 
@@ -1654,13 +1654,13 @@ def cumsum(a: TBatchedArray, axis: int | None, *args, **kwargs) -> TBatchedArray
 @implements(np.isneginf)
 def isneginf(x: BatchedArray) -> BatchedArray:
     r"""See ``np.isneginf`` documentation."""
-    return x.__class__(np.isneginf(x.data), batch_dim=x.batch_dim)
+    return x.isneginf()
 
 
 @implements(np.isposinf)
 def isposinf(x: BatchedArray) -> BatchedArray:
     r"""See ``np.isposinf`` documentation."""
-    return x.__class__(np.isposinf(x.data), batch_dim=x.batch_dim)
+    return x.isposinf()
 
 
 @implements(np.sum)

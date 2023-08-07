@@ -1713,7 +1713,7 @@ def test_numpy_concatenate_incorrect_batch_dim() -> None:
 ##################################
 
 
-def test_numpy_cumsum() -> None:
+def test_numpy_cumsum_axis_0() -> None:
     assert np.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=0).equal(
         BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]]))
     )
@@ -1727,7 +1727,7 @@ def test_numpy_cumsum_axis_1() -> None:
 
 def test_numpy_cumsum_axis_none() -> None:
     assert np.array_equal(
-        np.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=None),
+        np.cumsum(BatchedArray(np.arange(10).reshape(2, 5))),
         np.array([0, 1, 3, 6, 10, 15, 21, 28, 36, 45]),
     )
 
