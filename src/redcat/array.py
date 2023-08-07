@@ -4,7 +4,7 @@ __all__ = ["BatchedArray"]
 
 from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
-from typing import Any, TypeVar
+from typing import Any, TypeVar, overload
 
 import numpy as np
 from coola import objects_are_allclose, objects_are_equal
@@ -1361,7 +1361,15 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def cumsum(self, dim: int, **kwargs) -> TBatchedArray:
+    @overload
+    def cumsum(self, dim: None, *args, **kwargs) -> ndarray:
+        r"""See ``cumsum`` documentation."""
+
+    @overload
+    def cumsum(self, dim: int, *args, **kwargs) -> TBatchedArray:
+        r"""See ``cumsum`` documentation."""
+
+    def cumsum(self, dim: int | None, *args, **kwargs) -> TBatchedArray | ndarray:
         r"""Computes the cumulative sum of elements of the current batch
         in a given dimension.
 
@@ -1386,9 +1394,12 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[ 0,  1,  2,  3,  4],
                    [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
-        return self.__class__(np.cumsum(self._data, axis=dim, **kwargs), batch_dim=self._batch_dim)
+        out = np.cumsum(self._data, dim, *args, **kwargs)
+        if dim is None:
+            return out
+        return self.__class__(out, batch_dim=self._batch_dim)
 
-    def cumsum_(self, dim: int, **kwargs) -> None:
+    def cumsum_(self, dim: int) -> None:
         r"""Computes the cumulative sum of elements of the current batch
         in a given dimension.
 
@@ -1409,9 +1420,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[ 0,  1,  2,  3,  4],
                    [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
-        self._data = np.cumsum(self._data, axis=dim, **kwargs)
+        self._data = np.cumsum(self._data, dim)
 
-    def cumsum_along_batch(self, **kwargs) -> TBatchedArray:
+    def cumsum_along_batch(self, *args, **kwargs) -> TBatchedArray:
         r"""Computes the cumulative sum of elements of the current batch
         in the batch dimension.
 
@@ -1435,7 +1446,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[ 0,  1,  2,  3,  4],
                    [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
-        return self.cumsum(self._batch_dim, **kwargs)
+        return self.cumsum(self._batch_dim, *args, **kwargs)
 
     def cumsum_along_batch_(self) -> None:
         r"""Computes the cumulative sum of elements of the current batch
@@ -1656,6 +1667,22 @@ def concatenate(arrays: Sequence[BatchedArray | ndarray], axis: int = 0) -> Batc
         ),
         batch_dim=batch_dims.pop(),
     )
+
+
+@overload
+def cumsum(a: TBatchedArray, axis: None, *args, **kwargs) -> ndarray:
+    r"""See ``np.cumsum`` documentation."""
+
+
+@overload
+def cumsum(a: TBatchedArray, axis: int, *args, **kwargs) -> TBatchedArray:
+    r"""See ``np.cumsum`` documentation."""
+
+
+@implements(np.cumsum)
+def cumsum(a: TBatchedArray, axis: int | None, *args, **kwargs) -> TBatchedArray | ndarray:
+    r"""See ``np.cumsum`` documentation."""
+    return a.cumsum(axis, *args, **kwargs)
 
 
 @implements(np.isneginf)

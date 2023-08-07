@@ -1454,6 +1454,13 @@ def test_batched_array_cumsum_dim_1() -> None:
     )
 
 
+def test_batched_array_cumsum_dim_none() -> None:
+    assert np.array_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumsum(dim=None),
+        np.array([0, 1, 3, 6, 10, 15, 21, 28, 36, 45]),
+    )
+
+
 def test_batched_array_cumsum_custom_dims() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
@@ -1760,6 +1767,42 @@ def test_numpy_concatenate_incorrect_batch_dim() -> None:
                 BatchedArray(np.zeros((2, 2)), batch_dim=1),
             ]
         )
+
+
+##################################
+#     Tests for numpy.cumsum     #
+##################################
+
+
+def test_numpy_cumsum() -> None:
+    assert np.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=0).equal(
+        BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]]))
+    )
+
+
+def test_numpy_cumsum_axis_1() -> None:
+    assert np.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=1).equal(
+        BatchedArray(np.array([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]]))
+    )
+
+
+def test_numpy_cumsum_axis_none() -> None:
+    assert np.array_equal(
+        np.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=None),
+        np.array([0, 1, 3, 6, 10, 15, 21, 28, 36, 45]),
+    )
+
+
+def test_numpy_cumsum_custom_axiss() -> None:
+    assert np.cumsum(BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1), axis=1).equal(
+        BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1)
+    )
+
+
+def test_numpy_cumsum_dtype() -> None:
+    assert np.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=0, dtype=np.intc).equal(
+        BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]], dtype=np.intc))
+    )
 
 
 ####################################
