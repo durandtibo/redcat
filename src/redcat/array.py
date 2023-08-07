@@ -1510,44 +1510,17 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [10, 11, 12],
                    [13, 14, 15]], batch_dim=0)
         """
-        return self.concatenate(arrays, dim)
-
-    def concatenate(
-        self,
-        arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
-        axis: int = 0,
-    ) -> TBatchedArray:
-        r"""Concatenates the data of the batch(es) to the current batch
-        along a given dimension and creates a new batch.
-
-        Args:
-        ----
-            arrays (``BatchedArray`` or ``numpy.ndarray`` or
-                ``Iterable``): Specifies the batch(es) to concatenate.
-            axis (int, optional): Specifies the axis along which the
-                arrays will be concatenated. Default: ``0``
-
-        Returns:
-        -------
-            ``BatchedArray``: A batch with the concatenated data
-                in the given dimension.
-
-        Example usage:
-
-        .. code-block:: pycon
-
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.concatenate(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
-            array([[ 0,  1,  2],
-                   [ 4,  5,  6],
-                   [10, 11, 12],
-                   [13, 14, 15]], batch_dim=0)
-        """
         if isinstance(arrays, (BatchedArray, ndarray)):
             arrays = [arrays]
-        return np.concatenate(list(chain([self], arrays)), axis=axis)
+        arrays = list(chain([self], arrays))
+        batch_dims = get_batch_dims(arrays)
+        check_batch_dims(batch_dims)
+        return BatchedArray(
+            np.concatenate(
+                [array._data if hasattr(array, "_data") else array for array in arrays], axis=dim
+            ),
+            batch_dim=batch_dims.pop(),
+        )
 
     # def chunk_along_batch(self, chunks: int) -> tuple[TBatchedArray, ...]:
     #     pass
@@ -1659,14 +1632,7 @@ def implements(np_function: Callable) -> Callable:
 @implements(np.concatenate)
 def concatenate(arrays: Sequence[BatchedArray | ndarray], axis: int = 0) -> BatchedArray:
     r"""See ``numpy.concatenate`` documentation."""
-    batch_dims = get_batch_dims(arrays)
-    check_batch_dims(batch_dims)
-    return BatchedArray(
-        np.concatenate(
-            [array._data if hasattr(array, "_data") else array for array in arrays], axis=axis
-        ),
-        batch_dim=batch_dims.pop(),
-    )
+    return arrays[0].cat(arrays[1:], axis)
 
 
 @overload

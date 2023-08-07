@@ -1595,67 +1595,6 @@ def test_batched_array_cat_incorrect_batch_dim() -> None:
         batch.cat([BatchedArray(np.ones((2, 3)), batch_dim=1)])
 
 
-@mark.parametrize(
-    "arrays",
-    (
-        BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
-        np.array([[10, 11, 12], [13, 14, 15]]),
-        [BatchedArray(np.array([[10, 11, 12], [13, 14, 15]]))],
-        (BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),),
-    ),
-)
-def test_batched_array_concatenate_dim_0(
-    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
-) -> None:
-    assert (
-        BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-        .concatenate(arrays, axis=0)
-        .equal(BatchedArray(np.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])))
-    )
-
-
-@mark.parametrize(
-    "arrays",
-    (
-        BatchedArray(np.array([[10, 11], [12, 13]])),
-        np.array([[10, 11], [12, 13]]),
-        [BatchedArray(np.array([[10, 11], [12, 13]]))],
-        (BatchedArray(np.array([[10, 11], [12, 13]])),),
-    ),
-)
-def test_batched_array_concatenate_dim_1(
-    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
-) -> None:
-    assert (
-        BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-        .concatenate(arrays, axis=1)
-        .equal(BatchedArray(np.array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]])))
-    )
-
-
-def test_batched_array_concatenate_custom_dims() -> None:
-    assert (
-        BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
-        .concatenate(BatchedArray(np.array([[10, 12], [11, 13], [14, 15]]), batch_dim=1), axis=1)
-        .equal(
-            BatchedArray(
-                np.array([[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]]),
-                batch_dim=1,
-            )
-        )
-    )
-
-
-def test_batched_array_concatenate_empty() -> None:
-    assert BatchedArray(np.ones((2, 3))).concatenate([]).equal(BatchedArray(np.ones((2, 3))))
-
-
-def test_batched_array_concatenate_incorrect_batch_dim() -> None:
-    batch = BatchedArray(np.ones((2, 3)))
-    with raises(RuntimeError, match=r"The batch dimensions do not match."):
-        batch.concatenate([BatchedArray(np.ones((2, 3)), batch_dim=1)])
-
-
 #################
 #     Other     #
 #################
