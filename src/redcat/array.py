@@ -1357,6 +1357,104 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             other = other.data
         self._data = np.subtract(self._data.data, other * alpha)
 
+    ###########################################################
+    #     Mathematical | advanced arithmetical operations     #
+    ###########################################################
+
+    def cumsum(self, dim: int, **kwargs) -> TBatchedArray:
+        r"""Computes the cumulative sum of elements of the current batch
+        in a given dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the dimension of the cumulative sum.
+            **kwargs: see ``numpy.cumsum`` documentation
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the cumulative sum of
+                elements of the current batch in a given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(numpy.arange(10).reshape(2, 5))
+            >>> batch.cumsum(dim=0)
+            array([[ 0,  1,  2,  3,  4],
+                   [ 5,  7,  9, 11, 13]], batch_dim=0)
+        """
+        return self.__class__(np.cumsum(self._data, axis=dim, **kwargs), batch_dim=self._batch_dim)
+
+    def cumsum_(self, dim: int, **kwargs) -> None:
+        r"""Computes the cumulative sum of elements of the current batch
+        in a given dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the dimension of the cumulative sum.
+            **kwargs: see ``numpy.cumsum_`` documentation
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.cumsum_(dim=0)
+            >>> batch
+            array([[ 0,  1,  2,  3,  4],
+                   [ 5,  7,  9, 11, 13]], batch_dim=0)
+        """
+        self._data = np.cumsum(self._data, axis=dim, **kwargs)
+
+    def cumsum_along_batch(self, **kwargs) -> TBatchedArray:
+        r"""Computes the cumulative sum of elements of the current batch
+        in the batch dimension.
+
+        Args:
+        ----
+            **kwargs: see ``numpy.cumsum`` documentation
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the cumulative sum of
+                elements of the current batch in the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.cumsum_along_batch()
+            array([[ 0,  1,  2,  3,  4],
+                   [ 5,  7,  9, 11, 13]], batch_dim=0)
+        """
+        return self.cumsum(self._batch_dim, **kwargs)
+
+    def cumsum_along_batch_(self) -> None:
+        r"""Computes the cumulative sum of elements of the current batch
+        in the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.cumsum_along_batch_()
+            >>> batch
+            array([[ 0,  1,  2,  3,  4],
+                   [ 5,  7,  9, 11, 13]], batch_dim=0)
+        """
+        self.cumsum_(self._batch_dim)
+
     # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
     #     return self.permute_along_dim(permutation, dim=self._batch_dim)
     #
