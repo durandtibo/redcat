@@ -1481,7 +1481,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
     def cat(
         self,
-        arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+        tensors: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
         dim: int = 0,
     ) -> TBatchedArray:
         r"""Concatenates the data of the batch(es) to the current batch
@@ -1510,17 +1510,134 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [10, 11, 12],
                    [13, 14, 15]], batch_dim=0)
         """
-        if isinstance(arrays, (BatchedArray, ndarray)):
-            arrays = [arrays]
-        arrays = list(chain([self], arrays))
-        batch_dims = get_batch_dims(arrays)
+        if isinstance(tensors, (BatchedArray, ndarray)):
+            tensors = [tensors]
+        tensors = list(chain([self], tensors))
+        batch_dims = get_batch_dims(tensors)
         check_batch_dims(batch_dims)
         return BatchedArray(
             np.concatenate(
-                [array._data if hasattr(array, "_data") else array for array in arrays], axis=dim
+                [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors],
+                axis=dim,
             ),
             batch_dim=batch_dims.pop(),
         )
+
+    def cat_(
+        self,
+        arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+        dim: int = 0,
+    ) -> None:
+        r"""Concatenates the data of the batch(es) to the current batch
+        along a given dimension and creates a new batch.
+
+        Args:
+        ----
+            array (``BatchedArray`` or ``numpy.ndarray`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.cat_(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
+            >>> batch
+            array([[ 0,  1,  2],
+                   [ 4,  5,  6],
+                   [10, 11, 12],
+                   [13, 14, 15]], batch_dim=0)
+        """
+        self._data = self.cat(arrays, dim=dim).data
+
+    def cat_along_batch(
+        self, arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray]
+    ) -> TBatchedArray:
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the batch dimension and creates a new batch.
+
+        Args:
+        ----
+            arrays (``BatchedArray`` or ``numpy.ndarray`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the concatenated data
+                in the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.cat_along_batch(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
+            array([[ 0,  1,  2],
+                   [ 4,  5,  6],
+                   [10, 11, 12],
+                   [13, 14, 15]], batch_dim=0)
+            >>> batch = BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]))
+            >>> batch.cat_along_batch(
+            ...     [
+            ...         BatchedArray(np.array([[10, 12], [11, 13]])),
+            ...         BatchedArray(np.array([[20, 22], [21, 23]])),
+            ...     ]
+            ... )
+            array([[ 0,  4],
+                   [ 1,  5],
+                   [ 2,  6],
+                   [10, 12],
+                   [11, 13],
+                   [20, 22],
+                   [21, 23]], batch_dim=0)
+        """
+        return self.cat(arrays, dim=self._batch_dim)
+
+    def cat_along_batch_(
+        self, arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray]
+    ) -> None:
+        r"""Concatenates the data of the batch(es) to the current batch
+        along the batch dimension and creates a new batch.
+
+        Args:
+        ----
+            arrays (``BatchedArray`` or ``numpy.ndarray`` or
+                ``Iterable``): Specifies the batch(es) to concatenate.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+            >>> batch.cat_along_batch_(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
+            >>> batch
+            array([[ 0,  1,  2],
+                   [ 4,  5,  6],
+                   [10, 11, 12],
+                   [13, 14, 15]], batch_dim=0)
+            >>> batch = BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]))
+            >>> batch.cat_along_batch_(
+            ...     [
+            ...         BatchedArray(np.array([[10, 12], [11, 13]])),
+            ...         BatchedArray(np.array([[20, 22], [21, 23]])),
+            ...     ]
+            ... )
+            >>> batch
+            array([[ 0,  4],
+                   [ 1,  5],
+                   [ 2,  6],
+                   [10, 12],
+                   [11, 13],
+                   [20, 22],
+                   [21, 23]], batch_dim=0)
+        """
+        self.cat_(arrays, dim=self._batch_dim)
 
     # def chunk_along_batch(self, chunks: int) -> tuple[TBatchedArray, ...]:
     #     pass
@@ -1528,7 +1645,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     # def extend(self, other: Iterable[BaseBatch]) -> None:
     #     pass
     #
-    # def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BaseBatch:
+    # def index_select_along_batch(self, index: ndarray | Sequence[int]) -> BaseBatch:
     #     pass
     #
     # def slice_along_batch(

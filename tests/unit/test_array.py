@@ -1595,6 +1595,195 @@ def test_batched_array_cat_incorrect_batch_dim() -> None:
         batch.cat([BatchedArray(np.ones((2, 3)), batch_dim=1)])
 
 
+@mark.parametrize(
+    "arrays",
+    (
+        BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
+        np.array([[10, 11, 12], [13, 14, 15]]),
+        [BatchedArray(np.array([[10, 11, 12], [13, 14, 15]]))],
+        (BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),),
+    ),
+)
+def test_batched_array_cat__dim_0(
+    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+) -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+    batch.cat_(arrays, dim=0)
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])))
+
+
+@mark.parametrize(
+    "arrays",
+    (
+        BatchedArray(np.array([[10, 11], [12, 13]])),
+        np.array([[10, 11], [12, 13]]),
+        [BatchedArray(np.array([[10, 11], [12, 13]]))],
+        (BatchedArray(np.array([[10, 11], [12, 13]])),),
+    ),
+)
+def test_batched_array_cat__dim_1(
+    arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+) -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+    batch.cat_(arrays, dim=1)
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]])))
+
+
+def test_batched_array_cat__custom_dims() -> None:
+    batch = BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
+    batch.cat_(BatchedArray(np.array([[10, 12], [11, 13], [14, 15]]), batch_dim=1), dim=1)
+    assert batch.equal(
+        BatchedArray(
+            np.array([[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]]),
+            batch_dim=1,
+        )
+    )
+
+
+def test_batched_array_cat__empty() -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.cat_([])
+    assert batch.equal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_cat__incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.cat_([BatchedArray(np.zeros((2, 2)), batch_dim=1)])
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
+        np.array([[10, 11, 12], [13, 14, 15]]),
+        [BatchedArray(np.array([[10, 11, 12], [13, 14, 15]]))],
+        (BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),),
+    ),
+)
+def test_batched_array_cat_along_batch(
+    other: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+) -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+        .cat_along_batch(other)
+        .equal(BatchedArray(np.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])))
+    )
+
+
+def test_batched_array_cat_along_batch_custom_dims() -> None:
+    assert (
+        BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
+        .cat_along_batch(BatchedArray(np.array([[10, 12], [11, 13], [14, 15]]), batch_dim=1))
+        .equal(
+            BatchedArray(
+                np.array([[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]]),
+                batch_dim=1,
+            )
+        )
+    )
+
+
+def test_batched_array_cat_along_batch_custom_dims_2() -> None:
+    assert (
+        BatchedArray(np.ones((2, 3, 4)), batch_dim=2)
+        .cat_along_batch(BatchedArray(np.ones((2, 3, 1)), batch_dim=2))
+        .equal(BatchedArray(np.ones((2, 3, 5)), batch_dim=2))
+    )
+
+
+def test_batched_array_cat_along_batch_multiple() -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+        .cat_along_batch(
+            [
+                BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
+                BatchedArray(np.array([[20, 21, 22]])),
+                np.array([[30, 31, 32]]),
+            ]
+        )
+        .equal(
+            BatchedArray(
+                np.array(
+                    [[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15], [20, 21, 22], [30, 31, 32]]
+                )
+            )
+        )
+    )
+
+
+def test_batched_array_cat_along_batch_empty() -> None:
+    assert BatchedArray(np.ones((2, 3))).cat_along_batch([]).equal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_cat_along_batch_incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.cat_along_batch([BatchedArray(np.zeros((2, 2)), batch_dim=1)])
+
+
+@mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
+        np.array([[10, 11, 12], [13, 14, 15]]),
+        [BatchedArray(np.array([[10, 11, 12], [13, 14, 15]]))],
+        (BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),),
+    ),
+)
+def test_batched_array_cat_along_batch_(
+    other: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+) -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+    batch.cat_along_batch_(other)
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])))
+
+
+def test_batched_array_cat_along_batch__custom_dims() -> None:
+    batch = BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]), batch_dim=1)
+    batch.cat_along_batch_(BatchedArray(np.array([[10, 12], [11, 13], [14, 15]]), batch_dim=1))
+    assert batch.equal(
+        BatchedArray(
+            np.array([[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]]),
+            batch_dim=1,
+        )
+    )
+
+
+def test_batched_array_cat_along_batch__custom_dims_2() -> None:
+    batch = BatchedArray(np.ones((2, 3, 4)), batch_dim=2)
+    batch.cat_along_batch_(BatchedArray(np.ones((2, 3, 1)), batch_dim=2))
+    assert batch.equal(BatchedArray(np.ones((2, 3, 5)), batch_dim=2))
+
+
+def test_batched_array_cat_along_batch__multiple() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+    batch.cat_along_batch_(
+        [
+            BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])),
+            BatchedArray(np.array([[20, 21, 22]])),
+            np.array([[30, 31, 32]]),
+        ]
+    )
+    assert batch.equal(
+        BatchedArray(
+            np.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15], [20, 21, 22], [30, 31, 32]])
+        )
+    )
+
+
+def test_batched_array_cat_along_batch__empty() -> None:
+    batch = BatchedArray(np.ones((2, 3)))
+    batch.cat_along_batch_([])
+    assert batch.equal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_cat_along_batch__incorrect_batch_dim() -> None:
+    batch = BatchedArray(np.ones((2, 2)))
+    with raises(RuntimeError, match=r"The batch dimensions do not match."):
+        batch.cat_along_batch_([BatchedArray(np.zeros((2, 2)), batch_dim=1)])
+
+
 #################
 #     Other     #
 #################
