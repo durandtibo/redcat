@@ -844,11 +844,11 @@ def test_batched_array_lt_custom_batch_dim() -> None:
 #################
 
 
-def test_batched_tensor_bool() -> None:
+def test_batched_array_bool() -> None:
     assert BatchedArray(np.ones((2, 3))).bool().equal(BatchedArray(np.ones((2, 3), dtype=bool)))
 
 
-def test_batched_tensor_bool_custom_batch_dim() -> None:
+def test_batched_array_bool_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.ones((2, 3)), batch_dim=1)
         .bool()
@@ -856,7 +856,7 @@ def test_batched_tensor_bool_custom_batch_dim() -> None:
     )
 
 
-def test_batched_tensor_double() -> None:
+def test_batched_array_double() -> None:
     assert (
         BatchedArray(np.ones((2, 3), dtype=bool))
         .double()
@@ -864,7 +864,7 @@ def test_batched_tensor_double() -> None:
     )
 
 
-def test_batched_tensor_double_custom_batch_dim() -> None:
+def test_batched_array_double_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.ones((2, 3), dtype=bool), batch_dim=1)
         .double()
@@ -872,7 +872,7 @@ def test_batched_tensor_double_custom_batch_dim() -> None:
     )
 
 
-def test_batched_tensor_float() -> None:
+def test_batched_array_float() -> None:
     assert (
         BatchedArray(np.ones((2, 3), dtype=int))
         .float()
@@ -880,7 +880,7 @@ def test_batched_tensor_float() -> None:
     )
 
 
-def test_batched_tensor_float_custom_batch_dim() -> None:
+def test_batched_array_float_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.ones((2, 3), dtype=int), batch_dim=1)
         .float()
@@ -888,11 +888,11 @@ def test_batched_tensor_float_custom_batch_dim() -> None:
     )
 
 
-def test_batched_tensor_int() -> None:
+def test_batched_array_int() -> None:
     assert BatchedArray(np.ones((2, 3))).int().equal(BatchedArray(np.ones((2, 3), dtype=np.intc)))
 
 
-def test_batched_tensor_int_custom_batch_dim() -> None:
+def test_batched_array_int_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.ones((2, 3)), batch_dim=1)
         .int()
@@ -900,11 +900,11 @@ def test_batched_tensor_int_custom_batch_dim() -> None:
     )
 
 
-def test_batched_tensor_long() -> None:
+def test_batched_array_long() -> None:
     assert BatchedArray(np.ones((2, 3))).long().equal(BatchedArray(np.ones((2, 3), dtype=int)))
 
 
-def test_batched_tensor_long_custom_batch_dim() -> None:
+def test_batched_array_long_custom_batch_dim() -> None:
     assert (
         BatchedArray(np.ones((2, 3)), batch_dim=1)
         .long()
@@ -957,7 +957,7 @@ def test_batched_array__iadd__(other: BatchedArray | ndarray | int | float) -> N
         2.0,
     ),
 )
-def test_batched_tensor__floordiv__(other: BatchedArray | ndarray | int | float) -> None:
+def test_batched_array__floordiv__(other: BatchedArray | ndarray | int | float) -> None:
     assert (BatchedArray(np.ones((2, 3))) // other).equal(BatchedArray(np.zeros((2, 3))))
 
 
@@ -971,7 +971,7 @@ def test_batched_tensor__floordiv__(other: BatchedArray | ndarray | int | float)
         2.0,
     ),
 )
-def test_batched_tensor__ifloordiv__(other: BatchedArray | ndarray | int | float) -> None:
+def test_batched_array__ifloordiv__(other: BatchedArray | ndarray | int | float) -> None:
     batch = BatchedArray(np.ones((2, 3)))
     batch //= other
     assert batch.equal(BatchedArray(np.zeros((2, 3))))
@@ -1431,6 +1431,97 @@ def test_batched_array_sub__incorrect_batch_dim() -> None:
     batch = BatchedArray(np.ones((2, 2)))
     with raises(RuntimeError, match=r"The batch dimensions do not match."):
         batch.sub_(BatchedArray(np.ones((2, 2)), batch_dim=1))
+
+
+
+###########################################################
+#     Mathematical | advanced arithmetical operations     #
+###########################################################
+
+
+def test_batched_array_cumsum() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumsum(dim=0)
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+    )
+
+
+def test_batched_array_cumsum_dim_1() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumsum(dim=1)
+        .equal(BatchedArray(np.array([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]])))
+    )
+
+
+def test_batched_array_cumsum_custom_dims() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+        .cumsum(dim=1)
+        .equal(BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1))
+    )
+
+
+def test_batched_array_cumsum_dtype() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumsum(dim=0, dtype=np.intc)
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]], dtype=np.intc)))
+    )
+
+
+def test_batched_array_cumsum_() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.cumsum_(dim=0)
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+
+
+def test_batched_array_cumsum__custom_dims() -> None:
+    batch = BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+    batch.cumsum_(dim=1)
+    assert batch.equal(
+        BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1)
+    )
+
+
+def test_batched_array_cumsum_along_batch() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumsum_along_batch()
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+    )
+
+
+def test_batched_array_cumsum_along_batch_custom_dims() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+        .cumsum_along_batch()
+        .equal(BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1))
+    )
+
+
+def test_batched_array_cumsum_along_batch_dtype() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumsum_along_batch(dtype=np.intc)
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]], dtype=np.intc)))
+    )
+
+
+def test_batched_array_cumsum_along_batch_() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.cumsum_along_batch_()
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])))
+
+
+def test_batched_array_cumsum_along_batch__custom_dims() -> None:
+    batch = BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+    batch.cumsum_along_batch_()
+    assert batch.equal(
+        BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_dim=1)
+    )
+
 
 
 ##########################################################
