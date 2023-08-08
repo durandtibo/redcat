@@ -1,0 +1,57 @@
+import numpy as np
+from numpy import ndarray
+
+
+def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> ndarray:
+    r"""Permutes the values of a array along a given dimension.
+
+    Args:
+    ----
+        array (``numpy.ndarray``): Specifies the array to permute.
+        permutation (``numpy.ndarray`` of type long and shape
+            ``(dimension,)``): Specifies the permutation to use on the
+            array. The dimension of this array should be compatible
+            with the shape of the array to permute.
+        dim (int, optional): Specifies the dimension used to permute the
+            array. Default: ``0``
+
+    Returns:
+    -------
+        ``numpy.ndarray``: The permuted array.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import numpy as np
+        >>> from redcat.utils.array import permute_along_dim
+        >>> permute_along_dim(np.arange(4), permutation=np.array([0, 2, 1, 3]))
+        array([0, 2, 1, 3])
+        >>> permute_along_dim(
+        ...     np.arange(20).reshape(4, 5),
+        ...     permutation=np.array([0, 2, 1, 3]),
+        ... )
+        array([[ 0,  1,  2,  3,  4],
+               [10, 11, 12, 13, 14],
+               [ 5,  6,  7,  8,  9],
+               [15, 16, 17, 18, 19]])
+        >>> permute_along_dim(
+        ...     np.arange(20).reshape(4, 5),
+        ...     permutation=np.array([0, 4, 2, 1, 3]),
+        ...     dim=1,
+        ... )
+        array([[ 0,  4,  2,  1,  3],
+               [ 5,  9,  7,  6,  8],
+               [10, 14, 12, 11, 13],
+               [15, 19, 17, 16, 18]])
+        >>> permute_along_dim(
+        ...     np.arange(20).reshape(2, 2, 5),
+        ...     permutation=np.array([0, 4, 2, 1, 3]),
+        ...     dim=2,
+        ... )
+        array([[[ 0,  4,  2,  1,  3],
+                [ 5,  9,  7,  6,  8]],
+               [[10, 14, 12, 11, 13],
+                [15, 19, 17, 16, 18]]])
+    """
+    return np.swapaxes(np.swapaxes(array, 0, dim)[permutation], 0, dim)

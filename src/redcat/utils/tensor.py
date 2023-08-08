@@ -280,6 +280,7 @@ def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tens
 
     .. code-block:: pycon
 
+        >>> import torch
         >>> from redcat.utils.tensor import permute_along_dim
         >>> permute_along_dim(tensor=torch.arange(4), permutation=torch.tensor([0, 2, 1, 3]))
         tensor([0, 2, 1, 3])
