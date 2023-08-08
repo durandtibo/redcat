@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from redcat.utils.array import permute_along_dim
@@ -23,7 +22,9 @@ def test_permute_along_dim_2d_dim_0() -> None:
 
 def test_permute_along_dim_2d_dim_1() -> None:
     assert np.array_equal(
-        permute_along_dim(np.arange(20).reshape(4, 5), permutation=np.array([0, 4, 2, 1, 3]), dim=1),
+        permute_along_dim(
+            np.arange(20).reshape(4, 5), permutation=np.array([0, 4, 2, 1, 3]), dim=1
+        ),
         np.array([[0, 4, 2, 1, 3], [5, 9, 7, 6, 8], [10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]),
     )
 
