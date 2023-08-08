@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from typing import Any
 
 import numpy as np
@@ -1757,6 +1757,82 @@ def test_batched_array_logcumsumexp_along_batch__custom_dims() -> None:
             batch_dim=1,
         )
     )
+
+
+@mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_batch(permutation: Sequence[int] | ndarray) -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        .permute_along_batch(permutation)
+        .equal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+    )
+
+
+def test_batched_array_permute_along_batch_custom_dims() -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_dim=1)
+        .permute_along_batch(np.array([2, 1, 3, 0]))
+        .equal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
+    )
+
+
+@mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_batch_(permutation: Sequence[int] | ndarray) -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch.permute_along_batch_(permutation)
+    assert batch.equal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+
+
+def test_batched_array_permute_along_batch__custom_dims() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_dim=1)
+    batch.permute_along_batch_(np.array([2, 1, 3, 0]))
+    assert batch.equal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
+
+
+@mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_dim_0(permutation: Sequence[int] | ndarray) -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        .permute_along_dim(permutation, dim=0)
+        .equal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+    )
+
+
+@mark.parametrize("permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+def test_batched_array_permute_along_dim_1(permutation: Sequence[int] | ndarray) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .permute_along_dim(permutation, dim=1)
+        .equal(BatchedArray(np.array([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+    )
+
+
+def test_batched_array_permute_along_dim_custom_dims() -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_dim=1)
+        .permute_along_dim(np.array([2, 1, 3, 0]), dim=1)
+        .equal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
+    )
+
+
+@mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_dim__0(permutation: Sequence[int] | ndarray) -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch.permute_along_dim_(permutation, dim=0)
+    assert batch.equal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+
+
+@mark.parametrize("permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+def test_batched_array_permute_along_seq__1(permutation: Sequence[int] | ndarray) -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.permute_along_dim_(permutation, dim=1)
+    assert batch.equal(BatchedArray(np.array([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+
+
+def test_batched_array_permute_along_dim__custom_dims() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_dim=1)
+    batch.permute_along_dim_(np.array([2, 1, 3, 0]), dim=1)
+    assert batch.equal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
 
 
 ##########################################################
