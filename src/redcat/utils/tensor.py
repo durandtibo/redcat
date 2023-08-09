@@ -370,7 +370,7 @@ def to_tensor(tensor: Sequence | Tensor | np.ndarray) -> Tensor:
 
     Args:
     ----
-        tensor (sequence or ``torch.Tensor`` or ``numpy.ndarray``):
+        tensor (``Sequence`` or ``torch.Tensor`` or ``numpy.ndarray``):
             Specifies the data to convert to a tensor.
 
     Returns:

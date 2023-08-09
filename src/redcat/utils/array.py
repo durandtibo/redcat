@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+__all__ = ["permute_along_dim", "to_array"]
+
+from collections.abc import Sequence
+
 import numpy as np
+import torch
 from numpy import ndarray
 
 
@@ -55,3 +62,29 @@ def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> nda
                 [15, 19, 17, 16, 18]]])
     """
     return np.swapaxes(np.swapaxes(array, 0, dim)[permutation], 0, dim)
+
+
+def to_array(array: Sequence | torch.Tensor | ndarray) -> ndarray:
+    r"""Converts the input to a ``numpy.ndarray``.
+
+    Args:
+    ----
+        array (``Sequence`` or ``torch.Tensor`` or ``numpy.ndarray``):
+            Specifies the data to convert to a array.
+
+    Returns:
+    -------
+        ``numpy.ndarray``: A array.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat.utils.array import to_array
+        >>> x = to_array([1, 2, 3, 4, 5])
+        >>> x
+        array([1, 2, 3, 4, 5])
+    """
+    if not isinstance(array, ndarray):
+        array = np.asarray(array)
+    return array
