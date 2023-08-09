@@ -6,7 +6,7 @@ from unittest.mock import Mock
 from coola import objects_are_equal
 from coola.testing import numpy_available, torch_available
 from coola.utils import is_numpy_available, is_torch_available
-from pytest import mark
+from pytest import mark, raises
 
 from redcat.utils.random import get_random_rng, randperm
 from redcat.utils.tensor import get_torch_generator
@@ -38,6 +38,11 @@ def test_get_random_rng_int() -> None:
 
 def test_get_random_rng_none() -> None:
     assert isinstance(get_random_rng(None), random.Random)
+
+
+def test_get_random_rng_incorrect() -> None:
+    with raises(RuntimeError, match="Invalid `rng_or_seed`"):
+        get_random_rng("meow")
 
 
 ##############################
