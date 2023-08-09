@@ -10,6 +10,7 @@ import numpy as np
 from coola import objects_are_allclose, objects_are_equal
 from numpy import ndarray
 
+from redcat.utils.array import permute_along_dim
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -1566,11 +1567,78 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         self.logcumsumexp_(self._batch_dim)
 
-    # def permute_along_batch(self, permutation: IndicesType) -> TBatchedArray:
-    #     return self.permute_along_dim(permutation, dim=self._batch_dim)
-    #
-    # def permute_along_batch_(self, permutation: IndicesType) -> None:
-    #     self.permute_along_dim_(permutation, dim=self._batch_dim)
+    def permute_along_batch(self, permutation: Sequence[int] | ndarray) -> TBatchedArray:
+        return self.permute_along_dim(permutation, dim=self._batch_dim)
+
+    def permute_along_batch_(self, permutation: Sequence[int] | ndarray) -> None:
+        self.permute_along_dim_(permutation, dim=self._batch_dim)
+
+    def permute_along_dim(self, permutation: Sequence[int] | ndarray, dim: int) -> TBatchedArray:
+        r"""Permutes the data/batch along a given dimension.
+
+        Args:
+        ----
+            permutation (sequence or ``numpy.ndarray`` of type int
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+            dim (int): Specifies the dimension where the permutation
+                is computed.
+
+        Returns:
+        -------
+            ``BatchedArray``: A new batch with permuted data.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+            >>> batch.permute_along_dim([2, 1, 3, 0, 4], dim=0)
+            array([[4, 5],
+                   [2, 3],
+                   [6, 7],
+                   [0, 1],
+                   [8, 9]], batch_dim=0)
+        """
+        if not isinstance(permutation, ndarray):
+            permutation = np.asarray(permutation)
+        return self._create_new_batch(
+            permute_along_dim(self._data, permutation=permutation, dim=dim)
+        )
+
+    def permute_along_dim_(self, permutation: Sequence[int] | ndarray, dim: int) -> None:
+        r"""Permutes the data/batch along a given dimension.
+
+        Args:
+        ----
+            permutation (sequence or ``numpy.ndarray`` of type int
+                and shape ``(dimension,)``): Specifies the permutation
+                to use on the data. The dimension of the permutation
+                input should be compatible with the shape of the data.
+            dim (int): Specifies the dimension where the permutation
+                is computed.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+            >>> batch.permute_along_dim_([2, 1, 3, 0, 4], dim=0)
+            >>> batch
+            array([[4, 5],
+                   [2, 3],
+                   [6, 7],
+                   [0, 1],
+                   [8, 9]], batch_dim=0)
+        """
+        if not isinstance(permutation, ndarray):
+            permutation = np.asarray(permutation)
+        self._data = permute_along_dim(self._data, permutation=permutation, dim=dim)
 
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
