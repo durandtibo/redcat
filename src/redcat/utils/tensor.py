@@ -10,10 +10,11 @@ __all__ = [
     "get_torch_generator",
     "permute_along_dim",
     "swap2",
+    "to_tensor",
 ]
 
 import copy
-from collections.abc import MutableSequence
+from collections.abc import MutableSequence, Sequence
 from typing import Union, overload
 
 import numpy as np
@@ -362,3 +363,29 @@ def swap2(
     sequence[index0] = sequence[index1]
     sequence[index1] = tmp
     return sequence
+
+
+def to_tensor(tensor: Sequence | Tensor | np.ndarray) -> Tensor:
+    r"""Converts the input to a ``torch.Tensor``.
+
+    Args:
+    ----
+        tensor (sequence or ``torch.Tensor`` or ``numpy.ndarray``):
+            Specifies the data to convert to a tensor.
+
+    Returns:
+    -------
+        ``torch.Tensor``: A tensor.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat.utils.tensor import to_tensor
+        >>> x = to_tensor([1, 2, 3, 4, 5])
+        >>> x
+        tensor([1, 2, 3, 4, 5])
+    """
+    if not torch.is_tensor(tensor):
+        tensor = torch.as_tensor(tensor)
+    return tensor
