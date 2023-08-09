@@ -13,7 +13,7 @@ from torch import Tensor
 
 from redcat.base import BaseBatch
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
-from redcat.utils.tensor import permute_along_dim
+from redcat.utils.tensor import permute_along_dim, to_tensor
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -1578,10 +1578,8 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [0, 1],
                     [8, 9]], batch_dim=0)
         """
-        if not torch.is_tensor(permutation):
-            permutation = torch.as_tensor(permutation)
         return self._create_new_batch(
-            permute_along_dim(tensor=self._data, permutation=permutation, dim=dim)
+            permute_along_dim(tensor=self._data, permutation=to_tensor(permutation), dim=dim)
         )
 
     def permute_along_dim_(self, permutation: Sequence[int] | Tensor, dim: int) -> None:
@@ -1611,9 +1609,9 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [0, 1],
                     [8, 9]], batch_dim=0)
         """
-        if not torch.is_tensor(permutation):
-            permutation = torch.as_tensor(permutation)
-        self._data = permute_along_dim(tensor=self._data, permutation=permutation, dim=dim)
+        self._data = permute_along_dim(
+            tensor=self._data, permutation=to_tensor(permutation), dim=dim
+        )
 
     def shuffle_along_dim(
         self, dim: int, generator: torch.Generator | None = None
@@ -1622,6 +1620,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Args:
         ----
+            dim (int): Specifies the shuffle dimension.
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -1650,6 +1649,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Args:
         ----
+            dim (int): Specifies the shuffle dimension.
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -3839,9 +3839,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [2, 3],
                     [0, 1]], batch_dim=0)
         """
-        if not torch.is_tensor(index):
-            index = torch.as_tensor(index)
-        return self._create_new_batch(self._data.index_select(dim, index))
+        return self._create_new_batch(self._data.index_select(dim, to_tensor(index)))
 
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchedTensor:
         return self.index_select(self._batch_dim, index)

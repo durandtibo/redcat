@@ -1,8 +1,13 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
 from unittest.mock import patch
 
 import numpy as np
 import torch
-from pytest import raises
+from coola.testing import numpy_available
+from pytest import mark, raises
+from torch import Tensor
 
 from redcat.utils.tensor import (
     align_to_batch_first,
@@ -13,6 +18,7 @@ from redcat.utils.tensor import (
     get_torch_generator,
     permute_along_dim,
     swap2,
+    to_tensor,
 )
 
 ##########################################
@@ -266,3 +272,28 @@ def test_swap2_ndarray_2d() -> None:
     array = np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
     swap2(array, 0, 2)
     assert np.array_equal(array, np.array([[4, 5], [2, 3], [0, 1], [6, 7], [8, 9]]))
+
+
+###############################
+#     Tests for to_tensor     #
+###############################
+
+
+@mark.parametrize("data", (torch.tensor([3, 1, 2, 0, 1]), [3, 1, 2, 0, 1], (3, 1, 2, 0, 1)))
+def test_to_tensor_long(data: Sequence | Tensor) -> None:
+    assert to_tensor(data).equal(torch.tensor([3, 1, 2, 0, 1], dtype=torch.long))
+
+
+@mark.parametrize(
+    "data",
+    (torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0]), [3.0, 1.0, 2.0, 0.0, 1.0], (3.0, 1.0, 2.0, 0.0, 1.0)),
+)
+def test_to_tensor_float(data: Sequence | Tensor) -> None:
+    assert to_tensor(data).equal(torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0], dtype=torch.float))
+
+
+@numpy_available
+def test_to_tensor_numpy() -> None:
+    assert to_tensor(np.array([3, 1, 2, 0, 1])).equal(
+        torch.tensor([3, 1, 2, 0, 1], dtype=torch.long)
+    )
