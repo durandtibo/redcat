@@ -26,5 +26,5 @@ IndexType = Union[int, slice, list[int], Tensor, None]
 
 IndicesType = Union[Sequence[int], Tensor, ndarray]
 
-RNGType = Union[np.random.Generator, torch.Generator]
+RNGType = Union[random.Random, np.random.Generator, torch.Generator]
 RNGOrSeedType = Union[np.random.Generator, torch.Generator, random.Random, int, None]

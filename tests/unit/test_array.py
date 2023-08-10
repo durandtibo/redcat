@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
 from typing import Any
+from unittest.mock import patch
 
 import numpy as np
 from coola import objects_are_equal
@@ -1833,6 +1834,70 @@ def test_batched_array_permute_along_dim__custom_dims() -> None:
     batch = BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_dim=1)
     batch.permute_along_dim_(np.array([2, 1, 3, 0]), dim=1)
     assert batch.equal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
+
+
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_dim() -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        .shuffle_along_dim(dim=0)
+        .equal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+    )
+
+
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_dim_custom_dims() -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
+        .shuffle_along_dim(dim=1)
+        .equal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_dim=1))
+    )
+
+
+def test_batched_array_shuffle_along_dim_same_random_seed() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert batch.shuffle_along_dim(dim=0, generator=np.random.default_rng(1)).equal(
+        batch.shuffle_along_dim(dim=0, generator=np.random.default_rng(1))
+    )
+
+
+def test_batched_array_shuffle_along_dim_different_random_seeds() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert not batch.shuffle_along_dim(dim=0, generator=np.random.default_rng(1)).equal(
+        batch.shuffle_along_dim(dim=0, generator=np.random.default_rng(2))
+    )
+
+
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_dim_() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch.shuffle_along_dim_(dim=0)
+    assert batch.equal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+
+
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_dim__custom_dims() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
+    batch.shuffle_along_dim_(dim=1)
+    assert batch.equal(
+        BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_dim=1)
+    )
+
+
+def test_batched_array_shuffle_along_dim__same_random_seed() -> None:
+    batch1 = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch1.shuffle_along_dim_(dim=0, generator=np.random.default_rng(1))
+    batch2 = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch2.shuffle_along_dim_(dim=0, generator=np.random.default_rng(1))
+    assert batch1.equal(batch2)
+
+
+def test_batched_array_shuffle_along_dim__different_random_seeds() -> None:
+    batch1 = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch1.shuffle_along_dim_(dim=0, generator=np.random.default_rng(1))
+    batch2 = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch2.shuffle_along_dim_(dim=0, generator=np.random.default_rng(2))
+    assert not batch1.equal(batch2)
 
 
 ##########################################################

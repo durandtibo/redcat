@@ -10,8 +10,10 @@ import numpy as np
 from coola import objects_are_allclose, objects_are_equal
 from numpy import ndarray
 
-from redcat.utils.array import permute_along_dim
+from redcat.types import RNGType
+from redcat.utils.array import permute_along_dim, to_array
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
+from redcat.utils.random import randperm
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -1639,6 +1641,65 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         if not isinstance(permutation, ndarray):
             permutation = np.asarray(permutation)
         self._data = permute_along_dim(self._data, permutation=permutation, dim=dim)
+
+    def shuffle_along_dim(self, dim: int, generator: RNGType | None = None) -> TBatchedArray:
+        r"""Shuffles the data/batch along a given dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the shuffle dimension.
+            generator (``numpy.random.Generator`` or
+                ``torch.Generator`` or ``random.Random`` or ``None``,
+                optional): Specifies the pseudorandom number
+                generator for sampling or the random seed for the
+                random number generator. Default: ``None``
+
+        Returns:
+        -------
+            ``BatchedArray``:  A new batch with shuffled data
+                along a given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+            >>> batch.shuffle_along_dim(dim=0)  # doctest:+ELLIPSIS
+            array([[...]], batch_dim=0)
+        """
+        return self.permute_along_dim(to_array(randperm(self._data.shape[dim], generator)), dim=dim)
+
+    def shuffle_along_dim_(self, dim: int, generator: RNGType | None = None) -> None:
+        r"""Shuffles the data/batch along a given dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the shuffle dimension.
+            generator (``numpy.random.Generator`` or
+                ``torch.Generator`` or ``random.Random`` or ``None``,
+                optional): Specifies the pseudorandom number
+                generator for sampling or the random seed for the
+                random number generator. Default: ``None``
+
+        Returns:
+        -------
+            ``BatchedArray``:  A new batch with shuffled data
+                along a given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+            >>> batch.shuffle_along_dim_(dim=0)
+            >>> batch  # doctest:+ELLIPSIS
+            array([[...]], batch_dim=0)
+        """
+        self.permute_along_dim_(to_array(randperm(self._data.shape[dim], generator)), dim=dim)
 
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
