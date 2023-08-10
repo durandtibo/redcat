@@ -10,7 +10,7 @@ import numpy as np
 from coola import objects_are_allclose, objects_are_equal
 from numpy import ndarray
 
-from redcat.types import RNGType
+from redcat.types import RNGType, SortReturnType
 from redcat.utils.array import permute_along_dim, to_array
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.random import randperm
@@ -1700,6 +1700,89 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[...]], batch_dim=0)
         """
         self.permute_along_dim_(to_array(randperm(self._data.shape[dim], generator)), dim=dim)
+
+    def sort(
+        self,
+        dim: int = -1,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> SortReturnType:
+        r"""Sorts the elements of the batch along a given dimension in
+        monotonic order by value.
+
+        Args:
+        ----
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+        -------
+            (``BatchedArray``, ``BatchedArray``): A tuple
+                two values:
+                    - The first batch contains the batch values sorted
+                        along the given dimension.
+                    - The second batch contains the indices that sort
+                        the batch along the given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.sort(descending=True)
+            SortReturnType(values=array([[...]], batch_dim=0), indices=array([...]], batch_dim=0))
+        """
+        indices = np.argsort(self._data, axis=dim, kind="stable" if stable else "quicksort")
+        if descending:
+            indices = np.flip(indices, axis=dim)
+        return SortReturnType(
+            values=self._create_new_batch(np.take_along_axis(self._data, indices, dim)),
+            indices=self._create_new_batch(indices),
+        )
+
+    def sort_along_batch(
+        self,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> SortReturnType:
+        r"""Sorts the elements of the batch along the batch dimension in
+        monotonic order by value.
+
+        Args:
+        ----
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+        -------
+            (``BatchedArray``, ``BatchedArray``): A tuple
+                two values:
+                    - The first batch contains the batch values sorted
+                        along the given dimension.
+                    - The second batch contains the indices that sort
+                        the batch along the given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.sort_along_batch(descending=True)
+            SortReturnType(values=array([[...]], batch_dim=0), indices=array([...]], batch_dim=0))
+        """
+        return self.sort(dim=self._batch_dim, descending=descending, stable=stable)
 
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #

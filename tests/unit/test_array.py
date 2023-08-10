@@ -10,6 +10,7 @@ from numpy import ndarray
 from pytest import mark, raises
 
 from redcat.array import BatchedArray, get_div_rounding_operator
+from redcat.types import SortReturnType
 
 DTYPES = (bool, int, float)
 
@@ -1898,6 +1899,112 @@ def test_batched_array_shuffle_along_dim__different_random_seeds() -> None:
     batch2 = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     batch2.shuffle_along_dim_(dim=0, generator=np.random.default_rng(2))
     assert not batch1.equal(batch2)
+
+
+def test_batched_array_sort_descending_true() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(descending=True),
+        SortReturnType(
+            BatchedArray(np.array([[5, 4, 3, 2, 1], [9, 8, 7, 6, 5]])),
+            BatchedArray(np.array([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])),
+        ),
+    )
+
+
+def test_batched_array_sort_descending_true_dim_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort(
+            descending=True, dim=0
+        ),
+        SortReturnType(
+            BatchedArray(np.array([[5, 9], [4, 8], [3, 7], [2, 6], [1, 5]])),
+            BatchedArray(np.array([[3, 0], [0, 4], [4, 1], [2, 3], [1, 2]])),
+        ),
+    )
+
+
+def test_batched_array_sort_dim_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort(dim=0),
+        SortReturnType(
+            BatchedArray(np.array([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
+            BatchedArray(np.array([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+        ),
+        show_difference=True,
+    )
+
+
+def test_batched_array_sort_dim_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.array(
+                [
+                    [[0, 1], [-2, 3], [-4, 5], [-6, 7], [-8, 9]],
+                    [[10, -11], [12, -13], [14, -15], [16, -17], [18, -19]],
+                ]
+            )
+        ).sort(dim=1),
+        SortReturnType(
+            BatchedArray(
+                np.array(
+                    [
+                        [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
+                        [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
+                    ]
+                )
+            ),
+            BatchedArray(
+                np.array(
+                    [
+                        [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
+                        [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                    ]
+                )
+            ),
+        ),
+    )
+
+
+def test_batched_array_sort_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_dim=1).sort(dim=0),
+        SortReturnType(
+            BatchedArray(np.array([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), batch_dim=1),
+            BatchedArray(np.array([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), batch_dim=1),
+        ),
+    )
+
+
+def test_batched_array_sort_along_batch_descending_false() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort_along_batch(),
+        SortReturnType(
+            BatchedArray(np.array([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
+            BatchedArray(np.array([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+        ),
+    )
+
+
+def test_batched_array_sort_along_batch_descending_true() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort_along_batch(
+            descending=True
+        ),
+        SortReturnType(
+            BatchedArray(np.array([[5, 9], [4, 8], [3, 7], [2, 6], [1, 5]])),
+            BatchedArray(np.array([[3, 0], [0, 4], [4, 1], [2, 3], [1, 2]])),
+        ),
+    )
+
+
+def test_batched_array_sort_along_batch_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_dim=1).sort_along_batch(),
+        SortReturnType(
+            BatchedArray(np.array([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]), batch_dim=1),
+            BatchedArray(np.array([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), batch_dim=1),
+        ),
+    )
 
 
 ##########################################################
