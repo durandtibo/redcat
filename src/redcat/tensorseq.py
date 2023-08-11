@@ -19,6 +19,7 @@ from torch.nn.utils.rnn import pad_sequence
 
 from redcat import BaseBatch, tensor
 from redcat.tensor import BatchedTensor, get_batch_dims
+from redcat.types import SortReturnType
 from redcat.utils.common import check_batch_dims
 from redcat.utils.tensor import (
     align_to_batch_seq,
@@ -552,9 +553,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.permute_along_seq_(torch.randperm(self.seq_len, generator=generator))
 
-    def sort_along_seq(
-        self, descending: bool = False, stable: bool = False
-    ) -> torch.return_types.sort:
+    def sort_along_seq(self, descending: bool = False, stable: bool = False) -> SortReturnType:
         r"""Sorts the elements of the batch along the sequence dimension
         in monotonic order by value.
 
@@ -584,11 +583,12 @@ class BatchedTensorSeq(BatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.sort_along_seq(descending=True)
-            torch.return_types.sort(
-            values=tensor([[4, 3, 2, 1, 0],
-                    [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1),
-            indices=tensor([[4, 3, 2, 1, 0],
-                    [4, 3, 2, 1, 0]], batch_dim=0, seq_dim=1))
+            SortReturnType(
+              (values): tensor([[4, 3, 2, 1, 0],
+                        [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1)
+              (indices): tensor([[4, 3, 2, 1, 0],
+                        [4, 3, 2, 1, 0]], batch_dim=0, seq_dim=1)
+            )
         """
         return self.sort(dim=self._seq_dim, descending=descending, stable=stable)
 

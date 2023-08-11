@@ -20,6 +20,7 @@ from redcat.tensorseq import (
     from_sequences,
     get_seq_dims,
 )
+from redcat.types import SortReturnType
 from redcat.utils.tensor import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
@@ -2515,12 +2516,6 @@ def test_batched_tensor_seq_shuffle_along_dim__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
-def test_batched_tensor_seq_sort_descending_false() -> None:
-    values, indices = BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort()
-    assert values.equal(BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])))
-    assert indices.equal(BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])))
-
-
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
 def test_batched_tensor_seq_shuffle_along_seq() -> None:
     assert (
@@ -2601,14 +2596,42 @@ def test_batched_tensor_seq_shuffle_along_seq__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
+def test_batched_tensor_seq_sort_tuple() -> None:
+    values, indices = BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort()
+    assert objects_are_equal(
+        values, BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]))
+    )
+    assert objects_are_equal(
+        indices, BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]))
+    )
+
+
+def test_batched_tensor_seq_sort_namedtuple() -> None:
+    out = BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort()
+    assert objects_are_equal(
+        out.values, BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]))
+    )
+    assert objects_are_equal(
+        out.indices, BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]))
+    )
+
+
+def test_batched_tensor_seq_sort_descending_false() -> None:
+    assert objects_are_equal(
+        BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(descending=False),
+        SortReturnType(
+            BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])),
+            BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])),
+        ),
+    )
+
+
 def test_batched_tensor_seq_sort_descending_true() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(descending=True),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(torch.tensor([[5, 4, 3, 2, 1], [9, 8, 7, 6, 5]])),
-                BatchedTensorSeq(torch.tensor([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(torch.tensor([[5, 4, 3, 2, 1], [9, 8, 7, 6, 5]])),
+            BatchedTensorSeq(torch.tensor([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])),
         ),
     )
 
@@ -2616,11 +2639,9 @@ def test_batched_tensor_seq_sort_descending_true() -> None:
 def test_batched_tensor_seq_sort_dim_0() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort(dim=0),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
-                BatchedTensorSeq(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
+            BatchedTensorSeq(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
         ),
     )
 
@@ -2635,25 +2656,23 @@ def test_batched_tensor_seq_sort_dim_1() -> None:
                 ]
             )
         ).sort(dim=1),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(
-                    torch.tensor(
-                        [
-                            [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
-                            [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
-                        ]
-                    )
-                ),
-                BatchedTensorSeq(
-                    torch.tensor(
-                        [
-                            [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
-                            [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
-                        ]
-                    )
-                ),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
+                        [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
+                    ]
+                )
+            ),
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
+                        [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                    ]
+                )
+            ),
         ),
     )
 
@@ -2663,27 +2682,47 @@ def test_batched_tensor_seq_sort_custom_dims() -> None:
         BatchedTensorSeq(
             torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), seq_dim=0, batch_dim=1
         ).sort(dim=0),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(
-                    torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), seq_dim=0, batch_dim=1
-                ),
-                BatchedTensorSeq(
-                    torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), seq_dim=0, batch_dim=1
-                ),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(
+                torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), seq_dim=0, batch_dim=1
+            ),
+            BatchedTensorSeq(
+                torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), seq_dim=0, batch_dim=1
+            ),
         ),
+    )
+
+
+def test_batched_tensor_seq_sort_along_batch_tuple() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])
+    ).sort_along_batch()
+    assert objects_are_equal(
+        values, BatchedTensorSeq(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]))
+    )
+    assert objects_are_equal(
+        indices, BatchedTensorSeq(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]))
+    )
+
+
+def test_batched_tensor_seq_sort_along_batch_namedtuple() -> None:
+    out = BatchedTensorSeq(
+        torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])
+    ).sort_along_batch()
+    assert objects_are_equal(
+        out.values, BatchedTensorSeq(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]))
+    )
+    assert objects_are_equal(
+        out.indices, BatchedTensorSeq(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]))
     )
 
 
 def test_batched_tensor_seq_sort_along_batch_descending_false() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort_along_batch(),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
-                BatchedTensorSeq(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
+            BatchedTensorSeq(torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
         ),
     )
 
@@ -2693,11 +2732,9 @@ def test_batched_tensor_seq_sort_along_batch_descending_true() -> None:
         BatchedTensorSeq(torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort_along_batch(
             descending=True
         ),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(torch.tensor([[5, 9], [4, 8], [3, 7], [2, 6], [1, 5]])),
-                BatchedTensorSeq(torch.tensor([[3, 0], [0, 4], [4, 1], [2, 3], [1, 2]])),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(torch.tensor([[5, 9], [4, 8], [3, 7], [2, 6], [1, 5]])),
+            BatchedTensorSeq(torch.tensor([[3, 0], [0, 4], [4, 1], [2, 3], [1, 2]])),
         ),
     )
 
@@ -2707,27 +2744,45 @@ def test_batched_tensor_seq_sort_along_batch_custom_dims() -> None:
         BatchedTensorSeq(
             torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), seq_dim=0, batch_dim=1
         ).sort_along_batch(),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(
-                    torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]), seq_dim=0, batch_dim=1
-                ),
-                BatchedTensorSeq(
-                    torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), seq_dim=0, batch_dim=1
-                ),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(
+                torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]), seq_dim=0, batch_dim=1
+            ),
+            BatchedTensorSeq(
+                torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), seq_dim=0, batch_dim=1
+            ),
         ),
+    )
+
+
+def test_batched_tensor_seq_sort_along_seq_tuple() -> None:
+    values, indices = BatchedTensorSeq(
+        torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])
+    ).sort_along_seq()
+    assert objects_are_equal(
+        values, BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]))
+    )
+    assert objects_are_equal(
+        indices, BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]))
+    )
+
+
+def test_batched_tensor_seq_sort_along_seq_namedtuple() -> None:
+    out = BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort_along_seq()
+    assert objects_are_equal(
+        out.values, BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]))
+    )
+    assert objects_are_equal(
+        out.indices, BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]))
     )
 
 
 def test_batched_tensor_seq_sort_along_seq_descending_false() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort_along_seq(),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])),
-                BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])),
+            BatchedTensorSeq(torch.tensor([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])),
         ),
     )
 
@@ -2737,11 +2792,9 @@ def test_batched_tensor_seq_sort_along_seq_descending_true() -> None:
         BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort_along_seq(
             descending=True
         ),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(torch.tensor([[5, 4, 3, 2, 1], [9, 8, 7, 6, 5]])),
-                BatchedTensorSeq(torch.tensor([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(torch.tensor([[5, 4, 3, 2, 1], [9, 8, 7, 6, 5]])),
+            BatchedTensorSeq(torch.tensor([[3, 0, 4, 2, 1], [0, 4, 1, 3, 2]])),
         ),
     )
 
@@ -2756,25 +2809,23 @@ def test_batched_tensor_seq_sort_along_seq_dim_3() -> None:
                 ]
             )
         ).sort_along_seq(),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(
-                    torch.tensor(
-                        [
-                            [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
-                            [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
-                        ]
-                    )
-                ),
-                BatchedTensorSeq(
-                    torch.tensor(
-                        [
-                            [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
-                            [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
-                        ]
-                    )
-                ),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
+                        [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
+                    ]
+                )
+            ),
+            BatchedTensorSeq(
+                torch.tensor(
+                    [
+                        [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
+                        [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                    ]
+                )
+            ),
         ),
     )
 
@@ -2784,15 +2835,13 @@ def test_batched_tensor_seq_sort_along_seq_custom_dims() -> None:
         BatchedTensorSeq(
             torch.tensor([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), seq_dim=0, batch_dim=1
         ).sort_along_seq(),
-        torch.return_types.sort(
-            [
-                BatchedTensorSeq(
-                    torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), seq_dim=0, batch_dim=1
-                ),
-                BatchedTensorSeq(
-                    torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), seq_dim=0, batch_dim=1
-                ),
-            ]
+        SortReturnType(
+            BatchedTensorSeq(
+                torch.tensor([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), seq_dim=0, batch_dim=1
+            ),
+            BatchedTensorSeq(
+                torch.tensor([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), seq_dim=0, batch_dim=1
+            ),
         ),
     )
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["IndexType", "IndicesType", "RNGType", "RNGOrSeedType"]
+__all__ = ["IndexType", "IndicesType", "RNGType", "SortReturnType"]
 
 import random
 from collections import namedtuple
@@ -31,7 +31,6 @@ IndexType = Union[int, slice, list[int], Tensor, None]
 IndicesType = Union[Sequence[int], Tensor, ndarray]
 
 RNGType = Union[random.Random, np.random.Generator, torch.Generator]
-RNGOrSeedType = Union[np.random.Generator, torch.Generator, random.Random, int, None]
 
 
 class SortReturnType(namedtuple("SortReturnType", ["values", "indices"])):
