@@ -8,6 +8,22 @@ from redcat.types import SortReturnType
 ####################################
 
 
+def test_sort_return_type_str() -> None:
+    assert str(SortReturnType(torch.ones(2, 4), torch.ones(2, 4))).startswith("SortReturnType(")
+
+
+def test_sort_return_type_values() -> None:
+    assert objects_are_equal(
+        SortReturnType(torch.ones(2, 4), torch.zeros(2, 4)).values, torch.ones(2, 4)
+    )
+
+
+def test_sort_return_type_indices() -> None:
+    assert objects_are_equal(
+        SortReturnType(torch.ones(2, 4), torch.zeros(2, 4)).indices, torch.zeros(2, 4)
+    )
+
+
 def test_sort_return_type_tuple() -> None:
     assert objects_are_equal(
         tuple(SortReturnType(torch.ones(2, 4), torch.ones(2, 4))),

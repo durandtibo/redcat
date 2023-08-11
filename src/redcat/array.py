@@ -1736,7 +1736,12 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
             >>> batch.sort(descending=True)
-            SortReturnType(values=array([[...]], batch_dim=0), indices=array([...]], batch_dim=0))
+            SortReturnType(
+              (values): array([[4, 3, 2, 1, 0],
+                        [9, 8, 7, 6, 5]], batch_dim=0)
+              (indices): array([[4, 3, 2, 1, 0],
+                        [4, 3, 2, 1, 0]], batch_dim=0)
+            )
         """
         indices = np.argsort(self._data, axis=dim, kind="stable" if stable else "quicksort")
         if descending:
@@ -1780,7 +1785,12 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
             >>> batch.sort_along_batch(descending=True)
-            SortReturnType(values=array([[...]], batch_dim=0), indices=array([...]], batch_dim=0))
+            SortReturnType(
+              (values): array([[5, 6, 7, 8, 9],
+                        [0, 1, 2, 3, 4]], batch_dim=0)
+              (indices): array([[1, 1, 1, 1, 1],
+                        [0, 0, 0, 0, 0]], batch_dim=0)
+            )
         """
         return self.sort(dim=self._batch_dim, descending=descending, stable=stable)
 
