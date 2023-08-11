@@ -1794,6 +1794,50 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         return self.sort(dim=self._batch_dim, descending=descending, stable=stable)
 
+    ################################################
+    #     Mathematical | point-wise operations     #
+    ################################################
+
+    def abs(self) -> TBatchedArray:
+        r"""Computes the absolute value of each element.
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with the absolute value of
+                each element.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]))
+            >>> batch.abs()
+            array([[2., 0., 2.],
+                   [1., 1., 3.]], batch_dim=0)
+        """
+        return self._create_new_batch(np.abs(self._data))
+
+    def abs_(self) -> None:
+        r"""Computes the absolute value of each element.
+
+        In-place version of ``abs()``.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.array([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]))
+            >>> batch.abs_()
+            >>> batch
+            array([[2., 0., 2.],
+                   [1., 1., 3.]], batch_dim=0)
+        """
+        self._data = np.abs(self._data)
+
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
