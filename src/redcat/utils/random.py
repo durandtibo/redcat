@@ -8,7 +8,7 @@ from unittest.mock import Mock
 
 from coola.utils import is_numpy_available, is_torch_available
 
-from redcat.types import RNGOrSeedType
+from redcat.types import RNGType
 
 if is_numpy_available():
     import numpy as np
@@ -106,7 +106,9 @@ def randperm(n: int, generator: random.Random | int | None = None) -> list[int]:
     """
 
 
-def randperm(n: int, rng_or_seed: RNGOrSeedType = None) -> torch.Tensor | np.ndarray | list[int]:
+def randperm(
+    n: int, rng_or_seed: RNGType | int | None = None
+) -> torch.Tensor | np.ndarray | list[int]:
     r"""Creates a random permutation of integers from ``0`` to ``n - 1``.
 
     Args:
