@@ -12,7 +12,7 @@ from pytest import mark, raises
 from torch import Tensor
 from torch.overrides import is_tensor_like
 
-from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq
+from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq, BatchList
 from redcat.tensor import IndexType
 from redcat.tensorseq import (
     check_data_and_dims,
@@ -7311,7 +7311,9 @@ def test_batched_tensor_seq_split_along_seq_custom_dims() -> None:
         BatchedTensorSeq(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         torch.tensor([[3, 2], [0, 3], [1, 4]]),
+        torch.tensor([[3, 2], [0, 3], [1, 4]], dtype=torch.float),
         [[3, 2], [0, 3], [1, 4]],
+        BatchList([[3, 2], [0, 3], [1, 4]]),
     ),
 )
 def test_batched_tensor_seq_take_along_batch(indices: BaseBatch | Tensor | Sequence) -> None:
@@ -7376,7 +7378,9 @@ def test_batched_tensor_seq_take_along_batch_incorrect_seq_dim() -> None:
         BatchedTensorSeq(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         torch.tensor([[3, 2], [0, 3], [1, 4]]),
+        torch.tensor([[3, 2], [0, 3], [1, 4]], dtype=torch.float),
         [[3, 2], [0, 3], [1, 4]],
+        BatchList([[3, 2], [0, 3], [1, 4]]),
     ),
 )
 def test_batched_tensor_seq_take_along_dim(indices: BaseBatch | Tensor | Sequence) -> None:
@@ -7393,7 +7397,9 @@ def test_batched_tensor_seq_take_along_dim(indices: BaseBatch | Tensor | Sequenc
         BatchedTensorSeq(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])),
         torch.tensor([[3, 2], [0, 3], [1, 4]]),
+        torch.tensor([[3, 2], [0, 3], [1, 4]], dtype=torch.float),
         [[3, 2], [0, 3], [1, 4]],
+        BatchList([[3, 2], [0, 3], [1, 4]]),
     ),
 )
 def test_batched_tensor_seq_take_along_dim_0(indices: BaseBatch | Tensor | Sequence) -> None:
@@ -7459,7 +7465,10 @@ def test_batched_tensor_seq_take_along_dim_incorrect_seq_dim() -> None:
         BatchedTensorSeq(torch.tensor([[3, 0, 1], [2, 3, 4]])),
         BatchedTensor(torch.tensor([[3, 0, 1], [2, 3, 4]])),
         torch.tensor([[3, 0, 1], [2, 3, 4]]),
+        torch.tensor([[3, 0, 1], [2, 3, 4]], dtype=torch.float),
+        BatchList([[3, 0, 1], [2, 3, 4]]),
         [[3, 0, 1], [2, 3, 4]],
+        np.array([[3, 0, 1], [2, 3, 4]]),
     ),
 )
 def test_batched_tensor_seq_take_along_seq(indices: BaseBatch | Tensor | Sequence) -> None:

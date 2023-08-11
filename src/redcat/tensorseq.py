@@ -12,6 +12,7 @@ import functools
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Any, overload
 
+import numpy as np
 import torch
 from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
@@ -1249,14 +1250,24 @@ class BatchedTensorSeq(BatchedTensor):
     ) -> tuple[BatchedTensorSeq, ...]:
         return self.split(split_size_or_sections, dim=self._seq_dim)
 
-    def take_along_seq(self, indices: BaseBatch | Tensor | Sequence) -> BatchedTensorSeq:
+    def take_along_dim(
+        self,
+        indices: BaseBatch | np.ndarray | Tensor | Sequence,
+        dim: int | None = None,
+    ) -> BatchedTensorSeq | Tensor:
+        check_seq_dims(get_seq_dims((self, indices)))
+        return super().take_along_dim(indices, dim)
+
+    def take_along_seq(
+        self, indices: BaseBatch | np.ndarray | Tensor | Sequence
+    ) -> BatchedTensorSeq:
         r"""Takes values along the sequence dimension.
 
         Args:
         ----
-            indices (``BaseBatch`` or ``Tensor`` or sequence):
-                Specifies the indices to take along the sequence
-                dimension.
+            indices (``BaseBatch`` or ``numpy.ndarray`` or
+                ``torch.Tensor`` or `` Specifies the indices to take
+                along the batch dimension.
 
         Returns:
         -------
@@ -1503,21 +1514,7 @@ def take_along_dim(
     dim: int | None = None,
 ) -> BatchedTensorSeq | Tensor:
     r"""See ``torch.take_along_dim`` documentation."""
-    batch_dims = get_batch_dims((input, indices))
-    check_batch_dims(batch_dims)
-    seq_dims = get_seq_dims((input, indices))
-    check_seq_dims(seq_dims)
-    if isinstance(input, BatchedTensor):
-        input = input.data  # noqa: A001
-    if isinstance(indices, BatchedTensor):
-        indices = indices.data
-    if dim is None:
-        return torch.take_along_dim(input, indices)
-    return BatchedTensorSeq(
-        torch.take_along_dim(input, indices, dim=dim),
-        batch_dim=batch_dims.pop(),
-        seq_dim=seq_dims.pop(),
-    )
+    return input.take_along_dim(indices, dim)
 
 
 def from_sequences(

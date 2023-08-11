@@ -7,6 +7,7 @@ from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
 from typing import Any, TypeVar, Union, overload
 
+import numpy as np
 import torch
 from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
@@ -4017,7 +4018,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self.split(split_size_or_sections, dim=self._batch_dim)
 
     def take_along_batch(
-        self, indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence
+        self, indices: BaseBatch | np.ndarray | Tensor | Sequence
     ) -> TBatchedTensor:
         r"""Takes values along the batch dimension.
 
@@ -4045,22 +4046,41 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.take_along_dim(indices, dim=self._batch_dim)
 
+    @overload
     def take_along_dim(
         self,
-        indices: BaseBatch[Tensor | Sequence] | Tensor | Sequence,
-        dim: int | None = None,
+        indices: BaseBatch | np.ndarray | Tensor | Sequence,
+        dim: None = None,
+    ) -> Tensor:
+        r"""See documentation of ``take_along_dim``"""
+
+    @overload
+    def take_along_dim(
+        self,
+        indices: BaseBatch | np.ndarray | Tensor | Sequence,
+        dim: int,
     ) -> TBatchedTensor:
+        r"""See documentation of ``take_along_dim``"""
+
+    def take_along_dim(
+        self,
+        indices: BaseBatch | np.ndarray | Tensor | Sequence,
+        dim: int | None = None,
+    ) -> TBatchedTensor | Tensor:
         r"""Takes values along the batch dimension.
 
         Args:
         ----
-            indices (``BaseBatch`` or ``Tensor`` or sequence):
-                Specifies the indices to take along the batch
-                dimension.
+            indices (``BaseBatch`` or ``numpy.ndarray`` or
+                ``torch.Tensor`` or `` Specifies the indices to take
+                along the batch dimension.
+            dim (int or ``None``, optional): Specifies the dimension
+                to select along. Default: ``None``
 
         Returns:
         -------
-            ``BatchedTensor``: The batch with the selected data.
+            ``BatchedTensor`` or ``torch.Tensor``: The batch with the
+                selected data.
 
         Example usage:
 
@@ -4074,9 +4094,13 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [0, 7],
                     [2, 9]], batch_dim=0)
         """
-        if isinstance(indices, Sequence):
-            indices = torch.as_tensor(indices)
-        return torch.take_along_dim(self, indices, dim=dim)
+        check_batch_dims(get_batch_dims((self, indices)))
+        if isinstance(indices, BaseBatch):
+            indices = indices.data
+        indices = to_tensor(indices).long()
+        if dim is None:
+            return torch.take_along_dim(self._data, indices)
+        return self._create_new_batch(torch.take_along_dim(self._data, indices, dim=dim))
 
     def unsqueeze(self, dim: int) -> TBatchedTensor:
         r"""Returns a new batch with a dimension of size one inserted at
@@ -4465,15 +4489,4 @@ def take_along_dim(
     dim: int | None = None,
 ) -> BatchedTensor | Tensor:
     r"""See ``torch.take_along_dim`` documentation."""
-    batch_dims = get_batch_dims((input, indices))
-    check_batch_dims(batch_dims)
-    if isinstance(input, BatchedTensor):
-        input = input.data  # noqa: A001
-    if isinstance(indices, BatchedTensor):
-        indices = indices.data
-    if dim is None:
-        return torch.take_along_dim(input, indices)
-    return BatchedTensor(
-        torch.take_along_dim(input, indices, dim=dim),
-        batch_dim=batch_dims.pop(),
-    )
+    return input.take_along_dim(indices, dim)
