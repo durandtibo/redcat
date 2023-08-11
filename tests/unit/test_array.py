@@ -2076,6 +2076,62 @@ def test_batched_array_abs__custom_batch_dim() -> None:
     assert batch.equal(BatchedArray(np.array([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]]), batch_dim=1))
 
 
+def test_batched_array_clamp() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .clamp(min=2, max=5)
+        .equal(BatchedArray(np.array([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]])))
+    )
+
+
+def test_batched_array_clamp_only_max() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .clamp(max=5)
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 5, 5, 5, 5]])))
+    )
+
+
+def test_batched_array_clamp_only_min() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .clamp(min=2)
+        .equal(BatchedArray(np.array([[2, 2, 2, 3, 4], [5, 6, 7, 8, 9]])))
+    )
+
+
+def test_batched_array_clamp_custom_dims() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_dim=1)
+        .clamp(min=2, max=5)
+        .equal(BatchedArray(np.array([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]), batch_dim=1))
+    )
+
+
+def test_batched_array_clamp_() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.clamp_(min=2, max=5)
+    assert batch.equal(BatchedArray(np.array([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]])))
+
+
+def test_batched_array_clamp__only_max() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.clamp_(max=5)
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 5, 5, 5, 5]])))
+
+
+def test_batched_array_clamp__only_min() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.clamp_(min=2)
+    assert batch.equal(BatchedArray(np.array([[2, 2, 2, 3, 4], [5, 6, 7, 8, 9]])))
+
+
+def test_batched_array_clamp__custom_dims() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5), batch_dim=1)
+    batch.clamp_(min=2, max=5)
+    assert batch.equal(BatchedArray(np.array([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]), batch_dim=1))
+
+
 ##########################################################
 #    Indexing, slicing, joining, mutating operations     #
 ##########################################################

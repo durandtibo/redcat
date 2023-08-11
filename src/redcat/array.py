@@ -1838,6 +1838,93 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         self._data = np.abs(self._data)
 
+    def clamp(
+        self,
+        min: int | float | None = None,  # noqa: A002
+        max: int | float | None = None,  # noqa: A002
+    ) -> TBatchedArray:
+        r"""Clamps all elements in ``self`` into the range ``[min,
+        max]``.
+
+        Note: ``min`` and ``max`` cannot be both ``None``.
+
+        Args:
+        ----
+            min (int, float or ``None``, optional): Specifies
+                the lower bound. If ``min`` is ``None``,
+                there is no lower bound. Default: ``None``
+            max (int, float or ``None``, optional): Specifies
+                the upper bound. If ``max`` is ``None``,
+                there is no upper bound. Default: ``None``
+
+        Returns:
+        -------
+            ``BatchedArray``: A batch with clamped values.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.clamp(min=2, max=5)
+            array([[2, 2, 2, 3, 4],
+                   [5, 5, 5, 5, 5]], batch_dim=0)
+            >>> batch.clamp(min=2)
+            array([[2, 2, 2, 3, 4],
+                   [5, 6, 7, 8, 9]], batch_dim=0)
+            >>> batch.clamp(max=7)
+            array([[0, 1, 2, 3, 4],
+                   [5, 6, 7, 7, 7]], batch_dim=0)
+        """
+        return self._create_new_batch(np.clip(self._data, a_min=min, a_max=max))
+
+    def clamp_(
+        self,
+        min: int | float | None = None,  # noqa: A002
+        max: int | float | None = None,  # noqa: A002
+    ) -> None:
+        r"""Clamps all elements in ``self`` into the range ``[min,
+        max]``.
+
+        Inplace version of ``clamp``.
+
+        Note: ``min`` and ``max`` cannot be both ``None``.
+
+        Args:
+        ----
+            min (int, float or ``None``, optional): Specifies
+                the lower bound.  If ``min`` is ``None``,
+                there is no lower bound. Default: ``None``
+            max (int, float or ``None``, optional): Specifies
+                the upper bound. If ``max`` is ``None``,
+                there is no upper bound. Default: ``None``
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import numpy as np
+            >>> from redcat import BatchedArray
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.clamp_(min=2, max=5)
+            >>> batch
+            array([[2, 2, 2, 3, 4],
+                   [5, 5, 5, 5, 5]], batch_dim=0)
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.clamp_(min=2)
+            >>> batch
+            array([[2, 2, 2, 3, 4],
+                   [5, 6, 7, 8, 9]], batch_dim=0)
+            >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+            >>> batch.clamp_(max=7)
+            >>> batch
+            array([[0, 1, 2, 3, 4],
+                   [5, 6, 7, 7, 7]], batch_dim=0)
+        """
+        self._data = np.clip(self._data, a_min=min, a_max=max)
+
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
