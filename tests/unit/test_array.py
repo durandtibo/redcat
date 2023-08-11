@@ -1901,6 +1901,20 @@ def test_batched_array_shuffle_along_dim__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
+def test_batched_array_sort_tuple() -> None:
+    values, indices = BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort()
+    assert objects_are_equal(values, BatchedArray(np.array([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])))
+    assert objects_are_equal(indices, BatchedArray(np.array([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])))
+
+
+def test_batched_array_sort_namedtuple() -> None:
+    out = BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort()
+    assert objects_are_equal(out.values, BatchedArray(np.array([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])))
+    assert objects_are_equal(
+        out.indices, BatchedArray(np.array([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]))
+    )
+
+
 def test_batched_array_sort_descending_true() -> None:
     assert objects_are_equal(
         BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).sort(descending=True),
@@ -1972,6 +1986,28 @@ def test_batched_array_sort_custom_dims() -> None:
             BatchedArray(np.array([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), batch_dim=1),
             BatchedArray(np.array([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), batch_dim=1),
         ),
+    )
+
+
+def test_batched_array_sort_along_batch_tuple() -> None:
+    values, indices = BatchedArray(
+        np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])
+    ).sort_along_batch()
+    assert objects_are_equal(
+        values, BatchedArray(np.array([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]))
+    )
+    assert objects_are_equal(
+        indices, BatchedArray(np.array([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]))
+    )
+
+
+def test_batched_array_sort_along_batch_namedtuple() -> None:
+    out = BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).sort_along_batch()
+    assert objects_are_equal(
+        out.values, BatchedArray(np.array([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]))
+    )
+    assert objects_are_equal(
+        out.indices, BatchedArray(np.array([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]))
     )
 
 
