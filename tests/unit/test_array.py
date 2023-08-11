@@ -2043,6 +2043,39 @@ def test_batched_array_sort_along_batch_custom_dims() -> None:
     )
 
 
+################################################
+#     Mathematical | point-wise operations     #
+################################################
+
+
+def test_batched_array_abs() -> None:
+    assert (
+        BatchedArray(np.array([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]))
+        .abs()
+        .equal(BatchedArray(np.array([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]])))
+    )
+
+
+def test_batched_array_abs_custom_dims() -> None:
+    assert (
+        BatchedArray(np.array([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]), batch_dim=1)
+        .abs()
+        .equal(BatchedArray(np.array([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]]), batch_dim=1))
+    )
+
+
+def test_batched_array_abs_() -> None:
+    batch = BatchedArray(np.array([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]))
+    batch.abs_()
+    assert batch.equal(BatchedArray(np.array([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]])))
+
+
+def test_batched_array_abs__custom_batch_dim() -> None:
+    batch = BatchedArray(np.array([[-2.0, 0.0, 2.0], [-1.0, 1.0, 3.0]]), batch_dim=1)
+    batch.abs_()
+    assert batch.equal(BatchedArray(np.array([[2.0, 0.0, 2.0], [1.0, 1.0, 3.0]]), batch_dim=1))
+
+
 ##########################################################
 #    Indexing, slicing, joining, mutating operations     #
 ##########################################################
