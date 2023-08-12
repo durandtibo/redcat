@@ -1350,6 +1350,84 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
+    def argsort(
+        self,
+        dim: int = -1,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> TBatchedTensor:
+        r"""Returns the indices that sort the batch along a given
+        dimension in monotonic order by value.
+
+        Args:
+        ----
+            dim (int, optional): Specifies the dimension to sort along.
+                Default: ``-1``
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+        -------
+            ``BatchedTensor``: The indices that sort the batch along
+                the given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.argsort(descending=True)
+            tensor([[4, 3, 2, 1, 0],
+                    [4, 3, 2, 1, 0]], batch_dim=0)
+        """
+        return self._create_new_batch(
+            self._data.argsort(dim=dim, descending=descending, stable=stable)
+        )
+
+    def argsort_along_batch(
+        self,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> TBatchedTensor:
+        r"""Sorts the elements of the batch along the batch dimension in
+        monotonic order by value.
+
+        Args:
+        ----
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+        -------
+            ``BatchedTensor``: The indices that sort the batch along
+                the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.argsort_along_batch(descending=True)
+            tensor([[4, 4],
+                    [3, 3],
+                    [2, 2],
+                    [1, 1],
+                    [0, 0]], batch_dim=0)
+        """
+        return self.argsort(dim=self._batch_dim, descending=descending, stable=stable)
+
     def cumsum(self, dim: int, **kwargs) -> TBatchedTensor:
         r"""Computes the cumulative sum of elements of the current batch
         in a given dimension.
@@ -1685,6 +1763,8 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Args:
         ----
+            dim (int, optional): Specifies the dimension to sort along.
+                Default: ``-1``
             descending (bool, optional): Controls the sorting order.
                 If ``True``, the elements are sorted in descending
                 order by value. Default: ``False``
