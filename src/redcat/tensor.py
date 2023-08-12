@@ -2425,11 +2425,11 @@ class BatchedTensor(BaseBatch[Tensor]):
 
     @overload
     def max(self, dim: None = None) -> Tensor:
-        r"""See documentation of ``max``"""
+        r"""See documentation of ``torch.Tensor.max``"""
 
     @overload
     def max(self, dim: int, keepdim: bool = False) -> torch.return_types.max:
-        r"""See documentation of ``max``"""
+        r"""See documentation of ``torch.Tensor.max``"""
 
     def max(self, dim: int | None = None, keepdim: bool = False) -> Tensor | torch.return_types.max:
         r"""Computes the maximum of all elements or along a dimension.
@@ -2623,18 +2623,29 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.median(dim=self._batch_dim, keepdim=keepdim)
 
-    def min(self, *args, **kwargs) -> Tensor | torch.return_types.min:
-        r"""Computes the minimum of all elements.
+    @overload
+    def min(self, dim: None = None) -> Tensor:
+        r"""See documentation of ``torch.Tensor.min``"""
+
+    @overload
+    def min(self, dim: int, keepdim: bool = False) -> torch.return_types.min:
+        r"""See documentation of ``torch.Tensor.min``"""
+
+    def min(self, dim: int | None = None, keepdim: bool = False) -> Tensor | torch.return_types.min:
+        r"""Computes the minimum of all elements or along a dimension.
 
         Args:
         ----
-            *args: See the documentation of ``torch.Tensor.min``
-            **kwargs: See the documentation of ``torch.Tensor.min``
+            dim (int or ``None``, optional): Specifies the dimension
+                to reduce. Default: ``None``
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
 
         Returns:
         -------
             ``torch.Tensor`` or ``torch.return_types.min``:
-                The minimum of all elements.
+                The minimum of all elements or along a dimension.
 
         Example usage:
 
@@ -2654,7 +2665,9 @@ class BatchedTensor(BaseBatch[Tensor]):
             values=tensor([[0], [5]]),
             indices=tensor([[0], [0]]))
         """
-        return torch.min(self, *args, **kwargs)
+        if dim is None:
+            return self._data.min()
+        return self._data.min(dim=dim, keepdim=keepdim)
 
     def min_along_batch(self, keepdim: bool = False) -> torch.return_types.min:
         r"""Computes the minimum values along the batch dimension.
