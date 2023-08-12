@@ -8455,14 +8455,14 @@ def test_torch_max() -> None:
 def test_torch_max_dim_1() -> None:
     assert objects_are_equal(
         tuple(torch.max(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1)),
-        tuple(torch.tensor([4, 9]), torch.tensor([4, 4])),
+        (torch.tensor([4, 9]), torch.tensor([4, 4])),
     )
 
 
 def test_torch_max_dim_1_keepdim() -> None:
     assert objects_are_equal(
         tuple(torch.max(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True)),
-        tuple(torch.tensor([[4], [9]]), torch.tensor([[4], [4]])),
+        (torch.tensor([[4], [9]]), torch.tensor([[4], [4]])),
     )
 
 
