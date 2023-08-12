@@ -768,7 +768,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.argmin(dim=self._seq_dim, keepdim=keepdim)
 
-    def max_along_seq(self, keepdim: bool = False) -> torch.return_types.max:
+    def max_along_seq(self, keepdim: bool = False) -> ValuesIndicesTuple:
         r"""Computes the maximum values along the sequence dimension.
 
         Args:
@@ -779,7 +779,7 @@ class BatchedTensorSeq(BatchedTensor):
 
         Returns:
         -------
-            ``torch.return_types.max``: A batch with
+            ``ValuesIndicesTuple``: A batch with
                 the maximum values along the sequence dimension.
 
         Example usage:
@@ -790,14 +790,15 @@ class BatchedTensorSeq(BatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.max_along_seq()
-            torch.return_types.max(
-            values=tensor([4, 9]),
-            indices=tensor([4, 4]))
-            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            ValuesIndicesTuple(
+              (values): tensor([4, 9])
+              (indices): tensor([4, 4])
+            )
             >>> batch.max_along_seq(keepdim=True)
-            torch.return_types.max(
-            values=tensor([[4], [9]]),
-            indices=tensor([[4], [4]]))
+            ValuesIndicesTuple(
+              (values): tensor([[4], [9]])
+              (indices): tensor([[4], [4]])
+            )
         """
         return self.max(dim=self._seq_dim, keepdim=keepdim)
 
