@@ -2299,6 +2299,68 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Reduction operations     #
     ################################
 
+    def amax(self, dim: int | tuple[int, ...] | None, keepdim: bool = False) -> Tensor:
+        r"""Computes the maximum along a dimension.
+
+        Args:
+        ----
+            dim (int or tuple of ints or ``None``): Specifies the
+                dimension(s) to reduce.
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The maximum along a dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.amax(dim=1)
+            tensor([4, 9])
+            >>> batch.amax(dim=1, keepdim=True)
+            tensor([[4], [9]])
+            >>> batch.amax(dim=(0, 1))
+            tensor(9)
+            >>> batch.amax(dim=None)
+            tensor(9)
+        """
+        if dim is None:
+            return self._data.amax()
+        return self._data.amax(dim=dim, keepdim=keepdim)
+
+    def amax_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the maximum along the batch dimension.
+
+        Args:
+        ----
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The maximum along the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.amax_along_batch()
+            tensor([8, 9])
+            >>> batch.amax_along_batch(keepdim=True)
+            tensor([[8, 9]])
+        """
+        return self.amax(dim=self._batch_dim, keepdim=keepdim)
+
     @overload
     def max(self, dim: None = None) -> Tensor:
         r"""See documentation of ``max``"""
@@ -2308,7 +2370,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""See documentation of ``max``"""
 
     def max(self, dim: int | None = None, keepdim: bool = False) -> Tensor | torch.return_types.max:
-        r"""Computes the maximum of all elements.
+        r"""Computes the maximum of all elements or along a dimension.
 
         Args:
         ----
@@ -2321,7 +2383,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         Returns:
         -------
             ``torch.Tensor`` or ``torch.return_types.max``:
-                The maximum of all elements.
+                The maximum of all elements or along a dimension.
 
         Example usage:
 

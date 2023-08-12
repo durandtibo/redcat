@@ -621,6 +621,33 @@ class BatchedTensorSeq(BatchedTensor):
     #     Reduction operations     #
     ################################
 
+    def amax_along_seq(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the maximum along the sequence dimension.
+
+        Args:
+        ----
+            keepdim (bool, optional): Indicates whether the output
+                array has the sequence dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The maximum along the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.amax_along_seq()
+            tensor([4, 9])
+            >>> batch.amax_along_seq(keepdim=True)
+            tensor([[4], [9]])
+        """
+        return self.amax(dim=self._seq_dim, keepdim=keepdim)
+
     def max_along_seq(self, keepdim: bool = False) -> torch.return_types.max:
         r"""Computes the maximum values along the sequence dimension.
 
