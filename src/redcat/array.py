@@ -10,7 +10,8 @@ import numpy as np
 from coola import objects_are_allclose, objects_are_equal
 from numpy import ndarray
 
-from redcat.types import RNGType, SortReturnType
+from redcat.return_types import ValuesIndicesTuple
+from redcat.types import RNGType
 from redcat.utils.array import permute_along_dim, to_array
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.random import randperm
@@ -1706,7 +1707,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         dim: int = -1,
         descending: bool = False,
         stable: bool = False,
-    ) -> SortReturnType:
+    ) -> ValuesIndicesTuple:
         r"""Sorts the elements of the batch along a given dimension in
         monotonic order by value.
 
@@ -1736,7 +1737,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
             >>> batch.sort(descending=True)
-            SortReturnType(
+            ValuesIndicesTuple(
               (values): array([[4, 3, 2, 1, 0],
                         [9, 8, 7, 6, 5]], batch_dim=0)
               (indices): array([[4, 3, 2, 1, 0],
@@ -1746,7 +1747,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         indices = np.argsort(self._data, axis=dim, kind="stable" if stable else "quicksort")
         if descending:
             indices = np.flip(indices, axis=dim)
-        return SortReturnType(
+        return ValuesIndicesTuple(
             values=self._create_new_batch(np.take_along_axis(self._data, indices, dim)),
             indices=self._create_new_batch(indices),
         )
@@ -1755,7 +1756,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         self,
         descending: bool = False,
         stable: bool = False,
-    ) -> SortReturnType:
+    ) -> ValuesIndicesTuple:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
@@ -1785,7 +1786,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
             >>> batch.sort_along_batch(descending=True)
-            SortReturnType(
+            ValuesIndicesTuple(
               (values): array([[5, 6, 7, 8, 9],
                         [0, 1, 2, 3, 4]], batch_dim=0)
               (indices): array([[1, 1, 1, 1, 1],

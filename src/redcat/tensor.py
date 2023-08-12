@@ -5,7 +5,7 @@ __all__ = ["BatchedTensor"]
 import functools
 from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
-from typing import Any, TypeVar, Union, overload
+from typing import Any, TypeVar, overload
 
 import numpy as np
 import torch
@@ -13,7 +13,8 @@ from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.types import SortReturnType
+from redcat.return_types import ValuesIndicesTuple
+from redcat.types import IndexType
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.tensor import permute_along_dim, to_tensor
 
@@ -22,8 +23,6 @@ from redcat.utils.tensor import permute_along_dim, to_tensor
 TBatchedTensor = TypeVar("TBatchedTensor", bound="BatchedTensor")
 
 HANDLED_FUNCTIONS = {}
-
-IndexType = Union[int, slice, list[int], Tensor, None]
 
 
 class BatchedTensor(BaseBatch[Tensor]):
@@ -1757,7 +1756,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         dim: int = -1,
         descending: bool = False,
         stable: bool = False,
-    ) -> SortReturnType:
+    ) -> ValuesIndicesTuple:
         r"""Sorts the elements of the batch along a given dimension in
         monotonic order by value.
 
@@ -1789,20 +1788,20 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
             >>> batch.sort(descending=True)
-            SortReturnType(
+            ValuesIndicesTuple(
               (values): tensor([[4, 3, 2, 1, 0],
                         [9, 8, 7, 6, 5]], batch_dim=0)
               (indices): tensor([[4, 3, 2, 1, 0],
                         [4, 3, 2, 1, 0]], batch_dim=0)
             )
         """
-        return SortReturnType(*torch.sort(self, dim=dim, descending=descending, stable=stable))
+        return ValuesIndicesTuple(*torch.sort(self, dim=dim, descending=descending, stable=stable))
 
     def sort_along_batch(
         self,
         descending: bool = False,
         stable: bool = False,
-    ) -> SortReturnType:
+    ) -> ValuesIndicesTuple:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
@@ -1832,7 +1831,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
             >>> batch.sort_along_batch(descending=True)
-            SortReturnType(
+            ValuesIndicesTuple(
               (values): tensor([[5, 6, 7, 8, 9],
                         [0, 1, 2, 3, 4]], batch_dim=0)
               (indices): tensor([[1, 1, 1, 1, 1],
