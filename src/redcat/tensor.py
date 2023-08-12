@@ -2434,7 +2434,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         Args:
         ----
             dim (int or ``None``): Specifies the dimension to reduce.
-                If ``None``, the argmax of  the flattened input is
+                If ``None``, the argmax of the flattened input is
                 returned.
             keepdim (bool, optional): Indicates whether the output
                 array has the batch dimension retained or not.
@@ -2491,6 +2491,71 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[4, 4]])
         """
         return self.argmax(dim=self._batch_dim, keepdim=keepdim)
+
+    def argmin(self, dim: int | None = None, keepdim: bool = False) -> Tensor:
+        r"""Computes the indices of the minimum value of all elements or
+        along a specific dimension.
+
+        Args:
+        ----
+            dim (int or ``None``): Specifies the dimension to reduce.
+                If ``None``, the argmin of the flattened input is
+                returned.
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The indices of the minimum value of all
+                elements or along a specific dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.argmin(dim=1)
+            tensor([0, 0])
+            >>> batch.argmin(dim=1, keepdim=True)
+            tensor([[0], [0]])
+            >>> batch.argmin()
+            tensor(0)
+        """
+        if dim is None:
+            return self._data.argmin()
+        return self._data.argmin(dim=dim, keepdim=keepdim)
+
+    def argmin_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the indices of the minimum value along the batch
+        dimension.
+
+        Args:
+        ----
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The indices of the minimum value along
+                the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.argmin_along_batch()
+            tensor([0, 0])
+            >>> batch.argmin_along_batch(keepdim=True)
+            tensor([[0, 0]])
+        """
+        return self.argmin(dim=self._batch_dim, keepdim=keepdim)
 
     @overload
     def max(self, dim: None = None) -> Tensor:
