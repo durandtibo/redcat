@@ -7,6 +7,7 @@ from coola.testing import numpy_available, torch_available
 from coola.utils import is_numpy_available, is_torch_available
 from pytest import mark
 
+from redcat import BatchList
 from redcat.utils.array import permute_along_dim, to_array
 
 if is_numpy_available():
@@ -69,22 +70,37 @@ def test_permute_along_dim_3d_dim_2() -> None:
 
 
 @numpy_available
-@mark.parametrize("data", (np.array([3, 1, 2, 0, 1]), [3, 1, 2, 0, 1], (3, 1, 2, 0, 1)))
+@mark.parametrize(
+    "data",
+    (
+        np.array([3, 1, 2, 0, 1]),
+        [3, 1, 2, 0, 1],
+        (3, 1, 2, 0, 1),
+        BatchList([3, 1, 2, 0, 1]),
+        # TODO: uncomment after BatchedArray is a BaseBatch
+        # BatchedArray(np.array([3, 1, 2, 0, 1])),
+    ),
+)
 def test_to_array_long(data: Sequence | np.ndarray) -> None:
-    assert np.array_equal(to_array(data), np.array([3, 1, 2, 0, 1], dtype=int))
+    assert np.array_equal(to_array(data), np.array([3, 1, 2, 0, 1]))
 
 
 @numpy_available
 @mark.parametrize(
     "data",
-    (np.array([3.0, 1.0, 2.0, 0.0, 1.0]), [3.0, 1.0, 2.0, 0.0, 1.0], (3.0, 1.0, 2.0, 0.0, 1.0)),
+    (
+        np.array([3.0, 1.0, 2.0, 0.0, 1.0]),
+        [3.0, 1.0, 2.0, 0.0, 1.0],
+        (3.0, 1.0, 2.0, 0.0, 1.0),
+        BatchList([3.0, 1.0, 2.0, 0.0, 1.0]),
+        # TODO: uncomment after BatchedArray is a BaseBatch
+        # BatchedArray(np.array([3.0, 1.0, 2.0, 0.0, 1.0])),
+    ),
 )
 def test_to_array_float(data: Sequence | np.ndarray) -> None:
-    assert np.array_equal(to_array(data), np.array([3.0, 1.0, 2.0, 0.0, 1.0], dtype=float))
+    assert np.array_equal(to_array(data), np.array([3.0, 1.0, 2.0, 0.0, 1.0]))
 
 
 @torch_available
 def test_to_array_torch() -> None:
-    assert np.array_equal(
-        to_array(torch.tensor([3, 1, 2, 0, 1])), np.array([3, 1, 2, 0, 1], dtype=int)
-    )
+    assert np.array_equal(to_array(torch.tensor([3, 1, 2, 0, 1])), np.array([3, 1, 2, 0, 1]))

@@ -5,10 +5,11 @@ from unittest.mock import patch
 
 import numpy as np
 import torch
-from coola.testing import numpy_available
+from coola.testing import numpy_available, torch_available
 from pytest import mark, raises
 from torch import Tensor
 
+from redcat import BatchedTensor, BatchList
 from redcat.utils.tensor import (
     align_to_batch_first,
     align_to_batch_seq,
@@ -279,14 +280,31 @@ def test_swap2_ndarray_2d() -> None:
 ###############################
 
 
-@mark.parametrize("data", (torch.tensor([3, 1, 2, 0, 1]), [3, 1, 2, 0, 1], (3, 1, 2, 0, 1)))
+@torch_available
+@mark.parametrize(
+    "data",
+    (
+        torch.tensor([3, 1, 2, 0, 1]),
+        [3, 1, 2, 0, 1],
+        (3, 1, 2, 0, 1),
+        BatchList([3, 1, 2, 0, 1]),
+        BatchedTensor(torch.tensor([3, 1, 2, 0, 1])),
+    ),
+)
 def test_to_tensor_long(data: Sequence | Tensor) -> None:
     assert to_tensor(data).equal(torch.tensor([3, 1, 2, 0, 1], dtype=torch.long))
 
 
+@torch_available
 @mark.parametrize(
     "data",
-    (torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0]), [3.0, 1.0, 2.0, 0.0, 1.0], (3.0, 1.0, 2.0, 0.0, 1.0)),
+    (
+        torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0]),
+        [3.0, 1.0, 2.0, 0.0, 1.0],
+        (3.0, 1.0, 2.0, 0.0, 1.0),
+        BatchList([3.0, 1.0, 2.0, 0.0, 1.0]),
+        BatchedTensor(torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0])),
+    ),
 )
 def test_to_tensor_float(data: Sequence | Tensor) -> None:
     assert to_tensor(data).equal(torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0], dtype=torch.float))
