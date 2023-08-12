@@ -21,6 +21,8 @@ import numpy as np
 import torch
 from torch import Tensor
 
+from redcat.base import BaseBatch
+
 DeviceType = Union[torch.device, str, int]
 
 
@@ -365,13 +367,14 @@ def swap2(
     return sequence
 
 
-def to_tensor(tensor: Sequence | Tensor | np.ndarray) -> Tensor:
+def to_tensor(data: BaseBatch | Sequence | Tensor | np.ndarray) -> Tensor:
     r"""Converts the input to a ``torch.Tensor``.
 
     Args:
     ----
-        tensor (``Sequence`` or ``torch.Tensor`` or ``numpy.ndarray``):
-            Specifies the data to convert to a tensor.
+        data (``BaseBatch`` or ``Sequence`` or ``torch.Tensor`` or
+            ``numpy.ndarray``): Specifies the data to convert to a
+            tensor.
 
     Returns:
     -------
@@ -386,6 +389,8 @@ def to_tensor(tensor: Sequence | Tensor | np.ndarray) -> Tensor:
         >>> x
         tensor([1, 2, 3, 4, 5])
     """
-    if not torch.is_tensor(tensor):
-        tensor = torch.as_tensor(tensor)
-    return tensor
+    if isinstance(data, BaseBatch):
+        data = data.data
+    if not torch.is_tensor(data):
+        data = torch.as_tensor(data)
+    return data

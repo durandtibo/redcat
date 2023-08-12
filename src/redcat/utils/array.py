@@ -8,6 +8,8 @@ import numpy as np
 import torch
 from numpy import ndarray
 
+from redcat.base import BaseBatch
+
 
 def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> ndarray:
     r"""Permutes the values of a array along a given dimension.
@@ -64,17 +66,18 @@ def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> nda
     return np.swapaxes(np.swapaxes(array, 0, dim)[permutation], 0, dim)
 
 
-def to_array(array: Sequence | torch.Tensor | ndarray) -> ndarray:
+def to_array(data: Sequence | torch.Tensor | ndarray) -> ndarray:
     r"""Converts the input to a ``numpy.ndarray``.
 
     Args:
     ----
-        array (``Sequence`` or ``torch.Tensor`` or ``numpy.ndarray``):
-            Specifies the data to convert to a array.
+        data (``BaseBatch`` or ``Sequence`` or ``torch.Tensor`` or
+            ``numpy.ndarray``): Specifies the data to convert to an
+            array.
 
     Returns:
     -------
-        ``numpy.ndarray``: A array.
+        ``numpy.ndarray``: An array.
 
     Example usage:
 
@@ -85,6 +88,8 @@ def to_array(array: Sequence | torch.Tensor | ndarray) -> ndarray:
         >>> x
         array([1, 2, 3, 4, 5])
     """
-    if not isinstance(array, ndarray):
-        array = np.asarray(array)
-    return array
+    if isinstance(data, BaseBatch):
+        data = data.data
+    if not isinstance(data, ndarray):
+        data = np.asarray(data)
+    return data
