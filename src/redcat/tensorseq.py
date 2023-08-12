@@ -884,14 +884,16 @@ class BatchedTensorSeq(BatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.min_along_seq()
-            torch.return_types.min(
-            values=tensor([0, 5]),
-            indices=tensor([0, 0]))
+            ValuesIndicesTuple(
+              (values): tensor([0, 5])
+              (indices): tensor([0, 0])
+            )
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.min_along_seq(keepdim=True)
-            torch.return_types.min(
-            values=tensor([[0], [5]]),
-            indices=tensor([[0], [0]]))
+            ValuesIndicesTuple(
+              (values): tensor([[0], [5]])
+              (indices): tensor([[0], [0]])
+            )
         """
         return self.min(dim=self._seq_dim, keepdim=keepdim)
 

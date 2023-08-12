@@ -2845,10 +2845,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""See documentation of ``torch.Tensor.min``"""
 
     @overload
-    def min(self, dim: int, keepdim: bool = False) -> torch.return_types.min:
+    def min(self, dim: int, keepdim: bool = False) -> ValuesIndicesTuple:
         r"""See documentation of ``torch.Tensor.min``"""
 
-    def min(self, dim: int | None = None, keepdim: bool = False) -> Tensor | torch.return_types.min:
+    def min(self, dim: int | None = None, keepdim: bool = False) -> Tensor | ValuesIndicesTuple:
         r"""Computes the minimum of all elements or along a dimension.
 
         Args:
@@ -2861,7 +2861,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            ``torch.Tensor`` or ``torch.return_types.min``:
+            ``torch.Tensor`` or ``ValuesIndicesTuple``:
                 The minimum of all elements or along a dimension.
 
         Example usage:
@@ -2874,19 +2874,21 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.min()
             tensor(0)
             >>> batch.min(dim=1)
-            torch.return_types.min(
-            values=tensor([0, 5]),
-            indices=tensor([0, 0]))
+            ValuesIndicesTuple(
+              (values): tensor([0, 5])
+              (indices): tensor([0, 0])
+            )
             >>> batch.min(dim=1, keepdim=True)
-            torch.return_types.min(
-            values=tensor([[0], [5]]),
-            indices=tensor([[0], [0]]))
+            ValuesIndicesTuple(
+              (values): tensor([[0], [5]])
+              (indices): tensor([[0], [0]])
+            )
         """
         if dim is None:
             return self._data.min()
-        return self._data.min(dim=dim, keepdim=keepdim)
+        return ValuesIndicesTuple(*self._data.min(dim=dim, keepdim=keepdim))
 
-    def min_along_batch(self, keepdim: bool = False) -> torch.return_types.min:
+    def min_along_batch(self, keepdim: bool = False) -> ValuesIndicesTuple:
         r"""Computes the minimum values along the batch dimension.
 
         Args:
@@ -2897,7 +2899,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            ``torch.return_types.min``: A batch with
+            ``ValuesIndicesTuple``: A batch with
                 the minimum values along the batch dimension.
 
         Example usage:
@@ -2908,13 +2910,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]]))
             >>> batch.min_along_batch()
-            torch.return_types.min(
-            values=tensor([0, 5]),
-            indices=tensor([0, 0]))
+            ValuesIndicesTuple(
+              (values): tensor([0, 5])
+              (indices): tensor([0, 0])
+            )
             >>> batch.min_along_batch(keepdim=True)
-            torch.return_types.min(
-            values=tensor([[0, 5]]),
-            indices=tensor([[0, 0]]))
+            ValuesIndicesTuple(
+              (values): tensor([[0, 5]])
+              (indices): tensor([[0, 0]])
+            )
         """
         return self.min(dim=self._batch_dim, keepdim=keepdim)
 
