@@ -2641,10 +2641,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""See documentation of ``torch.Tensor.max``"""
 
     @overload
-    def max(self, dim: int, keepdim: bool = False) -> torch.return_types.max:
+    def max(self, dim: int, keepdim: bool = False) -> ValuesIndicesTuple:
         r"""See documentation of ``torch.Tensor.max``"""
 
-    def max(self, dim: int | None = None, keepdim: bool = False) -> Tensor | torch.return_types.max:
+    def max(self, dim: int | None = None, keepdim: bool = False) -> Tensor | ValuesIndicesTuple:
         r"""Computes the maximum of all elements or along a dimension.
 
         Args:
@@ -2657,7 +2657,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            ``torch.Tensor`` or ``torch.return_types.max``:
+            ``torch.Tensor`` or ``ValuesIndicesTuple``:
                 The maximum of all elements or along a dimension.
 
         Example usage:
@@ -2670,19 +2670,21 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.max()
             tensor(9)
             >>> batch.max(dim=1)
-            torch.return_types.max(
-            values=tensor([4, 9]),
-            indices=tensor([4, 4]))
+            ValuesIndicesTuple(
+              (values): tensor([4, 9])
+              (indices): tensor([4, 4])
+            )
             >>> batch.max(dim=1, keepdim=True)
-            torch.return_types.max(
-            values=tensor([[4], [9]]),
-            indices=tensor([[4], [4]]))
+            ValuesIndicesTuple(
+              (values): tensor([[4], [9]])
+              (indices): tensor([[4], [4]])
+            )
         """
         if dim is None:
             return self._data.max()
-        return self._data.max(dim=dim, keepdim=keepdim)
+        return ValuesIndicesTuple(*self._data.max(dim=dim, keepdim=keepdim))
 
-    def max_along_batch(self, keepdim: bool = False) -> torch.return_types.max:
+    def max_along_batch(self, keepdim: bool = False) -> ValuesIndicesTuple:
         r"""Computes the maximum values along the batch dimension.
 
         Args:
@@ -2693,7 +2695,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Returns:
         -------
-            ``torch.return_types.max``: A batch with
+            ``ValuesIndicesTuple``: A batch with
                 the maximum values along the batch dimension.
 
         Example usage:
@@ -2704,13 +2706,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]]))
             >>> batch.max_along_batch()
-            torch.return_types.max(
-            values=tensor([4, 9]),
-            indices=tensor([4, 4]))
+            ValuesIndicesTuple(
+              (values): tensor([4, 9])
+              (indices): tensor([4, 4])
+            )
             >>> batch.max_along_batch(keepdim=True)
-            torch.return_types.max(
-            values=tensor([[4, 9]]),
-            indices=tensor([[4, 4]]))
+            ValuesIndicesTuple(
+              (values): tensor([[4, 9]])
+              (indices): tensor([[4, 4]])
+            )
         """
         return self.max(dim=self._batch_dim, keepdim=keepdim)
 
