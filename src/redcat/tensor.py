@@ -2299,13 +2299,24 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Reduction operations     #
     ################################
 
-    def max(self, *args, **kwargs) -> Tensor | torch.return_types.max:
+    @overload
+    def max(self, dim: None = None) -> Tensor:
+        r"""See documentation of ``max``"""
+
+    @overload
+    def max(self, dim: int, keepdim: bool = False) -> torch.return_types.max:
+        r"""See documentation of ``max``"""
+
+    def max(self, dim: int | None = None, keepdim: bool = False) -> Tensor | torch.return_types.max:
         r"""Computes the maximum of all elements.
 
         Args:
         ----
-            *args: See the documentation of ``torch.Tensor.max``
-            **kwargs: See the documentation of ``torch.Tensor.max``
+            dim (int or ``None``, optional): Specifies the dimension
+                to reduce. Default: ``None``
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
 
         Returns:
         -------
@@ -2330,15 +2341,17 @@ class BatchedTensor(BaseBatch[Tensor]):
             values=tensor([[4], [9]]),
             indices=tensor([[4], [4]]))
         """
-        return torch.max(self, *args, **kwargs)
+        if dim is None:
+            return self._data.max()
+        return self._data.max(dim=dim, keepdim=keepdim)
 
     def max_along_batch(self, keepdim: bool = False) -> torch.return_types.max:
         r"""Computes the maximum values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the batch dimension retained or not.
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
                 Default: ``False``
 
         Returns:

@@ -626,8 +626,8 @@ class BatchedTensorSeq(BatchedTensor):
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
                 Default: ``False``
 
         Returns:
