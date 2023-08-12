@@ -2361,6 +2361,68 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.amax(dim=self._batch_dim, keepdim=keepdim)
 
+    def amin(self, dim: int | tuple[int, ...] | None, keepdim: bool = False) -> Tensor:
+        r"""Computes the minimum along a dimension.
+
+        Args:
+        ----
+            dim (int or tuple of ints or ``None``): Specifies the
+                dimension(s) to reduce.
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The minimum along a dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.amin(dim=1)
+            tensor([0, 5])
+            >>> batch.amin(dim=1, keepdim=True)
+            tensor([[0], [5]])
+            >>> batch.amin(dim=(0, 1))
+            tensor(0)
+            >>> batch.amin(dim=None)
+            tensor(0)
+        """
+        if dim is None:
+            return self._data.amin()
+        return self._data.amin(dim=dim, keepdim=keepdim)
+
+    def amin_along_batch(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the minimum along the batch dimension.
+
+        Args:
+        ----
+            keepdim (bool, optional): Indicates whether the output
+                array has the batch dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The minimum along the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+            >>> batch.amin_along_batch()
+            tensor([0, 1])
+            >>> batch.amin_along_batch(keepdim=True)
+            tensor([[0, 1]])
+        """
+        return self.amin(dim=self._batch_dim, keepdim=keepdim)
+
     @overload
     def max(self, dim: None = None) -> Tensor:
         r"""See documentation of ``max``"""

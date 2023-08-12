@@ -648,6 +648,33 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.amax(dim=self._seq_dim, keepdim=keepdim)
 
+    def amin_along_seq(self, keepdim: bool = False) -> Tensor:
+        r"""Computes the minimum along the sequence dimension.
+
+        Args:
+        ----
+            keepdim (bool, optional): Indicates whether the output
+                array has the sequence dimension retained or not.
+                Default: ``False``
+
+        Returns:
+        -------
+            ``torch.Tensor``: The minimum along the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.amin_along_seq()
+            tensor([0, 5])
+            >>> batch.amin_along_seq(keepdim=True)
+            tensor([[0], [5]])
+        """
+        return self.amin(dim=self._seq_dim, keepdim=keepdim)
+
     def max_along_seq(self, keepdim: bool = False) -> torch.return_types.max:
         r"""Computes the maximum values along the sequence dimension.
 
