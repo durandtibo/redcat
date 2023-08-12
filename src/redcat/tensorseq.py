@@ -370,6 +370,41 @@ class BatchedTensorSeq(BatchedTensor):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
+    def argsort_along_seq(
+        self,
+        descending: bool = False,
+        stable: bool = False,
+    ) -> BatchedTensorSeq:
+        r"""Sorts the elements of the batch along the sequence dimension
+        in monotonic order by value.
+
+        Args:
+        ----
+            descending (bool, optional): Controls the sorting order.
+                If ``True``, the elements are sorted in descending
+                order by value. Default: ``False``
+            stable (bool, optional): Makes the sorting routine stable,
+                which guarantees that the order of equivalent elements
+                is preserved. Default: ``False``
+
+        Returns:
+        -------
+            ``BatchedTensor``: The indices that sort the batch along
+                the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.argsort_along_seq(descending=True)
+            tensor([[4, 3, 2, 1, 0],
+                    [4, 3, 2, 1, 0]], batch_dim=0, seq_dim=1)
+        """
+        return self.argsort(dim=self._seq_dim, descending=descending, stable=stable)
+
     def cumsum_along_seq(self, **kwargs) -> BatchedTensorSeq:
         r"""Computes the cumulative sum of elements of the current batch
         in the sequence dimension.
