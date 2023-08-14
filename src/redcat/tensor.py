@@ -4102,7 +4102,7 @@ class BatchedTensor(BaseBatch[Tensor]):
              tensor([[4, 5], [6, 7]], batch_dim=0),
              tensor([[8, 9]], batch_dim=0))
         """
-        return torch.chunk(self, chunks, dim=dim)
+        return tuple(self._create_new_batch(chunk) for chunk in self._data.chunk(chunks, dim=dim))
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchedTensor, ...]:
         return self.chunk(chunks, self._batch_dim)
@@ -4642,10 +4642,7 @@ def cat(
 @implements(torch.chunk)
 def chunk(tensor: BatchedTensor, chunks: int, dim: int = 0) -> tuple[BatchedTensor, ...]:
     r"""See ``torch.chunk`` documentation."""
-    return tuple(
-        BatchedTensor(chunk, batch_dim=tensor.batch_dim)
-        for chunk in tensor.data.chunk(chunks, dim=dim)
-    )
+    return tensor.chunk(chunks=chunks, dim=dim)
 
 
 # Use the name `torchmax` to avoid shadowing `max` python builtin.
