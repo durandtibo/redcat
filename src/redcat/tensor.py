@@ -1751,29 +1751,18 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         self.permute_along_dim_(torch.randperm(self._data.shape[dim], generator=generator), dim=dim)
 
-    def sort(
-        self,
-        dim: int = -1,
-        descending: bool = False,
-        stable: bool = False,
-    ) -> ValuesIndicesTuple:
+    def sort(self, *args, **kwargs) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along a given dimension in
         monotonic order by value.
 
         Args:
         ----
-            dim (int, optional): Specifies the dimension to sort along.
-                Default: ``-1``
-            descending (bool, optional): Controls the sorting order.
-                If ``True``, the elements are sorted in descending
-                order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
-                which guarantees that the order of equivalent elements
-                is preserved. Default: ``False``
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
         -------
-            (``BatchedTensor``, ``BatchedTensor``): A tuple
+            (``BatchedTensor``, ``BatchedTensor``): A tuple of
                 two values:
                     - The first batch contains the batch values sorted
                         along the given dimension.
@@ -1788,31 +1777,23 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
             >>> batch.sort(descending=True)
-            ValuesIndicesTuple(
-              (values): tensor([[4, 3, 2, 1, 0],
-                        [9, 8, 7, 6, 5]], batch_dim=0)
-              (indices): tensor([[4, 3, 2, 1, 0],
-                        [4, 3, 2, 1, 0]], batch_dim=0)
-            )
+            torch.return_types.sort(
+            values=tensor([[4, 3, 2, 1, 0],
+                    [9, 8, 7, 6, 5]], batch_dim=0),
+            indices=tensor([[4, 3, 2, 1, 0],
+                    [4, 3, 2, 1, 0]], batch_dim=0))
         """
-        return ValuesIndicesTuple(*torch.sort(self, dim=dim, descending=descending, stable=stable))
+        out = torch.sort(self._data, *args, **kwargs)
+        return type(out)([BatchedTensor(data=o, batch_dim=self._batch_dim) for o in out])
 
-    def sort_along_batch(
-        self,
-        descending: bool = False,
-        stable: bool = False,
-    ) -> ValuesIndicesTuple:
+    def sort_along_batch(self, *args, **kwargs) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
         Args:
         ----
-            descending (bool, optional): Controls the sorting order.
-                If ``True``, the elements are sorted in descending
-                order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
-                which guarantees that the order of equivalent elements
-                is preserved. Default: ``False``
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
         -------
@@ -1831,14 +1812,13 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
             >>> batch.sort_along_batch(descending=True)
-            ValuesIndicesTuple(
-              (values): tensor([[5, 6, 7, 8, 9],
-                        [0, 1, 2, 3, 4]], batch_dim=0)
-              (indices): tensor([[1, 1, 1, 1, 1],
-                        [0, 0, 0, 0, 0]], batch_dim=0)
-            )
+            torch.return_types.sort(
+            values=tensor([[5, 6, 7, 8, 9],
+                    [0, 1, 2, 3, 4]], batch_dim=0),
+            indices=tensor([[1, 1, 1, 1, 1],
+                    [0, 0, 0, 0, 0]], batch_dim=0))
         """
-        return self.sort(dim=self._batch_dim, descending=descending, stable=stable)
+        return self.sort(self._batch_dim, *args, **kwargs)
 
     ################################################
     #     Mathematical | point-wise operations     #

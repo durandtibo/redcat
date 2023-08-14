@@ -589,18 +589,14 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.permute_along_seq_(torch.randperm(self.seq_len, generator=generator))
 
-    def sort_along_seq(self, descending: bool = False, stable: bool = False) -> ValuesIndicesTuple:
+    def sort_along_seq(self, *args, **kwargs) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along the sequence dimension
         in monotonic order by value.
 
         Args:
         ----
-            descending (bool, optional): Controls the sorting order.
-                If ``True``, the elements are sorted in descending
-                order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
-                which guarantees that the order of equivalent elements
-                is preserved. Default: ``False``
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
         -------
@@ -619,14 +615,13 @@ class BatchedTensorSeq(BatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.sort_along_seq(descending=True)
-            ValuesIndicesTuple(
-              (values): tensor([[4, 3, 2, 1, 0],
-                        [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1)
-              (indices): tensor([[4, 3, 2, 1, 0],
-                        [4, 3, 2, 1, 0]], batch_dim=0, seq_dim=1)
-            )
+            torch.return_types.sort(
+            values=tensor([[4, 3, 2, 1, 0],
+                    [9, 8, 7, 6, 5]], batch_dim=0),
+            indices=tensor([[4, 3, 2, 1, 0],
+                    [4, 3, 2, 1, 0]], batch_dim=0))
         """
-        return self.sort(dim=self._seq_dim, descending=descending, stable=stable)
+        return self.sort(self._seq_dim, *args, **kwargs)
 
     ################################################
     #     Mathematical | point-wise operations     #
