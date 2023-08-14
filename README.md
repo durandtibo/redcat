@@ -56,3 +56,12 @@
 ---
 
 *The logo was generated with Stable Diffusion 2.1*
+
+---
+
+## Philosophy
+
+- `BatchedTensor` and `BatchedTensorSeq` must behave like `torch.Tensor`
+- `BatchedArray` and `BatchedArraySeq` must behave like `numpy.ndarray`
+- `BatchedTensor` (resp. `BatchedTensorSeq`) does not have to behave like `BatchedArray` (
+  resp. `BatchedArraySeq`)
