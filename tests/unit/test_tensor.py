@@ -3196,17 +3196,29 @@ def test_batched_tensor_max() -> None:
     assert BatchedTensor(torch.arange(10).view(2, 5)).max().equal(torch.tensor(9))
 
 
+def test_batched_tensor_max_dim_tuple() -> None:
+    values, indices = BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1)
+    assert values.equal(torch.tensor([4, 9]))
+    assert indices.equal(torch.tensor([4, 4]))
+
+
+def test_batched_tensor_max_dim_namedtuple() -> None:
+    out = BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1)
+    assert out.values.equal(torch.tensor([4, 9]))
+    assert out.indices.equal(torch.tensor([4, 4]))
+
+
 def test_batched_tensor_max_keepdim_false() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1),
-        ValuesIndicesTuple(torch.tensor([4, 9]), torch.tensor([4, 4])),
+        tuple(BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1)),
+        (torch.tensor([4, 9]), torch.tensor([4, 4])),
     )
 
 
 def test_batched_tensor_max_keepdim_true() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1, keepdim=True),
-        ValuesIndicesTuple(torch.tensor([[4], [9]]), torch.tensor([[4], [4]])),
+        tuple(BatchedTensor(torch.arange(10).view(2, 5)).max(dim=1, keepdim=True)),
+        (torch.tensor([[4], [9]]), torch.tensor([[4], [4]])),
     )
 
 
@@ -3216,24 +3228,28 @@ def test_batched_tensor_max_custom_dims() -> None:
 
 def test_batched_tensor_max_along_batch() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).max_along_batch(),
-        ValuesIndicesTuple(torch.tensor([4, 9]), torch.tensor([4, 4])),
+        tuple(
+            BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).max_along_batch()
+        ),
+        (torch.tensor([4, 9]), torch.tensor([4, 4])),
     )
 
 
 def test_batched_tensor_max_along_batch_keepdim_true() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).max_along_batch(
-            keepdim=True
+        tuple(
+            BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).max_along_batch(
+                keepdim=True
+            )
         ),
-        ValuesIndicesTuple(torch.tensor([[4, 9]]), torch.tensor([[4, 4]])),
+        (torch.tensor([[4, 9]]), torch.tensor([[4, 4]])),
     )
 
 
 def test_batched_tensor_max_along_batch_custom_dims() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).max_along_batch(),
-        ValuesIndicesTuple(torch.tensor([4, 9]), torch.tensor([4, 4])),
+        tuple(BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).max_along_batch()),
+        (torch.tensor([4, 9]), torch.tensor([4, 4])),
     )
 
 
