@@ -8,7 +8,6 @@ __all__ = [
     "from_sequences",
 ]
 
-import functools
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from itertools import chain
 from typing import Any
@@ -30,6 +29,7 @@ from redcat.utils.tensor import (
 
 HANDLED_FUNCTIONS = {
     torch.cat: tensor.cat,
+    torch.chunk: tensor.chunk,
     torch.max: tensor.torchmax,
     torch.maximum: tensor.maximum,
     torch.mean: tensor.mean,
@@ -1556,24 +1556,15 @@ def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = No
     return dims
 
 
-def implements(torch_function: Callable) -> Callable:
-    """Register a torch function override for BatchedTensor."""
-
-    def decorator(func: Callable) -> Callable:
-        functools.update_wrapper(func, torch_function)
-        HANDLED_FUNCTIONS[torch_function] = func
-        return func
-
-    return decorator
-
-
-@implements(torch.chunk)
-def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedTensorSeq, ...]:
-    r"""See ``torch.chunk`` documentation."""
-    return tuple(
-        BatchedTensorSeq(chunk, batch_dim=tensor.batch_dim, seq_dim=tensor.seq_dim)
-        for chunk in tensor.data.chunk(chunks, dim=dim)
-    )
+# def implements(torch_function: Callable) -> Callable:
+#     """Register a torch function override for BatchedTensor."""
+#
+#     def decorator(func: Callable) -> Callable:
+#         functools.update_wrapper(func, torch_function)
+#         HANDLED_FUNCTIONS[torch_function] = func
+#         return func
+#
+#     return decorator
 
 
 def from_sequences(
@@ -1602,10 +1593,8 @@ def from_sequences(
     .. code-block:: pycon
 
         >>> import torch
-        >>> import redcat
-        >>> redcat.tensorseq.from_sequences(
-        ...     [torch.ones(3), torch.ones(5), torch.ones(1), torch.ones(0)]
-        ... )
+        >>> from redcat.tensorseq import from_sequences
+        >>> from_sequences([torch.ones(3), torch.ones(5), torch.ones(1), torch.ones(0)])
         tensor([[1., 1., 1., 0., 0.],
                 [1., 1., 1., 1., 1.],
                 [1., 0., 0., 0., 0.],
