@@ -2169,7 +2169,10 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[1, 1, 2],
                     [4, 5, 5]], batch_dim=0)
         """
-        return torch.maximum(self, other)
+        check_batch_dims(get_batch_dims((self, other)))
+        if isinstance(other, BatchedTensor):
+            other = other.data
+        return self._create_new_batch(torch.maximum(self._data, other))
 
     def minimum(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
         r"""Computes the element-wise minimum of ``self`` and ``other``.
@@ -2195,7 +2198,10 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[0, 0, 2],
                     [3, 4, 3]], batch_dim=0)
         """
-        return torch.minimum(self, other)
+        check_batch_dims(get_batch_dims((self, other)))
+        if isinstance(other, BatchedTensor):
+            other = other.data
+        return self._create_new_batch(torch.minimum(self._data, other))
 
     def pow(self, exponent: int | float | BatchedTensor) -> TBatchedTensor:
         r"""Computes the power of each element with the given exponent.
@@ -4654,10 +4660,7 @@ def torchmax(
 @implements(torch.maximum)
 def maximum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTensor:  # noqa: A002
     r"""See ``torch.maximum`` documentation."""
-    check_batch_dims(get_batch_dims((input, other)))
-    if isinstance(other, BatchedTensor):
-        other = other.data
-    return BatchedTensor(torch.maximum(input.data, other), batch_dim=input.batch_dim)
+    return input.maximum(other)
 
 
 @implements(torch.mean)
@@ -4686,10 +4689,7 @@ def torchmin(
 @implements(torch.minimum)
 def minimum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTensor:  # noqa: A002
     r"""See ``torch.minimum`` documentation."""
-    check_batch_dims(get_batch_dims((input, other)))
-    if isinstance(other, BatchedTensor):
-        other = other.data
-    return BatchedTensor(torch.minimum(input.data, other), batch_dim=input.batch_dim)
+    return input.minimum(other)
 
 
 @implements(torch.nanmean)

@@ -31,9 +31,11 @@ from redcat.utils.tensor import (
 HANDLED_FUNCTIONS = {
     torch.cat: tensor.cat,
     torch.max: tensor.torchmax,
+    torch.maximum: tensor.maximum,
     torch.mean: tensor.mean,
     torch.median: tensor.median,
     torch.min: tensor.torchmin,
+    torch.minimum: tensor.minimum,
     torch.nanmean: tensor.nanmean,
     torch.nanmedian: tensor.nanmedian,
     torch.nansum: tensor.nansum,
@@ -791,6 +793,13 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.max(self._seq_dim, *args, **kwargs)
 
+    def maximum(self, other: BatchedTensor | Tensor) -> BatchedTensorSeq:
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
+        if isinstance(other, BatchedTensor):
+            other = other.data
+        return self._create_new_batch(torch.maximum(self._data, other))
+
     def mean_along_seq(self, *args, **kwargs) -> BatchedTensor | BatchedTensorSeq:
         r"""Computes the mean values along the sequence dimension.
 
@@ -879,6 +888,13 @@ class BatchedTensorSeq(BatchedTensor):
             indices=tensor([[0], [0]]))
         """
         return self.min(self._seq_dim, *args, **kwargs)
+
+    def minimum(self, other: BatchedTensor | Tensor) -> BatchedTensorSeq:
+        check_batch_dims(get_batch_dims((self, other)))
+        check_seq_dims(get_seq_dims((self, other)))
+        if isinstance(other, BatchedTensor):
+            other = other.data
+        return self._create_new_batch(torch.minimum(self._data, other))
 
     def nanmean_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean values along the sequence dimension.
@@ -1557,34 +1573,6 @@ def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedT
     return tuple(
         BatchedTensorSeq(chunk, batch_dim=tensor.batch_dim, seq_dim=tensor.seq_dim)
         for chunk in tensor.data.chunk(chunks, dim=dim)
-    )
-
-
-@implements(torch.maximum)
-def maximum(
-    input: BatchedTensorSeq, other: BatchedTensor | Tensor  # noqa: A002
-) -> BatchedTensorSeq:
-    r"""See ``torch.maximum`` documentation."""
-    check_batch_dims(get_batch_dims((input, other)))
-    check_seq_dims(get_seq_dims((input, other)))
-    if isinstance(other, BatchedTensor):
-        other = other.data
-    return BatchedTensorSeq(
-        torch.maximum(input.data, other), batch_dim=input.batch_dim, seq_dim=input.seq_dim
-    )
-
-
-@implements(torch.minimum)
-def minimum(
-    input: BatchedTensorSeq, other: BatchedTensor | Tensor  # noqa: A002
-) -> BatchedTensorSeq:
-    r"""See ``torch.minimum`` documentation."""
-    check_batch_dims(get_batch_dims((input, other)))
-    check_seq_dims(get_seq_dims((input, other)))
-    if isinstance(other, BatchedTensor):
-        other = other.data
-    return BatchedTensorSeq(
-        torch.minimum(input.data, other), batch_dim=input.batch_dim, seq_dim=input.seq_dim
     )
 
 
