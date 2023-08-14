@@ -3952,7 +3952,14 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         if isinstance(tensors, (BatchedTensor, Tensor)):
             tensors = [tensors]
-        return torch.cat(list(chain([self], tensors)), dim=dim)
+        tensors = list(chain([self], tensors))
+        check_batch_dims(get_batch_dims(tensors))
+        return self._create_new_batch(
+            torch.cat(
+                [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors],
+                dim=dim,
+            ),
+        )
 
     def cat_(
         self,
@@ -4627,14 +4634,7 @@ def cat(
     dim: int = 0,
 ) -> BatchedTensor:
     r"""See ``torch.cat`` documentation."""
-    batch_dims = get_batch_dims(tensors)
-    check_batch_dims(batch_dims)
-    return BatchedTensor(
-        torch.cat(
-            [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors], dim=dim
-        ),
-        batch_dim=batch_dims.pop(),
-    )
+    return tensors[0].cat(tensors[1:], dim=dim)
 
 
 @implements(torch.chunk)

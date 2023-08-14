@@ -10,6 +10,7 @@ __all__ = [
 
 import functools
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from itertools import chain
 from typing import Any, overload
 
 import numpy as np
@@ -1128,6 +1129,23 @@ class BatchedTensorSeq(BatchedTensor):
             seq_dim=0,
         )
 
+    def cat(
+        self,
+        tensors: BatchedTensorSeq | Tensor | Iterable[BatchedTensorSeq | Tensor],
+        dim: int = 0,
+    ) -> BatchedTensorSeq:
+        if isinstance(tensors, (BatchedTensorSeq, BatchedTensor, Tensor)):
+            tensors = [tensors]
+        tensors = list(chain([self], tensors))
+        check_batch_dims(get_batch_dims(tensors))
+        check_seq_dims(get_seq_dims(tensors))
+        return self._create_new_batch(
+            torch.cat(
+                [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors],
+                dim=dim,
+            ),
+        )
+
     def cat_along_seq(
         self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
     ) -> BatchedTensorSeq:
@@ -1543,17 +1561,7 @@ def cat(
     dim: int = 0,
 ) -> BatchedTensorSeq:
     r"""See ``torch.cat`` documentation."""
-    batch_dims = get_batch_dims(tensors)
-    check_batch_dims(batch_dims)
-    seq_dims = get_seq_dims(tensors)
-    check_seq_dims(seq_dims)
-    return BatchedTensorSeq(
-        torch.cat(
-            [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors], dim=dim
-        ),
-        batch_dim=batch_dims.pop(),
-        seq_dim=seq_dims.pop(),
-    )
+    return tensors[0].cat(tensors[1:], dim=dim)
 
 
 @implements(torch.chunk)
