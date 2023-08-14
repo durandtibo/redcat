@@ -1044,7 +1044,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[3., 3., 3.],
                     [3., 3., 3.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         self._data.add_(other, alpha=alpha)
 
     def div(
@@ -1123,7 +1123,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[0.5000, 0.5000, 0.5000],
                     [0.5000, 0.5000, 0.5000]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         self._data.div_(other, rounding_mode=rounding_mode)
 
     def fmod(
@@ -1183,7 +1183,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[1., 1., 1.],
                     [1., 1., 1.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, divisor)))
+        self._check_valid_dims((self, divisor))
         self._data.fmod_(divisor)
 
     def mul(self, other: BatchedTensor | Tensor | int | float) -> TBatchedTensor:
@@ -1245,7 +1245,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[2., 2., 2.],
                     [2., 2., 2.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         self._data.mul_(other)
 
     def neg(self) -> TBatchedTensor:
@@ -1341,7 +1341,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[-1., -1., -1.],
                     [-1., -1., -1.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         self._data.sub_(other, alpha=alpha)
 
     ###########################################################
@@ -1821,7 +1821,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[2., 0., 2.],
                     [1., 1., 3.]], batch_dim=0)
         """
-        return torch.abs(self)
+        return self._create_new_batch(self._data.abs())
 
     def abs_(self) -> None:
         r"""Computes the absolute value of each element.
@@ -2169,7 +2169,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[1, 1, 2],
                     [4, 5, 5]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedTensor):
             other = other.data
         return self._create_new_batch(torch.maximum(self._data, other))
@@ -2198,7 +2198,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[0, 0, 2],
                     [3, 4, 3]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedTensor):
             other = other.data
         return self._create_new_batch(torch.minimum(self._data, other))
@@ -2255,7 +2255,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[ 0.,  1.,  4.],
                     [ 9., 16., 25.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, exponent)))
+        self._check_valid_dims((self, exponent))
         self._data.pow_(exponent)
 
     def rsqrt(self) -> TBatchedTensor:
@@ -3716,7 +3716,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[ True, False, False, False],
                     [ True, False,  True, False]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         self._data.logical_and_(other)
 
     def logical_not(self) -> TBatchedTensor:
@@ -3829,7 +3829,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[ True,  True,  True, False],
                     [ True,  True,  True,  True]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         self._data.logical_or_(other)
 
     def logical_xor(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
@@ -3894,7 +3894,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[False,  True,  True, False],
                     [False,  True, False,  True]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         self._data.logical_xor_(other)
 
     ##########################################################
@@ -3952,7 +3952,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         if isinstance(tensors, (BatchedTensor, Tensor)):
             tensors = [tensors]
         tensors = list(chain([self], tensors))
-        check_batch_dims(get_batch_dims(tensors))
+        self._check_valid_dims(tensors)
         return self._create_new_batch(
             torch.cat(
                 [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors],
@@ -4188,10 +4188,8 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [42, 42],
                     [ 8,  9]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, mask)))
-        if isinstance(mask, BatchedTensor):
-            mask = mask.data
-        return self._create_new_batch(self._data.masked_fill(mask.data, value))
+        self._check_valid_dims((self, mask))
+        return self._create_new_batch(self._data.masked_fill(to_tensor(mask.data), value))
 
     def select(self, dim: int, index: int) -> Tensor:
         r"""Selects the batch along the batch dimension at the given
@@ -4217,10 +4215,10 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.select(dim=0, index=2)
             tensor([4, 5])
         """
-        return torch.select(self._data, dim=dim, index=index)
+        return self._data.select(dim=dim, index=index)
 
     def select_along_batch(self, index: int) -> Tensor:
-        return self._data.select(self._batch_dim, index)
+        return self.select(self._batch_dim, index)
 
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
@@ -4396,13 +4394,11 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [0, 7],
                     [2, 9]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, indices)))
-        if isinstance(indices, BaseBatch):
-            indices = indices.data
+        self._check_valid_dims((self, indices))
         indices = to_tensor(indices).long()
         if dim is None:
-            return torch.take_along_dim(self._data, indices)
-        return self._create_new_batch(torch.take_along_dim(self._data, indices, dim=dim))
+            return self._data.take_along_dim(indices)
+        return self._create_new_batch(self._data.take_along_dim(indices, dim=dim))
 
     def unsqueeze(self, dim: int) -> TBatchedTensor:
         r"""Returns a new batch with a dimension of size one inserted at
@@ -4516,7 +4512,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                      [8],
                      [9]]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         return self._create_new_batch(self._data.view_as(other.data))
 
     ########################
@@ -4589,7 +4585,28 @@ class BatchedTensor(BaseBatch[Tensor]):
             f"device={self.device}, {dims})"
         )
 
+    def _check_valid_dims(self, tensors: Sequence) -> None:
+        r"""Checks if the dimensions are valid.
+
+        Args:
+        ----
+            tensors (``Sequence``): Specifies the sequence of
+                tensors/batches to check.
+        """
+        check_batch_dims(get_batch_dims(tensors))
+
     def _create_new_batch(self, data: Tensor) -> TBatchedTensor:
+        r"""Creates a new batch given a ``torch.Tensor``.
+
+        Args:
+        ----
+            data (``torch.Tensor``): Specifies the data to put in the
+                batch.
+
+        Returns:
+        -------
+            ``BatchedTensor``: The new batch.
+        """
         return self.__class__(data, **self._get_kwargs())
 
     def _get_kwargs(self) -> dict:
