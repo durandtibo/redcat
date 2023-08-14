@@ -13,7 +13,6 @@ from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.return_types import ValuesIndicesTuple
 from redcat.types import IndexType
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.tensor import permute_along_dim, to_tensor
@@ -2600,11 +2599,8 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Args:
         ----
-            dim (int or ``None``, optional): Specifies the dimension
-                to reduce. Default: ``None``
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.max``
+            **kwargs: See the documentation of ``torch.Tensor.max``
 
         Returns:
         -------
@@ -2636,9 +2632,8 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.max``
+            **kwargs: See the documentation of ``torch.Tensor.max``
 
         Returns:
         -------
@@ -2785,28 +2780,17 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.median(dim=self._batch_dim, keepdim=keepdim)
 
-    @overload
-    def min(self, dim: None = None) -> Tensor:
-        r"""See documentation of ``torch.Tensor.min``"""
-
-    @overload
-    def min(self, dim: int, keepdim: bool = False) -> ValuesIndicesTuple:
-        r"""See documentation of ``torch.Tensor.min``"""
-
-    def min(self, dim: int | None = None, keepdim: bool = False) -> Tensor | ValuesIndicesTuple:
+    def min(self, *args, **kwargs) -> Tensor | torch.return_types.min:
         r"""Computes the minimum of all elements or along a dimension.
 
         Args:
         ----
-            dim (int or ``None``, optional): Specifies the dimension
-                to reduce. Default: ``None``
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.min``
+            **kwargs: See the documentation of ``torch.Tensor.min``
 
         Returns:
         -------
-            ``torch.Tensor`` or ``ValuesIndicesTuple``:
+            ``torch.Tensor`` or ``torch.return_types.min``:
                 The minimum of all elements or along a dimension.
 
         Example usage:
@@ -2819,32 +2803,27 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.min()
             tensor(0)
             >>> batch.min(dim=1)
-            ValuesIndicesTuple(
-              (values): tensor([0, 5])
-              (indices): tensor([0, 0])
-            )
+            torch.return_types.min(
+            values=tensor([0, 5]),
+            indices=tensor([0, 0]))
             >>> batch.min(dim=1, keepdim=True)
-            ValuesIndicesTuple(
-              (values): tensor([[0], [5]])
-              (indices): tensor([[0], [0]])
-            )
+            torch.return_types.min(
+            values=tensor([[0], [5]]),
+            indices=tensor([[0], [0]]))
         """
-        if dim is None:
-            return self._data.min()
-        return ValuesIndicesTuple(*self._data.min(dim=dim, keepdim=keepdim))
+        return self._data.min(*args, **kwargs)
 
-    def min_along_batch(self, keepdim: bool = False) -> ValuesIndicesTuple:
+    def min_along_batch(self, *args, **kwargs) -> torch.return_types.min:
         r"""Computes the minimum values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.min``
+            **kwargs: See the documentation of ``torch.Tensor.min``
 
         Returns:
         -------
-            ``ValuesIndicesTuple``: A batch with
+            ``torch.return_types.min``: A batch with
                 the minimum values along the batch dimension.
 
         Example usage:
@@ -2855,17 +2834,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]]))
             >>> batch.min_along_batch()
-            ValuesIndicesTuple(
-              (values): tensor([0, 5])
-              (indices): tensor([0, 0])
-            )
+            torch.return_types.min(
+            values=tensor([0, 5]),
+            indices=tensor([0, 0]))
             >>> batch.min_along_batch(keepdim=True)
-            ValuesIndicesTuple(
-              (values): tensor([[0, 5]])
-              (indices): tensor([[0, 0]])
-            )
+            torch.return_types.min(
+            values=tensor([[0, 5]]),
+            indices=tensor([[0, 0]]))
         """
-        return self.min(dim=self._batch_dim, keepdim=keepdim)
+        return self.min(self._batch_dim, *args, **kwargs)
 
     def nanmean(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean of all elements.
