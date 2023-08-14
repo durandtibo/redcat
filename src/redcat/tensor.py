@@ -4310,7 +4310,10 @@ class BatchedTensor(BaseBatch[Tensor]):
              tensor([[4, 5], [6, 7]], batch_dim=0),
              tensor([[8, 9]], batch_dim=0))
         """
-        return torch.split(self, split_size_or_sections, dim=dim)
+        return tuple(
+            self._create_new_batch(chunk)
+            for chunk in self._data.split(split_size_or_sections, dim=dim)
+        )
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
@@ -4739,10 +4742,7 @@ def split(
     tensor: BatchedTensor, split_size_or_sections: int | Sequence[int], dim: int = 0
 ) -> tuple[BatchedTensor, ...]:
     r"""See ``torch.split`` documentation."""
-    return tuple(
-        BatchedTensor(chunk, batch_dim=tensor.batch_dim)
-        for chunk in tensor.data.split(split_size_or_sections, dim=dim)
-    )
+    return tensor.split(split_size_or_sections=split_size_or_sections, dim=dim)
 
 
 @implements(torch.sum)
@@ -4751,7 +4751,7 @@ def torchsum(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
 
     Use the name `torchsum` to avoid shadowing `sum` python builtin.
     """
-    return torch.sum(input.data, *args, **kwargs)
+    return input.data.sum(*args, **kwargs)
 
 
 @overload
