@@ -9,13 +9,11 @@ __all__ = [
     "get_available_devices",
     "get_torch_generator",
     "permute_along_dim",
-    "swap2",
     "to_tensor",
 ]
 
-import copy
-from collections.abc import MutableSequence, Sequence
-from typing import Union, overload
+from collections.abc import Sequence
+from typing import Union
 
 import numpy as np
 import torch
@@ -23,6 +21,7 @@ from coola.utils.tensor import is_cuda_available, is_mps_available
 from torch import Tensor
 
 from redcat.base import BaseBatch
+from redcat.utils.common import swap2
 
 DeviceType = Union[torch.device, str, int]
 
@@ -316,56 +315,6 @@ def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tens
                  [15, 19, 17, 16, 18]]])
     """
     return tensor.transpose(0, dim)[permutation].transpose(0, dim).contiguous()
-
-
-@overload
-def swap2(sequence: Tensor, index0: int, index1: int) -> Tensor:
-    r"""``swap2`` for a ``torch.Tensor``."""
-
-
-@overload
-def swap2(sequence: np.ndarray, index0: int, index1: int) -> np.ndarray:
-    r"""``swap2`` for a ``numpy.ndarray``."""
-
-
-@overload
-def swap2(sequence: MutableSequence, index0: int, index1: int) -> MutableSequence:
-    r"""``swap2`` for a mutable sequence."""
-
-
-def swap2(
-    sequence: Tensor | np.ndarray | MutableSequence, index0: int, index1: int
-) -> Tensor | np.ndarray | MutableSequence:
-    r"""Swaps two values in a mutable sequence.
-
-    The swap is performed in-place.
-
-    Args:
-    ----
-        sequence (``torch.Tensor`` or ``numpy.ndarray`` or
-            ``MutableSequence``): Specifies the sequence to update.
-        index0 (int): Specifies the index of the first value to swap.
-        index1 (int): Specifies the index of the second value to swap.
-
-    Returns:
-    -------
-        ``torch.Tensor`` or ``numpy.ndarray`` or ``MutableSequence``:
-            The updated sequence.
-
-    Example usage:
-
-    .. code-block:: pycon
-
-        >>> from redcat.utils.tensor import swap2
-        >>> seq = [1, 2, 3, 4, 5]
-        >>> swap2(seq, 2, 0)
-        >>> seq
-        [3, 2, 1, 4, 5]
-    """
-    tmp = copy.deepcopy(sequence[index0])
-    sequence[index0] = sequence[index1]
-    sequence[index1] = tmp
-    return sequence
 
 
 def to_tensor(data: BaseBatch | Sequence | Tensor | np.ndarray) -> Tensor:

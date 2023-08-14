@@ -18,7 +18,6 @@ from redcat.utils.tensor import (
     get_available_devices,
     get_torch_generator,
     permute_along_dim,
-    swap2,
     to_tensor,
 )
 
@@ -242,41 +241,6 @@ def test_permute_along_dim_3d_dim_2() -> None:
             [[[0, 4, 2, 1, 3], [5, 9, 7, 6, 8]], [[10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]]
         )
     )
-
-
-###########################
-#     Tests for swap2     #
-###########################
-
-
-def test_swap2_list() -> None:
-    seq = [1, 2, 3, 4, 5]
-    swap2(seq, 0, 2)
-    assert seq == [3, 2, 1, 4, 5]
-
-
-def test_swap2_tensor_1d() -> None:
-    tensor = torch.tensor([1, 2, 3, 4, 5])
-    swap2(tensor, 0, 2)
-    assert tensor.equal(torch.tensor([3, 2, 1, 4, 5]))
-
-
-def test_swap2_tensor_2d() -> None:
-    tensor = torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
-    swap2(tensor, 0, 2)
-    assert tensor.equal(torch.tensor([[4, 5], [2, 3], [0, 1], [6, 7], [8, 9]]))
-
-
-def test_swap2_ndarray_1d() -> None:
-    array = np.array([1, 2, 3, 4, 5])
-    swap2(array, 0, 2)
-    assert np.array_equal(array, np.array([3, 2, 1, 4, 5]))
-
-
-def test_swap2_ndarray_2d() -> None:
-    array = np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
-    swap2(array, 0, 2)
-    assert np.array_equal(array, np.array([[4, 5], [2, 3], [0, 1], [6, 7], [8, 9]]))
 
 
 ###############################
