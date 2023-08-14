@@ -1349,25 +1349,14 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def argsort(
-        self,
-        dim: int = -1,
-        descending: bool = False,
-        stable: bool = False,
-    ) -> TBatchedTensor:
+    def argsort(self, *args, **kwargs) -> TBatchedTensor:
         r"""Returns the indices that sort the batch along a given
         dimension in monotonic order by value.
 
         Args:
         ----
-            dim (int, optional): Specifies the dimension to sort along.
-                Default: ``-1``
-            descending (bool, optional): Controls the sorting order.
-                If ``True``, the elements are sorted in descending
-                order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
-                which guarantees that the order of equivalent elements
-                is preserved. Default: ``False``
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
         -------
@@ -1385,26 +1374,16 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[4, 3, 2, 1, 0],
                     [4, 3, 2, 1, 0]], batch_dim=0)
         """
-        return self._create_new_batch(
-            self._data.argsort(dim=dim, descending=descending, stable=stable)
-        )
+        return self._create_new_batch(self._data.argsort(*args, **kwargs))
 
-    def argsort_along_batch(
-        self,
-        descending: bool = False,
-        stable: bool = False,
-    ) -> TBatchedTensor:
+    def argsort_along_batch(self, *args, **kwargs) -> TBatchedTensor:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
         Args:
         ----
-            descending (bool, optional): Controls the sorting order.
-                If ``True``, the elements are sorted in descending
-                order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
-                which guarantees that the order of equivalent elements
-                is preserved. Default: ``False``
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
 
         Returns:
         -------
@@ -1425,7 +1404,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [1, 1],
                     [0, 0]], batch_dim=0)
         """
-        return self.argsort(dim=self._batch_dim, descending=descending, stable=stable)
+        return self.argsort(self._batch_dim, *args, **kwargs)
 
     def cumsum(self, dim: int, **kwargs) -> TBatchedTensor:
         r"""Computes the cumulative sum of elements of the current batch
