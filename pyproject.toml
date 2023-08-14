@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "redcat"
-version = "0.0.8a72"
+version = "0.0.8a73"
 description = "A library to manipulate batches of examples"
 readme = "README.md"
 authors = ["Thibaut Durand <durand.tibo+gh@gmail.com>"]

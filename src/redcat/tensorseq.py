@@ -9,7 +9,6 @@ __all__ = [
 ]
 
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from itertools import chain
 from typing import Any
 
 import numpy as np
@@ -341,38 +340,6 @@ class BatchedTensorSeq(BatchedTensor):
     #     Mathematical | arithmetical operations     #
     ##################################################
 
-    def add_(
-        self,
-        other: BatchedTensor | Tensor | int | float,
-        alpha: int | float = 1.0,
-    ) -> None:
-        check_seq_dims(get_seq_dims((self, other)))
-        super().add_(other, alpha=alpha)
-
-    def div_(
-        self,
-        other: BatchedTensor | Tensor | int | float,
-        rounding_mode: str | None = None,
-    ) -> None:
-        check_seq_dims(get_seq_dims((self, other)))
-        super().div_(other, rounding_mode=rounding_mode)
-
-    def fmod_(self, divisor: BatchedTensor | Tensor | int | float) -> None:
-        check_seq_dims(get_seq_dims((self, divisor)))
-        super().fmod_(divisor)
-
-    def mul_(self, other: BatchedTensor | Tensor | int | float) -> None:
-        check_seq_dims(get_seq_dims((self, other)))
-        super().mul_(other)
-
-    def sub_(
-        self,
-        other: BatchedTensor | Tensor | int | float,
-        alpha: int | float = 1.0,
-    ) -> None:
-        check_seq_dims(get_seq_dims((self, other)))
-        super().sub_(other, alpha=alpha)
-
     ###########################################################
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
@@ -626,25 +593,9 @@ class BatchedTensorSeq(BatchedTensor):
     #     Mathematical | point-wise operations     #
     ################################################
 
-    def pow_(self, exponent: int | float | BatchedTensor) -> None:
-        check_seq_dims(get_seq_dims((self, exponent)))
-        super().pow_(exponent)
-
     #############################################
     #     Mathematical | logical operations     #
     #############################################
-
-    def logical_and_(self, other: BatchedTensor | Tensor) -> None:
-        check_seq_dims(get_seq_dims((self, other)))
-        super().logical_and_(other)
-
-    def logical_or_(self, other: BatchedTensor | Tensor) -> None:
-        check_seq_dims(get_seq_dims((self, other)))
-        super().logical_or_(other)
-
-    def logical_xor_(self, other: BatchedTensor | Tensor) -> None:
-        check_seq_dims(get_seq_dims((self, other)))
-        super().logical_xor_(other)
 
     ################################
     #     Reduction operations     #
@@ -793,13 +744,6 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.max(self._seq_dim, *args, **kwargs)
 
-    def maximum(self, other: BatchedTensor | Tensor) -> BatchedTensorSeq:
-        check_batch_dims(get_batch_dims((self, other)))
-        check_seq_dims(get_seq_dims((self, other)))
-        if isinstance(other, BatchedTensor):
-            other = other.data
-        return self._create_new_batch(torch.maximum(self._data, other))
-
     def mean_along_seq(self, *args, **kwargs) -> BatchedTensor | BatchedTensorSeq:
         r"""Computes the mean values along the sequence dimension.
 
@@ -888,13 +832,6 @@ class BatchedTensorSeq(BatchedTensor):
             indices=tensor([[0], [0]]))
         """
         return self.min(self._seq_dim, *args, **kwargs)
-
-    def minimum(self, other: BatchedTensor | Tensor) -> BatchedTensorSeq:
-        check_batch_dims(get_batch_dims((self, other)))
-        check_seq_dims(get_seq_dims((self, other)))
-        if isinstance(other, BatchedTensor):
-            other = other.data
-        return self._create_new_batch(torch.minimum(self._data, other))
 
     def nanmean_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean values along the sequence dimension.
@@ -1141,23 +1078,6 @@ class BatchedTensorSeq(BatchedTensor):
             seq_dim=0,
         )
 
-    def cat(
-        self,
-        tensors: BatchedTensorSeq | Tensor | Iterable[BatchedTensorSeq | Tensor],
-        dim: int = 0,
-    ) -> BatchedTensorSeq:
-        if isinstance(tensors, (BatchedTensorSeq, BatchedTensor, Tensor)):
-            tensors = [tensors]
-        tensors = list(chain([self], tensors))
-        check_batch_dims(get_batch_dims(tensors))
-        check_seq_dims(get_seq_dims(tensors))
-        return self._create_new_batch(
-            torch.cat(
-                [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors],
-                dim=dim,
-            ),
-        )
-
     def cat_along_seq(
         self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
     ) -> BatchedTensorSeq:
@@ -1303,15 +1223,6 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.index_select(self._seq_dim, index)
 
-    def masked_fill(
-        self, mask: BatchedTensor | Tensor, value: bool | int | float
-    ) -> BatchedTensorSeq:
-        check_batch_dims(get_batch_dims((self, mask)))
-        check_seq_dims(get_seq_dims((self, mask)))
-        if isinstance(mask, BatchedTensor):
-            mask = mask.data
-        return self._create_new_batch(self._data.masked_fill(mask.data, value))
-
     def repeat_along_seq(self, repeats: int) -> BatchedTensorSeq:
         r"""Repeats the batch along the sequence dimension.
 
@@ -1410,14 +1321,6 @@ class BatchedTensorSeq(BatchedTensor):
     ) -> tuple[BatchedTensorSeq, ...]:
         return self.split(split_size_or_sections, dim=self._seq_dim)
 
-    def take_along_dim(
-        self,
-        indices: BaseBatch | np.ndarray | Tensor | Sequence,
-        dim: int | None = None,
-    ) -> BatchedTensorSeq | Tensor:
-        check_seq_dims(get_seq_dims((self, indices)))
-        return super().take_along_dim(indices, dim)
-
     def take_along_seq(
         self, indices: BaseBatch | np.ndarray | Tensor | Sequence
     ) -> BatchedTensorSeq:
@@ -1455,10 +1358,9 @@ class BatchedTensorSeq(BatchedTensor):
             seq_dim=self._seq_dim + 1 if self._seq_dim >= dim and dim >= 0 else self._seq_dim,
         )
 
-    def view_as(self, other: BatchedTensor | Tensor) -> BatchedTensorSeq:
-        check_batch_dims(get_batch_dims((self, other)))
-        check_seq_dims(get_seq_dims((self, other)))
-        return self._create_new_batch(self._data.view_as(other.data))
+    def _check_valid_dims(self, tensors: Sequence) -> None:
+        check_batch_dims(get_batch_dims(tensors))
+        check_seq_dims(get_seq_dims(tensors))
 
     def _get_kwargs(self) -> dict:
         return {"batch_dim": self._batch_dim, "seq_dim": self._seq_dim}
