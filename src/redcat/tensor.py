@@ -2684,16 +2684,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.mean(dim=1, keepdim=True)
             tensor([[2.], [7.]])
         """
-        return torch.mean(self, *args, **kwargs)
+        return self._data.mean(*args, **kwargs)
 
-    def mean_along_batch(self, keepdim: bool = False) -> Tensor:
+    def mean_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.mean``
+            **kwargs: See the documentation of ``torch.Tensor.mean``
 
         Returns:
         -------
@@ -2712,7 +2711,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.mean_along_batch(keepdim=True)
             tensor([[4., 5.]])
         """
-        return self.mean(dim=self._batch_dim, keepdim=keepdim)
+        return self.mean(self._batch_dim, *args, **kwargs)
 
     def median(self, *args, **kwargs) -> Tensor | torch.return_types.median:
         r"""Computes the median of all elements.
@@ -2748,16 +2747,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             values=tensor([[2], [7]]),
             indices=tensor([[2], [2]]))
         """
-        return torch.median(self, *args, **kwargs)
+        return self._data.median(*args, **kwargs)
 
-    def median_along_batch(self, keepdim: bool = False) -> torch.return_types.median:
+    def median_along_batch(self, *args, **kwargs) -> torch.return_types.median:
         r"""Computes the median values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.median``
+            **kwargs: See the documentation of ``torch.Tensor.median``
 
         Returns:
         -------
@@ -2778,7 +2776,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             values=tensor([2, 7]),
             indices=tensor([2, 2]))
         """
-        return self.median(dim=self._batch_dim, keepdim=keepdim)
+        return self.median(self._batch_dim, *args, **kwargs)
 
     def min(self, *args, **kwargs) -> Tensor | torch.return_types.min:
         r"""Computes the minimum of all elements or along a dimension.
@@ -2870,16 +2868,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.nanmean(dim=1, keepdim=True)
             tensor([[2.0000], [6.5000]])
         """
-        return torch.nanmean(self, *args, **kwargs)
+        return self._data.nanmean(*args, **kwargs)
 
-    def nanmean_along_batch(self, keepdim: bool = False) -> Tensor:
+    def nanmean_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.nanmean``
+            **kwargs: See the documentation of ``torch.Tensor.nanmean``
 
         Returns:
         -------
@@ -2900,7 +2897,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.nanmean_along_batch(keepdim=True)
             tensor([[2.0000, 6.5000]])
         """
-        return self.nanmean(dim=self._batch_dim, keepdim=keepdim)
+        return self.nanmean(self._batch_dim, *args, **kwargs)
 
     def nanmedian(self, *args, **kwargs) -> Tensor | torch.return_types.nanmedian:
         r"""Computes the median of all elements.
@@ -2936,16 +2933,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             values=tensor([[2.], [6.]]),
             indices=tensor([[2], [1]]))
         """
-        return torch.nanmedian(self, *args, **kwargs)
+        return self._data.nanmedian(*args, **kwargs)
 
-    def nanmedian_along_batch(self, keepdim: bool = False) -> torch.return_types.nanmedian:
+    def nanmedian_along_batch(self, *args, **kwargs) -> torch.return_types.nanmedian:
         r"""Computes the median values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.nanmedian``
+            **kwargs: See the documentation of ``torch.Tensor.nanmedian``
 
         Returns:
         -------
@@ -2968,7 +2964,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             values=tensor([2., 6.]),
             indices=tensor([2, 1]))
         """
-        return self.nanmedian(dim=self._batch_dim, keepdim=keepdim)
+        return self.nanmedian(self._batch_dim, *args, **kwargs)
 
     def nansum(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum of all elements.
@@ -2996,16 +2992,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.nansum(dim=1, keepdim=True)
             tensor([[10.], [26.]])
         """
-        return torch.nansum(self, *args, **kwargs)
+        return self._data.nansum(*args, **kwargs)
 
-    def nansum_along_batch(self, keepdim: bool = False) -> Tensor:
+    def nansum_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.nansum``
+            **kwargs: See the documentation of ``torch.Tensor.nansum``
 
         Returns:
         -------
@@ -3024,15 +3019,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.nansum_along_batch()
             tensor([10., 26.])
         """
-        return self.nansum(dim=self._batch_dim, keepdim=keepdim)
+        return self.nansum(self._batch_dim, *args, **kwargs)
 
     def prod(self, *args, **kwargs) -> Tensor:
         r"""Computes the product of all elements.
 
         Args:
         ----
-            *args: See the documentation of ``torch.Tensor.nansum``
-            **kwargs: See the documentation of ``torch.Tensor.nansum``
+            *args: See the documentation of ``torch.Tensor.prod``
+            **kwargs: See the documentation of ``torch.Tensor.prod``
 
         Returns:
         -------
@@ -3052,16 +3047,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.prod(dim=1, keepdim=True)
             tensor([[ 120], [3024]])
         """
-        return torch.prod(self, *args, **kwargs)
+        return self._data.prod(*args, **kwargs)
 
     def prod_along_batch(self, keepdim: bool = False) -> Tensor:
         r"""Computes the product values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.prod``
+            **kwargs: See the documentation of ``torch.Tensor.prod``
 
         Returns:
         -------
@@ -3108,16 +3102,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.sum(dim=1, keepdim=True)
             tensor([[10], [35]])
         """
-        return torch.sum(self, *args, **kwargs)
+        return self._data.sum(*args, **kwargs)
 
-    def sum_along_batch(self, keepdim: bool = False) -> Tensor:
+    def sum_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum values along the batch dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.sum``
+            **kwargs: See the documentation of ``torch.Tensor.sum``
 
         Returns:
         -------
@@ -3134,7 +3127,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.sum_along_batch()
             tensor([20, 25])
         """
-        return self.sum(dim=self._batch_dim, keepdim=keepdim)
+        return self.sum(self._batch_dim, *args, **kwargs)
 
     ###########################################
     #     Mathematical | trigo operations     #
@@ -4655,7 +4648,7 @@ def torchmax(
     input: BatchedTensor, *args, **kwargs  # noqa: A002
 ) -> Tensor | torch.return_types.max:
     r"""See ``torch.max`` documentation."""
-    return torch.max(input.data, *args, **kwargs)
+    return input.max(*args, **kwargs)
 
 
 @implements(torch.maximum)
@@ -4670,7 +4663,7 @@ def maximum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTenso
 @implements(torch.mean)
 def mean(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.mean`` documentation."""
-    return torch.mean(input.data, *args, **kwargs)
+    return input.mean(*args, **kwargs)
 
 
 @implements(torch.median)
@@ -4678,7 +4671,7 @@ def median(
     input: BatchedTensor, *args, **kwargs  # noqa: A002
 ) -> Tensor | torch.return_types.median:
     r"""See ``torch.median`` documentation."""
-    return torch.median(input.data, *args, **kwargs)
+    return input.median(*args, **kwargs)
 
 
 # Use the name `torchmin` to avoid shadowing `min` python builtin.
@@ -4687,7 +4680,7 @@ def torchmin(
     input: BatchedTensor, *args, **kwargs  # noqa: A002
 ) -> Tensor | torch.return_types.min:
     r"""See ``torch.min`` documentation."""
-    return torch.min(input.data, *args, **kwargs)
+    return input.min(*args, **kwargs)
 
 
 @implements(torch.minimum)
@@ -4702,7 +4695,7 @@ def minimum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTenso
 @implements(torch.nanmean)
 def nanmean(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.nanmean`` documentation."""
-    return torch.nanmean(input.data, *args, **kwargs)
+    return input.nanmean(*args, **kwargs)
 
 
 @implements(torch.nanmedian)
@@ -4710,25 +4703,25 @@ def nanmedian(
     input: BatchedTensor, *args, **kwargs  # noqa: A002
 ) -> Tensor | torch.return_types.nanmedian:
     r"""See ``torch.nanmedian`` documentation."""
-    return torch.nanmedian(input.data, *args, **kwargs)
+    return input.nanmedian(*args, **kwargs)
 
 
 @implements(torch.nansum)
 def nansum(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.nansum`` documentation."""
-    return torch.nansum(input.data, *args, **kwargs)
+    return input.nansum(*args, **kwargs)
 
 
 @implements(torch.prod)
 def prod(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     r"""See ``torch.prod`` documentation."""
-    return torch.prod(input.data, *args, **kwargs)
+    return input.prod(*args, **kwargs)
 
 
 @implements(torch.select)
 def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
     r"""See ``torch.select`` documentation."""
-    return torch.select(input.data, dim=dim, index=index)
+    return input.select(dim=dim, index=index)
 
 
 @implements(torch.sort)
@@ -4751,22 +4744,7 @@ def torchsum(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
 
     Use the name `torchsum` to avoid shadowing `sum` python builtin.
     """
-    return input.data.sum(*args, **kwargs)
-
-
-@overload
-def take_along_dim(
-    input: BatchedTensor | Tensor,  # noqa: A002
-    indices: BatchedTensor | Tensor,
-) -> Tensor:
-    r"""See ``torch.take_along_dim`` documentation."""
-
-
-@overload
-def take_along_dim(
-    input: BatchedTensor | Tensor, indices: BatchedTensor | Tensor, dim: int  # noqa: A002
-) -> BatchedTensor:
-    r"""See ``torch.take_along_dim`` documentation."""
+    return input.sum(*args, **kwargs)
 
 
 @implements(torch.take_along_dim)
