@@ -13,7 +13,6 @@ from torch import Tensor
 from torch.overrides import is_tensor_like
 
 from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq, BatchList
-from redcat.return_types import ValuesIndicesTuple
 from redcat.tensor import IndexType
 from redcat.utils.tensor import get_available_devices, get_torch_generator
 
@@ -3358,17 +3357,29 @@ def test_batched_tensor_min() -> None:
     assert BatchedTensor(torch.arange(10).view(2, 5)).min().equal(torch.tensor(0))
 
 
+def test_batched_tensor_min_dim_tuple() -> None:
+    values, indices = BatchedTensor(torch.arange(10).view(2, 5)).min(dim=1)
+    assert values.equal(torch.tensor([0, 5]))
+    assert indices.equal(torch.tensor([0, 0]))
+
+
+def test_batched_tensor_min_dim_namedtuple() -> None:
+    out = BatchedTensor(torch.arange(10).view(2, 5)).min(dim=1)
+    assert out.values.equal(torch.tensor([0, 5]))
+    assert out.indices.equal(torch.tensor([0, 0]))
+
+
 def test_batched_tensor_min_keepdim_false() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.arange(10).view(2, 5)).min(dim=1),
-        ValuesIndicesTuple(torch.tensor([0, 5]), torch.tensor([0, 0])),
+        tuple(BatchedTensor(torch.arange(10).view(2, 5)).min(dim=1)),
+        (torch.tensor([0, 5]), torch.tensor([0, 0])),
     )
 
 
 def test_batched_tensor_min_keepdim_true() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.arange(10).view(2, 5)).min(dim=1, keepdim=True),
-        ValuesIndicesTuple(torch.tensor([[0], [5]]), torch.tensor([[0], [0]])),
+        tuple(BatchedTensor(torch.arange(10).view(2, 5)).min(dim=1, keepdim=True)),
+        (torch.tensor([[0], [5]]), torch.tensor([[0], [0]])),
     )
 
 
@@ -3378,24 +3389,28 @@ def test_batched_tensor_min_custom_dims() -> None:
 
 def test_batched_tensor_min_along_batch() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch(),
-        ValuesIndicesTuple(torch.tensor([0, 5]), torch.tensor([0, 0])),
+        tuple(
+            BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch()
+        ),
+        (torch.tensor([0, 5]), torch.tensor([0, 0])),
     )
 
 
 def test_batched_tensor_min_along_batch_keepdim_true() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch(
-            keepdim=True
+        tuple(
+            BatchedTensor(torch.tensor([[0, 5], [1, 6], [2, 7], [3, 8], [4, 9]])).min_along_batch(
+                keepdim=True
+            )
         ),
-        ValuesIndicesTuple(torch.tensor([[0, 5]]), torch.tensor([[0, 0]])),
+        (torch.tensor([[0, 5]]), torch.tensor([[0, 0]])),
     )
 
 
 def test_batched_tensor_min_along_batch_custom_dims() -> None:
     assert objects_are_equal(
-        BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).min_along_batch(),
-        ValuesIndicesTuple(torch.tensor([0, 5]), torch.tensor([0, 0])),
+        tuple(BatchedTensor(torch.arange(10).view(2, 5), batch_dim=1).min_along_batch()),
+        (torch.tensor([0, 5]), torch.tensor([0, 0])),
     )
 
 

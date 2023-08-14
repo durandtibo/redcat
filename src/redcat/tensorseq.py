@@ -759,9 +759,8 @@ class BatchedTensorSeq(BatchedTensor):
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.max``
+            **kwargs: See the documentation of ``torch.Tensor.max``
 
         Returns:
         -------
@@ -846,14 +845,13 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.median(dim=self._seq_dim, keepdim=keepdim)
 
-    def min_along_seq(self, keepdim: bool = False) -> torch.return_types.min:
+    def min_along_seq(self, *args, **kwargs) -> torch.return_types.min:
         r"""Computes the minimum values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.min``
+            **kwargs: See the documentation of ``torch.Tensor.min``
 
         Returns:
         -------
@@ -868,18 +866,16 @@ class BatchedTensorSeq(BatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.min_along_seq()
-            ValuesIndicesTuple(
-              (values): tensor([0, 5])
-              (indices): tensor([0, 0])
-            )
+            torch.return_types.min(
+            values=tensor([0, 5]),
+            indices=tensor([0, 0]))
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.min_along_seq(keepdim=True)
-            ValuesIndicesTuple(
-              (values): tensor([[0], [5]])
-              (indices): tensor([[0], [0]])
-            )
+            torch.return_types.min(
+            values=tensor([[0], [5]]),
+            indices=tensor([[0], [0]]))
         """
-        return self.min(dim=self._seq_dim, keepdim=keepdim)
+        return self.min(self._seq_dim, *args, **kwargs)
 
     def nanmean_along_seq(self, keepdim: bool = False) -> Tensor:
         r"""Computes the mean values along the sequence dimension.
