@@ -4,11 +4,14 @@ __all__ = [
     "check_batch_dims",
     "check_data_and_dim",
     "get_batch_dims",
+    "swap2",
 ]
 
-from collections.abc import Iterable, Mapping
-from typing import Any
+import copy
+from collections.abc import Iterable, Mapping, MutableSequence
+from typing import Any, overload
 
+import numpy as np
 from numpy import ndarray
 from torch import Tensor
 
@@ -103,3 +106,53 @@ def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     dims = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
     dims.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
     return dims
+
+
+@overload
+def swap2(sequence: Tensor, index0: int, index1: int) -> Tensor:
+    r"""``swap2`` for a ``torch.Tensor``."""
+
+
+@overload
+def swap2(sequence: np.ndarray, index0: int, index1: int) -> np.ndarray:
+    r"""``swap2`` for a ``numpy.ndarray``."""
+
+
+@overload
+def swap2(sequence: MutableSequence, index0: int, index1: int) -> MutableSequence:
+    r"""``swap2`` for a mutable sequence."""
+
+
+def swap2(
+    sequence: Tensor | np.ndarray | MutableSequence, index0: int, index1: int
+) -> Tensor | np.ndarray | MutableSequence:
+    r"""Swaps two values in a mutable sequence.
+
+    The swap is performed in-place.
+
+    Args:
+    ----
+        sequence (``torch.Tensor`` or ``numpy.ndarray`` or
+            ``MutableSequence``): Specifies the sequence to update.
+        index0 (int): Specifies the index of the first value to swap.
+        index1 (int): Specifies the index of the second value to swap.
+
+    Returns:
+    -------
+        ``torch.Tensor`` or ``numpy.ndarray`` or ``MutableSequence``:
+            The updated sequence.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat.utils.common import swap2
+        >>> seq = [1, 2, 3, 4, 5]
+        >>> swap2(seq, 2, 0)
+        >>> seq
+        [3, 2, 1, 4, 5]
+    """
+    tmp = copy.deepcopy(sequence[index0])
+    sequence[index0] = sequence[index1]
+    sequence[index1] = tmp
+    return sequence

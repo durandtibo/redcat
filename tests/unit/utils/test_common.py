@@ -5,7 +5,12 @@ import torch
 from pytest import mark, raises
 
 from redcat import BatchedArray, BatchedTensor, BatchedTensorSeq
-from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
+from redcat.utils.common import (
+    check_batch_dims,
+    check_data_and_dim,
+    get_batch_dims,
+    swap2,
+)
 
 ######################################
 #     Tests for check_batch_dims     #
@@ -84,3 +89,38 @@ def test_get_batch_dims_2_tensor() -> None:
 
 def test_get_batch_dims_empty() -> None:
     assert get_batch_dims(tuple()) == set()
+
+
+###########################
+#     Tests for swap2     #
+###########################
+
+
+def test_swap2_list() -> None:
+    seq = [1, 2, 3, 4, 5]
+    swap2(seq, 0, 2)
+    assert seq == [3, 2, 1, 4, 5]
+
+
+def test_swap2_tensor_1d() -> None:
+    tensor = torch.tensor([1, 2, 3, 4, 5])
+    swap2(tensor, 0, 2)
+    assert tensor.equal(torch.tensor([3, 2, 1, 4, 5]))
+
+
+def test_swap2_tensor_2d() -> None:
+    tensor = torch.tensor([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    swap2(tensor, 0, 2)
+    assert tensor.equal(torch.tensor([[4, 5], [2, 3], [0, 1], [6, 7], [8, 9]]))
+
+
+def test_swap2_ndarray_1d() -> None:
+    array = np.array([1, 2, 3, 4, 5])
+    swap2(array, 0, 2)
+    assert np.array_equal(array, np.array([3, 2, 1, 4, 5]))
+
+
+def test_swap2_ndarray_2d() -> None:
+    array = np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    swap2(array, 0, 2)
+    assert np.array_equal(array, np.array([[4, 5], [2, 3], [0, 1], [6, 7], [8, 9]]))
