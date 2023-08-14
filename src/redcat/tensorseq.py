@@ -11,7 +11,7 @@ __all__ = [
 import functools
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from itertools import chain
-from typing import Any, overload
+from typing import Any
 
 import numpy as np
 import torch
@@ -29,6 +29,7 @@ from redcat.utils.tensor import (
 )
 
 HANDLED_FUNCTIONS = {
+    torch.cat: tensor.cat,
     torch.max: tensor.torchmax,
     torch.mean: tensor.mean,
     torch.median: tensor.median,
@@ -37,7 +38,11 @@ HANDLED_FUNCTIONS = {
     torch.nanmedian: tensor.nanmedian,
     torch.nansum: tensor.nansum,
     torch.prod: tensor.prod,
+    torch.select: tensor.select,
+    torch.sort: tensor.sort,
+    torch.split: tensor.split,
     torch.sum: tensor.torchsum,
+    torch.take_along_dim: tensor.take_along_dim,
 }
 
 
@@ -755,7 +760,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.argmin(dim=self._seq_dim, keepdim=keepdim)
 
-    def max_along_seq(self, keepdim: bool = False) -> torch.return_types.max:
+    def max_along_seq(self, *args, **kwargs) -> torch.return_types.max:
         r"""Computes the maximum values along the sequence dimension.
 
         Args:
@@ -784,17 +789,15 @@ class BatchedTensorSeq(BatchedTensor):
             values=tensor([[4], [9]]),
             indices=tensor([[4], [4]]))
         """
-        return self.max(dim=self._seq_dim, keepdim=keepdim)
+        return self.max(self._seq_dim, *args, **kwargs)
 
-    def mean_along_seq(self, keepdim: bool = False) -> BatchedTensor | BatchedTensorSeq:
+    def mean_along_seq(self, *args, **kwargs) -> BatchedTensor | BatchedTensorSeq:
         r"""Computes the mean values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not. If ``False``
-                the returned type is ``BatchedTensor``, otherwise it
-                is ``BatchedTensorSeq``. Default: ``False``
+            *args: See the documentation of ``torch.Tensor.mean``
+            **kwargs: See the documentation of ``torch.Tensor.mean``
 
         Returns:
         -------
@@ -814,16 +817,15 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.mean_along_seq(keepdim=True)
             tensor([[2.], [7.]])
         """
-        return self.mean(dim=self._seq_dim, keepdim=keepdim)
+        return self.mean(self._seq_dim, *args, **kwargs)
 
-    def median_along_seq(self, keepdim: bool = False) -> torch.return_types.median:
+    def median_along_seq(self, *args, **kwargs) -> torch.return_types.median:
         r"""Computes the median values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.median``
+            **kwargs: See the documentation of ``torch.Tensor.median``
 
         Returns:
         -------
@@ -844,7 +846,7 @@ class BatchedTensorSeq(BatchedTensor):
             values=tensor([2, 7]),
             indices=tensor([2, 2]))
         """
-        return self.median(dim=self._seq_dim, keepdim=keepdim)
+        return self.median(self._seq_dim, *args, **kwargs)
 
     def min_along_seq(self, *args, **kwargs) -> torch.return_types.min:
         r"""Computes the minimum values along the sequence dimension.
@@ -878,14 +880,13 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.min(self._seq_dim, *args, **kwargs)
 
-    def nanmean_along_seq(self, keepdim: bool = False) -> Tensor:
+    def nanmean_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.nanmean``
+            **kwargs: See the documentation of ``torch.Tensor.nanmean``
 
         Returns:
         -------
@@ -904,16 +905,15 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.nanmean_along_seq(keepdim=True)
             tensor([[2.0000], [6.5000]])
         """
-        return self.nanmean(dim=self._seq_dim, keepdim=keepdim)
+        return self.nanmean(self._seq_dim, *args, **kwargs)
 
-    def nanmedian_along_seq(self, keepdim: bool = False) -> torch.return_types.nanmedian:
+    def nanmedian_along_seq(self, *args, **kwargs) -> torch.return_types.nanmedian:
         r"""Computes the median values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.nanmedian``
+            **kwargs: See the documentation of ``torch.Tensor.nanmedian``
 
         Returns:
         -------
@@ -934,16 +934,15 @@ class BatchedTensorSeq(BatchedTensor):
             values=tensor([2., 6.]),
             indices=tensor([2, 1]))
         """
-        return self.nanmedian(dim=self._seq_dim, keepdim=keepdim)
+        return self.nanmedian(self._seq_dim, *args, **kwargs)
 
-    def nansum_along_seq(self, keepdim: bool = False) -> Tensor:
+    def nansum_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.nansum``
+            **kwargs: See the documentation of ``torch.Tensor.nansum``
 
         Returns:
         -------
@@ -960,16 +959,15 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.nansum_along_seq()
             tensor([10., 26.])
         """
-        return self.nansum(dim=self._seq_dim, keepdim=keepdim)
+        return self.nansum(self._seq_dim, *args, **kwargs)
 
-    def prod_along_seq(self, keepdim: bool = False) -> Tensor:
+    def prod_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the product values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.prod``
+            **kwargs: See the documentation of ``torch.Tensor.prod``
 
         Returns:
         -------
@@ -988,17 +986,15 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.prod_along_seq(keepdim=True)
             tensor([[ 120], [3024]])
         """
-        return self.prod(dim=self._seq_dim, keepdim=keepdim)
+        return self.prod(self._seq_dim, *args, **kwargs)
 
-    def sum_along_seq(self, keepdim: bool = False) -> Tensor:
+    def sum_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the sum values along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool): Indicates whether the output tensor has
-                the sequence dimension retained or not. If ``False``
-                the returned type is ``BatchedTensor``, otherwise it
-                is ``BatchedTensorSeq``. Default: ``False``
+            *args: See the documentation of ``torch.Tensor.sum``
+            **kwargs: See the documentation of ``torch.Tensor.sum``
 
         Returns:
         -------
@@ -1015,7 +1011,7 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.sum_along_seq()
             tensor([10, 35])
         """
-        return self.sum(dim=self._seq_dim, keepdim=keepdim)
+        return self.sum(self._seq_dim, *args, **kwargs)
 
     ##########################################################
     #    Indexing, slicing, joining, mutating operations     #
@@ -1555,15 +1551,6 @@ def implements(torch_function: Callable) -> Callable:
     return decorator
 
 
-@implements(torch.cat)
-def cat(
-    tensors: Sequence[BatchedTensor | Tensor],
-    dim: int = 0,
-) -> BatchedTensorSeq:
-    r"""See ``torch.cat`` documentation."""
-    return tensors[0].cat(tensors[1:], dim=dim)
-
-
 @implements(torch.chunk)
 def chunk(tensor: BatchedTensorSeq, chunks: int, dim: int = 0) -> tuple[BatchedTensorSeq, ...]:
     r"""See ``torch.chunk`` documentation."""
@@ -1599,54 +1586,6 @@ def minimum(
     return BatchedTensorSeq(
         torch.minimum(input.data, other), batch_dim=input.batch_dim, seq_dim=input.seq_dim
     )
-
-
-@implements(torch.select)
-def select(input: BatchedTensorSeq, dim: int, index: int) -> Tensor:  # noqa: A002
-    r"""See ``torch.select`` documentation."""
-    return torch.select(input.data, dim=dim, index=index)
-
-
-@implements(torch.sort)
-def sort(input: BatchedTensorSeq, *args, **kwargs) -> torch.return_types.sort:  # noqa: A002
-    r"""See ``torch.sort`` documentation."""
-    return input.sort(*args, **kwargs)
-
-
-@implements(torch.split)
-def split(
-    tensor: BatchedTensorSeq, split_size_or_sections: int | Sequence[int], dim: int = 0
-) -> tuple[BatchedTensorSeq, ...]:
-    r"""See ``torch.split`` documentation."""
-    return tuple(
-        BatchedTensorSeq(chunk, batch_dim=tensor.batch_dim, seq_dim=tensor.seq_dim)
-        for chunk in tensor.data.split(split_size_or_sections, dim=dim)
-    )
-
-
-@overload
-def take_along_dim(
-    input: BatchedTensor | Tensor,  # noqa: A002
-    indices: BatchedTensor | Tensor,
-) -> Tensor:
-    r"""See ``torch.take_along_dim`` documentation."""
-
-
-@overload
-def take_along_dim(
-    input: BatchedTensor | Tensor, indices: BatchedTensor | Tensor, dim: int  # noqa: A002
-) -> BatchedTensorSeq:
-    r"""See ``torch.take_along_dim`` documentation."""
-
-
-@implements(torch.take_along_dim)
-def take_along_dim(
-    input: BatchedTensor | Tensor,  # noqa: A002
-    indices: BatchedTensor | Tensor,
-    dim: int | None = None,
-) -> BatchedTensorSeq | Tensor:
-    r"""See ``torch.take_along_dim`` documentation."""
-    return input.take_along_dim(indices, dim)
 
 
 def from_sequences(
