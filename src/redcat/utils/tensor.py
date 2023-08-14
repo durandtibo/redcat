@@ -19,6 +19,7 @@ from typing import Union, overload
 
 import numpy as np
 import torch
+from coola.utils.tensor import is_cuda_available, is_mps_available
 from torch import Tensor
 
 from redcat.base import BaseBatch
@@ -220,9 +221,9 @@ def get_available_devices() -> tuple[str, ...]:
         ('cpu'...)
     """
     devices = ["cpu"]
-    if torch.cuda.is_available():
+    if is_cuda_available():
         devices.append("cuda:0")
-    if torch.backends.mps.is_available():
+    if is_mps_available():
         devices.append("mps:0")
     return tuple(devices)
 
