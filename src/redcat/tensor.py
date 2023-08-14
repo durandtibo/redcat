@@ -4789,13 +4789,7 @@ def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
 @implements(torch.sort)
 def sort(input: BatchedTensor, *args, **kwargs) -> torch.return_types.sort:  # noqa: A002
     r"""See ``torch.sort`` documentation."""
-    values, indices = torch.sort(input.data, *args, **kwargs)
-    return torch.return_types.sort(
-        [
-            BatchedTensor(data=values, batch_dim=input.batch_dim),
-            BatchedTensor(data=indices, batch_dim=input.batch_dim),
-        ]
-    )
+    return input.sort(*args, **kwargs)
 
 
 @implements(torch.split)
