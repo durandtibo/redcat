@@ -163,6 +163,23 @@ BATCH_TO_TENSOR = (
 )
 
 
+BATCH_TUPLE = (
+    partial(torch.sort, dim=0),
+    partial(torch.sort, dim=1),
+)
+
+BATCH_TO_TENSOR_TUPLE = (
+    partial(torch.max, dim=0),
+    partial(torch.max, dim=1),
+    partial(torch.min, dim=0),
+    partial(torch.min, dim=1),
+    partial(torch.median, dim=0),
+    partial(torch.median, dim=1),
+    partial(torch.nanmedian, dim=0),
+    partial(torch.nanmedian, dim=1),
+)
+
+
 @mark.parametrize("func", UNARY_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_unary(func: Callable, cls: type[BatchedTensor]) -> None:
@@ -235,6 +252,50 @@ def test_batch_to_tensor_batched_tensor_seq_custom_dims(func: Callable) -> None:
     )
 
 
+@mark.parametrize("func", BATCH_TUPLE)
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_batch_tuple(func: Callable, cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    assert objects_are_equal(tuple(func(cls(x))), tuple(cls(y) for y in func(x)))
+
+
+@mark.parametrize("func", BATCH_TUPLE)
+def test_batch_tuple_batched_tensor(func: Callable) -> None:
+    x = torch.rand(6, 10)
+    assert objects_are_equal(
+        tuple(func(BatchedTensor(x, batch_dim=1))),
+        tuple(BatchedTensor(y, batch_dim=1) for y in func(x)),
+    )
+
+
+@mark.parametrize("func", BATCH_TUPLE)
+def test_batch_tuple_batched_tensor_seq(func: Callable) -> None:
+    x = torch.rand(6, 10)
+    assert objects_are_equal(
+        tuple(func(BatchedTensorSeq.from_seq_batch(x))),
+        tuple(BatchedTensorSeq.from_seq_batch(y) for y in func(x)),
+    )
+
+
+@mark.parametrize("func", BATCH_TO_TENSOR_TUPLE)
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_batch_to_tensor_tuple(func: Callable, cls: type[BatchedTensor]) -> None:
+    x = torch.rand(6, 10)
+    assert objects_are_equal(func(cls(x)), func(x))
+
+
+@mark.parametrize("func", BATCH_TO_TENSOR_TUPLE)
+def test_batch_to_tensor_tuple_batched_tensor(func: Callable) -> None:
+    x = torch.rand(6, 10)
+    assert objects_are_equal(func(BatchedTensor(x, batch_dim=1)), func(x))
+
+
+@mark.parametrize("func", BATCH_TO_TENSOR_TUPLE)
+def test_batch_to_tensor_tuple_batched_tensor_seq(func: Callable) -> None:
+    x = torch.rand(6, 10)
+    assert objects_are_equal(func(BatchedTensorSeq.from_seq_batch(x)), func(x))
+
+
 def test_same_behaviour_take_along_dim() -> None:  # TODO: update
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))
@@ -287,12 +348,4 @@ def test_torch_cat(other: BatchedTensor | Tensor) -> None:
                 [[0, 1, 2, 4, 5], [10, 11, 12, 14, 15]],
             )
         ),
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_sort(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    assert objects_are_equal(
-        torch.sort(cls(x)), torch.return_types.sort(cls(y) for y in torch.sort(x))
     )
