@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "redcat"
-version = "0.0.8a80"
+version = "0.0.8a81"
 description = "A library to manipulate batches of examples"
 readme = "README.md"
 authors = ["Thibaut Durand <durand.tibo+gh@gmail.com>"]
@@ -31,9 +31,9 @@ packages = [
 [tool.poetry.dependencies]
 # Core dependencies
 coola = ">=0.0.19,<1.0"
-numpy = ">=1.21,<2.0"  # TODO: make optional
+numpy = ">=1.21,<1.26"  # TODO: make optional
 python = "^3.9"
-torch = ">=1.11,<3.0"  # TODO: make optional
+torch = ">=1.11,<2.1"  # TODO: make optional
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7"
