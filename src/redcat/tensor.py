@@ -4659,6 +4659,24 @@ def amin(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
     return input.amin(*args, **kwargs)
 
 
+@implements(torch.argmax)
+def argmax(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.argmax`` documentation."""
+    return input.argmax(*args, **kwargs)
+
+
+@implements(torch.argmin)
+def argmin(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.argmin`` documentation."""
+    return input.argmin(*args, **kwargs)
+
+
+@implements(torch.argsort)
+def argsort(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.argsort`` documentation."""
+    return input.argsort(*args, **kwargs)
+
+
 @implements(torch.cat)
 def cat(
     tensors: tuple[BatchedTensor | Tensor, ...] | list[BatchedTensor | Tensor],
