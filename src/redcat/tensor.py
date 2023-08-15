@@ -4647,6 +4647,18 @@ def implements(torch_function: Callable) -> Callable:
     return decorator
 
 
+@implements(torch.amax)
+def amax(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.amax`` documentation."""
+    return input.amax(*args, **kwargs)
+
+
+@implements(torch.amin)
+def amin(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+    r"""See ``torch.amin`` documentation."""
+    return input.amin(*args, **kwargs)
+
+
 @implements(torch.cat)
 def cat(
     tensors: tuple[BatchedTensor | Tensor, ...] | list[BatchedTensor | Tensor],

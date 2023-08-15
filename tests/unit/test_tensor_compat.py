@@ -5,7 +5,7 @@ from collections.abc import Callable
 from functools import partial
 
 import torch
-from coola import objects_are_equal
+from coola import objects_are_allclose, objects_are_equal
 from pytest import mark
 from torch import Tensor
 
@@ -16,8 +16,6 @@ BATCH_CLASSES = (BatchedTensor, BatchedTensorSeq)
 UNARY_FUNCTIONS = (
     # partial(torch.select, dim=0, index=0),
     # torch.arctan2,
-    # torch.max,
-    # torch.min,
     partial(torch.clamp, min=0.1, max=0.5),
     partial(torch.cumsum, dim=0),
     partial(torch.cumsum, dim=1),
@@ -88,10 +86,6 @@ UNARY_FUNCTIONS = (
 )
 
 PAIRWISE_FUNCTIONS = (
-    # partial(torch.max, dim=0),
-    # partial(torch.max, dim=1),
-    # partial(torch.min, dim=0),
-    # partial(torch.min, dim=1),
     torch.add,
     torch.div,
     torch.eq,
@@ -118,6 +112,19 @@ PAIRWISE_FUNCTIONS = (
     torch.remainder,
     torch.sub,
     torch.true_divide,
+)
+
+BATCH_TO_TENSOR = (
+    partial(torch.amax, dim=0),
+    partial(torch.amax, dim=1),
+    partial(torch.amin, dim=0),
+    partial(torch.amin, dim=1),
+    partial(torch.max, dim=0),
+    partial(torch.max, dim=1),
+    partial(torch.min, dim=0),
+    partial(torch.min, dim=1),
+    torch.max,
+    torch.min,
 )
 
 
@@ -168,6 +175,15 @@ def test_pairwise_batched_tensor_seq_custom_dims(func: Callable) -> None:
     assert func(
         BatchedTensorSeq.from_seq_batch(tensor1), BatchedTensorSeq.from_seq_batch(tensor2)
     ).allclose(BatchedTensorSeq.from_seq_batch(func(tensor1, tensor2)), equal_nan=True)
+
+
+@mark.parametrize("func", BATCH_TO_TENSOR)
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_batch_to_tensor(func: Callable, cls: type[BatchedTensor]) -> None:
+    tensor = torch.rand(2, 3)
+    assert objects_are_allclose(
+        func(cls(tensor)), func(tensor), equal_nan=True, show_difference=True
+    )
 
 
 def test_same_behaviour_take_along_dim() -> None:  # TODO: update

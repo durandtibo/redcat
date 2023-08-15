@@ -27,6 +27,8 @@ from redcat.utils.tensor import (
 )
 
 HANDLED_FUNCTIONS = {
+    torch.amax: tensor.amax,
+    torch.amin: tensor.amin,
     torch.cat: tensor.cat,
     torch.chunk: tensor.chunk,
     torch.max: tensor.torchmax,
