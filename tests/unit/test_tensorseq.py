@@ -8375,6 +8375,70 @@ def test_get_seq_dims_empty() -> None:
     assert get_seq_dims(tuple()) == set()
 
 
+################################
+#     Tests for torch.amax     #
+################################
+
+
+def test_torch_amax_dim_0() -> None:
+    assert torch.amax(BatchedTensorSeq(torch.arange(10).view(5, 2)), dim=0).equal(
+        torch.tensor([8, 9])
+    )
+
+
+def test_torch_amax_dim_1() -> None:
+    assert objects_are_equal(
+        torch.amax(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1),
+        torch.tensor([4, 9]),
+    )
+
+
+def test_torch_amax_dim_1_keepdim() -> None:
+    assert objects_are_equal(
+        torch.amax(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True),
+        torch.tensor([[4], [9]]),
+    )
+
+
+def test_torch_amax_custom_dims() -> None:
+    assert objects_are_equal(
+        torch.amax(BatchedTensorSeq.from_seq_batch(torch.arange(10).view(2, 5)), dim=1),
+        torch.tensor([4, 9]),
+    )
+
+
+################################
+#     Tests for torch.amin     #
+################################
+
+
+def test_torch_amin_dim_0() -> None:
+    assert torch.amin(BatchedTensorSeq(torch.arange(10).view(5, 2)), dim=0).equal(
+        torch.tensor([0, 1])
+    )
+
+
+def test_torch_amin_dim_1() -> None:
+    assert objects_are_equal(
+        torch.amin(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1),
+        torch.tensor([0, 5]),
+    )
+
+
+def test_torch_amin_dim_1_keepdim() -> None:
+    assert objects_are_equal(
+        torch.amin(BatchedTensorSeq(torch.arange(10).view(2, 5)), dim=1, keepdim=True),
+        torch.tensor([[0], [5]]),
+    )
+
+
+def test_torch_amin_custom_dims() -> None:
+    assert objects_are_equal(
+        torch.amin(BatchedTensorSeq.from_seq_batch(torch.arange(10).view(2, 5)), dim=1),
+        torch.tensor([0, 5]),
+    )
+
+
 ###############################
 #     Tests for torch.cat     #
 ###############################
