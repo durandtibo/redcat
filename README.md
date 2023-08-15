@@ -65,3 +65,48 @@
 - `BatchedArray` and `BatchedArraySeq` must behave like `numpy.ndarray`
 - `BatchedTensor` (resp. `BatchedTensorSeq`) does not have to behave like `BatchedArray` (
   resp. `BatchedArraySeq`)
+
+## Installation
+
+## Installation
+
+We highly recommend installing
+a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
+`redcat` can be installed from pip using the following command:
+
+```shell
+pip install redcat
+```
+
+To make the package as slim as possible, only the minimal packages required to use `redcat` are
+installed.
+To include all the packages, you can use the following command:
+
+```shell
+pip install redcat[all]
+```
+
+Please check the [get started page](https://durandtibo.github.io/redcat/get_started) to see how to
+install only some specific packages or other alternatives to install the library.
+
+| `redcat` | `numpy`        | `torch`       | `python`      |
+|----------|----------------|---------------|---------------|
+| `0.0.8`  | `>=1.21,<1.26` | `>=1.11,<2.1` | `>=3.9,<3.12` |
+
+
+## Contributing
+
+Please check the instructions in [CONTRIBUTING.md](.github/CONTRIBUTING.md).
+
+## API stability
+
+:warning: While `redcat` is in development stage, no API is guaranteed to be stable from one
+release to the next.
+In fact, it is very likely that the API will change multiple times before a stable 1.0.0 release.
+In practice, this means that upgrading `redcat` to a new version will possibly break any code that
+was using the old version of `redcat`.
+
+## License
+
+`redcat` is licensed under BSD 3-Clause "New" or "Revised" license available in [LICENSE](LICENSE)
+file.
