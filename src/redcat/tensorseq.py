@@ -749,7 +749,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.max(self._seq_dim, *args, **kwargs)
 
-    def mean_along_seq(self, *args, **kwargs) -> BatchedTensor | BatchedTensorSeq:
+    def mean_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the mean values along the sequence dimension.
 
         Args:
@@ -759,8 +759,8 @@ class BatchedTensorSeq(BatchedTensor):
 
         Returns:
         -------
-            ``BatchedTensor`` or ``BatchedTensorSeq``: A batch with
-                the mean values along the sequence dimension.
+            ``torch.Tensor``: A tensor with the mean values along
+                the sequence dimension.
 
         Example usage:
 

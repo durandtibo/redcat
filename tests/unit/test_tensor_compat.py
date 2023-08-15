@@ -13,7 +13,6 @@ from redcat import BatchedTensor, BatchedTensorSeq
 BATCH_CLASSES = (BatchedTensor, BatchedTensorSeq)
 
 UNARY_FUNCTIONS = (
-    # torch.arctan2,
     partial(torch.argsort, dim=0),
     partial(torch.argsort, dim=1),
     partial(torch.clamp, min=0.1, max=0.5),
@@ -89,7 +88,11 @@ UNARY_FUNCTIONS = (
 )
 
 PAIRWISE_FUNCTIONS = (
+    partial(torch.div, rounding_mode="floor"),
+    partial(torch.div, rounding_mode="trunc"),
+    partial(torch.div, rounding_mode=None),
     torch.add,
+    torch.arctan2,
     torch.div,
     torch.eq,
     torch.floor_divide,
@@ -118,16 +121,14 @@ PAIRWISE_FUNCTIONS = (
 )
 
 BATCH_TO_TENSOR = (
-    partial(torch.argmax, dim=0),
-    partial(torch.argmax, dim=1),
-    partial(torch.argmin, dim=0),
-    partial(torch.argmin, dim=1),
-    partial(torch.select, dim=0, index=0),
-    partial(torch.select, dim=1, index=0),
     partial(torch.amax, dim=0),
     partial(torch.amax, dim=1),
     partial(torch.amin, dim=0),
     partial(torch.amin, dim=1),
+    partial(torch.argmax, dim=0),
+    partial(torch.argmax, dim=1),
+    partial(torch.argmin, dim=0),
+    partial(torch.argmin, dim=1),
     partial(torch.max, dim=0),
     partial(torch.max, dim=1),
     partial(torch.mean, dim=0),
@@ -140,12 +141,14 @@ BATCH_TO_TENSOR = (
     partial(torch.nanmean, dim=1),
     partial(torch.nanmedian, dim=0),
     partial(torch.nanmedian, dim=1),
-    partial(torch.prod, dim=0),
-    partial(torch.prod, dim=1),
-    partial(torch.sum, dim=0),
-    partial(torch.sum, dim=1),
     partial(torch.nansum, dim=0),
     partial(torch.nansum, dim=1),
+    partial(torch.prod, dim=0),
+    partial(torch.prod, dim=1),
+    partial(torch.select, dim=0, index=0),
+    partial(torch.select, dim=1, index=0),
+    partial(torch.sum, dim=0),
+    partial(torch.sum, dim=1),
     torch.argmax,
     torch.argmin,
     torch.max,
