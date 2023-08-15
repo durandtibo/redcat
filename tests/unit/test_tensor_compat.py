@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 from collections.abc import Callable
 from functools import partial
 
@@ -14,15 +13,19 @@ from redcat import BatchedTensor, BatchedTensorSeq
 BATCH_CLASSES = (BatchedTensor, BatchedTensorSeq)
 
 UNARY_FUNCTIONS = (
-    # partial(torch.select, dim=0, index=0),
     # torch.arctan2,
+    partial(torch.argsort, dim=0),
+    partial(torch.argsort, dim=1),
     partial(torch.clamp, min=0.1, max=0.5),
-    partial(torch.cumsum, dim=0),
-    partial(torch.cumsum, dim=1),
     partial(torch.cumprod, dim=0),
     partial(torch.cumprod, dim=1),
+    partial(torch.cumsum, dim=0),
+    partial(torch.cumsum, dim=1),
     partial(torch.unsqueeze, dim=-1),
     partial(torch.unsqueeze, dim=0),
+    partial(torch.clamp, min=0.0),
+    partial(torch.clamp, max=1.0),
+    partial(torch.clamp, min=0.0, max=1.0),
     torch.abs,
     torch.acos,
     torch.acosh,
@@ -115,16 +118,45 @@ PAIRWISE_FUNCTIONS = (
 )
 
 BATCH_TO_TENSOR = (
+    partial(torch.argmax, dim=0),
+    partial(torch.argmax, dim=1),
+    partial(torch.argmin, dim=0),
+    partial(torch.argmin, dim=1),
+    partial(torch.select, dim=0, index=0),
+    partial(torch.select, dim=1, index=0),
     partial(torch.amax, dim=0),
     partial(torch.amax, dim=1),
     partial(torch.amin, dim=0),
     partial(torch.amin, dim=1),
     partial(torch.max, dim=0),
     partial(torch.max, dim=1),
+    partial(torch.mean, dim=0),
+    partial(torch.mean, dim=1),
+    partial(torch.median, dim=0),
+    partial(torch.median, dim=1),
     partial(torch.min, dim=0),
     partial(torch.min, dim=1),
+    partial(torch.nanmean, dim=0),
+    partial(torch.nanmean, dim=1),
+    partial(torch.nanmedian, dim=0),
+    partial(torch.nanmedian, dim=1),
+    partial(torch.prod, dim=0),
+    partial(torch.prod, dim=1),
+    partial(torch.sum, dim=0),
+    partial(torch.sum, dim=1),
+    partial(torch.nansum, dim=0),
+    partial(torch.nansum, dim=1),
+    torch.argmax,
+    torch.argmin,
     torch.max,
+    torch.mean,
+    torch.median,
     torch.min,
+    torch.nanmean,
+    torch.nanmedian,
+    torch.nansum,
+    torch.prod,
+    torch.sum,
 )
 
 
@@ -181,8 +213,22 @@ def test_pairwise_batched_tensor_seq_custom_dims(func: Callable) -> None:
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_batch_to_tensor(func: Callable, cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(2, 3)
+    assert objects_are_allclose(func(cls(tensor)), func(tensor), equal_nan=True)
+
+
+@mark.parametrize("func", BATCH_TO_TENSOR)
+def test_batch_to_tensor_batched_tensor_custom_dims(func: Callable) -> None:
+    tensor = torch.rand(2, 3)
     assert objects_are_allclose(
-        func(cls(tensor)), func(tensor), equal_nan=True, show_difference=True
+        func(BatchedTensor(tensor, batch_dim=1)), func(tensor), equal_nan=True
+    )
+
+
+@mark.parametrize("func", BATCH_TO_TENSOR)
+def test_batch_to_tensor_batched_tensor_seq_custom_dims(func: Callable) -> None:
+    tensor = torch.rand(2, 3)
+    assert objects_are_allclose(
+        func(BatchedTensorSeq.from_seq_batch(tensor)), func(tensor), equal_nan=True
     )
 
 
@@ -218,129 +264,6 @@ def test_same_behaviour_take_along_dim_0() -> None:  # TODO: update
     ).data.equal(torch.take_along_dim(tensor, indices=indices, dim=0))
 
 
-def test_torch_abs() -> None:
-    assert torch.abs(BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [0.0, -1.0, -2.0]]))).equal(
-        BatchedTensor(torch.tensor([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]]))
-    )
-
-
-def test_torch_acos() -> None:
-    assert torch.acos(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [[math.pi, math.pi / 2, 0.0], [2 * math.pi / 3, math.pi / 2, math.pi / 3]],
-                dtype=torch.float,
-            )
-        ),
-        atol=1e-6,
-    )
-
-
-def test_torch_acosh() -> None:
-    assert torch.acosh(BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [
-                    [0.0, 1.3169578969248166, 1.762747174039086],
-                    [2.0634370688955608, 2.2924316695611777, 2.477888730288475],
-                ],
-                dtype=torch.float,
-            )
-        ),
-        atol=1e-6,
-    )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.ones(2, 3)),
-        torch.ones(2, 3),
-        1,
-        1.0,
-    ),
-)
-def test_torch_add(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.add(BatchedTensor(torch.zeros(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.ones(2, 3)),
-        torch.ones(2, 3),
-        1,
-        1.0,
-    ),
-)
-def test_torch_add_alpha(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.add(BatchedTensor(torch.ones(2, 3)), other, alpha=2.0).equal(
-        BatchedTensor(torch.full((2, 3), 3.0))
-    )
-
-
-def test_torch_add_tensor() -> None:
-    assert torch.add(torch.zeros(2, 3), BatchedTensor(torch.ones(2, 3))).equal(
-        BatchedTensor(torch.ones(2, 3))
-    )
-
-
-def test_torch_asin() -> None:
-    assert torch.asin(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [[-math.pi / 2, 0.0, math.pi / 2], [-math.pi / 6, 0.0, math.pi / 6]],
-                dtype=torch.float,
-            )
-        ),
-        atol=1e-6,
-    )
-
-
-def test_torch_asinh() -> None:
-    assert torch.asinh(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [
-                    [-0.8813735842704773, 0.0, 0.8813735842704773],
-                    [-0.4812118113040924, 0.0, 0.4812118113040924],
-                ],
-                dtype=torch.float,
-            )
-        ),
-        atol=1e-6,
-    )
-
-
-def test_torch_atan() -> None:
-    assert torch.atan(
-        BatchedTensor(torch.tensor([[0.0, 1.0, math.sqrt(3.0)], [-math.sqrt(3.0), -1.0, 0.0]]))
-    ).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [[0.0, math.pi / 4, math.pi / 3], [-math.pi / 3, -math.pi / 4, 0.0]],
-                dtype=torch.float,
-            )
-        ),
-        atol=1e-6,
-    )
-
-
-def test_torch_atanh() -> None:
-    assert torch.atanh(BatchedTensor(torch.tensor([[-0.5, 0.0, 0.5], [-0.1, 0.0, 0.1]]))).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [
-                    [-0.5493061443340549, 0.0, 0.5493061443340549],
-                    [-0.10033534773107558, 0.0, 0.10033534773107558],
-                ],
-                dtype=torch.float,
-            )
-        ),
-        atol=1e-6,
-    )
-
-
 @mark.parametrize(
     "other",
     (
@@ -364,365 +287,9 @@ def test_torch_cat(other: BatchedTensor | Tensor) -> None:
     )
 
 
-def test_torch_clamp() -> None:
-    assert torch.clamp(BatchedTensor(torch.arange(10).view(2, 5)), min=2, max=5).equal(
-        BatchedTensor(torch.tensor([[2, 2, 2, 3, 4], [5, 5, 5, 5, 5]]))
-    )
-
-
-def test_torch_cos() -> None:
-    assert torch.cos(
-        BatchedTensor(
-            torch.tensor([[0.0, 0.5 * math.pi, math.pi], [2 * math.pi, 1.5 * math.pi, 0.0]])
-        )
-    ).allclose(
-        BatchedTensor(torch.tensor([[1.0, 0.0, -1.0], [1.0, 0.0, 1.0]], dtype=torch.float)),
-        atol=1e-6,
-    )
-
-
-def test_torch_cosh() -> None:
-    assert torch.cosh(BatchedTensor(torch.tensor([[-1.0, 0.0, 1.0], [-0.5, 0.0, 0.5]]))).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [
-                    [1.5430806348152437, 1.0, 1.5430806348152437],
-                    [1.1276259652063807, 1.0, 1.1276259652063807],
-                ],
-                dtype=torch.float,
-            )
-        ),
-        atol=1e-6,
-    )
-
-
-def test_torch_cumsum_dim_0() -> None:
-    assert torch.cumsum(BatchedTensor(torch.ones(2, 3)), dim=0).equal(
-        BatchedTensor(torch.tensor([[1.0, 1.0, 1.0], [2.0, 2.0, 2.0]]))
-    )
-
-
-def test_torch_cumsum_dim_1() -> None:
-    assert torch.cumsum(BatchedTensor(torch.ones(2, 3)), dim=1).equal(
-        BatchedTensor(torch.tensor([[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]]))
-    )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.full((2, 3), 2.0)),
-        torch.full((2, 3), 2.0),
-        2,
-        2.0,
-    ),
-)
-def test_torch_div(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.div(BatchedTensor(torch.ones(2, 3)), other).equal(
-        BatchedTensor(torch.full((2, 3), 0.5))
-    )
-
-
-def test_torch_div_tensor() -> None:
-    assert torch.div(torch.ones(2, 3), BatchedTensor(torch.full((2, 3), 2.0))).equal(
-        BatchedTensor(torch.full((2, 3), 0.5))
-    )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.full((2, 5), 5.0)),
-        torch.full((2, 5), 5.0),
-        BatchedTensor(torch.full((2, 1), 5.0)),
-        5,
-        5.0,
-    ),
-)
-def test_torch_eq(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.eq(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
-        BatchedTensor(
-            torch.tensor(
-                [[False, False, False, False, False], [True, False, False, False, False]],
-                dtype=torch.bool,
-            ),
-        )
-    )
-
-
-def test_torch_eq_tensor() -> None:
-    assert torch.eq(torch.arange(10).view(2, 5), BatchedTensor(torch.full((2, 5), 5.0))).equal(
-        BatchedTensor(
-            torch.tensor(
-                [[False, False, False, False, False], [True, False, False, False, False]],
-                dtype=torch.bool,
-            ),
-        )
-    )
-
-
-def test_torch_exp() -> None:
-    assert torch.exp(
-        BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
-    ).allclose(
-        BatchedTensor(
-            torch.tensor(
-                [
-                    [2.7182817459106445, 7.389056205749512, 20.08553695678711],
-                    [54.598148345947266, 148.4131622314453, 403.4288024902344],
-                ]
-            )
-        ),
-        atol=1e-6,
-    )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.full((2, 3), 2.0)),
-        torch.full((2, 3), 2.0),
-        2,
-        2.0,
-    ),
-)
-def test_torch_fmod(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.fmod(BatchedTensor(torch.ones(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
-
-
-def test_torch_fmod_tensor() -> None:
-    assert torch.fmod(torch.ones(2, 3), BatchedTensor(torch.full((2, 3), 2.0))).equal(
-        BatchedTensor(torch.ones(2, 3))
-    )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.full((2, 5), 5.0)),
-        torch.full((2, 5), 5.0),
-        BatchedTensor(torch.full((2, 1), 5.0)),
-        5,
-        5.0,
-    ),
-)
-def test_torch_ge(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.ge(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
-        BatchedTensor(
-            torch.tensor(
-                [[False, False, False, False, False], [True, True, True, True, True]],
-                dtype=torch.bool,
-            ),
-        )
-    )
-
-
-def test_torch_ge_tensor() -> None:
-    assert torch.ge(torch.arange(10).view(2, 5), BatchedTensor(torch.full((2, 5), 5.0))).equal(
-        BatchedTensor(
-            torch.tensor(
-                [[False, False, False, False, False], [True, True, True, True, True]],
-                dtype=torch.bool,
-            ),
-        )
-    )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.full((2, 5), 5.0)),
-        torch.full((2, 5), 5.0),
-        BatchedTensor(torch.full((2, 1), 5.0)),
-        5,
-        5.0,
-    ),
-)
-def test_torch_gt(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.gt(BatchedTensor(torch.arange(10).view(2, 5)), other).equal(
-        BatchedTensor(
-            torch.tensor(
-                [[False, False, False, False, False], [False, True, True, True, True]],
-                dtype=torch.bool,
-            ),
-        )
-    )
-
-
-def test_torch_gt_tensor() -> None:
-    assert torch.gt(torch.arange(10).view(2, 5), BatchedTensor(torch.full((2, 5), 5.0))).equal(
-        BatchedTensor(
-            torch.tensor(
-                [[False, False, False, False, False], [False, True, True, True, True]],
-                dtype=torch.bool,
-            ),
-        )
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_mean(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    assert torch.mean(cls(x)).equal(torch.mean(x))
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (0, 1))
-@mark.parametrize("keepdim", (True, False))
-def test_torch_mean_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10)
-    assert torch.mean(cls(x), dim=dim, keepdim=keepdim).equal(
-        torch.mean(x, dim=dim, keepdim=keepdim)
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_median(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    assert torch.median(cls(x)).equal(torch.median(x))
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (0, 1))
-@mark.parametrize("keepdim", (True, False))
-def test_torch_median_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10)
-    assert objects_are_equal(
-        torch.median(cls(x), dim=dim, keepdim=keepdim), torch.median(x, dim=dim, keepdim=keepdim)
-    )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.ones(2, 3)),
-        torch.ones(2, 3),
-        1,
-        1.0,
-    ),
-)
-def test_torch_mul(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.mul(BatchedTensor(torch.ones(2, 3)), other).equal(BatchedTensor(torch.ones(2, 3)))
-
-
-def test_torch_mul_tensor() -> None:
-    assert torch.mul(torch.ones(2, 3), BatchedTensor(torch.ones(2, 3))).equal(
-        BatchedTensor(torch.ones(2, 3))
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_nanmean(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    x[x < 0.2] = float("nan")
-    assert torch.nanmean(cls(x)).equal(torch.nanmean(x))
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (0, 1))
-@mark.parametrize("keepdim", (True, False))
-def test_torch_nanmean_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10)
-    assert torch.nanmean(cls(x), dim=dim, keepdim=keepdim).equal(
-        torch.nanmean(x, dim=dim, keepdim=keepdim)
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_nanmedian(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    x[x < 0.2] = float("nan")
-    assert torch.nanmedian(cls(x)).equal(torch.nanmedian(x))
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (0, 1))
-@mark.parametrize("keepdim", (True, False))
-def test_torch_nanmedian_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10)
-    assert objects_are_equal(
-        torch.nanmedian(cls(x), dim=dim, keepdim=keepdim),
-        torch.nanmedian(x, dim=dim, keepdim=keepdim),
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_nansum(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    x[x < 0.2] = float("nan")
-    assert torch.nansum(cls(x)).equal(torch.nansum(x))
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (0, 1))
-@mark.parametrize("keepdim", (True, False))
-def test_torch_nansum_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10)
-    assert torch.nansum(cls(x), dim=dim, keepdim=keepdim).equal(
-        torch.nansum(x, dim=dim, keepdim=keepdim)
-    )
-
-
-def test_torch_neg() -> None:
-    assert torch.neg(BatchedTensor(torch.full((2, 3), 2.0))).equal(
-        BatchedTensor(torch.full((2, 3), -2.0))
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_prod(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    assert torch.prod(cls(x)).equal(torch.prod(x))
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (0, 1))
-@mark.parametrize("keepdim", (True, False))
-def test_torch_prod_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10)
-    assert torch.prod(cls(x), dim=dim, keepdim=keepdim).equal(
-        torch.prod(x, dim=dim, keepdim=keepdim)
-    )
-
-
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_torch_sort(cls: type[BatchedTensor]) -> None:
     x = torch.rand(6, 10)
     assert objects_are_equal(
         torch.sort(cls(x)), torch.return_types.sort(cls(y) for y in torch.sort(x))
     )
-
-
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.ones(2, 3)),
-        torch.ones(2, 3),
-        1,
-        1.0,
-    ),
-)
-def test_torch_sub(other: BatchedTensor | Tensor | int | float) -> None:
-    assert torch.sub(BatchedTensor(torch.full((2, 3), 2.0)), other).equal(
-        BatchedTensor(torch.ones(2, 3))
-    )
-
-
-def test_torch_sub_tensor() -> None:
-    assert torch.sub(torch.full((2, 3), 2.0), BatchedTensor(torch.ones(2, 3))).equal(
-        BatchedTensor(torch.ones(2, 3))
-    )
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-def test_torch_sum(cls: type[BatchedTensor]) -> None:
-    x = torch.rand(6, 10)
-    assert torch.sum(cls(x)).equal(torch.sum(x))
-
-
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dim", (0, 1))
-@mark.parametrize("keepdim", (True, False))
-def test_torch_sum_kwargs(cls: type[BatchedTensor], dim: int, keepdim: bool) -> None:
-    x = torch.rand(6, 10)
-    assert torch.sum(cls(x), dim=dim, keepdim=keepdim).equal(torch.sum(x, dim=dim, keepdim=keepdim))
