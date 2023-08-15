@@ -3,7 +3,9 @@ from __future__ import annotations
 __all__ = [
     "check_batch_dims",
     "check_data_and_dim",
+    "check_seq_dims",
     "get_batch_dims",
+    "get_seq_dims",
     "swap2",
 ]
 
@@ -71,6 +73,30 @@ def check_data_and_dim(data: ndarray | Tensor, batch_dim: int) -> None:
         )
 
 
+def check_seq_dims(dims: set[int]) -> None:
+    r"""Gets the sequence dimensions from the inputs.
+
+    Args:
+    ----
+        dims (set): Specifies the sequence dims to check.
+
+    Raises:
+    ------
+        RuntimeError if there are more than one sequence dimension.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat.utils.common import get_seq_dims
+        >>> get_seq_dims({1})
+    """
+    if len(dims) != 1:
+        raise RuntimeError(
+            f"The sequence dimensions do not match. Received multiple values: {dims}"
+        )
+
+
 def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:
     r"""Gets the batch dimensions from the inputs.
 
@@ -105,6 +131,37 @@ def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     kwargs = kwargs or {}
     dims = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
     dims.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
+    return dims
+
+
+def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = None) -> set[int]:
+    r"""Gets the sequence dimensions from the inputs.
+
+    Args:
+    ----
+        args: Variable length argument list.
+        kwargs: Arbitrary keyword arguments.
+
+    Returns:
+    -------
+        set: The sequence dimensions.
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> import torch
+        >>> from redcat import BatchedTensorSeq
+        >>> from redcat.utils.common import get_seq_dims
+        >>> get_seq_dims(
+        ...     args=(BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq(torch.ones(2, 6))),
+        ...     kwargs={"batch": BatchedTensorSeq(torch.ones(2, 4))},
+        ... )
+        {1}
+    """
+    kwargs = kwargs or {}
+    dims = {val._seq_dim for val in args if hasattr(val, "_seq_dim")}
+    dims.update({val._seq_dim for val in kwargs.values() if hasattr(val, "_seq_dim")})
     return dims
 
 

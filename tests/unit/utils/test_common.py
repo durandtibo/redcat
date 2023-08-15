@@ -8,7 +8,9 @@ from redcat import BatchedArray, BatchedTensor, BatchedTensorSeq
 from redcat.utils.common import (
     check_batch_dims,
     check_data_and_dim,
+    check_seq_dims,
     get_batch_dims,
+    get_seq_dims,
     swap2,
 )
 
@@ -55,6 +57,20 @@ def test_check_data_and_dim_incorrect_batch_dim(
 
 
 ####################################
+#     Tests for check_seq_dims     #
+####################################
+
+
+def test_check_seq_dims_correct() -> None:
+    check_seq_dims({0})
+
+
+def test_check_seq_dims_incorrect() -> None:
+    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
+        check_seq_dims({0, 1})
+
+
+####################################
 #     Tests for get_batch_dims     #
 ####################################
 
@@ -89,6 +105,29 @@ def test_get_batch_dims_2_tensor() -> None:
 
 def test_get_batch_dims_empty() -> None:
     assert get_batch_dims(tuple()) == set()
+
+
+##################################
+#     Tests for get_seq_dims     #
+##################################
+
+
+def test_get_seq_dims() -> None:
+    assert get_seq_dims(
+        (BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq(torch.ones(2, 3))),
+        {"val": BatchedTensorSeq(torch.ones(2, 3))},
+    ) == {1}
+
+
+def test_get_seq_dims_2() -> None:
+    assert get_seq_dims(
+        (BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))),
+        {"val": BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))},
+    ) == {0, 1}
+
+
+def test_get_seq_dims_empty() -> None:
+    assert get_seq_dims(tuple()) == set()
 
 
 ###########################

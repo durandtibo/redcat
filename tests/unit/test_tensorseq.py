@@ -14,12 +14,7 @@ from torch.overrides import is_tensor_like
 
 from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq, BatchList
 from redcat.tensor import IndexType
-from redcat.tensorseq import (
-    check_data_and_dims,
-    check_seq_dims,
-    from_sequences,
-    get_seq_dims,
-)
+from redcat.tensorseq import check_data_and_dims, from_sequences
 from redcat.utils.tensor import get_available_devices, get_torch_generator
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
@@ -8336,43 +8331,6 @@ def test_check_data_and_dims_incorrect_seq_dim(seq_dim: int) -> None:
 def test_check_data_and_dims_same_batch_and_seq_dims() -> None:
     with raises(RuntimeError, match=r"batch_dim \(0\) and seq_dim \(0\) have to be different"):
         check_data_and_dims(torch.ones(2, 3), batch_dim=0, seq_dim=0)
-
-
-####################################
-#     Tests for check_seq_dims     #
-####################################
-
-
-def test_check_seq_dims_correct() -> None:
-    check_seq_dims({0})
-
-
-def test_check_seq_dims_incorrect() -> None:
-    with raises(RuntimeError, match=r"The sequence dimensions do not match."):
-        check_seq_dims({0, 1})
-
-
-##################################
-#     Tests for get_seq_dims     #
-##################################
-
-
-def test_get_seq_dims() -> None:
-    assert get_seq_dims(
-        (BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq(torch.ones(2, 3))),
-        {"val": BatchedTensorSeq(torch.ones(2, 3))},
-    ) == {1}
-
-
-def test_get_seq_dims_2() -> None:
-    assert get_seq_dims(
-        (BatchedTensorSeq(torch.ones(2, 3)), BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))),
-        {"val": BatchedTensorSeq.from_seq_batch(torch.ones(2, 3))},
-    ) == {0, 1}
-
-
-def test_get_seq_dims_empty() -> None:
-    assert get_seq_dims(tuple()) == set()
 
 
 ################################
