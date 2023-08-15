@@ -8812,13 +8812,13 @@ def test_torch_nanmedian_keepdim() -> None:
 def test_torch_nansum() -> None:
     assert torch.nansum(
         BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]]))
-    ).equal(torch.tensor(36))
+    ).equal(torch.tensor(36.0))
 
 
 def test_torch_nansum_dim_1() -> None:
     assert torch.nansum(
         BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])), dim=1
-    ).equal(torch.tensor([10, 26]))
+    ).equal(torch.tensor([10.0, 26.0]))
 
 
 def test_torch_nansum_keepdim() -> None:
@@ -8826,7 +8826,7 @@ def test_torch_nansum_keepdim() -> None:
         BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, float("nan")]])),
         dim=1,
         keepdim=True,
-    ).equal(torch.tensor([[10], [26]]))
+    ).equal(torch.tensor([[10.0], [26.0]]))
 
 
 ################################
@@ -8835,7 +8835,9 @@ def test_torch_nansum_keepdim() -> None:
 
 
 def test_torch_prod() -> None:
-    assert torch.prod(BatchedTensorSeq(torch.arange(10).view(2, 5))).equal(torch.tensor(0.0))
+    assert torch.prod(BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(2, 5))).equal(
+        torch.tensor(0.0)
+    )
 
 
 def test_torch_prod_dim_1() -> None:
