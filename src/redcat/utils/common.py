@@ -150,6 +150,7 @@ def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = No
 
     .. code-block:: pycon
 
+        >>> import torch
         >>> from redcat import BatchedTensorSeq
         >>> from redcat.utils.common import get_seq_dims
         >>> get_seq_dims(
