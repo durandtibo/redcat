@@ -68,8 +68,6 @@
 
 ## Installation
 
-## Installation
-
 We highly recommend installing
 a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
 `redcat` can be installed from pip using the following command:
@@ -89,10 +87,12 @@ pip install redcat[all]
 Please check the [get started page](https://durandtibo.github.io/redcat/get_started) to see how to
 install only some specific packages or other alternatives to install the library.
 
+The following is the corresponding `redcat` versions and supported Python, PyTorch and NumPy
+versions.
+
 | `redcat` | `numpy`        | `torch`       | `python`      |
 |----------|----------------|---------------|---------------|
 | `0.0.8`  | `>=1.21,<1.26` | `>=1.11,<2.1` | `>=3.9,<3.12` |
-
 
 ## Contributing
 
