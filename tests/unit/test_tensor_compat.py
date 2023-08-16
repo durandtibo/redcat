@@ -6,7 +6,6 @@ from functools import partial
 import torch
 from coola import objects_are_allclose, objects_are_equal
 from pytest import mark
-from torch import Tensor
 
 from redcat import BatchedTensor, BatchedTensorSeq
 
@@ -221,22 +220,16 @@ def test_batch_to_tensor_tuple(func: Callable, cls: type[BatchedTensor]) -> None
     assert objects_are_equal(func(cls(x)), func(x))
 
 
-@mark.parametrize(
-    "other",
-    (
-        BatchedTensor(torch.tensor([[4, 5], [14, 15]])),
-        torch.tensor([[4, 5], [14, 15]]),
-    ),
-)
-def test_torch_cat(other: BatchedTensor | Tensor) -> None:
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_torch_cat(cls: type[BatchedTensor]) -> None:
     assert torch.cat(
         tensors=[
-            BatchedTensor(torch.tensor([[0, 1, 2], [10, 11, 12]])),
-            other,
+            cls(torch.tensor([[0, 1, 2], [10, 11, 12]])),
+            torch.tensor([[4, 5], [14, 15]]),
         ],
         dim=1,
     ).equal(
-        BatchedTensor(
+        cls(
             torch.tensor(
                 [[0, 1, 2, 4, 5], [10, 11, 12, 14, 15]],
             )
@@ -244,33 +237,10 @@ def test_torch_cat(other: BatchedTensor | Tensor) -> None:
     )
 
 
-def test_same_behaviour_take_along_dim() -> None:  # TODO: update
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_same_behaviour_take_along_dim(cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))
-    assert torch.take_along_dim(BatchedTensor(tensor), indices=indices).data.equal(
+    assert torch.take_along_dim(cls(tensor), indices=indices).equal(
         torch.take_along_dim(tensor, indices=indices)
     )
-
-
-def test_same_behaviour_take_along_dim_batch() -> None:  # TODO: update
-    tensor = torch.rand(4, 6)
-    indices = torch.randint(0, 3, size=(4, 6))
-    assert torch.take_along_dim(BatchedTensor(tensor), indices=BatchedTensor(indices)).data.equal(
-        torch.take_along_dim(tensor, indices=indices)
-    )
-
-
-def test_same_behaviour_take_along_dim_tensor() -> None:  # TODO: update
-    tensor = torch.rand(4, 6)
-    indices = torch.randint(0, 3, size=(4, 6))
-    assert torch.take_along_dim(tensor, indices=BatchedTensor(indices)).data.equal(
-        torch.take_along_dim(tensor, indices=indices)
-    )
-
-
-def test_same_behaviour_take_along_dim_0() -> None:  # TODO: update
-    tensor = torch.rand(4, 6)
-    indices = torch.randint(0, 3, size=(4, 6))
-    assert torch.take_along_dim(
-        BatchedTensor(tensor), indices=BatchedTensor(indices), dim=0
-    ).data.equal(torch.take_along_dim(tensor, indices=indices, dim=0))
