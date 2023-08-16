@@ -374,6 +374,56 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.argsort(self._seq_dim, *args, **kwargs)
 
+    def cumprod_along_seq(self, *args, **kwargs) -> BatchedTensorSeq:
+        r"""Computes the cumulative product of elements of the current
+        batch in the sequence dimension.
+
+        Args:
+        ----
+            *args: See the documentation of ``torch.Tensor.cumprod``
+            **kwargs: See the documentation of ``torch.Tensor.cumprod``
+
+        Returns:
+        -------
+            ``BatchedTensorSeq``: A batch with the cumulative sum of
+                elements of the current batch in the sequence dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5)).cumprod_along_seq()
+            >>> batch
+            tensor([[    0,     0,     0,     0,     0],
+                    [    5,    30,   210,  1680, 15120]], batch_dim=0, seq_dim=1)
+        """
+        return self.cumprod(self._seq_dim, *args, **kwargs)
+
+    def cumprod_along_seq_(self, *args, **kwargs) -> None:
+        r"""Computes the cumulative product of elements of the current
+        batch in the sequence dimension.
+
+        Args:
+        ----
+            *args: See the documentation of ``torch.Tensor.cumprod``
+            **kwargs: See the documentation of ``torch.Tensor.cumprod``
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensorSeq
+            >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+            >>> batch.cumprod_along_seq_()
+            >>> batch
+            tensor([[    0,     0,     0,     0,     0],
+                    [    5,    30,   210,  1680, 15120]], batch_dim=0, seq_dim=1)
+        """
+        self.cumprod_(self._seq_dim, *args, **kwargs)
+
     def cumsum_along_seq(self, **kwargs) -> BatchedTensorSeq:
         r"""Computes the cumulative sum of elements of the current batch
         in the sequence dimension.

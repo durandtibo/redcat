@@ -1405,6 +1405,108 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.argsort(self._batch_dim, *args, **kwargs)
 
+    def cumprod(self, dim: int, *args, **kwargs) -> TBatchedTensor:
+        r"""Computes the cumulative product of elements of the current
+        batch in a given dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the dimension of the cumulative sum.
+            *args: See the documentation of ``torch.Tensor.cumprod``
+            **kwargs: See the documentation of ``torch.Tensor.cumprod``
+
+        Returns:
+        -------
+            ``BatchedTensor``: A batch with the cumulative product of
+                elements of the current batch in a given dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.cumprod(dim=0)
+            tensor([[ 0,  1,  2,  3,  4],
+                    [ 0,  6, 14, 24, 36]], batch_dim=0)
+        """
+        return torch.cumprod(self, dim, *args, **kwargs)
+
+    def cumprod_(self, dim: int, *args, **kwargs) -> None:
+        r"""Computes the cumulative product of elements of the current
+        batch in a given dimension.
+
+        Args:
+        ----
+            dim (int): Specifies the dimension of the cumulative product.
+            *args: See the documentation of ``torch.Tensor.cumprod``
+            **kwargs: See the documentation of ``torch.Tensor.cumprod``
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.cumprod_(dim=0)
+            >>> batch
+            tensor([[ 0,  1,  2,  3,  4],
+                    [ 0,  6, 14, 24, 36]], batch_dim=0)
+        """
+        self._data.cumprod_(dim, *args, **kwargs)
+
+    def cumprod_along_batch(self, *args, **kwargs) -> TBatchedTensor:
+        r"""Computes the cumulative product of elements of the current
+        batch in the batch dimension.
+
+        Args:
+        ----
+            *args: See the documentation of ``torch.Tensor.cumprod``
+            **kwargs: See the documentation of ``torch.Tensor.cumprod``
+
+        Returns:
+        -------
+            ``BatchedTensor``: A batch with the cumulative product of
+                elements of the current batch in the batch dimension.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.cumprod_along_batch()
+            tensor([[ 0,  1,  2,  3,  4],
+                    [ 0,  6, 14, 24, 36]], batch_dim=0)
+        """
+        return self.cumprod(self._batch_dim, *args, **kwargs)
+
+    def cumprod_along_batch_(self, *args, **kwargs) -> None:
+        r"""Computes the cumulative product of elements of the current
+        batch in the batch dimension.
+
+        Args:
+        ----
+            *args: See the documentation of ``torch.Tensor.cumprod``
+            **kwargs: See the documentation of ``torch.Tensor.cumprod``
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.arange(10).view(2, 5))
+            >>> batch.cumprod_along_batch_()
+            >>> batch
+            tensor([[ 0,  1,  2,  3,  4],
+                    [ 0,  6, 14, 24, 36]], batch_dim=0)
+        """
+        self.cumprod_(self._batch_dim, *args, **kwargs)
+
     def cumsum(self, dim: int, **kwargs) -> TBatchedTensor:
         r"""Computes the cumulative sum of elements of the current batch
         in a given dimension.
