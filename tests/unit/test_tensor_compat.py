@@ -17,13 +17,13 @@ BATCH_CLASSES = (
     BatchedTensorSeq.from_seq_batch,
 )
 
-
+DTYPES = (torch.float, torch.long)
 SHAPES = ((2, 3), (2, 3, 4), (2, 3, 4, 5))
 
 
 @mark.parametrize("cls", BATCH_CLASSES)
 @mark.parametrize("device", get_available_devices())
-def test_tensor_device(cls: type[BatchedTensor], device: torch.device) -> None:
+def test_tensor_device(cls: type[BatchedTensor], device: str) -> None:
     tensor = torch.ones(2, 3, device=device)
     assert cls(tensor).device == tensor.device
 
@@ -35,7 +35,7 @@ def test_tensor_dim(cls: type[BatchedTensor]) -> None:
 
 
 @mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dtype", (torch.float, torch.long))
+@mark.parametrize("dtype", DTYPES)
 def test_tensor_dtype(cls: type[BatchedTensor], dtype: torch.dtype) -> None:
     tensor = torch.ones(2, 3, dtype=dtype)
     assert cls(tensor).dtype == tensor.dtype
@@ -45,6 +45,13 @@ def test_tensor_dtype(cls: type[BatchedTensor], dtype: torch.dtype) -> None:
 def test_tensor_is_contiguous(cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(2, 3)
     assert cls(tensor).is_contiguous() == tensor.is_contiguous()
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_tensor_ndim(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
+    tensor = torch.ones(*shape)
+    assert cls(tensor).ndim == tensor.ndim
 
 
 @mark.parametrize("cls", BATCH_CLASSES)
@@ -66,6 +73,16 @@ def test_tensor_numel(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
 def test_tensor_shape(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
     tensor = torch.rand(*shape)
     assert cls(tensor).shape == tensor.shape
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dtype", DTYPES)
+@mark.parametrize("device", get_available_devices())
+def test_tensor_to(cls: type[BatchedTensor], dtype: torch.dtype, device: str) -> None:
+    tensor = torch.ones(2, 3, dtype=dtype)
+    batch = cls(tensor)
+    assert batch.dtype == tensor.dtype
+    assert batch.device == tensor.device
 
 
 UNARY_FUNCTIONS = (
