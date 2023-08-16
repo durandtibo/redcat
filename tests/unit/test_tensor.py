@@ -1611,6 +1611,94 @@ def test_batched_tensor_argsort_along_batch_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_cumprod_dim_0() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumprod(dim=0)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+    )
+
+
+def test_batched_tensor_cumprod_dim_1() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumprod(dim=1)
+        .equal(BatchedTensor(torch.tensor([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])))
+    )
+
+
+def test_batched_tensor_cumprod_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
+        .cumprod(dim=1)
+        .equal(
+            BatchedTensor(torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1)
+        )
+    )
+
+
+def test_batched_tensor_cumprod_dtype() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumprod(dim=0, dtype=torch.int)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]], dtype=torch.int)))
+    )
+
+
+def test_batched_tensor_cumprod_() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch.cumprod_(dim=0)
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+
+
+def test_batched_tensor_cumprod__custom_dims() -> None:
+    batch = BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
+    batch.cumprod_(dim=1)
+    assert batch.equal(
+        BatchedTensor(torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1)
+    )
+
+
+def test_batched_tensor_cumprod_along_batch() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumprod_along_batch()
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+    )
+
+
+def test_batched_tensor_cumprod_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
+        .cumprod_along_batch()
+        .equal(
+            BatchedTensor(torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1)
+        )
+    )
+
+
+def test_batched_tensor_cumprod_along_batch_dtype() -> None:
+    assert (
+        BatchedTensor(torch.arange(10).view(2, 5))
+        .cumprod_along_batch(dtype=torch.int)
+        .equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]], dtype=torch.int)))
+    )
+
+
+def test_batched_tensor_cumprod_along_batch_() -> None:
+    batch = BatchedTensor(torch.arange(10).view(2, 5))
+    batch.cumprod_along_batch_()
+    assert batch.equal(BatchedTensor(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+
+
+def test_batched_tensor_cumprod_along_batch__custom_dims() -> None:
+    batch = BatchedTensor(torch.arange(10).view(5, 2), batch_dim=1)
+    batch.cumprod_along_batch_()
+    assert batch.equal(
+        BatchedTensor(torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1)
+    )
+
+
 def test_batched_tensor_cumsum() -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))

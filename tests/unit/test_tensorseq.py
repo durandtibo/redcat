@@ -1886,6 +1886,149 @@ def test_batched_tensor_seq_argsort_along_seq_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_cumprod_dim_0() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumprod(dim=0)
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+    )
+
+
+def test_batched_tensor_seq_cumprod_dim_1() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumprod(dim=1)
+        .equal(BatchedTensorSeq(torch.tensor([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])))
+    )
+
+
+def test_batched_tensor_seq_cumprod_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+        .cumprod(dim=1)
+        .equal(
+            BatchedTensorSeq.from_seq_batch(
+                torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]])
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cumprod_dtype() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumprod(dim=0, dtype=torch.int)
+        .equal(
+            BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]], dtype=torch.int))
+        )
+    )
+
+
+def test_batched_tensor_seq_cumprod_() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch.cumprod_(dim=0)
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+
+
+def test_batched_tensor_seq_cumprod__custom_dims() -> None:
+    batch = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+    batch.cumprod_(dim=1)
+    assert batch.equal(
+        BatchedTensorSeq.from_seq_batch(torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]))
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_batch() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumprod_along_batch()
+        .equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_batch_custom_dims() -> None:
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+        .cumprod_along_batch()
+        .equal(
+            BatchedTensorSeq.from_seq_batch(
+                torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]])
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_batch_dtype() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumprod_along_batch(dtype=torch.int)
+        .equal(
+            BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]], dtype=torch.int))
+        )
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_batch_() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch.cumprod_along_batch_()
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+
+
+def test_batched_tensor_seq_cumprod_along_batch__custom_dims() -> None:
+    batch = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+    batch.cumprod_along_batch_()
+    assert batch.equal(
+        BatchedTensorSeq.from_seq_batch(torch.tensor([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]))
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_seq() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumprod_along_seq()
+        .equal(BatchedTensorSeq(torch.tensor([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])))
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_seq_custom_dims() -> None:
+    print(BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2)).cumprod_along_seq())
+    assert (
+        BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+        .cumprod_along_seq()
+        .equal(
+            BatchedTensorSeq.from_seq_batch(
+                torch.tensor([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]])
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_seq_dtype() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10).view(2, 5))
+        .cumprod_along_seq(dtype=torch.int)
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]], dtype=torch.int)
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_cumprod_along_seq_() -> None:
+    batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+    batch.cumprod_along_seq_()
+    assert batch.equal(BatchedTensorSeq(torch.tensor([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])))
+
+
+def test_batched_tensor_seq_cumprod_along_seq__custom_dims() -> None:
+    batch = BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
+    batch.cumprod_along_seq_()
+    assert batch.equal(
+        BatchedTensorSeq.from_seq_batch(torch.tensor([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]))
+    )
+
+
 def test_batched_tensor_seq_cumsum_dim_0() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))
