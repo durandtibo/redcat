@@ -654,14 +654,13 @@ class BatchedTensorSeq(BatchedTensor):
     #     Reduction operations     #
     ################################
 
-    def amax_along_seq(self, keepdim: bool = False) -> Tensor:
+    def amax_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the maximum along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.amax``
+            **kwargs: See the documentation of ``torch.Tensor.amax``
 
         Returns:
         -------
@@ -679,16 +678,15 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.amax_along_seq(keepdim=True)
             tensor([[4], [9]])
         """
-        return self.amax(dim=self._seq_dim, keepdim=keepdim)
+        return self.amax(self._seq_dim, *args, **kwargs)
 
-    def amin_along_seq(self, keepdim: bool = False) -> Tensor:
+    def amin_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the minimum along the sequence dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.amin``
+            **kwargs: See the documentation of ``torch.Tensor.amin``
 
         Returns:
         -------
@@ -706,17 +704,16 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.amin_along_seq(keepdim=True)
             tensor([[0], [5]])
         """
-        return self.amin(dim=self._seq_dim, keepdim=keepdim)
+        return self.amin(self._seq_dim, *args, **kwargs)
 
-    def argmax_along_seq(self, keepdim: bool = False) -> Tensor:
+    def argmax_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the indices of the maximum value along the sequence
         dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.argmax``
+            **kwargs: See the documentation of ``torch.Tensor.argmax``
 
         Returns:
         -------
@@ -735,17 +732,16 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.argmax_along_seq(keepdim=True)
             tensor([[4], [4]])
         """
-        return self.argmax(dim=self._seq_dim, keepdim=keepdim)
+        return self.argmax(self._seq_dim, *args, **kwargs)
 
-    def argmin_along_seq(self, keepdim: bool = False) -> Tensor:
+    def argmin_along_seq(self, *args, **kwargs) -> Tensor:
         r"""Computes the indices of the minimum value along the sequence
         dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the sequence dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.argmin``
+            **kwargs: See the documentation of ``torch.Tensor.argmin``
 
         Returns:
         -------
@@ -764,7 +760,7 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.argmin_along_seq(keepdim=True)
             tensor([[0], [0]])
         """
-        return self.argmin(dim=self._seq_dim, keepdim=keepdim)
+        return self.argmin(self._seq_dim, *args, **kwargs)
 
     def max_along_seq(self, *args, **kwargs) -> torch.return_types.max:
         r"""Computes the maximum values along the sequence dimension.

@@ -99,6 +99,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._data.dtype
 
     @property
+    def ndim(self) -> int:
+        r"""``int``: The number of dimensions."""
+        return self._data.ndim
+
+    @property
     def shape(self) -> torch.Size:
         r"""``torch.Size``: The shape of the tensor."""
         return self._data.shape
@@ -2444,17 +2449,14 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Reduction operations     #
     ################################
 
-    def amax(self, dim: int | tuple[int, ...] | None, keepdim: bool = False) -> Tensor:
+    def amax(self, *args, **kwargs) -> Tensor:
         r"""Computes the maximum value of all elements or along a
         dimension.
 
         Args:
         ----
-            dim (int or tuple of ints or ``None``): Specifies the
-                dimension(s) to reduce.
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.amax``
+            **kwargs: See the documentation of ``torch.Tensor.amax``
 
         Returns:
         -------
@@ -2477,18 +2479,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.amax(dim=None)
             tensor(9)
         """
-        if dim is None:
-            return self._data.amax()
-        return self._data.amax(dim=dim, keepdim=keepdim)
+        return self._data.amax(*args, **kwargs)
 
-    def amax_along_batch(self, keepdim: bool = False) -> Tensor:
+    def amax_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the maximum along the batch dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.amax``
+            **kwargs: See the documentation of ``torch.Tensor.amax``
 
         Returns:
         -------
@@ -2506,19 +2505,16 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.amax_along_batch(keepdim=True)
             tensor([[8, 9]])
         """
-        return self.amax(dim=self._batch_dim, keepdim=keepdim)
+        return self.amax(self._batch_dim, *args, **kwargs)
 
-    def amin(self, dim: int | tuple[int, ...] | None, keepdim: bool = False) -> Tensor:
+    def amin(self, *args, **kwargs) -> Tensor:
         r"""Computes the minimum value of all elements or along a
         dimension.
 
         Args:
         ----
-            dim (int or tuple of ints or ``None``): Specifies the
-                dimension(s) to reduce.
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.amin``
+            **kwargs: See the documentation of ``torch.Tensor.amin``
 
         Returns:
         -------
@@ -2541,18 +2537,15 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.amin(dim=None)
             tensor(0)
         """
-        if dim is None:
-            return self._data.amin()
-        return self._data.amin(dim=dim, keepdim=keepdim)
+        return self._data.amin(*args, **kwargs)
 
-    def amin_along_batch(self, keepdim: bool = False) -> Tensor:
+    def amin_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the minimum along the batch dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.amin``
+            **kwargs: See the documentation of ``torch.Tensor.amin``
 
         Returns:
         -------
@@ -2570,20 +2563,16 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.amin_along_batch(keepdim=True)
             tensor([[0, 1]])
         """
-        return self.amin(dim=self._batch_dim, keepdim=keepdim)
+        return self.amin(self._batch_dim, *args, **kwargs)
 
-    def argmax(self, dim: int | None = None, keepdim: bool = False) -> Tensor:
+    def argmax(self, *args, **kwargs) -> Tensor:
         r"""Computes the indices of the maximum value of all elements or
         along a specific dimension.
 
         Args:
         ----
-            dim (int or ``None``): Specifies the dimension to reduce.
-                If ``None``, the argmax of the flattened input is
-                returned.
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.argmax``
+            **kwargs: See the documentation of ``torch.Tensor.argmax``
 
         Returns:
         -------
@@ -2604,19 +2593,16 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.argmax()
             tensor(9)
         """
-        if dim is None:
-            return self._data.argmax()
-        return self._data.argmax(dim=dim, keepdim=keepdim)
+        return self._data.argmax(*args, **kwargs)
 
-    def argmax_along_batch(self, keepdim: bool = False) -> Tensor:
+    def argmax_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the indices of the maximum value along the batch
         dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.argmax``
+            **kwargs: See the documentation of ``torch.Tensor.argmax``
 
         Returns:
         -------
@@ -2635,20 +2621,16 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.argmax_along_batch(keepdim=True)
             tensor([[4, 4]])
         """
-        return self.argmax(dim=self._batch_dim, keepdim=keepdim)
+        return self.argmax(self._batch_dim, *args, **kwargs)
 
-    def argmin(self, dim: int | None = None, keepdim: bool = False) -> Tensor:
+    def argmin(self, *args, **kwargs) -> Tensor:
         r"""Computes the indices of the minimum value of all elements or
         along a specific dimension.
 
         Args:
         ----
-            dim (int or ``None``): Specifies the dimension to reduce.
-                If ``None``, the argmin of the flattened input is
-                returned.
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.argmin``
+            **kwargs: See the documentation of ``torch.Tensor.argmin``
 
         Returns:
         -------
@@ -2669,19 +2651,16 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.argmin()
             tensor(0)
         """
-        if dim is None:
-            return self._data.argmin()
-        return self._data.argmin(dim=dim, keepdim=keepdim)
+        return self._data.argmin(*args, **kwargs)
 
-    def argmin_along_batch(self, keepdim: bool = False) -> Tensor:
+    def argmin_along_batch(self, *args, **kwargs) -> Tensor:
         r"""Computes the indices of the minimum value along the batch
         dimension.
 
         Args:
         ----
-            keepdim (bool, optional): Indicates whether the output
-                array has the batch dimension retained or not.
-                Default: ``False``
+            *args: See the documentation of ``torch.Tensor.argmin``
+            **kwargs: See the documentation of ``torch.Tensor.argmin``
 
         Returns:
         -------
@@ -2700,7 +2679,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.argmin_along_batch(keepdim=True)
             tensor([[0, 0]])
         """
-        return self.argmin(dim=self._batch_dim, keepdim=keepdim)
+        return self.argmin(self._batch_dim, *args, **kwargs)
 
     def max(self, *args, **kwargs) -> Tensor | torch.return_types.max:
         r"""Computes the maximum of all elements or along a dimension.
