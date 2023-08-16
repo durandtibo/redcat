@@ -86,7 +86,6 @@ pip install redcat[all]
 
 Please check the [get started page](https://durandtibo.github.io/redcat/get_started) to see how to
 install only some specific packages or other alternatives to install the library.
-
 The following is the corresponding `redcat` versions and supported Python, PyTorch and NumPy
 versions.
 
