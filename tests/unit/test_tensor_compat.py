@@ -8,6 +8,7 @@ from coola import objects_are_allclose, objects_are_equal
 from pytest import mark
 
 from redcat import BatchedTensor, BatchedTensorSeq
+from redcat.utils.tensor import get_available_devices
 
 BATCH_CLASSES = (
     BatchedTensor,
@@ -15,6 +16,57 @@ BATCH_CLASSES = (
     BatchedTensorSeq,
     BatchedTensorSeq.from_seq_batch,
 )
+
+
+SHAPES = ((2, 3), (2, 3, 4), (2, 3, 4, 5))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("device", get_available_devices())
+def test_tensor_device(cls: type[BatchedTensor], device: torch.device) -> None:
+    tensor = torch.ones(2, 3, device=device)
+    assert cls(tensor).device == tensor.device
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_tensor_dim(cls: type[BatchedTensor]) -> None:
+    tensor = torch.ones(2, 3)
+    assert cls(tensor).dim() == tensor.dim()
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dtype", (torch.float, torch.long))
+def test_tensor_dtype(cls: type[BatchedTensor], dtype: torch.dtype) -> None:
+    tensor = torch.ones(2, 3, dtype=dtype)
+    assert cls(tensor).dtype == tensor.dtype
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_tensor_is_contiguous(cls: type[BatchedTensor]) -> None:
+    tensor = torch.rand(2, 3)
+    assert cls(tensor).is_contiguous() == tensor.is_contiguous()
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_tensor_ndimension(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
+    tensor = torch.ones(*shape)
+    assert cls(tensor).ndimension() == tensor.ndimension()
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_tensor_numel(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
+    tensor = torch.ones(*shape)
+    assert cls(tensor).numel() == tensor.numel()
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_tensor_shape(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
+    tensor = torch.rand(*shape)
+    assert cls(tensor).shape == tensor.shape
+
 
 UNARY_FUNCTIONS = (
     partial(torch.argsort, dim=0),
@@ -238,7 +290,7 @@ def test_torch_cat(cls: type[BatchedTensor]) -> None:
 
 
 @mark.parametrize("cls", BATCH_CLASSES)
-def test_same_behaviour_take_along_dim(cls: type[BatchedTensor]) -> None:
+def test_take_along_dim(cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))
     assert torch.take_along_dim(cls(tensor), indices=indices).equal(
