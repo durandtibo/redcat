@@ -89,9 +89,9 @@ install only some specific packages or other alternatives to install the library
 The following is the corresponding `redcat` versions and supported Python, PyTorch and NumPy
 versions.
 
-| `redcat` | `numpy`        | `torch`       | `python`      |
-|----------|----------------|---------------|---------------|
-| `0.0.8`  | `>=1.21,<1.26` | `>=1.11,<2.1` | `>=3.9,<3.12` |
+| `redcat` | `coola`            | `numpy`        | `torch`       | `python`      |
+|----------|--------------------|----------------|---------------|---------------|
+| `0.0.8`  | `>=0.0.20,<0.0.22` | `>=1.21,<1.26` | `>=1.11,<2.1` | `>=3.9,<3.12` |
 
 ## Contributing
 
