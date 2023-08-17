@@ -111,4 +111,4 @@ file.
 
 ---
 
-*The logo was generated with Fooocus*
+*The logo was generated with [Fooocus](https://github.com/lllyasviel/Fooocus)*
