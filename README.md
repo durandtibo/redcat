@@ -76,20 +76,21 @@ pip install redcat
 
 To make the package as slim as possible, only the minimal packages required to use `redcat` are
 installed.
-To include all the packages, you can use the following command:
+To include all the dependencies, you can use the following command:
 
 ```shell
 pip install redcat[all]
 ```
 
 Please check the [get started page](https://durandtibo.github.io/redcat/get_started) to see how to
-install only some specific packages or other alternatives to install the library.
+install only some specific dependencies or other alternatives to install the library.
 The following is the corresponding `redcat` versions and supported Python, PyTorch and NumPy
 versions.
 
 | `redcat` | `coola`            | `numpy`        | `torch`       | `python`      |
 |----------|--------------------|----------------|---------------|---------------|
-| `0.0.8`  | `>=0.0.20,<0.0.22` | `>=1.21,<1.26` | `>=1.11,<2.1` | `>=3.9,<3.12` |
+| `0.0.9`  | `>=0.0.20,<0.0.22` | `>=1.21,<1.26` | `>=1.11,<2.1` | `>=3.9,<3.12` |
+| `0.0.8`  | `>=0.0.20,<0.0.21` | `>=1.21,<1.26` | `>=1.11,<2.1` | `>=3.9,<3.12` |
 
 ## Contributing
 
@@ -110,4 +111,4 @@ file.
 
 ---
 
-*The logo was generated with Fooocus*
+*The logo was generated with [Fooocus](https://github.com/lllyasviel/Fooocus)*
