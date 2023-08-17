@@ -8,7 +8,7 @@ from coola.utils import is_numpy_available, is_torch_available
 from pytest import mark
 
 from redcat import BatchList
-from redcat.utils.array import permute_along_dim, to_array
+from redcat.utils.array import permute_along_axis, to_array
 
 if is_numpy_available():
     import numpy as np
@@ -23,40 +23,40 @@ else:  # pragma: no cover
 
 
 #######################################
-#     Tests for permute_along_dim     #
+#     Tests for permute_along_axis     #
 #######################################
 
 
 @numpy_available
-def test_permute_along_dim_1d() -> None:
+def test_permute_along_axis_1d() -> None:
     assert np.array_equal(
-        permute_along_dim(np.arange(4), permutation=np.array([0, 2, 1, 3])), np.array([0, 2, 1, 3])
+        permute_along_axis(np.arange(4), permutation=np.array([0, 2, 1, 3])), np.array([0, 2, 1, 3])
     )
 
 
 @numpy_available
-def test_permute_along_dim_2d_dim_0() -> None:
+def test_permute_along_axis_2d_axis_0() -> None:
     assert np.array_equal(
-        permute_along_dim(np.arange(20).reshape(4, 5), permutation=np.array([0, 2, 1, 3])),
+        permute_along_axis(np.arange(20).reshape(4, 5), permutation=np.array([0, 2, 1, 3])),
         np.array([[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]]),
     )
 
 
 @numpy_available
-def test_permute_along_dim_2d_dim_1() -> None:
+def test_permute_along_axis_2d_axis_1() -> None:
     assert np.array_equal(
-        permute_along_dim(
-            np.arange(20).reshape(4, 5), permutation=np.array([0, 4, 2, 1, 3]), dim=1
+        permute_along_axis(
+            np.arange(20).reshape(4, 5), permutation=np.array([0, 4, 2, 1, 3]), axis=1
         ),
         np.array([[0, 4, 2, 1, 3], [5, 9, 7, 6, 8], [10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]),
     )
 
 
 @numpy_available
-def test_permute_along_dim_3d_dim_2() -> None:
+def test_permute_along_axis_3d_axis_2() -> None:
     assert np.array_equal(
-        permute_along_dim(
-            np.arange(20).reshape(2, 2, 5), permutation=np.array([0, 4, 2, 1, 3]), dim=2
+        permute_along_axis(
+            np.arange(20).reshape(2, 2, 5), permutation=np.array([0, 4, 2, 1, 3]), axis=2
         ),
         np.array(
             [[[0, 4, 2, 1, 3], [5, 9, 7, 6, 8]], [[10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]]

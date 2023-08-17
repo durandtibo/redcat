@@ -4036,7 +4036,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._check_valid_dims(tensors)
         return self._create_new_batch(
             torch.cat(
-                [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors],
+                [
+                    tensor.data if isinstance(tensor, BatchedTensor) else tensor
+                    for tensor in tensors
+                ],
                 dim=dim,
             ),
         )

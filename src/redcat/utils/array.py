@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["permute_along_dim", "to_array"]
+__all__ = ["permute_along_axis", "to_array"]
 
 from collections.abc import Sequence
 
@@ -11,8 +11,8 @@ from numpy import ndarray
 from redcat.base import BaseBatch
 
 
-def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> ndarray:
-    r"""Permutes the values of a array along a given dimension.
+def permute_along_axis(array: ndarray, permutation: ndarray, axis: int = 0) -> ndarray:
+    r"""Permutes the values of a array along a given axis.
 
     Args:
     ----
@@ -21,7 +21,7 @@ def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> nda
             ``(dimension,)``): Specifies the permutation to use on the
             array. The dimension of this array should be compatible
             with the shape of the array to permute.
-        dim (int, optional): Specifies the dimension used to permute the
+        axis (int, optional): Specifies the axis used to permute the
             array. Default: ``0``
 
     Returns:
@@ -33,10 +33,10 @@ def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> nda
     .. code-block:: pycon
 
         >>> import numpy as np
-        >>> from redcat.utils.array import permute_along_dim
-        >>> permute_along_dim(np.arange(4), permutation=np.array([0, 2, 1, 3]))
+        >>> from redcat.utils.array import permute_along_axis
+        >>> permute_along_axis(np.arange(4), permutation=np.array([0, 2, 1, 3]))
         array([0, 2, 1, 3])
-        >>> permute_along_dim(
+        >>> permute_along_axis(
         ...     np.arange(20).reshape(4, 5),
         ...     permutation=np.array([0, 2, 1, 3]),
         ... )
@@ -44,26 +44,26 @@ def permute_along_dim(array: ndarray, permutation: ndarray, dim: int = 0) -> nda
                [10, 11, 12, 13, 14],
                [ 5,  6,  7,  8,  9],
                [15, 16, 17, 18, 19]])
-        >>> permute_along_dim(
+        >>> permute_along_axis(
         ...     np.arange(20).reshape(4, 5),
         ...     permutation=np.array([0, 4, 2, 1, 3]),
-        ...     dim=1,
+        ...     axis=1,
         ... )
         array([[ 0,  4,  2,  1,  3],
                [ 5,  9,  7,  6,  8],
                [10, 14, 12, 11, 13],
                [15, 19, 17, 16, 18]])
-        >>> permute_along_dim(
+        >>> permute_along_axis(
         ...     np.arange(20).reshape(2, 2, 5),
         ...     permutation=np.array([0, 4, 2, 1, 3]),
-        ...     dim=2,
+        ...     axis=2,
         ... )
         array([[[ 0,  4,  2,  1,  3],
                 [ 5,  9,  7,  6,  8]],
                [[10, 14, 12, 11, 13],
                 [15, 19, 17, 16, 18]]])
     """
-    return np.swapaxes(np.swapaxes(array, 0, dim)[permutation], 0, dim)
+    return np.swapaxes(np.swapaxes(array, 0, axis)[permutation], 0, axis)
 
 
 def to_array(data: Sequence | torch.Tensor | ndarray) -> ndarray:
