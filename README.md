@@ -53,9 +53,7 @@
 <img height="242" src="assets/redcat.png" alt="logo"/>
 </p>
 
----
 
-*The logo was generated with Stable Diffusion 2.1*
 
 ---
 
@@ -109,3 +107,7 @@ was using the old version of `redcat`.
 
 `redcat` is licensed under BSD 3-Clause "New" or "Revised" license available in [LICENSE](LICENSE)
 file.
+
+---
+
+*The logo was generated with Fooocus*

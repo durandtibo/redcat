@@ -16,7 +16,6 @@ BATCH_CLASSES = (
     BatchedTensorSeq,
     BatchedTensorSeq.from_seq_batch,
 )
-
 DTYPES = (torch.float, torch.long)
 SHAPES = ((2, 3), (2, 3, 4), (2, 3, 4, 5))
 
