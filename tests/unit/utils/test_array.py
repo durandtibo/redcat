@@ -5,10 +5,10 @@ from unittest.mock import Mock
 
 from coola.testing import numpy_available, torch_available
 from coola.utils import is_numpy_available, is_torch_available
-from pytest import mark
+from pytest import mark, raises
 
 from redcat import BatchList
-from redcat.utils.array import permute_along_axis, to_array
+from redcat.utils.array import get_div_rounding_operator, permute_along_axis, to_array
 
 if is_numpy_available():
     import numpy as np
@@ -22,9 +22,27 @@ else:  # pragma: no cover
     torch = Mock()
 
 
-#######################################
+###############################################
+#     Tests for get_div_rounding_operator     #
+###############################################
+
+
+def test_get_div_rounding_operator_mode_none() -> None:
+    assert get_div_rounding_operator(None) == np.true_divide
+
+
+def test_get_div_rounding_operator_mode_floor() -> None:
+    assert get_div_rounding_operator("floor") == np.floor_divide
+
+
+def test_get_div_rounding_operator_mode_incorrect() -> None:
+    with raises(RuntimeError, match="Incorrect `rounding_mode`"):
+        get_div_rounding_operator("incorrect")
+
+
+########################################
 #     Tests for permute_along_axis     #
-#######################################
+########################################
 
 
 @numpy_available

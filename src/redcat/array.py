@@ -12,7 +12,7 @@ from numpy import ndarray
 
 from redcat.return_types import ValuesIndicesTuple
 from redcat.types import RNGType
-from redcat.utils.array import permute_along_axis, to_array
+from redcat.utils.array import get_div_rounding_operator, permute_along_axis, to_array
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.random import randperm
 
@@ -2055,16 +2055,6 @@ def concatenate(arrays: Sequence[BatchedArray | ndarray], axis: int = 0) -> Batc
     return arrays[0].concatenate(arrays[1:], axis)
 
 
-@overload
-def cumsum(a: TBatchedArray, axis: None, *args, **kwargs) -> ndarray:
-    r"""See ``np.cumsum`` documentation."""
-
-
-@overload
-def cumsum(a: TBatchedArray, axis: int, *args, **kwargs) -> TBatchedArray:
-    r"""See ``np.cumsum`` documentation."""
-
-
 @implements(np.cumsum)
 def cumsum(a: TBatchedArray, axis: int | None = None, *args, **kwargs) -> TBatchedArray | ndarray:
     r"""See ``np.cumsum`` documentation."""
@@ -2090,33 +2080,3 @@ def numpysum(input: BatchedArray, *args, **kwargs) -> ndarray:  # noqa: A002
     Use the name ``numpysum`` to avoid shadowing `sum` python builtin.
     """
     return np.sum(input.data, *args, **kwargs)
-
-
-def get_div_rounding_operator(mode: str | None) -> Callable:
-    r"""Gets the rounding operator for a division.
-
-    Args:
-    ----
-        mode (str or ``None``, optional): Specifies the
-            type of rounding applied to the result.
-            - ``None``: true division.
-            - ``"floor"``: floor division.
-            Default: ``None``
-
-    Returns:
-    -------
-        ``Callable``: The rounding operator for a division
-
-    Example usage:
-
-    .. code-block:: pycon
-
-        >>> from redcat.array import get_div_rounding_operator
-        >>> get_div_rounding_operator(None)
-        <ufunc 'divide'>
-    """
-    if mode is None:
-        return np.true_divide
-    if mode == "floor":
-        return np.floor_divide
-    raise RuntimeError(f"Incorrect `rounding_mode` {mode}. Valid values are: None and 'floor'")
