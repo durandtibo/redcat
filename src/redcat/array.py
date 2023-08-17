@@ -1407,7 +1407,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> import numpy as np
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(2, 5).astype(float))
-            >>> batch.logcumsumexp_(dim=1)
+            >>> batch.logcumsumexp_(axis=1)
             >>> batch
             array([[0.        , 1.31326169, 2.40760596, 3.4401897 , 4.4519144 ],
                    [5.        , 6.31326169, 7.40760596, 8.4401897 , 9.4519144 ]], batch_dim=0)
@@ -1537,7 +1537,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Args:
         ----
-            dim (int): Specifies the shuffle axis.
+            axis (int): Specifies the shuffle axis.
             generator (``numpy.random.Generator`` or
                 ``torch.Generator`` or ``random.Random`` or ``None``,
                 optional): Specifies the pseudorandom number
@@ -1587,7 +1587,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> import numpy as np
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
-            >>> batch.shuffle_along_axis_(dim=0)
+            >>> batch.shuffle_along_axis_(axis=0)
             >>> batch  # doctest:+ELLIPSIS
             array([[...]], batch_dim=0)
         """

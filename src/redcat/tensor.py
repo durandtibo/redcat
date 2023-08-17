@@ -1628,7 +1628,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(2, 5).float())
-            >>> batch.logcumsumexp(axis=1)
+            >>> batch.logcumsumexp(dim=1)
             tensor([[0.0000, 1.3133, 2.4076, 3.4402, 4.4519],
                     [5.0000, 6.3133, 7.4076, 8.4402, 9.4519]], batch_dim=0)
         """
@@ -1735,7 +1735,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.permute_along_axis([2, 1, 3, 0, 4], axis=0)
+            >>> batch.permute_along_dim([2, 1, 3, 0, 4], dim=0)
             tensor([[4, 5],
                     [2, 3],
                     [6, 7],
@@ -1765,7 +1765,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.permute_along_axis_([2, 1, 3, 0, 4], dim=0)
+            >>> batch.permute_along_dim_([2, 1, 3, 0, 4], dim=0)
             >>> batch
             tensor([[4, 5],
                     [2, 3],
@@ -1801,7 +1801,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_axis(axis=0)  # doctest:+ELLIPSIS
+            >>> batch.shuffle_along_dim(dim=0)  # doctest:+ELLIPSIS
             tensor([[...]], batch_dim=0)
         """
         return self.permute_along_dim(
@@ -1830,7 +1830,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_axis_(dim=0)
+            >>> batch.shuffle_along_dim_(dim=0)
             >>> batch  # doctest:+ELLIPSIS
             tensor([[...]], batch_dim=0)
         """
@@ -4024,7 +4024,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.concatenate(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
+            >>> batch.cat(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
             tensor([[ 0,  1,  2],
                     [ 4,  5,  6],
                     [10, 11, 12],
@@ -4064,7 +4064,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.concatenate_(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
+            >>> batch.cat_(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
             >>> batch
             tensor([[ 0,  1,  2],
                     [ 4,  5,  6],
@@ -4096,13 +4096,13 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.concatenate_along_batch(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
+            >>> batch.cat_along_batch(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
             tensor([[ 0,  1,  2],
                     [ 4,  5,  6],
                     [10, 11, 12],
                     [13, 14, 15]], batch_dim=0)
             >>> batch = BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]))
-            >>> batch.concatenate_along_batch(
+            >>> batch.cat_along_batch(
             ...     [
             ...         BatchedTensor(torch.tensor([[10, 12], [11, 13]])),
             ...         BatchedTensor(torch.tensor([[20, 22], [21, 23]])),
@@ -4136,16 +4136,14 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.concatenate_along_batch_(
-            ...     BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]]))
-            ... )
+            >>> batch.cat_along_batch_(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
             >>> batch
             tensor([[ 0,  1,  2],
                     [ 4,  5,  6],
                     [10, 11, 12],
                     [13, 14, 15]], batch_dim=0)
             >>> batch = BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]))
-            >>> batch.concatenate_along_batch_(
+            >>> batch.cat_along_batch_(
             ...     [
             ...         BatchedTensor(torch.tensor([[10, 12], [11, 13]])),
             ...         BatchedTensor(torch.tensor([[20, 22], [21, 23]])),
