@@ -96,96 +96,23 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         return self._data.dtype
 
     @property
+    def ndim(self) -> int:
+        r"""``int``: The number of dimensions."""
+        return self._data.ndim
+
+    @property
     def shape(self) -> tuple[int, ...]:
         r"""``tuple``: The shape of the array."""
         return self._data.shape
 
-    def dim(self) -> int:
-        r"""Gets the number of dimensions.
-
-        Returns:
-        -------
-            int: The number of dimensions
-
-        Example usage:
-
-        .. code-block:: pycon
-
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.dim()
-            2
-        """
-        return self._data.ndim
-
-    def ndimension(self) -> int:
-        r"""Gets the number of dimensions.
-
-        Returns:
-        -------
-            int: The number of dimensions
-
-        Example usage:
-
-        .. code-block:: pycon
-
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.ndimension()
-            2
-        """
-        return self.dim()
-
-    def numel(self) -> int:
-        r"""Gets the total number of elements in the array.
-
-        Returns:
-        -------
-            int: The total number of elements
-
-        Example usage:
-
-        .. code-block:: pycon
-
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.numel()
-            6
-        """
-        return np.prod(self._data.shape).item()
+    @property
+    def size(self) -> tuple[int, ...]:
+        r"""``tuple``: The total number of elements in the array."""
+        return self._data.size
 
     ###############################
     #     Creation operations     #
     ###############################
-
-    def clone(self, *args, **kwargs) -> TBatchedArray:
-        r"""Creates a copy of the current batch.
-
-        Args:
-        ----
-            *args: See the documentation of ``numpy.copy``
-            **kwargs: See the documentation of ``numpy.copy``
-
-        Returns:
-        -------
-            ``BatchedArray``: A copy of the current batch.
-
-        Example usage:
-
-        .. code-block:: pycon
-
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch_copy = batch.clone()
-            >>> batch_copy
-            array([[1., 1., 1.],
-                   [1., 1., 1.]], batch_dim=0)
-        """
-        return self._create_new_batch(self._data.copy(*args, **kwargs))
 
     def copy(self, *args, **kwargs) -> TBatchedArray:
         r"""Creates a copy of the current batch.
@@ -211,7 +138,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[1., 1., 1.],
                    [1., 1., 1.]], batch_dim=0)
         """
-        return self.clone(*args, **kwargs)
+        return self._create_new_batch(self._data.copy(*args, **kwargs))
 
     def empty_like(self, *args, **kwargs) -> TBatchedArray:
         r"""Creates an uninitialized batch, with the same shape as the
@@ -497,32 +424,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [  True,  True,  True]], batch_dim=0)
         """
         return self._create_new_batch(self._data.astype(dtype, *args, **kwargs))
-
-    def to(self, *args, **kwargs) -> TBatchedArray:
-        r"""Moves and/or casts the data.
-
-        Args:
-        ----
-            *args: See the documentation of ``numpy.astype``
-            **kwargs: See the documentation of ``numpy.astype``
-
-        Returns:
-        -------
-            ``BatchedArray``: A new batch with the data after
-                dtype and/or device conversion.
-
-        Example usage:
-
-        .. code-block:: pycon
-
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.to(dtype=bool)
-            array([[  True,  True,  True],
-                   [  True,  True,  True]], batch_dim=0)
-        """
-        return self._create_new_batch(self._data.astype(*args, **kwargs))
 
     #################################
     #     Comparison operations     #
@@ -996,11 +897,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[3., 3., 3.],
                    [3., 3., 3.]], batch_dim=0)
         """
-        batch_dims = get_batch_dims((self, other))
-        check_batch_dims(batch_dims)
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
-        return self.__class__(np.add(self.data, other * alpha), batch_dim=batch_dims.pop())
+        return self._create_new_batch(np.add(self.data, other * alpha))
 
     def add_(
         self,
@@ -1032,7 +932,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[3., 3., 3.],
                    [3., 3., 3.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
         self._data = np.add(self._data.data, other * alpha)
@@ -1077,14 +977,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [0.5, 0.5, 0.5]], batch_dim=0)
         """
 
-        batch_dims = get_batch_dims((self, other))
-        check_batch_dims(batch_dims)
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
-        return self.__class__(
-            get_div_rounding_operator(rounding_mode)(self.data, other),
-            batch_dim=batch_dims.pop(),
-        )
+        return self._create_new_batch(get_div_rounding_operator(rounding_mode)(self.data, other))
 
     def div_(
         self,
@@ -1117,7 +1013,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[0.5, 0.5, 0.5],
                    [0.5, 0.5, 0.5]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
         self._data = get_div_rounding_operator(rounding_mode)(self.data, other)
@@ -1155,14 +1051,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[1., 1., 1.],
                    [1., 1., 1.]], batch_dim=0)
         """
-        batch_dims = get_batch_dims((self, divisor))
-        check_batch_dims(batch_dims)
+        self._check_valid_dims((self, divisor))
         if isinstance(divisor, BatchedArray):
             divisor = divisor.data
-        return self.__class__(
-            np.fmod(self.data, divisor),
-            batch_dim=batch_dims.pop(),
-        )
+        return self._create_new_batch(np.fmod(self.data, divisor))
 
     def fmod_(self, divisor: BatchedArray | ndarray | int | float) -> None:
         r"""Computes the element-wise remainder of division.
@@ -1186,7 +1078,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[1., 1., 1.],
                    [1., 1., 1.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, divisor)))
+        self._check_valid_dims((self, divisor))
         if isinstance(divisor, BatchedArray):
             divisor = divisor.data
         self._data = np.fmod(self._data, divisor)
@@ -1221,11 +1113,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[2., 2., 2.],
                    [2., 2., 2.]], batch_dim=0)
         """
-        batch_dims = get_batch_dims((self, other))
-        check_batch_dims(batch_dims)
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
-        return self.__class__(self.data * other, batch_dim=batch_dims.pop())
+        return self._create_new_batch(self._data * other)
 
     def mul_(self, other: BatchedArray | ndarray | int | float) -> None:
         r"""Multiplies the ``self`` batch by the input ``other`.
@@ -1254,7 +1145,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[2., 2., 2.],
                    [2., 2., 2.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
         self._data = self._data * other
@@ -1282,7 +1173,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[-1., -1., -1.],
                    [-1., -1., -1.]], batch_dim=0)
         """
-        return self.__class__(np.negative(self.data), batch_dim=self._batch_dim)
+        return self._create_new_batch(np.negative(self.data))
 
     def sub(
         self,
@@ -1321,11 +1212,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[-1., -1., -1.],
                    [-1., -1., -1.]], batch_dim=0)
         """
-        batch_dims = get_batch_dims((self, other))
-        check_batch_dims(batch_dims)
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
-        return self.__class__(np.subtract(self.data, other * alpha), batch_dim=batch_dims.pop())
+        return self._create_new_batch(np.subtract(self.data, other * alpha))
 
     def sub_(
         self,
@@ -1356,7 +1246,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[-1., -1., -1.],
                    [-1., -1., -1.]], batch_dim=0)
         """
-        check_batch_dims(get_batch_dims((self, other)))
+        self._check_valid_dims((self, other))
         if isinstance(other, BatchedArray):
             other = other.data
         self._data = np.subtract(self._data.data, other * alpha)
@@ -1367,11 +1257,11 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
     @overload
     def cumsum(self, dim: None, *args, **kwargs) -> ndarray:
-        r"""See ``cumsum`` documentation."""
+        r"""See ``numpy.cumsum`` documentation."""
 
     @overload
     def cumsum(self, dim: int, *args, **kwargs) -> TBatchedArray:
-        r"""See ``cumsum`` documentation."""
+        r"""See ``numpy.cumsum`` documentation."""
 
     def cumsum(self, dim: int | None, *args, **kwargs) -> TBatchedArray | ndarray:
         r"""Computes the cumulative sum of elements of the current batch
@@ -1380,7 +1270,8 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Args:
         ----
             dim (int): Specifies the dimension of the cumulative sum.
-            **kwargs: see ``numpy.cumsum`` documentation
+            *args: See the documentation of ``numpy.cumsum``
+            **kwargs: See the documentation of ``numpy.cumsum``
 
         Returns:
         -------
@@ -1403,14 +1294,15 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             return out
         return self._create_new_batch(out)
 
-    def cumsum_(self, dim: int) -> None:
+    def cumsum_(self, dim: int, *args, **kwargs) -> None:
         r"""Computes the cumulative sum of elements of the current batch
         in a given dimension.
 
         Args:
         ----
             dim (int): Specifies the dimension of the cumulative sum.
-            **kwargs: see ``numpy.cumsum_`` documentation
+            *args: See the documentation of ``numpy.cumsum``
+            **kwargs: See the documentation of ``numpy.cumsum``
 
         Example usage:
 
@@ -1424,7 +1316,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[ 0,  1,  2,  3,  4],
                    [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
-        self._data = np.cumsum(self._data, dim)
+        self._data = np.cumsum(self._data, dim, *args, **kwargs)
 
     def cumsum_along_batch(self, *args, **kwargs) -> TBatchedArray:
         r"""Computes the cumulative sum of elements of the current batch
@@ -1432,7 +1324,8 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Args:
         ----
-            **kwargs: see ``numpy.cumsum`` documentation
+            *args: See the documentation of ``numpy.cumsum``
+            **kwargs: See the documentation of ``numpy.cumsum``
 
         Returns:
         -------
@@ -1452,9 +1345,14 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         return self.cumsum(self._batch_dim, *args, **kwargs)
 
-    def cumsum_along_batch_(self) -> None:
+    def cumsum_along_batch_(self, *args, **kwargs) -> None:
         r"""Computes the cumulative sum of elements of the current batch
         in the batch dimension.
+
+        Args:
+        ----
+            *args: See the documentation of ``numpy.cumsum``
+            **kwargs: See the documentation of ``numpy.cumsum``
 
         Example usage:
 
@@ -1468,7 +1366,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             array([[ 0,  1,  2,  3,  4],
                    [ 5,  7,  9, 11, 13]], batch_dim=0)
         """
-        self.cumsum_(self._batch_dim)
+        self.cumsum_(self._batch_dim, *args, **kwargs)
 
     def logcumsumexp(self, dim: int) -> TBatchedArray:
         r"""Computes the logarithm of the cumulative summation of the
@@ -1581,7 +1479,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Args:
         ----
-            permutation (sequence or ``numpy.ndarray`` of type int
+            permutation (``Sequence`` or ``numpy.ndarray`` of type int
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
@@ -1606,10 +1504,8 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [0, 1],
                    [8, 9]], batch_dim=0)
         """
-        if not isinstance(permutation, ndarray):
-            permutation = np.asarray(permutation)
         return self._create_new_batch(
-            permute_along_dim(self._data, permutation=permutation, dim=dim)
+            permute_along_dim(self._data, permutation=to_array(permutation), dim=dim)
         )
 
     def permute_along_dim_(self, permutation: Sequence[int] | ndarray, dim: int) -> None:
@@ -1617,7 +1513,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         Args:
         ----
-            permutation (sequence or ``numpy.ndarray`` of type int
+            permutation (``Sequence`` or ``numpy.ndarray`` of type int
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
@@ -1639,9 +1535,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [0, 1],
                    [8, 9]], batch_dim=0)
         """
-        if not isinstance(permutation, ndarray):
-            permutation = np.asarray(permutation)
-        self._data = permute_along_dim(self._data, permutation=permutation, dim=dim)
+        self._data = self.permute_along_dim(permutation=permutation, dim=dim).data
 
     def shuffle_along_dim(self, dim: int, generator: RNGType | None = None) -> TBatchedArray:
         r"""Shuffles the data/batch along a given dimension.
@@ -1935,7 +1829,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
     def cat(
         self,
-        tensors: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
+        arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
         dim: int = 0,
     ) -> TBatchedArray:
         r"""Concatenates the data of the batch(es) to the current batch
@@ -1964,17 +1858,15 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                    [10, 11, 12],
                    [13, 14, 15]], batch_dim=0)
         """
-        if isinstance(tensors, (BatchedArray, ndarray)):
-            tensors = [tensors]
-        tensors = list(chain([self], tensors))
-        batch_dims = get_batch_dims(tensors)
-        check_batch_dims(batch_dims)
-        return BatchedArray(
+        if isinstance(arrays, (BatchedArray, ndarray)):
+            arrays = [arrays]
+        arrays = list(chain([self], arrays))
+        self._check_valid_dims(arrays)
+        return self._create_new_batch(
             np.concatenate(
-                [tensor._data if hasattr(tensor, "_data") else tensor for tensor in tensors],
+                [array._data if hasattr(array, "_data") else array for array in arrays],
                 axis=dim,
             ),
-            batch_dim=batch_dims.pop(),
         )
 
     def cat_(
@@ -2093,60 +1985,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         self.cat_(arrays, dim=self._batch_dim)
 
-    # def chunk_along_batch(self, chunks: int) -> tuple[TBatchedArray, ...]:
-    #     pass
-    #
-    # def extend(self, other: Iterable[BaseBatch]) -> None:
-    #     pass
-    #
-    # def index_select_along_batch(self, index: ndarray | Sequence[int]) -> BaseBatch:
-    #     pass
-    #
-    # def slice_along_batch(
-    #     self, start: int = 0, stop: int | None = None, step: int = 1
-    # ) -> TBatchedArray:
-    #     pass
-    #
-    # def split(
-    #     self, split_size_or_sections: int | Sequence[int], dim: int = 0
-    # ) -> tuple[TBatchedArray, ...]:
-    #     r"""Splits the batch into chunks along a given dimension.
-    #
-    #     Args:
-    #     ----
-    #         split_size_or_sections (int or sequence): Specifies the
-    #             size of a single chunk or list of sizes for each chunk.
-    #         dim (int, optional): Specifies the dimension along which
-    #             to split the array. Default: ``0``
-    #
-    #     Returns:
-    #     -------
-    #         tuple: The batch split into chunks along the given
-    #             dimension.
-    #
-    #     Example usage:
-    #
-    #     .. code-block:: pycon
-    #
-    #         >>> import numpy
-    #         >>> from redcat import BatchedArray
-    #         >>> batch = BatchedArray(numpy.arange(10).reshape(5, 2))
-    #         >>> batch.split(2, dim=0)
-    #         (array([[0, 1], [2, 3]], batch_dim=0),
-    #          array([[4, 5], [6, 7]], batch_dim=0),
-    #          array([[8, 9]], batch_dim=0))
-    #     """
-    #     if isinstance(split_size_or_sections, int):
-    #         split_size_or_sections = np.arange(
-    #             split_size_or_sections, self._data.shape[dim], split_size_or_sections
-    #         )
-    #     return np.split(self, split_size_or_sections)
-    #
-    # def split_along_batch(
-    #     self, split_size_or_sections: int | Sequence[int]
-    # ) -> tuple[TBatchedArray, ...]:
-    #     return self.split(split_size_or_sections, dim=self._batch_dim)
-
     #################
     #     Other     #
     #################
@@ -2154,6 +1992,16 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     def summary(self) -> str:
         dims = ", ".join([f"{key}={value}" for key, value in self._get_kwargs().items()])
         return f"{self.__class__.__qualname__}(dtype={self.dtype}, shape={self.shape}, {dims})"
+
+    def _check_valid_dims(self, arrays: Sequence) -> None:
+        r"""Checks if the dimensions are valid.
+
+        Args:
+        ----
+            arrays (``Sequence``): Specifies the sequence of
+                arrays/batches to check.
+        """
+        check_batch_dims(get_batch_dims(arrays))
 
     def _create_new_batch(self, data: ndarray) -> TBatchedArray:
         return self.__class__(data, **self._get_kwargs())

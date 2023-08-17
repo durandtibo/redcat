@@ -9,6 +9,37 @@ from pytest import mark
 from redcat import BatchedArray
 
 BATCH_CLASSES = (BatchedArray,)
+DTYPES = (int, float)
+SHAPES = ((2, 3), (2, 3, 4), (2, 3, 4, 5))
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dtype", DTYPES)
+def test_array_dtype(cls: type[BatchedArray], dtype: np.dtype) -> None:
+    array = np.ones((2, 3), dtype=dtype)
+    assert cls(array).dtype == array.dtype
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_array_ndim(cls: type[BatchedArray], shape: tuple[int, ...]) -> None:
+    array = np.ones(shape)
+    assert cls(array).ndim == array.ndim
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_array_shape(cls: type[BatchedArray], shape: tuple[int, ...]) -> None:
+    array = np.ones(shape)
+    assert cls(array).shape == array.shape
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_array_size(cls: type[BatchedArray], shape: tuple[int, ...]) -> None:
+    array = np.ones(shape)
+    assert cls(array).size == array.size
+
 
 UNARY_FUNCTIONS = (
     # partial(np.select, dim=0, index=0),
@@ -134,15 +165,15 @@ def test_unary_batched_array_custom_dims(func: Callable) -> None:
 @mark.parametrize("func", PAIRWISE_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_pairwise(func: Callable, cls: type[BatchedArray]) -> None:
-    tensor1 = np.random.rand(2, 3)
-    tensor2 = np.random.rand(2, 3) + 1.0
-    assert func(cls(tensor1), cls(tensor2)).allclose(cls(func(tensor1, tensor2)), equal_nan=True)
+    array1 = np.random.rand(2, 3)
+    array2 = np.random.rand(2, 3) + 1.0
+    assert func(cls(array1), cls(array2)).allclose(cls(func(array1, array2)), equal_nan=True)
 
 
 @mark.parametrize("func", PAIRWISE_FUNCTIONS)
-def test_pairwise_batched_tensor_custom_dims(func: Callable) -> None:
-    tensor1 = np.random.rand(2, 3)
-    tensor2 = np.random.rand(2, 3) + 1.0
-    assert func(BatchedArray(tensor1, batch_dim=1), BatchedArray(tensor2, batch_dim=1)).allclose(
-        BatchedArray(func(tensor1, tensor2), batch_dim=1), equal_nan=True
+def test_pairwise_batched_array_custom_dims(func: Callable) -> None:
+    array1 = np.random.rand(2, 3)
+    array2 = np.random.rand(2, 3) + 1.0
+    assert func(BatchedArray(array1, batch_dim=1), BatchedArray(array2, batch_dim=1)).allclose(
+        BatchedArray(func(array1, array2), batch_dim=1), equal_nan=True
     )

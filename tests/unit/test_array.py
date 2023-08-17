@@ -59,20 +59,16 @@ def test_batched_array_dtype() -> None:
     assert BatchedArray(np.ones((2, 3))).dtype == float
 
 
+def test_batched_array_ndim() -> None:
+    assert BatchedArray(np.ones((2, 3))).ndim == 2
+
+
 def test_batched_array_shape() -> None:
     assert BatchedArray(np.ones((2, 3))).shape == (2, 3)
 
 
-def test_batched_array_dim() -> None:
-    assert BatchedArray(np.ones((2, 3))).dim() == 2
-
-
-def test_batched_array_ndimension() -> None:
-    assert BatchedArray(np.ones((2, 3))).ndimension() == 2
-
-
-def test_batched_array_numel() -> None:
-    assert BatchedArray(np.ones((2, 3))).numel() == 6
+def test_batched_array_size() -> None:
+    assert BatchedArray(np.ones((2, 3))).size == 6
 
 
 #################################
@@ -94,41 +90,9 @@ def test_batched_array_astype_custom_dim() -> None:
     )
 
 
-def test_batched_array_to() -> None:
-    assert (
-        BatchedArray(np.ones((2, 3)))
-        .to(dtype=bool)
-        .equal(BatchedArray(np.ones((2, 3), dtype=bool)))
-    )
-
-
-def test_batched_array_to_custom_dim() -> None:
-    assert (
-        BatchedArray(np.ones((2, 3)), batch_dim=1)
-        .to(dtype=bool)
-        .equal(BatchedArray(np.ones((2, 3), dtype=bool), batch_dim=1))
-    )
-
-
 ###############################
 #     Creation operations     #
 ###############################
-
-
-def test_batched_array_clone() -> None:
-    batch = BatchedArray(np.ones((2, 3)))
-    clone = batch.clone()
-    batch.add_(1)
-    assert batch.equal(BatchedArray(np.full((2, 3), 2.0)))
-    assert clone.equal(BatchedArray(np.ones((2, 3))))
-
-
-def test_batched_array_clone_custom_batch_dim() -> None:
-    assert (
-        BatchedArray(np.ones((2, 3)), batch_dim=1)
-        .clone()
-        .equal(BatchedArray(np.ones((2, 3)), batch_dim=1))
-    )
 
 
 def test_batched_array_copy() -> None:
