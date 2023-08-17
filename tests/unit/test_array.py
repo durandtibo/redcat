@@ -9,7 +9,7 @@ from coola import objects_are_equal
 from numpy import ndarray
 from pytest import mark, raises
 
-from redcat.array import BatchedArray, get_div_rounding_operator
+from redcat.array import BatchedArray
 from redcat.return_types import ValuesIndicesTuple
 
 DTYPES = (bool, int, float)
@@ -2570,21 +2570,3 @@ def test_numpy_sum_keepdim() -> None:
         np.sum(BatchedArray(np.arange(10).reshape(2, 5)), axis=1, keepdims=True),
         np.array([[10], [35]]),
     )
-
-
-###############################################
-#     Tests for get_div_rounding_operator     #
-###############################################
-
-
-def test_get_div_rounding_operator_mode_none() -> None:
-    assert get_div_rounding_operator(None) == np.true_divide
-
-
-def test_get_div_rounding_operator_mode_floor() -> None:
-    assert get_div_rounding_operator("floor") == np.floor_divide
-
-
-def test_get_div_rounding_operator_mode_incorrect() -> None:
-    with raises(RuntimeError, match="Incorrect `rounding_mode`"):
-        get_div_rounding_operator("incorrect")

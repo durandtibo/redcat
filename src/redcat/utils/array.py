@@ -1,14 +1,45 @@
 from __future__ import annotations
 
-__all__ = ["permute_along_axis", "to_array"]
+__all__ = ["get_div_rounding_operator", "permute_along_axis", "to_array"]
 
 from collections.abc import Sequence
+from typing import Callable
 
 import numpy as np
 import torch
 from numpy import ndarray
 
 from redcat.base import BaseBatch
+
+
+def get_div_rounding_operator(mode: str | None) -> Callable:
+    r"""Gets the rounding operator for a division.
+
+    Args:
+    ----
+        mode (str or ``None``, optional): Specifies the
+            type of rounding applied to the result.
+            - ``None``: true division.
+            - ``"floor"``: floor division.
+            Default: ``None``
+
+    Returns:
+    -------
+        ``Callable``: The rounding operator for a division
+
+    Example usage:
+
+    .. code-block:: pycon
+
+        >>> from redcat.utils.array import get_div_rounding_operator
+        >>> get_div_rounding_operator(None)
+        <ufunc 'divide'>
+    """
+    if mode is None:
+        return np.true_divide
+    if mode == "floor":
+        return np.floor_divide
+    raise RuntimeError(f"Incorrect `rounding_mode` {mode}. Valid values are: None and 'floor'")
 
 
 def permute_along_axis(array: ndarray, permutation: ndarray, axis: int = 0) -> ndarray:
