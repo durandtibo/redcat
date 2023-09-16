@@ -216,7 +216,7 @@ def get_available_devices() -> tuple[str, ...]:
     .. code-block:: pycon
 
         >>> from redcat.utils.tensor import get_available_devices
-        >>> get_available_devices()  # doctest:+ELLIPSIS
+        >>> get_available_devices()
         ('cpu'...)
     """
     devices = ["cpu"]
@@ -251,10 +251,10 @@ def get_torch_generator(
         >>> import torch
         >>> from redcat.utils.tensor import get_torch_generator
         >>> generator = get_torch_generator(42)
-        >>> torch.rand(2, 4, generator=generator)  # doctest:+ELLIPSIS
+        >>> torch.rand(2, 4, generator=generator)
         tensor([[...]])
         >>> generator = get_torch_generator(42)
-        >>> torch.rand(2, 4, generator=generator)  # doctest:+ELLIPSIS
+        >>> torch.rand(2, 4, generator=generator)
         tensor([[...]])
     """
     generator = torch.Generator(device)

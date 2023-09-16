@@ -581,7 +581,7 @@ class BatchedTensorSeq(BatchedTensor):
             >>> import torch
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
-            >>> batch.shuffle_along_seq()  # doctest:+ELLIPSIS
+            >>> batch.shuffle_along_seq()
             tensor([[...]], batch_dim=0, seq_dim=1)
         """
         return self.permute_along_seq(torch.randperm(self.seq_len, generator=generator))
@@ -603,7 +603,7 @@ class BatchedTensorSeq(BatchedTensor):
             >>> from redcat import BatchedTensorSeq
             >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
             >>> batch.shuffle_along_seq_()
-            >>> batch  # doctest:+ELLIPSIS
+            >>> batch
             tensor([[...]], batch_dim=0, seq_dim=1)
         """
         self.permute_along_seq_(torch.randperm(self.seq_len, generator=generator))
