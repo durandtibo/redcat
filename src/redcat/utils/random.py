@@ -41,7 +41,7 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
 
         >>> import numpy as np
         >>> from redcat.utils.random import get_random_rng
-        >>> get_random_rng(42)  # doctest:+ELLIPSIS
+        >>> get_random_rng(42)
         <random.Random object at 0x...>
     """
     if isinstance(rng_or_seed, random.Random):
@@ -131,20 +131,20 @@ def randperm(
 
         >>> import numpy as np
         >>> from redcat.utils.random import randperm
-        >>> randperm(10, np.random.default_rng(42))  # doctest:+ELLIPSIS
+        >>> randperm(10, np.random.default_rng(42))
         array([...])
 
     .. code-block:: pycon
 
         >>> from redcat.utils.tensor import get_torch_generator
         >>> from redcat.utils.random import randperm
-        >>> randperm(10, get_torch_generator(42))  # doctest:+ELLIPSIS
+        >>> randperm(10, get_torch_generator(42))
         tensor([...])
 
     .. code-block:: pycon
 
         >>> from redcat.utils.random import randperm
-        >>> randperm(10, 42)  # doctest:+ELLIPSIS
+        >>> randperm(10, 42)
         [...]
     """
     if isinstance(rng_or_seed, torch.Generator):

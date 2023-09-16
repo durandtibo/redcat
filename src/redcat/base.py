@@ -194,7 +194,7 @@ class BaseBatch(Generic[T], ABC):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_batch()  # doctest:+ELLIPSIS
+            >>> batch.shuffle_along_batch()
             tensor([[...]], batch_dim=0)
         """
         return self.permute_along_batch(torch.randperm(self.batch_size, generator=generator))
@@ -216,7 +216,7 @@ class BaseBatch(Generic[T], ABC):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
             >>> batch.shuffle_along_batch_()
-            >>> batch  # doctest:+ELLIPSIS
+            >>> batch
             tensor([[...]], batch_dim=0)
         """
         self.permute_along_batch_(torch.randperm(self.batch_size, generator=generator))

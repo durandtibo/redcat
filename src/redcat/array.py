@@ -161,7 +161,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> import numpy as np
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.empty_like()  # doctest:+ELLIPSIS
+            >>> batch.empty_like()
             array([[...]], batch_dim=0)
         """
         return self._create_new_batch(np.empty_like(self._data, *args, **kwargs))
@@ -1556,7 +1556,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> import numpy as np
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
-            >>> batch.shuffle_along_axis(axis=0)  # doctest:+ELLIPSIS
+            >>> batch.shuffle_along_axis(axis=0)
             array([[...]], batch_dim=0)
         """
         return self.permute_along_axis(
@@ -1588,7 +1588,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             >>> from redcat import BatchedArray
             >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
             >>> batch.shuffle_along_axis_(axis=0)
-            >>> batch  # doctest:+ELLIPSIS
+            >>> batch
             array([[...]], batch_dim=0)
         """
         self.permute_along_axis_(to_array(randperm(self._data.shape[axis], generator)), axis=axis)

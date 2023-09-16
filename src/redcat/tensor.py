@@ -302,7 +302,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.empty_like()  # doctest:+ELLIPSIS
+            >>> batch.empty_like()
             tensor([[...]], batch_dim=0)
         """
         return self._create_new_batch(torch.empty_like(self._data, *args, **kwargs))
@@ -1801,7 +1801,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> import torch
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_dim(dim=0)  # doctest:+ELLIPSIS
+            >>> batch.shuffle_along_dim(dim=0)
             tensor([[...]], batch_dim=0)
         """
         return self.permute_along_dim(
@@ -1831,7 +1831,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> from redcat import BatchedTensor
             >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
             >>> batch.shuffle_along_dim_(dim=0)
-            >>> batch  # doctest:+ELLIPSIS
+            >>> batch
             tensor([[...]], batch_dim=0)
         """
         self.permute_along_dim_(torch.randperm(self._data.shape[dim], generator=generator), dim=dim)

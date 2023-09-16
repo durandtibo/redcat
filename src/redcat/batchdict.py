@@ -257,7 +257,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ...         "key2": BatchList(["a", "b"]),
             ...     }
             ... )
-            >>> batch.shuffle_along_seq()  # doctest:+ELLIPSIS
+            >>> batch.shuffle_along_seq()
             BatchDict(
               (key1): tensor([[...]], batch_dim=0, seq_dim=1)
               (key2): BatchList(data=['a', 'b'])
@@ -301,7 +301,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             ...     }
             ... )
             >>> batch.shuffle_along_seq()
-            >>> batch  # doctest:+ELLIPSIS
+            >>> batch
             BatchDict(
               (key1): tensor([[...]], batch_dim=0, seq_dim=1)
               (key2): BatchList(data=['a', 'b'])
