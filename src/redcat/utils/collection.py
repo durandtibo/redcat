@@ -20,7 +20,7 @@ def to_list(data: list | tuple | Tensor | ndarray | BaseBatch) -> list:
     -------
         list: The data.
 
-     Example usage:
+    Example usage:
 
     .. code-block:: pycon
 
