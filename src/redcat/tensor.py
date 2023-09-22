@@ -1869,7 +1869,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [4, 3, 2, 1, 0]], batch_dim=0))
         """
         out = torch.sort(self._data, *args, **kwargs)
-        return type(out)([BatchedTensor(data=o, batch_dim=self._batch_dim) for o in out])
+        return type(out)([self._create_new_batch(o) for o in out])
 
     def sort_along_batch(self, *args, **kwargs) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along the batch dimension in
