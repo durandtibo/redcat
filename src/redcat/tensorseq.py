@@ -636,9 +636,9 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.sort_along_seq(descending=True)
             torch.return_types.sort(
             values=tensor([[4, 3, 2, 1, 0],
-                    [9, 8, 7, 6, 5]], batch_dim=0),
+                    [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1),
             indices=tensor([[4, 3, 2, 1, 0],
-                    [4, 3, 2, 1, 0]], batch_dim=0))
+                    [4, 3, 2, 1, 0]], batch_dim=0, seq_dim=1))
         """
         return self.sort(self._seq_dim, *args, **kwargs)
 
