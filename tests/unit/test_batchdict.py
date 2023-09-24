@@ -721,6 +721,59 @@ def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> N
     )
 
 
+def test_batched_tensor_seq_repeat_along_seq_2() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .repeat_along_seq(2)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(
+                        torch.tensor(
+                            [[0, 1, 2, 3, 4, 0, 1, 2, 3, 4], [5, 6, 7, 8, 9, 5, 6, 7, 8, 9]]
+                        )
+                    ),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_repeat_along_seq_3() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .repeat_along_seq(3)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(
+                        torch.tensor(
+                            [
+                                [0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4],
+                                [5, 6, 7, 8, 9, 5, 6, 7, 8, 9, 5, 6, 7, 8, 9],
+                            ]
+                        )
+                    ),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_repeat_along_seq_empty() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
+        .repeat_along_seq(2)
+        .equal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
+    )
+
+
 def test_batch_dict_select_along_batch() -> None:
     assert BatchDict(
         {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
