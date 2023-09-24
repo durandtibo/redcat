@@ -848,6 +848,108 @@ def test_batch_dict_slice_along_batch_start_1_stop_4_step_2() -> None:
     )
 
 
+def test_batch_dict_slice_along_seq() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .slice_along_seq()
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_slice_along_seq_start_2() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .slice_along_seq(start=2)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[2, 3, 4], [7, 8, 9]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_slice_along_seq_stop_3() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .slice_along_seq(stop=3)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[0, 1, 2], [5, 6, 7]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_slice_along_seq_stop_100() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .slice_along_seq(stop=100)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_slice_along_seq_step_2() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .slice_along_seq(step=2)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[0, 2, 4], [5, 7, 9]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_slice_along_seq_start_1_stop_4_step_2() -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .slice_along_seq(start=1, stop=4, step=2)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[1, 3], [6, 8]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
 def test_batch_dict_split_along_batch_5() -> None:
     assert objects_are_equal(
         BatchDict(

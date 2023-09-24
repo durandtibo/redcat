@@ -434,7 +434,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             {key: value.index_select_along_batch(index) for key, value in self._data.items()}
         )
 
-    def repeat_along_seq(self, repeats: int) -> BatchDict:
+    def repeat_along_seq(self, repeats: int) -> TBatchDict:
         r"""Repeats the batch along the sequence dimension.
 
         Args:
@@ -481,6 +481,61 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         return self.__class__(
             {key: value.slice_along_batch(start, stop, step) for key, value in self._data.items()}
         )
+
+    def slice_along_seq(self, start: int = 0, stop: int | None = None, step: int = 1) -> TBatchDict:
+        r"""Slices the batch in the sequence dimension.
+
+        Args:
+        ----
+            start (int, optional): Specifies the index where the
+                slicing of object starts. Default: ``0``
+            stop (int, optional): Specifies the index where the
+                slicing of object stops. ``None`` means last.
+                Default: ``None``
+            step (int, optional): Specifies the increment between
+                each index for slicing. Default: ``1``
+
+        Returns:
+        -------
+            ``BatchedTensorSeq``: A slice of the current batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.slice_along_seq(start=2)
+            BatchDict(
+              (key1): tensor([[2, 3, 4],
+                        [7, 8, 9]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+            >>> batch.slice_along_seq(stop=3)
+            BatchDict(
+              (key1): tensor([[0, 1, 2],
+                        [5, 6, 7]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+            >>> batch.slice_along_seq(step=2)
+            BatchDict(
+              (key1): tensor([[0, 2, 4],
+                        [5, 7, 9]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+        """
+        out = {}
+        for key, val in self._data.items():
+            if hasattr(val, "slice_along_seq"):
+                val = val.slice_along_seq(start, stop, step)
+            out[key] = val
+        return self.__class__(out)
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
