@@ -379,6 +379,44 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
             out[key] = val
         return self.__class__(out)
 
+    def repeat_along_seq(self, repeats: int) -> BatchDict:
+        r"""Repeats the batch along the sequence dimension.
+
+        Args:
+        ----
+            repeats (int): Specifies the number of times to repeat
+                the batch along the sequence dimension.
+
+        Returns:
+        -------
+            ``BatchDict``: A repeated version of the input batch.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.repeat_along_seq(2)
+            BatchDict(
+              (key1): tensor([[0, 1, 2, 3, 4, 0, 1, 2, 3, 4],
+                        [5, 6, 7, 8, 9, 5, 6, 7, 8, 9]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+        """
+        out = {}
+        for key, val in self._data.items():
+            if hasattr(val, "repeat_along_seq"):
+                val = val.repeat_along_seq(repeats)
+            out[key] = val
+        return self.__class__(out)
+
     def cat_along_seq_(self, batches: BatchDict | Sequence[BatchDict]) -> None:
         r"""Concatenates the data of the batch(es) to the current batch
         along the sequence dimension and creates a new batch.

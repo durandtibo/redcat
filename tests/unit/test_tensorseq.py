@@ -7449,6 +7449,14 @@ def test_batched_tensor_seq_masked_fill_incorrect_seq_dim() -> None:
         batch.masked_fill(BatchedTensorSeq(torch.zeros(2, 2, 2), seq_dim=2), 0)
 
 
+def test_batched_tensor_seq_repeat_along_seq_repeats_0() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(10, dtype=torch.float).view(2, 5))
+        .repeat_along_seq(repeats=0)
+        .equal(BatchedTensorSeq(torch.zeros(2, 0)))
+    )
+
+
 def test_batched_tensor_seq_repeat_along_seq_repeats_1() -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))
