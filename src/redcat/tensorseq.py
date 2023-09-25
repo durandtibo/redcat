@@ -516,7 +516,7 @@ class BatchedTensorSeq(BatchedTensor):
         Args:
         ----
             permutation (sequence or ``torch.Tensor`` of type long
-                and shape ``(dimension,)``): Specifies the permutation
+                and shape ``(seq_len,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
 
@@ -543,7 +543,7 @@ class BatchedTensorSeq(BatchedTensor):
         Args:
         ----
             permutation (sequence or ``torch.Tensor`` of type long
-                and shape ``(dimension,)``): Specifies the permutation
+                and shape ``(seq_len,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
 
