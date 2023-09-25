@@ -14,6 +14,7 @@ from collections.abc import (
 )
 from typing import Any, TypeVar
 
+import numpy as np
 import torch
 from coola import objects_are_allclose, objects_are_equal
 from coola.utils.format import str_indent, str_mapping
@@ -547,6 +548,45 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         ):
             batches.append(self.__class__({key: value for key, value in zip(keys, values)}))
         return tuple(batches)
+
+    def take_along_seq(self, indices: BaseBatch | np.ndarray | Tensor | Sequence) -> TBatchDict:
+        r"""Takes values along the sequence dimension.
+
+        Args:
+        ----
+            indices (``BaseBatch`` or ``numpy.ndarray`` or
+                ``torch.Tensor`` or `` Specifies the indices to take
+                along the batch dimension.
+
+        Returns:
+        -------
+            ``BatchDict``: The batch with the selected data.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.take_along_seq(torch.tensor([[3, 0, 1], [2, 3, 4]]))
+            BatchDict(
+              (key1): tensor([[3, 0, 1],
+                        [7, 8, 9]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+        """
+        out = {}
+        for key, val in self._data.items():
+            if hasattr(val, "take_along_seq"):
+                val = val.take_along_seq(indices)
+            out[key] = val
+        return self.__class__(out)
 
     ########################
     #     mini-batches     #

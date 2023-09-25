@@ -1025,6 +1025,34 @@ def test_batch_dict_split_along_batch_split_size_list_empty() -> None:
 #         ).split_along_batch(split_size_or_sections=0)
 
 
+def test_batch_dict_take_along_seq() -> None:
+    assert (
+        BatchDict(
+            {
+                "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+                "key2": BatchList(["a", "b"]),
+            }
+        )
+        .take_along_seq(torch.tensor([[3, 0, 1], [2, 3, 4]]))
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[3, 0, 1], [7, 8, 9]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_take_along_seq_empty() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
+        .take_along_seq(torch.tensor([[3, 0, 1], [2, 3, 4]]))
+        .equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+    )
+
+
 ########################
 #     mini-batches     #
 ########################
