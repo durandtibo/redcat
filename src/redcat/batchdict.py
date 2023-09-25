@@ -22,12 +22,13 @@ from torch import Tensor
 
 from redcat.base import BaseBatch
 
+TBaseBatch = TypeVar("TBaseBatch", bound=BaseBatch)
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchDict = TypeVar("TBatchDict", bound="BatchDict")
 
 
-class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
+class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     r"""Implements a batch object to represent a dictionary of batches.
 
     Args:
@@ -48,7 +49,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         ... )
     """
 
-    def __init__(self, data: dict[Hashable, BaseBatch]) -> None:
+    def __init__(self, data: dict[Hashable, TBaseBatch]) -> None:
         if not isinstance(data, dict):
             raise TypeError(f"Incorrect type. Expect a dict but received {type(data)}")
         check_same_batch_size(data)
@@ -63,7 +64,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         return next(iter(self._data.values())).batch_size
 
     @property
-    def data(self) -> dict[Hashable, BaseBatch]:
+    def data(self) -> dict[Hashable, TBaseBatch]:
         return self._data
 
     #################################
@@ -601,7 +602,7 @@ class BatchDict(BaseBatch[dict[Hashable, BaseBatch]]):
         return f"{self.__class__.__qualname__}(\n  {str_indent(data_str)}\n)"
 
 
-def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
+def check_same_batch_size(data: dict[Hashable, TBaseBatch]) -> None:
     r"""Checks if the all the batches in a group have the same batch
     size.
 
@@ -672,7 +673,7 @@ def check_same_keys(data1: dict, data2: dict) -> None:
         raise RuntimeError(f"Keys do not match: ({keys1} vs {keys2})")
 
 
-def get_seq_lens(data: dict[Hashable, BaseBatch]) -> set[int]:
+def get_seq_lens(data: dict[Hashable, TBaseBatch]) -> set[int]:
     r"""Gets the sequence lengths from the inputs.
 
     Args:
