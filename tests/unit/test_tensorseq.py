@@ -170,6 +170,14 @@ def test_batched_tensor_seq_to_custom_dims() -> None:
     )
 
 
+def test_batched_tensor_seq_to_data() -> None:
+    assert BatchedTensorSeq(torch.ones(2, 3)).to_data().equal(torch.ones(2, 3))
+
+
+def test_batched_tensor_seq_to_data_custom_dim() -> None:
+    assert BatchedTensorSeq.from_seq_batch(torch.ones(2, 3)).to_data().equal(torch.ones(2, 3))
+
+
 ###############################
 #     Creation operations     #
 ###############################

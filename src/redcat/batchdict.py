@@ -102,6 +102,13 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     def values(self) -> ValuesView:
         return self._data.values()
 
+    #################################
+    #     Conversion operations     #
+    #################################
+
+    def to_data(self) -> dict:
+        return {key: value.to_data() for key, value in self._data.items()}
+
     ###############################
     #     Creation operations     #
     ###############################

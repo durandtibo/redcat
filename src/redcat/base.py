@@ -28,6 +28,30 @@ class BaseBatch(Generic[T], ABC):
     def data(self) -> T:
         r"""The data in the batch."""
 
+    #################################
+    #     Conversion operations     #
+    #################################
+
+    @abstractmethod
+    def to_data(self) -> Any:
+        r"""Returns the internal data without the batch wrapper.
+
+        Returns:
+        -------
+            ``Any``: The internal data.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchedTensor
+            >>> batch = BatchedTensor(torch.ones(2, 3))
+            >>> data = batch.to_data()
+            >>> data
+            tensor([[1., 1., 1.], [1., 1., 1.]])
+        """
+
     ###############################
     #     Creation operations     #
     ###############################
@@ -49,8 +73,7 @@ class BaseBatch(Generic[T], ABC):
             >>> batch = BatchedTensor(torch.ones(2, 3))
             >>> batch_copy = batch.clone()
             >>> batch_copy
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
+            tensor([[1., 1., 1.], [1., 1., 1.]], batch_dim=0)
         """
 
     #################################

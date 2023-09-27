@@ -171,6 +171,20 @@ def test_batch_dict_values() -> None:
     )
 
 
+#################################
+#     Conversion operations     #
+#################################
+
+
+def test_batch_dict_to_data() -> None:
+    assert objects_are_equal(
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        ).to_data(),
+        {"key1": torch.arange(10).view(2, 5), "key2": ["a", "b"]},
+    )
+
+
 ###############################
 #     Creation operations     #
 ###############################

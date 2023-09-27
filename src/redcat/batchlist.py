@@ -54,6 +54,13 @@ class BatchList(BaseBatch[list[T]]):
     def data(self) -> list[T]:
         return self._data
 
+    #################################
+    #     Conversion operations     #
+    #################################
+
+    def to_data(self) -> list[T]:
+        return self._data
+
     ###############################
     #     Creation operations     #
     ###############################
