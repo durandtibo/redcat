@@ -74,7 +74,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     def __contains__(self, key: Hashable) -> bool:
         return key in self._data
 
-    def __getitem__(self, key: Hashable) -> BaseBatch:
+    def __getitem__(self, key: Hashable) -> TBaseBatch:
         return self._data[key]
 
     def __iter__(self) -> Iterator[Hashable]:
@@ -83,14 +83,14 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     def __len__(self) -> int:
         return len(self._data)
 
-    def __setitem__(self, key: Hashable, value: BaseBatch) -> None:
+    def __setitem__(self, key: Hashable, value: TBaseBatch) -> None:
         if value.batch_size != self.batch_size:
             raise RuntimeError(
                 f"Incorrect batch size. Expected {self.batch_size} but received {value.batch_size}"
             )
         self._data[key] = value
 
-    def get(self, key: Hashable, default: BaseBatch | None = None) -> BaseBatch | None:
+    def get(self, key: Hashable, default: TBaseBatch | None = None) -> TBaseBatch | None:
         return self._data.get(key, default)
 
     def items(self) -> ItemsView:
@@ -330,12 +330,12 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
 
-    def append(self, other: BatchDict) -> None:
+    def append(self, other: TBaseBatch) -> None:
         check_same_keys(self.data, other.data)
         for key, value in self._data.items():
             value.append(other[key])
 
-    def cat_along_seq(self, batches: BatchDict | Sequence[BatchDict]) -> TBatchDict:
+    def cat_along_seq(self, batches: TBaseBatch | Sequence[TBaseBatch]) -> TBatchDict:
         r"""Concatenates the data of the batch(es) to the current batch
         along the sequence dimension and creates a new batch.
 
@@ -381,7 +381,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             out[key] = val
         return self.__class__(out)
 
-    def cat_along_seq_(self, batches: BatchDict | Sequence[BatchDict]) -> None:
+    def cat_along_seq_(self, batches: TBaseBatch | Sequence[TBaseBatch]) -> None:
         r"""Concatenates the data of the batch(es) to the current batch
         along the sequence dimension and creates a new batch.
 
@@ -550,7 +550,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             batches.append(self.__class__({key: value for key, value in zip(keys, values)}))
         return tuple(batches)
 
-    def take_along_seq(self, indices: BaseBatch | np.ndarray | Tensor | Sequence) -> TBatchDict:
+    def take_along_seq(self, indices: TBaseBatch | np.ndarray | Tensor | Sequence) -> TBatchDict:
         r"""Takes values along the sequence dimension.
 
         Args:
@@ -602,7 +602,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         return f"{self.__class__.__qualname__}(\n  {str_indent(data_str)}\n)"
 
 
-def check_same_batch_size(data: dict[Hashable, TBaseBatch]) -> None:
+def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
     r"""Checks if the all the batches in a group have the same batch
     size.
 
@@ -673,7 +673,7 @@ def check_same_keys(data1: dict, data2: dict) -> None:
         raise RuntimeError(f"Keys do not match: ({keys1} vs {keys2})")
 
 
-def get_seq_lens(data: dict[Hashable, TBaseBatch]) -> set[int]:
+def get_seq_lens(data: dict[Hashable, BaseBatch]) -> set[int]:
     r"""Gets the sequence lengths from the inputs.
 
     Args:
