@@ -131,6 +131,14 @@ def test_batched_tensor_to_custom_dim() -> None:
     )
 
 
+def test_batched_tensor_to_data() -> None:
+    assert BatchedTensor(torch.ones(2, 3)).to_data().equal(torch.ones(2, 3))
+
+
+def test_batched_tensor_to_data_custom_dim() -> None:
+    assert BatchedTensor(torch.ones(2, 3), batch_dim=1).to_data().equal(torch.ones(2, 3))
+
+
 ###############################
 #     Creation operations     #
 ###############################

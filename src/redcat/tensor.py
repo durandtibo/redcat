@@ -250,6 +250,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._create_new_batch(self._data.to(*args, **kwargs))
 
+    def to_data(self) -> Tensor:
+        return self._data
+
     ###############################
     #     Creation operations     #
     ###############################

@@ -31,6 +31,15 @@ def test_batch_list_batch_size(batch_size: int) -> None:
     assert BatchList(["a"] * batch_size).batch_size == batch_size
 
 
+#################################
+#     Conversion operations     #
+#################################
+
+
+def test_batch_list_to_data() -> None:
+    assert BatchList(["a", "b", 42]).to_data() == ["a", "b", 42]
+
+
 ###############################
 #     Creation operations     #
 ###############################
