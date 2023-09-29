@@ -2,7 +2,6 @@ from __future__ import annotations
 
 __all__ = ["BatchDict", "check_same_batch_size", "check_same_keys", "get_seq_lens"]
 
-import copy
 from collections.abc import (
     Hashable,
     ItemsView,
@@ -47,6 +46,12 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         ...         "key2": BatchList(["a", "b"]),
         ...     }
         ... )
+        >>> batch
+        BatchDict(
+          (key1): tensor([[0, 1, 2, 3, 4],
+                    [5, 6, 7, 8, 9]], batch_dim=0, seq_dim=1)
+          (key2): BatchList(data=['a', 'b'])
+        )
     """
 
     def __init__(self, data: dict[Hashable, TBaseBatch]) -> None:
@@ -114,7 +119,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     ###############################
 
     def clone(self) -> TBatchDict:
-        return self.__class__(copy.deepcopy(self._data))
+        return self.__class__({key: batch.clone() for key, batch in self._data.items()})
 
     #################################
     #     Comparison operations     #
