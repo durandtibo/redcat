@@ -36,6 +36,8 @@ class BatchList(BaseBatch[list[T]]):
 
         >>> from redcat import BatchList
         >>> batch = BatchList([1, 2, 3])
+        >>> batch
+        BatchList(data=[1, 2, 3])
     """
 
     def __init__(self, data: list[T]) -> None:
@@ -65,7 +67,7 @@ class BatchList(BaseBatch[list[T]]):
     #     Creation operations     #
     ###############################
 
-    def clone(self, *args, **kwargs) -> TBatchList:
+    def clone(self) -> TBatchList:
         return self._create_new_batch(copy.deepcopy(self._data))
 
     #################################

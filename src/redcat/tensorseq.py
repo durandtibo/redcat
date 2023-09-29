@@ -73,6 +73,9 @@ class BatchedTensorSeq(BatchedTensor):
         >>> import torch
         >>> from redcat import BatchedTensorSeq
         >>> batch = BatchedTensorSeq(torch.arange(10).view(2, 5))
+        >>> batch
+        tensor([[0, 1, 2, 3, 4],
+                [5, 6, 7, 8, 9]], batch_dim=0, seq_dim=1)
     """
 
     def __init__(self, data: Any, *, batch_dim: int = 0, seq_dim: int = 1, **kwargs) -> None:
