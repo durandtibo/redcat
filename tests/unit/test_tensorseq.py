@@ -7375,7 +7375,7 @@ def test_batched_tensor_seq_index_select_along_batch_extra_dims() -> None:
     )
 
 
-@mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
+@mark.parametrize("index", (torch.tensor([2, 0]), torch.tensor([[2, 0], [2, 0]]), [2, 0], (2, 0)))
 def test_batched_tensor_seq_index_select_along_seq(
     index: Tensor | list[int] | tuple[int, ...]
 ) -> None:
@@ -7401,6 +7401,26 @@ def test_batched_tensor_seq_index_select_along_seq_extra_dims() -> None:
         .equal(
             BatchedTensorSeq(
                 torch.tensor([[[4, 5], [0, 1]], [[14, 15], [10, 11]]]), batch_dim=2, seq_dim=1
+            )
+        )
+    )
+
+
+def test_batched_tensor_seq_index_select_along_seq_2d_extra_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(20).view(2, 5, 2))
+        .index_select_along_seq(torch.tensor([[2, 0], [4, 3]]))
+        .equal(BatchedTensorSeq(torch.tensor([[[4, 5], [0, 1]], [[18, 19], [16, 17]]])))
+    )
+
+
+def test_batched_tensor_seq_index_select_along_seq_2d_custom_dims_extra_dims() -> None:
+    assert (
+        BatchedTensorSeq(torch.arange(20).view(2, 5, 2), batch_dim=2, seq_dim=1)
+        .index_select_along_seq(torch.tensor([[2, 0], [4, 3]]))
+        .equal(
+            BatchedTensorSeq(
+                torch.tensor([[[4, 9], [0, 7]], [[14, 19], [10, 17]]]), batch_dim=2, seq_dim=1
             )
         )
     )
