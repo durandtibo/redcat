@@ -22,6 +22,7 @@ from redcat.utils.tensor import (
     align_to_batch_seq,
     align_to_seq_batch,
     compute_batch_seq_permutation,
+    to_tensor,
 )
 
 HANDLED_FUNCTIONS = {
@@ -1251,8 +1252,9 @@ class BatchedTensorSeq(BatchedTensor):
 
         Args:
         ----
-            index (``torch.Tensor`` or list or tuple): Specifies the
-                indices to select.
+            index (``torch.Tensor`` of type long and shape
+                ``(seq_len,)`` or ``(batch_size, seq_len,)`` or
+                ``Sequence``): Specifies the indices to select.
 
         Returns:
         -------
@@ -1272,8 +1274,20 @@ class BatchedTensorSeq(BatchedTensor):
             >>> batch.index_select_along_seq(torch.tensor([4, 3, 2, 1, 0]))
             tensor([[4, 3, 2, 1, 0],
                     [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1)
+            >>> batch.index_select_along_seq(torch.tensor([[2, 1, 3, 0, 4], [4, 3, 2, 1, 0]]))
+            tensor([[2, 1, 3, 0, 4],
+                    [9, 8, 7, 6, 5]], batch_dim=0, seq_dim=1)
         """
-        return self.index_select(self._seq_dim, index)
+        index = to_tensor(index)
+        if index.ndim == 1:
+            return self.index_select(self._seq_dim, index)
+        data = self.align_to_batch_seq().data
+        seq_len = index.shape[1]
+        batch_index = torch.arange(self.batch_size).repeat_interleave(seq_len)
+        index = index.flatten()
+        return self.__class__(
+            data[batch_index, index].view(self.batch_size, seq_len, *data.shape[2:])
+        ).align_as(self)
 
     def repeat_along_seq(self, repeats: int) -> BatchedTensorSeq:
         r"""Repeats the batch along the sequence dimension.
