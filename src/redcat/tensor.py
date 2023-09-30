@@ -15,7 +15,7 @@ from torch import Tensor
 from redcat.base import BaseBatch
 from redcat.types import IndexType
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
-from redcat.utils.tensor import permute_along_dim, to_tensor
+from redcat.utils.tensor import to_tensor
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -1748,9 +1748,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [0, 1],
                     [8, 9]], batch_dim=0)
         """
-        return self._create_new_batch(
-            permute_along_dim(tensor=self._data, permutation=to_tensor(permutation), dim=dim)
-        )
+        return self.index_select(dim=dim, index=permutation)
 
     def permute_along_dim_(self, permutation: Sequence[int] | Tensor, dim: int) -> None:
         r"""Permutes the data/batch along a given dimension.
@@ -1779,9 +1777,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [0, 1],
                     [8, 9]], batch_dim=0)
         """
-        self._data = permute_along_dim(
-            tensor=self._data, permutation=to_tensor(permutation), dim=dim
-        )
+        self._data = self.permute_along_dim(dim=dim, permutation=permutation).data
 
     def shuffle_along_dim(
         self, dim: int, generator: torch.Generator | None = None
@@ -1810,8 +1806,8 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch.shuffle_along_dim(dim=0)
             tensor([[...]], batch_dim=0)
         """
-        return self.permute_along_dim(
-            torch.randperm(self._data.shape[dim], generator=generator), dim=dim
+        return self.index_select(
+            dim=dim, index=torch.randperm(self._data.shape[dim], generator=generator)
         )
 
     def shuffle_along_dim_(self, dim: int, generator: torch.Generator | None = None) -> None:
@@ -1840,7 +1836,7 @@ class BatchedTensor(BaseBatch[Tensor]):
             >>> batch
             tensor([[...]], batch_dim=0)
         """
-        self.permute_along_dim_(torch.randperm(self._data.shape[dim], generator=generator), dim=dim)
+        self._data = self.shuffle_along_dim(dim=dim, generator=generator).data
 
     def sort(self, *args, **kwargs) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along a given dimension in
