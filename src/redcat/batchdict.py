@@ -448,6 +448,56 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             {key: value.index_select_along_batch(index) for key, value in self._data.items()}
         )
 
+    def index_select_along_seq(self, index: Tensor | Sequence[int]) -> TBatchDict:
+        r"""Slices the batch along the sequence dimension at the given
+        indices.
+
+        Args:
+        ----
+            index (``torch.Tensor`` of type long and shape
+                ``(seq_len,)`` or ``(batch_size, seq_len,)`` or
+                ``Sequence``): Specifies the indices to select.
+
+        Returns:
+        -------
+            ``BatchDict``: A new batch sliced along the sequence
+                dimension at the given indices.
+
+        Example usage:
+
+        .. code-block:: pycon
+
+            >>> import torch
+            >>> from redcat import BatchDict, BatchList, BatchedTensorSeq
+            >>> batch = BatchDict(
+            ...     {
+            ...         "key1": BatchedTensorSeq(torch.arange(10).view(2, 5)),
+            ...         "key2": BatchList(["a", "b"]),
+            ...     }
+            ... )
+            >>> batch.index_select_along_seq([2, 4])
+            BatchDict(
+              (key1): tensor([[2, 4], [7, 9]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+            >>> batch.index_select_along_seq(torch.tensor([2, 4]))
+            BatchDict(
+              (key1): tensor([[2, 4], [7, 9]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+            >>> batch.index_select_along_seq(torch.tensor([[2, 4], [4, 3]]))
+            BatchDict(
+              (key1): tensor([[2, 4], [9, 8]], batch_dim=0, seq_dim=1)
+              (key2): BatchList(data=['a', 'b'])
+            )
+        """
+        out = {}
+        for key, val in self._data.items():
+            if hasattr(val, "index_select_along_seq"):
+                val = val.index_select_along_seq(index)
+            out[key] = val
+        return self.__class__(out)
+
     def repeat_along_seq(self, repeats: int) -> TBatchDict:
         r"""Repeats the batch along the sequence dimension.
 

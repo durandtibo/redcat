@@ -735,6 +735,32 @@ def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> N
     )
 
 
+@mark.parametrize("index", (torch.tensor([2, 0]), torch.tensor([[2, 0], [2, 0]]), [2, 0], (2, 0)))
+def test_batch_dict_index_select_along_seq(index: Tensor | Sequence[int]) -> None:
+    assert (
+        BatchDict(
+            {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
+        )
+        .index_select_along_seq(index)
+        .equal(
+            BatchDict(
+                {
+                    "key1": BatchedTensorSeq(torch.tensor([[2, 0], [7, 5]])),
+                    "key2": BatchList(["a", "b"]),
+                }
+            )
+        )
+    )
+
+
+def test_batch_dict_index_select_along_seq_missing() -> None:
+    assert (
+        BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
+        .index_select_along_seq([2, 0])
+        .equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+    )
+
+
 def test_batched_tensor_seq_repeat_along_seq_2() -> None:
     assert (
         BatchDict(
