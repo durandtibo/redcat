@@ -16,6 +16,7 @@ from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq, BatchList
 from redcat.tensor import IndexType
 from redcat.tensorseq import check_data_and_dims, from_sequences
 from redcat.utils.tensor import get_available_devices, get_torch_generator
+from tests.conftest import torch_greater_equal_1_13
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
 
@@ -1780,6 +1781,7 @@ def test_batched_tensor_seq_argsort_descending_true() -> None:
     )
 
 
+@torch_greater_equal_1_13
 def test_batched_tensor_seq_argsort_stable_true() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).argsort(stable=True),
@@ -1844,6 +1846,7 @@ def test_batched_tensor_seq_argsort_along_batch_descending_true() -> None:
     )
 
 
+@torch_greater_equal_1_13
 def test_batched_tensor_seq_argsort_along_batch_stable_true() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(
@@ -1878,6 +1881,7 @@ def test_batched_tensor_seq_argsort_along_seq_descending_true() -> None:
     )
 
 
+@torch_greater_equal_1_13
 def test_batched_tensor_seq_argsort_along_seq_stable_true() -> None:
     assert objects_are_equal(
         BatchedTensorSeq(torch.tensor([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).argsort_along_seq(
