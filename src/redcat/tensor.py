@@ -1359,13 +1359,14 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def argsort(self, *args, **kwargs) -> TBatchedTensor:
+    def argsort(self, dim: int = -1, **kwargs) -> TBatchedTensor:
         r"""Returns the indices that sort the batch along a given
         dimension in monotonic order by value.
 
         Args:
         ----
-            *args: Variable length argument list.
+            dim (int, optional): Specifies the dimension to sort
+                along. Default: ``-1``
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
@@ -1384,15 +1385,14 @@ class BatchedTensor(BaseBatch[Tensor]):
             tensor([[4, 3, 2, 1, 0],
                     [4, 3, 2, 1, 0]], batch_dim=0)
         """
-        return self._create_new_batch(self._data.argsort(*args, **kwargs))
+        return self._create_new_batch(torch.argsort(self._data, dim=dim, **kwargs))
 
-    def argsort_along_batch(self, *args, **kwargs) -> TBatchedTensor:
+    def argsort_along_batch(self, **kwargs) -> TBatchedTensor:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
         Args:
         ----
-            *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
@@ -1414,7 +1414,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                     [1, 1],
                     [0, 0]], batch_dim=0)
         """
-        return self.argsort(self._batch_dim, *args, **kwargs)
+        return self.argsort(dim=self._batch_dim, **kwargs)
 
     def cumprod(self, dim: int, *args, **kwargs) -> TBatchedTensor:
         r"""Computes the cumulative product of elements of the current
