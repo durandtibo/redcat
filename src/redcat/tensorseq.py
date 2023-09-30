@@ -351,13 +351,12 @@ class BatchedTensorSeq(BatchedTensor):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def argsort_along_seq(self, *args, **kwargs) -> BatchedTensorSeq:
+    def argsort_along_seq(self, **kwargs) -> BatchedTensorSeq:
         r"""Sorts the elements of the batch along the sequence dimension
         in monotonic order by value.
 
         Args:
         ----
-            *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
@@ -376,7 +375,7 @@ class BatchedTensorSeq(BatchedTensor):
             tensor([[4, 3, 2, 1, 0],
                     [4, 3, 2, 1, 0]], batch_dim=0, seq_dim=1)
         """
-        return self.argsort(self._seq_dim, *args, **kwargs)
+        return self.argsort(dim=self._seq_dim, **kwargs)
 
     def cumprod_along_seq(self, *args, **kwargs) -> BatchedTensorSeq:
         r"""Computes the cumulative product of elements of the current

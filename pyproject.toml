@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "redcat"
-version = "0.0.15"
+version = "0.0.16a0"
 description = "A library to manipulate batches of examples"
 readme = "README.md"
 authors = ["Thibaut Durand <durand.tibo+gh@gmail.com>"]
@@ -39,6 +39,7 @@ torch = ">=1.11,<2.1"  # TODO: make optional
 black = "^23.9"
 coverage = { extras = ["toml"], version = "^7.3" }
 docformatter = { extras = ["tomli"], version = "^1.7" }
+packaging = "^23.1"
 pre-commit = "^3.4"
 pygments = "^2.16"
 pylint = "^2.17"
