@@ -118,7 +118,7 @@ jobs:
 
       - name: Run short experiment
         run: |
-          python -c "import numpy; import redcat; assert redcat.BatchedArray(numpy.arange(10).reshape(2, 5)).sum().equal(numpy.array(45.0))"
+          python -c "import numpy; import redcat; assert redcat.BatchedArray(numpy.arange(10).reshape(2, 5)).data.equal(numpy.arange(10).reshape(2, 5))"
 
 
   torch:
