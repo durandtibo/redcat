@@ -5,7 +5,7 @@ on:
   workflow_dispatch:  # manual trigger
 
 jobs:
-  package:
+  all:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
@@ -32,7 +32,7 @@ jobs:
         run: |
           python -c "import redcat; assert redcat.BatchList([1, 2, 3, 4, 5]).slice_along_batch(step=2).equal(redcat.BatchList([1, 3, 5]))"
 
-  package-all:
+  min:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
@@ -59,7 +59,7 @@ jobs:
         run: |
           python -c "import torch; import redcat; assert redcat.BatchedTensor(torch.arange(10).view(2, 5)).sum().equal(torch.tensor(45.0))"
 
-  package-coola:
+  coola:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
@@ -68,7 +68,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.9', '3.10', '3.11' ]
-        coola-version: [ 0.0.21, 0.0.20 ]
+        coola-version: [ 0.0.24, 0.0.23, 0.0.22, 0.0.21, 0.0.20 ]
 
     steps:
       - name: Checkout
@@ -87,41 +87,7 @@ jobs:
         run: |
           python -c "import redcat; assert redcat.BatchList([1, 2, 3, 4, 5]).slice_along_batch(step=2).equal(redcat.BatchList([1, 3, 5]))"
 
-#  package-numpy:
-#    runs-on: ${{ matrix.os }}
-#    timeout-minutes: 10
-#    strategy:
-#      max-parallel: 8
-#      fail-fast: false
-#      matrix:
-#        os: [ ubuntu-latest ]
-#        python-version: [ '3.9', '3.10', '3.11' ]
-#        numpy-version: [ 1.25.2, 1.24.3, 1.23.5, 1.22.4, 1.21.6 ]
-#        exclude:
-#          - numpy-version: 1.21.6
-#            python-version: 3.11
-#          - numpy-version: 1.22.4
-#            python-version: 3.11
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Set up Python
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#
-#      - name: Install package
-#        run: |
-#          pip install redcat numpy==${{ matrix.numpy-version }}
-#
-#      - name: Run short experiment
-#        run: |
-#          python -c "import numpy; import redcat; assert redcat.BatchedArray(nunpy.arange(10).reshape(2, 5)).sum().equal(numpy.array(45.0))"
-
-
-  package-torch:
+  numpy:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
@@ -130,11 +96,11 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.9', '3.10', '3.11' ]
-        pytorch-version: [ 2.0.1, 1.13.1, 1.12.1, 1.11.0 ]
+        numpy-version: [ 1.26.0, 1.25.2, 1.24.3, 1.23.5, 1.22.4, 1.21.6 ]
         exclude:
-          - pytorch-version: 1.11.0
+          - numpy-version: 1.21.6
             python-version: 3.11
-          - pytorch-version: 1.12.1
+          - numpy-version: 1.22.4
             python-version: 3.11
 
     steps:
@@ -148,7 +114,41 @@ jobs:
 
       - name: Install package
         run: |
-          pip install redcat torch==${{ matrix.pytorch-version }}
+          pip install redcat numpy==${{ matrix.numpy-version }}
+
+      - name: Run short experiment
+        run: |
+          python -c "import numpy; import redcat; assert redcat.BatchedArray(numpy.arange(10).reshape(2, 5)).shape == (2, 5)"
+
+
+  torch:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.9', '3.10', '3.11' ]
+        torch-version: [ 2.1.0, 2.0.1, 1.13.1, 1.12.1, 1.11.0 ]
+        exclude:
+          - torch-version: 1.11.0
+            python-version: 3.11
+          - torch-version: 1.12.1
+            python-version: 3.11
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package
+        run: |
+          pip install redcat torch==${{ matrix.torch-version }}
 
       - name: Run short experiment
         run: |
