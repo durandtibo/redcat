@@ -39,13 +39,13 @@ torch = ">=1.11,<2.2"  # TODO: make optional
 black = "^23.9"
 coverage = { extras = ["toml"], version = "^7.3" }
 docformatter = { extras = ["tomli"], version = "^1.7" }
-packaging = "^23.2"
+feu = ">=0.0.1,<0.0.2"
 pre-commit = "^3.4"
 pygments = "^2.16"
 pytest = "^7.4"
 pytest-cov = "^4.1"
-pytest-timeout = "^2.1"
-ruff = ">=0.0.291,<1.0"
+pytest-timeout = "^2.2"
+ruff = ">=0.0.292,<1.0"
 xdoctest = "^1.1"
 
 [build-system]
