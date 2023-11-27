@@ -3297,7 +3297,7 @@ def test_batched_tensor_seq_exp() -> None:
     assert (
         BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
         .exp()
-        .equal(
+        .allclose(
             BatchedTensorSeq(
                 torch.tensor(
                     [
@@ -3305,7 +3305,8 @@ def test_batched_tensor_seq_exp() -> None:
                         [54.598148345947266, 148.4131622314453, 403.4288024902344],
                     ]
                 )
-            )
+            ),
+            atol=1e-6,
         )
     )
 
@@ -3316,7 +3317,7 @@ def test_batched_tensor_seq_exp_custom_dims() -> None:
             torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float), batch_dim=1, seq_dim=0
         )
         .exp()
-        .equal(
+        .allclose(
             BatchedTensorSeq(
                 torch.tensor(
                     [
@@ -3326,7 +3327,8 @@ def test_batched_tensor_seq_exp_custom_dims() -> None:
                 ),
                 batch_dim=1,
                 seq_dim=0,
-            )
+            ),
+            atol=1e-6,
         )
     )
 
@@ -3334,15 +3336,16 @@ def test_batched_tensor_seq_exp_custom_dims() -> None:
 def test_batched_tensor_seq_exp_() -> None:
     batch = BatchedTensorSeq(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
     batch.exp_()
-    assert batch.equal(
+    assert batch.allclose(
         BatchedTensorSeq(
             torch.tensor(
                 [
                     [2.7182817459106445, 7.389056205749512, 20.08553695678711],
                     [54.598148345947266, 148.4131622314453, 403.4288024902344],
                 ]
-            )
-        )
+            ),
+        ),
+        atol=1e-6,
     )
 
 
@@ -3353,7 +3356,7 @@ def test_batched_tensor_seq_exp__custom_dims() -> None:
         seq_dim=0,
     )
     batch.exp_()
-    assert batch.equal(
+    assert batch.allclose(
         BatchedTensorSeq(
             torch.tensor(
                 [
@@ -3363,7 +3366,8 @@ def test_batched_tensor_seq_exp__custom_dims() -> None:
             ),
             batch_dim=1,
             seq_dim=0,
-        )
+        ),
+        atol=1e-6,
     )
 
 

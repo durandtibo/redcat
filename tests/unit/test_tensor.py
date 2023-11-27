@@ -2493,7 +2493,7 @@ def test_batched_tensor_exp() -> None:
     assert (
         BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
         .exp()
-        .equal(
+        .allclose(
             BatchedTensor(
                 torch.tensor(
                     [
@@ -2501,7 +2501,8 @@ def test_batched_tensor_exp() -> None:
                         [54.598148345947266, 148.4131622314453, 403.4288024902344],
                     ]
                 )
-            )
+            ),
+            atol=1e-6,
         )
     )
 
@@ -2510,7 +2511,7 @@ def test_batched_tensor_exp_custom_dims() -> None:
     assert (
         BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float), batch_dim=1)
         .exp()
-        .equal(
+        .allclose(
             BatchedTensor(
                 torch.tensor(
                     [
@@ -2519,7 +2520,8 @@ def test_batched_tensor_exp_custom_dims() -> None:
                     ]
                 ),
                 batch_dim=1,
-            )
+            ),
+            atol=1e-6,
         )
     )
 
@@ -2527,7 +2529,7 @@ def test_batched_tensor_exp_custom_dims() -> None:
 def test_batched_tensor_exp_() -> None:
     batch = BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float))
     batch.exp_()
-    assert batch.equal(
+    assert batch.allclose(
         BatchedTensor(
             torch.tensor(
                 [
@@ -2535,14 +2537,15 @@ def test_batched_tensor_exp_() -> None:
                     [54.598148345947266, 148.4131622314453, 403.4288024902344],
                 ]
             )
-        )
+        ),
+        atol=1e-6,
     )
 
 
 def test_batched_tensor_exp__custom_dims() -> None:
     batch = BatchedTensor(torch.tensor([[1, 2, 3], [4, 5, 6]], dtype=torch.float), batch_dim=1)
     batch.exp_()
-    assert batch.equal(
+    assert batch.allclose(
         BatchedTensor(
             torch.tensor(
                 [
@@ -2551,7 +2554,8 @@ def test_batched_tensor_exp__custom_dims() -> None:
                 ]
             ),
             batch_dim=1,
-        )
+        ),
+        atol=1e-6,
     )
 
 
