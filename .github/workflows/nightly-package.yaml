@@ -68,7 +68,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.9', '3.10', '3.11' ]
-        coola-version: [ 0.0.24, 0.0.23, 0.0.22, 0.0.21, 0.0.20 ]
+        coola-version: [ 0.0.25, 0.0.24, 0.0.23, 0.0.22, 0.0.21, 0.0.20 ]
 
     steps:
       - name: Checkout
@@ -96,7 +96,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.9', '3.10', '3.11' ]
-        numpy-version: [ 1.26.0, 1.25.2, 1.24.3, 1.23.5, 1.22.4, 1.21.6 ]
+        numpy-version: [ 1.26.2, 1.25.2, 1.24.3, 1.23.5, 1.22.4, 1.21.6 ]
         exclude:
           - numpy-version: 1.21.6
             python-version: 3.11
@@ -130,7 +130,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.9', '3.10', '3.11' ]
-        torch-version: [ 2.1.0, 2.0.1, 1.13.1, 1.12.1, 1.11.0 ]
+        torch-version: [ 2.1.1, 2.0.1, 1.13.1, 1.12.1, 1.11.0 ]
         exclude:
           - torch-version: 1.11.0
             python-version: 3.11
