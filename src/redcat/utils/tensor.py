@@ -17,7 +17,7 @@ from typing import Union
 
 import numpy as np
 import torch
-from coola.utils.tensor import is_cuda_available, is_mps_available
+from coola.utils.tensor import get_available_devices
 from torch import Tensor
 
 from redcat.base import BaseBatch
@@ -202,29 +202,6 @@ def compute_batch_seq_permutation(
         old_seq_dim = old_batch_dim
     swap2(dims, old_seq_dim, new_seq_dim)  # Swap sequence dim
     return dims
-
-
-def get_available_devices() -> tuple[str, ...]:
-    r"""Gets the available PyTorch devices on the machine.
-
-    Returns
-    -------
-        tuple: The available devices.
-
-    Example usage:
-
-    .. code-block:: pycon
-
-        >>> from redcat.utils.tensor import get_available_devices
-        >>> get_available_devices()
-        ('cpu'...)
-    """
-    devices = ["cpu"]
-    if is_cuda_available():
-        devices.append("cuda:0")
-    if is_mps_available():
-        devices.append("mps:0")
-    return tuple(devices)
 
 
 def get_torch_generator(

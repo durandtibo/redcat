@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -15,7 +14,6 @@ from redcat.utils.tensor import (
     align_to_batch_seq,
     align_to_seq_batch,
     compute_batch_seq_permutation,
-    get_available_devices,
     get_torch_generator,
     permute_along_dim,
     to_tensor,
@@ -152,41 +150,6 @@ def test_compute_batch_seq_permutation_incorrect_old_dims() -> None:
 def test_compute_batch_seq_permutation_incorrect_new_dims() -> None:
     with raises(RuntimeError, match=r"Incorrect new_batch_dim (.*) and new_seq_dim (.*)."):
         compute_batch_seq_permutation(5, 0, 1, 1, 1)
-
-
-###########################################
-#     Tests for get_available_devices     #
-###########################################
-
-
-@torch_available
-@patch("torch.cuda.is_available", lambda *args, **kwargs: False)
-@patch("redcat.utils.tensor.is_mps_available", lambda *args, **kwargs: False)
-def test_get_available_devices_cpu() -> None:
-    assert get_available_devices() == ("cpu",)
-
-
-@torch_available
-@patch("torch.cuda.is_available", lambda *args, **kwargs: True)
-@patch("torch.cuda.device_count", lambda *args, **kwargs: 1)
-@patch("redcat.utils.tensor.is_mps_available", lambda *args, **kwargs: False)
-def test_get_available_devices_cpu_and_gpu() -> None:
-    assert get_available_devices() == ("cpu", "cuda:0")
-
-
-@torch_available
-@patch("torch.cuda.is_available", lambda *args, **kwargs: False)
-@patch("redcat.utils.tensor.is_mps_available", lambda *args, **kwargs: True)
-def test_get_available_devices_cpu_and_mps() -> None:
-    assert get_available_devices() == ("cpu", "mps:0")
-
-
-@torch_available
-@patch("torch.cuda.is_available", lambda *args, **kwargs: True)
-@patch("torch.cuda.device_count", lambda *args, **kwargs: 1)
-@patch("redcat.utils.tensor.is_mps_available", lambda *args, **kwargs: True)
-def test_get_available_devices_cpu_and_gpu_and_mps() -> None:
-    assert get_available_devices() == ("cpu", "cuda:0", "mps:0")
 
 
 #########################################
