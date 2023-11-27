@@ -17,12 +17,12 @@ config-poetry :
 .PHONY : install-min
 install-min :
 	poetry install --no-interaction
-	pip install --upgrade "torch>=2.0.1"  # TODO: https://github.com/pytorch/pytorch/issues/100974
+	pip install --upgrade "torch>=2.1.1"  # TODO: https://github.com/pytorch/pytorch/issues/100974
 
 .PHONY : install
 install :
 	poetry install --no-interaction --all-extras
-	pip install --upgrade "torch>=2.0.1"  # TODO: https://github.com/pytorch/pytorch/issues/100974
+	pip install --upgrade "torch>=2.1.1"  # TODO: https://github.com/pytorch/pytorch/issues/100974
 
 .PHONY : install-all
 install-all : install
@@ -35,7 +35,7 @@ update :
 
 .PHONY : lint
 lint :
-	ruff check --format=github .
+	ruff check --output-format=github .
 
 .PHONY : format
 format :
