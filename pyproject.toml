@@ -30,22 +30,22 @@ packages = [
 
 [tool.poetry.dependencies]
 # Core dependencies
-coola = ">=0.0.20,<0.0.26"
-numpy = ">=1.22,<1.27"  # TODO: make optional
+coola = ">=0.0.20,<0.2"
+numpy = ">=1.22,<2.0"  # TODO: make optional
 python = ">=3.9,<3.12"
-torch = ">=1.11,<2.2"  # TODO: make optional
+torch = ">=1.11,<3.0"  # TODO: make optional
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.11"
+black = "^23.12"
 coverage = { extras = ["toml"], version = "^7.3" }
 docformatter = { extras = ["tomli"], version = "^1.7" }
-feu = ">=0.0.1,<0.0.2"
-pre-commit = "^3.5"
+feu = ">=0.0.2,<0.1"
+pre-commit = "^3.6"
 pygments = "^2.17"
 pytest = "^7.4"
 pytest-cov = "^4.1"
 pytest-timeout = "^2.2"
-ruff = ">=0.1.6,<1.0"
+ruff = ">=0.1.8,<1.0"
 xdoctest = "^1.1"
 
 [build-system]
