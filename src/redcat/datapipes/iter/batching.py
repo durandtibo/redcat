@@ -29,6 +29,11 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
             The generated mini-batches have the same structure
             as the input batches.
         batch_size (int): Specifies the batch size.
+        drop_last (bool, optional): If ``True``, it drops the last
+            incomplete batch, if the number of examples is not
+            divisible by the batch size. If ``False`` and the number
+            of examples is not divisible by the batch size, then the
+            last batch will be smaller. Default: ``False``
         shuffle (bool, optional): If ``True``, the batches are
             shuffled before to create the mini-batches. The
             shuffling is done per batch. Default: ``False``
