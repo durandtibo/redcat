@@ -28,9 +28,9 @@ jobs:
         run: |
           pip install redcat
 
-      - name: Run short experiment
+      - name: Run some checks
         run: |
-          python tests/nightly.py
+          python tests/nightly_checks.py
 
   stable-min:
     runs-on: ${{ matrix.os }}
@@ -55,9 +55,9 @@ jobs:
         run: |
           pip install "redcat[all]"
 
-      - name: Run short experiment
+      - name: Run some checks
         run: |
-          python tests/nightly.py
+          python tests/nightly_checks.py
 
   latest-all:
     runs-on: ${{ matrix.os }}
@@ -82,9 +82,9 @@ jobs:
         run: |
           pip install --pre redcat
 
-      - name: Run short experiment
+      - name: Run some checks
         run: |
-          python tests/nightly.py
+          python tests/nightly_checks.py
 
   latest-min:
     runs-on: ${{ matrix.os }}
@@ -109,9 +109,9 @@ jobs:
         run: |
           pip install --pre "redcat[all]"
 
-      - name: Run short experiment
+      - name: Run some checks
         run: |
-          python tests/nightly.py
+          python tests/nightly_checks.py
 
   coola:
     runs-on: ${{ matrix.os }}
@@ -137,9 +137,9 @@ jobs:
         run: |
           pip install redcat coola==${{ matrix.coola-version }}
 
-      - name: Run short experiment
+      - name: Run some checks
         run: |
-          python -c "import redcat; assert redcat.BatchList([1, 2, 3, 4, 5]).slice_along_batch(step=2).equal(redcat.BatchList([1, 3, 5]))"
+          python tests/nightly_checks.py
 
   numpy:
     runs-on: ${{ matrix.os }}
@@ -170,10 +170,9 @@ jobs:
         run: |
           pip install redcat numpy==${{ matrix.numpy-version }}
 
-      - name: Run short experiment
+      - name: Run some checks
         run: |
-          python -c "import numpy; import redcat; assert redcat.BatchedArray(numpy.arange(10).reshape(2, 5)).shape == (2, 5)"
-
+          python tests/nightly_checks.py
 
   torch:
     runs-on: ${{ matrix.os }}
@@ -204,6 +203,6 @@ jobs:
         run: |
           pip install redcat torch==${{ matrix.torch-version }}
 
-      - name: Run short experiment
+      - name: Run some checks
         run: |
-          python -c "import torch; import redcat; assert redcat.BatchedTensor(torch.arange(10).view(2, 5)).sum().equal(torch.tensor(45))"
+          python tests/nightly_checks.py
