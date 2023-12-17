@@ -30,7 +30,7 @@ jobs:
 
       - name: Run some checks
         run: |
-          python tests/nightly_checks.py
+          python tests/package_checks.py
 
   stable-min:
     runs-on: ${{ matrix.os }}
@@ -57,7 +57,7 @@ jobs:
 
       - name: Run some checks
         run: |
-          python tests/nightly_checks.py
+          python tests/package_checks.py
 
   latest-all:
     runs-on: ${{ matrix.os }}
@@ -84,7 +84,7 @@ jobs:
 
       - name: Run some checks
         run: |
-          python tests/nightly_checks.py
+          python tests/package_checks.py
 
   latest-min:
     runs-on: ${{ matrix.os }}
@@ -111,7 +111,7 @@ jobs:
 
       - name: Run some checks
         run: |
-          python tests/nightly_checks.py
+          python tests/package_checks.py
 
   coola:
     runs-on: ${{ matrix.os }}
@@ -139,7 +139,7 @@ jobs:
 
       - name: Run some checks
         run: |
-          python tests/nightly_checks.py
+          python tests/package_checks.py
 
   numpy:
     runs-on: ${{ matrix.os }}
@@ -172,7 +172,7 @@ jobs:
 
       - name: Run some checks
         run: |
-          python tests/nightly_checks.py
+          python tests/package_checks.py
 
   torch:
     runs-on: ${{ matrix.os }}
@@ -205,4 +205,4 @@ jobs:
 
       - name: Run some checks
         run: |
-          python tests/nightly_checks.py
+          python tests/package_checks.py
