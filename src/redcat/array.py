@@ -13,7 +13,12 @@ from numpy import ndarray
 from redcat.return_types import ValuesIndicesTuple
 from redcat.types import RNGType
 from redcat.utils.array import get_div_rounding_operator, permute_along_axis, to_array
-from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
+from redcat.utils.common import (
+    check_batch_dims,
+    check_data_and_dim,
+    get_batch_dims,
+    get_data,
+)
 from redcat.utils.random import randperm
 
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -87,6 +92,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
     @property
     def data(self) -> ndarray:
+        r"""The underlying numpy array."""
         return self._data
 
     @property
@@ -695,7 +701,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        return self._create_new_batch(self._data.astype(bool))
+        return self.astype(bool)
 
     def double(self) -> TBatchedArray:
         r"""Converts the current batch to double (``float64``) data type.
@@ -715,7 +721,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        return self._create_new_batch(self._data.astype(np.double))
+        return self.astype(np.double)
 
     def float(self) -> TBatchedArray:
         r"""Converts the current batch to float (``float32``) data type.
@@ -735,7 +741,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        return self._create_new_batch(self._data.astype(np.single))
+        return self.astype(np.single)
 
     def int(self) -> TBatchedArray:
         r"""Converts the current batch to int (``int32``) data type.
@@ -755,7 +761,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        return self._create_new_batch(self._data.astype(np.intc))
+        return self.astype(np.intc)
 
     def long(self) -> TBatchedArray:
         r"""Converts the current batch to long (``int64``) data type.
@@ -775,7 +781,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        return self._create_new_batch(self._data.astype(np.int_))
+        return self.astype(np.int_)
 
     ##################################################
     #     Mathematical | arithmetical operations     #
@@ -854,9 +860,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         ```
         """
         self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        return self._create_new_batch(np.add(self.data, other * alpha))
+        return self._create_new_batch(np.add(self.data, get_data(other) * alpha))
 
     def add_(
         self,
@@ -886,10 +890,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        self._data = np.add(self._data.data, other * alpha)
+        self._data = self.add(other, alpha).data
 
     def div(
         self,
@@ -928,9 +929,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
 
         self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        return self._create_new_batch(get_div_rounding_operator(rounding_mode)(self.data, other))
+        return self._create_new_batch(
+            get_div_rounding_operator(rounding_mode)(self.data, get_data(other))
+        )
 
     def div_(
         self,
@@ -961,10 +962,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        self._data = get_div_rounding_operator(rounding_mode)(self.data, other)
+        self._data = self.div(other, rounding_mode).data
 
     def fmod(
         self,
@@ -998,9 +996,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         ```
         """
         self._check_valid_dims((self, divisor))
-        if isinstance(divisor, BatchedArray):
-            divisor = divisor.data
-        return self._create_new_batch(np.fmod(self.data, divisor))
+        return self._create_new_batch(np.fmod(self.data, get_data(divisor)))
 
     def fmod_(self, divisor: BatchedArray | ndarray | int | float) -> None:
         r"""Computes the element-wise remainder of division.
@@ -1023,10 +1019,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        self._check_valid_dims((self, divisor))
-        if isinstance(divisor, BatchedArray):
-            divisor = divisor.data
-        self._data = np.fmod(self._data, divisor)
+        self._data = self.fmod(divisor).data
 
     def mul(self, other: BatchedArray | ndarray | int | float) -> TBatchedArray:
         r"""Multiplies the ``self`` batch by the input ``other`.
@@ -1057,9 +1050,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         ```
         """
         self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        return self._create_new_batch(self._data * other)
+        return self._create_new_batch(self._data * get_data(other))
 
     def mul_(self, other: BatchedArray | ndarray | int | float) -> None:
         r"""Multiplies the ``self`` batch by the input ``other`.
@@ -1087,9 +1078,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         ```
         """
         self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        self._data = self._data * other
+        self._data *= get_data(other)
 
     def neg(self) -> TBatchedArray:
         r"""Returns a new batch with the negative of the elements.
@@ -1149,9 +1138,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         ```
         """
         self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        return self._create_new_batch(np.subtract(self.data, other * alpha))
+        return self._create_new_batch(np.subtract(self.data, get_data(other) * alpha))
 
     def sub_(
         self,
@@ -1180,10 +1167,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
         ```
         """
-        self._check_valid_dims((self, other))
-        if isinstance(other, BatchedArray):
-            other = other.data
-        self._data = np.subtract(self._data.data, other * alpha)
+        self._data = self.sub(other, alpha).data
 
     ###########################################################
     #     Mathematical | advanced arithmetical operations     #
