@@ -1,0 +1,3 @@
+# Base classes
+
+::: redcat.BaseBatch

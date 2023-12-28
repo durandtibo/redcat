@@ -21,25 +21,25 @@ class BatchShufflerIterDataPipe(IterDataPipe[BaseBatch[T]]):
     r"""Implements a DataPipe to shuffle data in ``BaseBatch`` objects.
 
     Args:
-    ----
-        datapipe (``IterDataPipe``): Specifies the source DataPipe.
-            The DataPipe has to return ``BaseBatch`` objects.
-        random_seed (int, optional): Specifies the random seed used
-            to shuffle the data. Default: ``3770589329299158004``
+        datapipe: Specifies the source DataPipe. The DataPipe has to
+            return ``BaseBatch`` objects.
+        random_seed: Specifies the random seed used to shuffle the
+            data.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
+    >>> import torch
+    >>> from torch.utils.data.datapipes.iter import IterableWrapper
+    >>> from redcat import BatchedTensor
+    >>> from redcat.datapipes.iter import BatchShuffler
+    >>> datapipe = BatchShuffler(
+    ...     IterableWrapper([BatchedTensor(torch.arange(4).add(i)) for i in range(2)])
+    ... )
+    >>> list(datapipe)
+    [tensor([3, 0, 1, 2], batch_dim=0), tensor([1, 3, 4, 2], batch_dim=0)]
 
-        >>> import torch
-        >>> from torch.utils.data.datapipes.iter import IterableWrapper
-        >>> from redcat import BatchedTensor
-        >>> from redcat.datapipes.iter import BatchShuffler
-        >>> datapipe = BatchShuffler(
-        ...     IterableWrapper([BatchedTensor(torch.arange(4).add(i)) for i in range(2)])
-        ... )
-        >>> list(datapipe)
-        [tensor([3, 0, 1, 2], batch_dim=0), tensor([1, 3, 4, 2], batch_dim=0)]
+    ```
     """
 
     def __init__(
@@ -66,6 +66,6 @@ class BatchShufflerIterDataPipe(IterDataPipe[BaseBatch[T]]):
 
     @property
     def random_seed(self) -> int:
-        r"""``int``: The random seed used to initialize the pseudo
-        random generator."""
+        r"""The random seed used to initialize the pseudo random
+        generator."""
         return self._generator.initial_seed()

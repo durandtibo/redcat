@@ -31,7 +31,6 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     r"""Implements a batch object to represent a dictionary of batches.
 
     Args:
-    ----
         data (dict): Specifies the dictionary of batches.
 
     Example usage:
@@ -491,7 +490,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         r"""Repeats the batch along the sequence dimension.
 
         Args:
-            repeats (int): Specifies the number of times to repeat
+            repeats: Specifies the number of times to repeat
                 the batch along the sequence dimension.
 
         Returns:
@@ -537,12 +536,12 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         r"""Slices the batch in the sequence dimension.
 
         Args:
-            start (int, optional): Specifies the index where the
+            start: Specifies the index where the
                 slicing of object starts. Default: ``0``
-            stop (int, optional): Specifies the index where the
+            stop: Specifies the index where the
                 slicing of object stops. ``None`` means last.
                 Default: ``None``
-            step (int, optional): Specifies the increment between
+            step: Specifies the increment between
                 each index for slicing. Default: ``1``
 
         Returns:
@@ -652,7 +651,6 @@ def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
     size.
 
     Args:
-    ----
         group (``BaseBatch`` or dict or sequence): Specifies the group
             of batches to check.
 
@@ -687,7 +685,6 @@ def check_same_keys(data1: dict, data2: dict) -> None:
     r"""Checks if the dictionaries have the same keys.
 
     Args:
-    ----
         data1 (dict): Specifies the first dictionary.
         data2 (dict): Specifies the second dictionary.
 
@@ -722,11 +719,9 @@ def get_seq_lens(data: dict[Hashable, BaseBatch]) -> set[int]:
     r"""Gets the sequence lengths from the inputs.
 
     Args:
-    ----
         data (dict): Specifies the data with the sequences.
 
     Returns:
-    -------
         set: The sequence lengths.
 
     Example usage:

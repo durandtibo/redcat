@@ -56,13 +56,12 @@ class BatchedTensorSeq(BatchedTensor):
     sequences.
 
     Args:
-    ----
         data (array_like): Specifies the data for the tensor. It can
             be a torch.Tensor, list, tuple, NumPy ndarray, scalar,
             and other types.
-        batch_dim (int, optional): Specifies the batch dimension
+        batch_dim: Specifies the batch dimension
             in the ``torch.Tensor`` object. Default: ``0``
-        seq_dim (int, optional): Specifies the sequence dimension in
+        seq_dim: Specifies the sequence dimension in
             the ``torch.Tensor`` object. Default: ``1``
         kwargs: Keyword arguments that are passed to
             ``torch.as_tensor``.
@@ -1167,7 +1166,7 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Splits the batch into chunks along the sequence dimension.
 
         Args:
-            chunks (int): Specifies the number of chunks.
+            chunks: Specifies the number of chunks.
 
         Returns:
             tuple: The batch split into chunks along the sequence
@@ -1232,7 +1231,7 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Repeats the batch along the sequence dimension.
 
         Args:
-            repeats (int): Specifies the number of times to repeat
+            repeats: Specifies the number of times to repeat
                 the batch along the sequence dimension.
 
         Returns:
@@ -1258,7 +1257,7 @@ class BatchedTensorSeq(BatchedTensor):
         index.
 
         Args:
-            index (int): Specifies the index to select.
+            index: Specifies the index to select.
 
         Returns:
             ``BatchedTensor``: The batch sliced along the sequence
@@ -1285,12 +1284,12 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Slices the batch in the sequence dimension.
 
         Args:
-            start (int, optional): Specifies the index where the
+            start: Specifies the index where the
                 slicing of object starts. Default: ``0``
-            stop (int, optional): Specifies the index where the
+            stop: Specifies the index where the
                 slicing of object stops. ``None`` means last.
                 Default: ``None``
-            step (int, optional): Specifies the increment between
+            step: Specifies the increment between
                 each index for slicing. Default: ``1``
 
         Returns:
@@ -1368,11 +1367,10 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
     correct.
 
     Args:
-    ----
         data (``torch.Tensor``): Specifies the tensor in the batch.
-        batch_dim (int): Specifies the batch dimension in the
+        batch_dim: Specifies the batch dimension in the
             ``torch.Tensor`` object.
-        seq_dim (int, optional): Specifies the sequence dimension in
+        seq_dim: Specifies the sequence dimension in
             the ``torch.Tensor`` object.
 
     Raises:
@@ -1418,7 +1416,6 @@ def from_sequences(
     r"""Converts variable length sequences to a single padded tensor.
 
     Args:
-    ----
         sequences (iterable): Specifies an iterable over the variable
             length sequences. Each sequence is a ``torch.Tensor`` of
             shape ``(sequence_length, *)``. This function assumes
@@ -1428,7 +1425,6 @@ def from_sequences(
         padding value. Default: ``0``
 
     Returns:
-    -------
         ``BatchedTensorSeq``: A padded tensor. The underlying data is
             a ``torch.Tensor`` of shape
             ``(batch_size, sequence_length, *)``.

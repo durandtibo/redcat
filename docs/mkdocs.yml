@@ -20,7 +20,10 @@ nav:
   - Home: index.md
   - get_started.md
   - Reference:
-      - refs/array.md
+      - refs/base.md
+      - refs/batchedarray.md
+      - refs/datapipes.md
+      - refs/utils.md
   - GitHub: https://github.com/durandtibo/redcat
 
 repo_url: https://github.com/durandtibo/redcat
