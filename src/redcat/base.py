@@ -37,7 +37,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Returns the internal data without the batch wrapper.
 
         Returns:
-        -------
             ``Any``: The internal data.
 
         Example usage:
@@ -61,7 +60,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Creates a copy of the current batch.
 
         Returns:
-        -------
             ``BaseBatch``: A copy of the current batch.
 
         Example usage:
@@ -87,7 +85,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Indicates if two batches are equal within a tolerance or not.
 
         Args:
-        ----
             other: Specifies the value to compare.
             rtol (float, optional): Specifies the relative tolerance
                 parameter. Default: ``1e-5``
@@ -97,7 +94,6 @@ class BaseBatch(Generic[T], ABC):
                 will be considered equal. Default: ``False``
 
         Returns:
-        -------
             bool: ``True`` if the batches are equal within a tolerance,
                 ``False`` otherwise.
 
@@ -118,11 +114,9 @@ class BaseBatch(Generic[T], ABC):
         r"""Indicates if two batches are equal or not.
 
         Args:
-        ----
             other: Specifies the value to compare.
 
         Returns:
-        -------
             bool: ``True`` if the batches have the same size,
                 elements and same batch dimension, ``False`` otherwise.
 
@@ -145,14 +139,12 @@ class BaseBatch(Generic[T], ABC):
         r"""Permutes the data/batch along the batch dimension.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
 
         Returns:
-        -------
             ``BaseBatch``: A new batch with permuted data.
 
         Example usage:
@@ -175,7 +167,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Permutes the data/batch along the batch dimension.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
@@ -201,13 +192,11 @@ class BaseBatch(Generic[T], ABC):
         r"""Shuffles the data/batch along the batch dimension.
 
         Args:
-        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Returns:
-        -------
             ``BaseBatch``:  A new batch with shuffled data.
 
         Example usage:
@@ -226,7 +215,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Shuffles the data/batch along the batch dimension.
 
         Args:
-        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -262,7 +250,6 @@ class BaseBatch(Generic[T], ABC):
         dimension.
 
         Args:
-        ----
             other (``TensorSeqBatch``): Specifies the batch to append
                 at the end of current batch.
 
@@ -287,11 +274,9 @@ class BaseBatch(Generic[T], ABC):
         r"""Splits the batch into chunks along the batch dimension.
 
         Args:
-        ----
             chunks (int): Specifies the number of chunks.
 
         Returns:
-        -------
             tuple: The batch split into chunks along the batch
                 dimension.
 
@@ -325,7 +310,6 @@ class BaseBatch(Generic[T], ABC):
         implementation to know the supported batch implementations.
 
         Args:
-        ----
             other (iterable): Specifies the batches to append to the
                 current batch.
 
@@ -354,12 +338,10 @@ class BaseBatch(Generic[T], ABC):
         r"""Selects data at the given indices along the batch dimension.
 
         Args:
-        ----
             index (``torch.Tensor`` or list or tuple): Specifies the
                 indices to select.
 
         Returns:
-        -------
             ``BaseBatch``: A new batch which indexes ``self``
                 along the batch dimension using the entries in
                 ``index``.
@@ -387,11 +369,9 @@ class BaseBatch(Generic[T], ABC):
         index.
 
         Args:
-        ----
             index (int): Specifies the index to select.
 
         Returns:
-        -------
             ``BaseBatch``: The batch sliced along the batch
                 dimension at the given index.
 
@@ -410,7 +390,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Slices the batch in the batch dimension.
 
         Args:
-        ----
             start (int, optional): Specifies the index where the
                 slicing of object starts. Default: ``0``
             stop (int, optional): Specifies the index where the
@@ -420,7 +399,6 @@ class BaseBatch(Generic[T], ABC):
                 each index for slicing. Default: ``1``
 
         Returns:
-        -------
             ``BaseBatch``: A slice of the current batch.
 
         Example usage:
@@ -448,12 +426,10 @@ class BaseBatch(Generic[T], ABC):
         r"""Splits the batch into chunks along the batch dimension.
 
         Args:
-        ----
             split_size_or_sections (int or sequence): Specifies the
                 size of a single chunk or list of sizes for each chunk.
 
         Returns:
-        -------
             tuple: The batch split into chunks along the batch
                 dimension.
 
@@ -477,7 +453,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Gets the number of mini-batches for a given batch size.
 
         Args:
-        ----
             batch_size (int): Specifies the target batch size of the
                 mini-batches.
             drop_last (bool, optional): If ``True``, the last batch is
@@ -485,7 +460,6 @@ class BaseBatch(Generic[T], ABC):
                 Default: ``False``
 
         Returns:
-        -------
             int: The number of mini-batches.
 
         Example usage:
@@ -513,7 +487,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Gets the mini-batches of the current batch.
 
         Args:
-        ----
             batch_size (int): Specifies the target batch size of the
                 mini-batches.
             drop_last (bool, optional): If ``True``, the last batch is
@@ -527,7 +500,6 @@ class BaseBatch(Generic[T], ABC):
                 data. Default: ``False``
 
         Returns:
-        -------
             iterable: The mini-batches.
 
         Example usage:
@@ -576,7 +548,6 @@ class BaseBatch(Generic[T], ABC):
         r"""Returns a summary of the current batch.
 
         Returns:
-        -------
             str: The summary of the current batch
 
         Example usage:

@@ -115,7 +115,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Gets the number of dimensions.
 
         Returns:
-        -------
             int: The number of dimensions
 
         Example usage:
@@ -134,7 +133,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Gets the number of dimensions.
 
         Returns:
-        -------
             int: The number of dimensions
 
         Example usage:
@@ -153,7 +151,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Gets the total number of elements in the tensor.
 
         Returns:
-        -------
             int: The total number of elements
 
         Example usage:
@@ -178,13 +175,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Creates a batch with a contiguous representation of the data.
 
         Args:
-        ----
             memory_format (``torch.memory_format``, optional):
                 Specifies the desired memory format.
                 Default: ``torch.contiguous_format``
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch with a contiguous
                 representation of the data.
 
@@ -205,13 +200,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         data.
 
         Args:
-        ----
             memory_format (``torch.memory_format``, optional):
                 Specifies the desired memory format.
                 Default: ``torch.contiguous_format``
 
         Returns:
-        -------
             bool: ``True`` if the data are stored with a contiguous
                 tensor, otherwise ``False``.
 
@@ -231,12 +224,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Moves and/or casts the data.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.to``
             **kwargs: See the documentation of ``torch.Tensor.to``
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch with the data after
                 dtype and/or device conversion.
 
@@ -264,12 +255,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Creates a copy of the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.clone``
             **kwargs: See the documentation of ``torch.Tensor.clone``
 
         Returns:
-        -------
             ``BatchedTensor``: A copy of the current batch.
 
         Example usage:
@@ -291,13 +280,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         current batch.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.empty_like``
             **kwargs: See the documentation of
                 ``torch.Tensor.empty_like``
 
         Returns:
-        -------
             ``BatchedTensor``: A uninitialized batch with the same
                 shape as the current batch.
 
@@ -318,13 +305,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         same shape as the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.full_like``
             **kwargs: See the documentation of
                 ``torch.Tensor.full_like``
 
         Returns:
-        -------
             ``BatchedTensor``: A batch filled with the scalar
                 value, with the same shape as the current batch.
 
@@ -354,7 +339,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         the current batch.
 
         Args:
-        ----
             fill_value (float or int or bool): Specifies the number
                 to fill the batch with.
             batch_size (int or ``None``): Specifies the batch size.
@@ -364,7 +348,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 ``torch.Tensor.new_full``.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch filled with the scalar value.
 
         Example usage:
@@ -403,7 +386,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         the current batch.
 
         Args:
-        ----
             batch_size (int or ``None``): Specifies the batch size.
                 If ``None``, the batch size of the current batch is
                 used. Default: ``None``.
@@ -411,7 +393,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 ``torch.Tensor.new_ones``.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch filled with the scalar
                 value ``1``.
 
@@ -451,7 +432,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         in the current batch.
 
         Args:
-        ----
             batch_size (int or ``None``): Specifies the batch size.
                 If ``None``, the batch size of the current batch is
                 used. Default: ``None``.
@@ -459,7 +439,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 ``torch.Tensor.new_zeros``.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch filled with the scalar
                 value ``0``.
 
@@ -492,13 +471,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         same shape as the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.ones_like``
             **kwargs: See the documentation of
                 ``torch.Tensor.ones_like``
 
         Returns:
-        -------
             ``BatchedTensor``: A batch filled with the scalar
                 value ``1``, with the same shape as the current
                 batch.
@@ -521,13 +498,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         same shape as the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.zeros_like``
             **kwargs: See the documentation of
                 ``torch.Tensor.zeros_like``
 
         Returns:
-        -------
             ``BatchedTensor``: A batch filled with the scalar
                 value ``0``, with the same shape as the current
                 batch.
@@ -581,11 +556,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes element-wise equality.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 equality.
 
@@ -620,12 +593,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes ``self >= other`` element-wise.
 
         Args:
-        ----
             other: Specifies the value to compare
                 with.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 comparison.
 
@@ -653,11 +624,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes ``self > other`` element-wise.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 comparison.
 
@@ -686,7 +655,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         or negative infinity) or not.
 
         Returns:
-        -------
             ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is infinite
                 and ``False`` elsewhere.
@@ -711,7 +679,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         or not.
 
         Returns:
-        -------
             ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is negative
                 infinity and ``False`` elsewhere.
@@ -736,7 +703,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         or not.
 
         Returns:
-        -------
             ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is positive
                 infinity and ``False`` elsewhere.
@@ -760,7 +726,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Indicates if each element in the batch is NaN or not.
 
         Returns:
-        -------
             ``BatchedTensor``:  A batch containing a boolean tensor
                 that is ``True`` where the current batch is infinite
                 and ``False`` elsewhere.
@@ -784,11 +749,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes ``self <= other`` element-wise.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 comparison.
 
@@ -816,11 +779,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes ``self < other`` element-wise.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 comparison.
 
@@ -852,7 +813,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Converts the current batch to bool data type.
 
         Returns:
-        -------
             ``BatchedTensor``: The current batch to bool data type.
 
         Example usage:
@@ -871,7 +831,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Converts the current batch to double (``float64``) data type.
 
         Returns:
-        -------
             ``BatchedTensor``: The current batch to double data type.
 
         Example usage:
@@ -890,7 +849,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Converts the current batch to float (``float32``) data type.
 
         Returns:
-        -------
             ``BatchedTensor``: The current batch to float data type.
 
         Example usage:
@@ -909,7 +867,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Converts the current batch to int (``int32``) data type.
 
         Returns:
-        -------
             ``BatchedTensor``: The current batch to int data type.
 
         Example usage:
@@ -928,7 +885,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Converts the current batch to long (``int64``) data type.
 
         Returns:
-        -------
             ``BatchedTensor``: The current batch to long data type.
 
         Example usage:
@@ -996,7 +952,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``out = self + alpha * other``
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the other value to add to the
                 current batch.
@@ -1004,7 +959,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 batch to add. Default: ``1.0``
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch containing the addition of
                 the two batches.
 
@@ -1036,7 +990,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``self += alpha * other`` (in-place)
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the other value to add to the
                 current batch.
@@ -1068,7 +1021,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``out = self / other``
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the dividend.
             rounding_mode (str or ``None``, optional): Specifies the
@@ -1080,7 +1032,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 Default: ``None``
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch containing the division
                 of the two batches.
 
@@ -1111,7 +1062,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``self /= other`` (in-place)
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the dividend.
             rounding_mode (str or ``None``, optional): Specifies the
@@ -1146,12 +1096,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         The current batch is the dividend.
 
         Args:
-        ----
             divisor (``BatchedTensor`` or ``torch.Tensor`` or int
                 or float): Specifies the divisor.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch containing the
                 element-wise remainder of division.
 
@@ -1178,7 +1126,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         The current batch is the dividend.
 
         Args:
-        ----
             divisor (``BatchedTensor`` or ``torch.Tensor`` or int
                 or float): Specifies the divisor.
 
@@ -1203,12 +1150,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``out = self * other``
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the value to multiply.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch containing the
                 multiplication of the two batches.
 
@@ -1235,12 +1180,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``self *= other`` (in-place)
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the value to multiply.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch containing the
                 multiplication of the two batches.
 
@@ -1263,7 +1206,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Returns a new batch with the negative of the elements.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch with the negative of
                 the elements.
 
@@ -1295,14 +1237,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``out = self - alpha * other``
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the value to subtract.
             alpha (int or float, optional): Specifies the scale of the
                 batch to substract. Default: ``1``
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch containing the diffence of
                 the two batches.
 
@@ -1334,7 +1274,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``self -= alpha * other`` (in-place)
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor`` or int or
                 float): Specifies the value to subtract.
             alpha (int or float, optional): Specifies the scale of the
@@ -1364,13 +1303,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension in monotonic order by value.
 
         Args:
-        ----
             dim (int, optional): Specifies the dimension to sort
                 along. Default: ``-1``
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-        -------
             ``BatchedTensor``: The indices that sort the batch along
                 the given dimension.
 
@@ -1392,11 +1329,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         monotonic order by value.
 
         Args:
-        ----
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-        -------
             ``BatchedTensor``: The indices that sort the batch along
                 the batch dimension.
 
@@ -1421,13 +1356,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch in a given dimension.
 
         Args:
-        ----
             dim (int): Specifies the dimension of the cumulative sum.
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the cumulative product of
                 elements of the current batch in a given dimension.
 
@@ -1449,7 +1382,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch in a given dimension.
 
         Args:
-        ----
             dim (int): Specifies the dimension of the cumulative product.
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
@@ -1473,12 +1405,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch in the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the cumulative product of
                 elements of the current batch in the batch dimension.
 
@@ -1500,7 +1430,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch in the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
 
@@ -1523,12 +1452,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         in a given dimension.
 
         Args:
-        ----
             dim (int): Specifies the dimension of the cumulative sum.
             **kwargs: see ``torch.cumsum`` documentation
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the cumulative sum of
                 elements of the current batch in a given dimension.
 
@@ -1550,7 +1477,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         in a given dimension.
 
         Args:
-        ----
             dim (int): Specifies the dimension of the cumulative sum.
             **kwargs: see ``torch.cumsum_`` documentation
 
@@ -1573,11 +1499,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         in the batch dimension.
 
         Args:
-        ----
             **kwargs: see ``torch.cumsum`` documentation
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the cumulative sum of
                 elements of the current batch in the batch dimension.
 
@@ -1618,11 +1542,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-        ----
             dim (int): Specifies the dimension of the cumulative sum.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the cumulative
                 summation of the exponentiation of elements of the
                 current batch in a given dimension.
@@ -1646,7 +1568,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-        ----
             dim (int): Specifies the dimension of the cumulative sum.
 
         Example usage:
@@ -1669,7 +1590,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the cumulative
                 summation of the exponentiation of elements of the
                 current batch in the batch dimension.
@@ -1722,7 +1642,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Permutes the data/batch along a given dimension.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
@@ -1731,7 +1650,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 is computed.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch with permuted data.
 
         Example usage:
@@ -1754,7 +1672,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Permutes the data/batch along a given dimension.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
@@ -1785,14 +1702,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Shuffles the data/batch along a given dimension.
 
         Args:
-        ----
             dim (int): Specifies the shuffle dimension.
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Returns:
-        -------
             ``BatchedTensor``:  A new batch with shuffled data
                 along a given dimension.
 
@@ -1814,14 +1729,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Shuffles the data/batch along a given dimension.
 
         Args:
-        ----
             dim (int): Specifies the shuffle dimension.
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Returns:
-        -------
             ``BatchedTensor``:  A new batch with shuffled data
                 along a given dimension.
 
@@ -1843,12 +1756,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         monotonic order by value.
 
         Args:
-        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-        -------
             (``BatchedTensor``, ``BatchedTensor``): A tuple of
                 two values:
                     - The first batch contains the batch values sorted
@@ -1878,12 +1789,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         monotonic order by value.
 
         Args:
-        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-        -------
             (``BatchedTensor``, ``BatchedTensor``): A tuple
                 two values:
                     - The first batch contains the batch values sorted
@@ -1915,7 +1824,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the absolute value of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the absolute value of
                 each element.
 
@@ -1962,7 +1870,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         Note: ``min`` and ``max`` cannot be both ``None``.
 
         Args:
-        ----
             min (int, float or ``None``, optional): Specifies
                 the lower bound. If ``min`` is ``None``,
                 there is no lower bound. Default: ``None``
@@ -1971,7 +1878,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 there is no upper bound. Default: ``None``
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with clamped values.
 
         Example usage:
@@ -2006,7 +1912,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         Note: ``min`` and ``max`` cannot be both ``None``.
 
         Args:
-        ----
             min (int, float or ``None``, optional): Specifies
                 the lower bound.  If ``min`` is ``None``,
                 there is no lower bound. Default: ``None``
@@ -2042,7 +1947,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the exponential of the elements.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the exponential of the
                 elements of the current batch.
 
@@ -2082,7 +1986,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the natural logarithm of the elements.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the natural
                 logarithm of the elements of the current batch.
 
@@ -2126,7 +2029,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the logarithm to the base 10 of the elements.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the logarithm to the
                 base 10 of the elements of the current batch.
 
@@ -2170,7 +2072,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the natural logarithm of ``self + 1``.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the natural
                 logarithm of ``self + 1``.
 
@@ -2214,7 +2115,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the logarithm to the base 2 of the elements.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the logarithm to the
                 base 2 of the elements of the current batch.
 
@@ -2258,12 +2158,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the element-wise maximum of ``self`` and ``other``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``): Specifies
                 a batch.
 
         Returns:
-        -------
             ``BatchedTensor``: The batch with the element-wise
                 maximum of ``self`` and ``other``
 
@@ -2287,12 +2185,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the element-wise minimum of ``self`` and ``other``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``): Specifies
                 a batch.
 
         Returns:
-        -------
             ``BatchedTensor``: The batch with the element-wise
                 minimum of ``self`` and ``other``
 
@@ -2316,14 +2212,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the power of each element with the given exponent.
 
         Args:
-        ----
             exponent (int or float or ``BatchedTensor``): Specifies
                 the exponent value. ``exponent`` can be either a single
                 numeric number or a ``BatchedTensor`` with the same
                 number of elements.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the power of each
                 element with the given exponent.
 
@@ -2346,7 +2240,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         In-place version of ``pow(exponent)``.
 
         Args:
-        ----
             exponent (int or float or ``BatchedTensor``): Specifies
                 the exponent value. ``exponent`` can be either a
                 single numeric number or a ``BatchedTensor``
@@ -2371,7 +2264,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the reciprocal of the square-root of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the square-root of
                 each element.
 
@@ -2411,7 +2303,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the square-root of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the square-root of
                 each element.
 
@@ -2456,12 +2347,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.amax``
             **kwargs: See the documentation of ``torch.Tensor.amax``
 
         Returns:
-        -------
             ``torch.Tensor``: The maximum value of all elements or
                 along a dimension.
 
@@ -2487,12 +2376,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the maximum along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.amax``
             **kwargs: See the documentation of ``torch.Tensor.amax``
 
         Returns:
-        -------
             ``torch.Tensor``: The maximum along the batch dimension.
 
         Example usage:
@@ -2514,12 +2401,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.amin``
             **kwargs: See the documentation of ``torch.Tensor.amin``
 
         Returns:
-        -------
             ``torch.Tensor``: The minimum value of all elements or
                 along a dimension.
 
@@ -2545,12 +2430,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the minimum along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.amin``
             **kwargs: See the documentation of ``torch.Tensor.amin``
 
         Returns:
-        -------
             ``torch.Tensor``: The minimum along the batch dimension.
 
         Example usage:
@@ -2572,12 +2455,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         along a specific dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.argmax``
             **kwargs: See the documentation of ``torch.Tensor.argmax``
 
         Returns:
-        -------
             ``torch.Tensor``: The indices of the maximum value of all
                 elements or along a specific dimension.
 
@@ -2602,12 +2483,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.argmax``
             **kwargs: See the documentation of ``torch.Tensor.argmax``
 
         Returns:
-        -------
             ``torch.Tensor``: The indices of the maximum value along
                 the batch dimension.
 
@@ -2630,12 +2509,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         along a specific dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.argmin``
             **kwargs: See the documentation of ``torch.Tensor.argmin``
 
         Returns:
-        -------
             ``torch.Tensor``: The indices of the minimum value of all
                 elements or along a specific dimension.
 
@@ -2660,12 +2537,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.argmin``
             **kwargs: See the documentation of ``torch.Tensor.argmin``
 
         Returns:
-        -------
             ``torch.Tensor``: The indices of the minimum value along
                 the batch dimension.
 
@@ -2687,12 +2562,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the maximum of all elements or along a dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.max``
             **kwargs: See the documentation of ``torch.Tensor.max``
 
         Returns:
-        -------
             ``torch.Tensor`` or ``torch.return_types.max``:
                 The maximum of all elements or along a dimension.
 
@@ -2720,12 +2593,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the maximum values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.max``
             **kwargs: See the documentation of ``torch.Tensor.max``
 
         Returns:
-        -------
             ``torch.return_types.max``: A batch with
                 the maximum values along the batch dimension.
 
@@ -2751,12 +2622,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the mean of all elements.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.mean``
             **kwargs: See the documentation of ``torch.Tensor.mean``
 
         Returns:
-        -------
             ``torch.Tensor``: The mean of all elements.
 
         Example usage:
@@ -2779,12 +2648,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the mean values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.mean``
             **kwargs: See the documentation of ``torch.Tensor.mean``
 
         Returns:
-        -------
             ``torch.Tensor``: A batch with
                 the mean values along the batch dimension.
 
@@ -2806,12 +2673,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the median of all elements.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.median``
             **kwargs: See the documentation of ``torch.Tensor.median``
 
         Returns:
-        -------
             ``torch.Tensor`` or ``torch.return_types.median``:
                 The median of all elements or per dimension.
                 The first tensor will be populated with the median
@@ -2842,12 +2707,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the median values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.median``
             **kwargs: See the documentation of ``torch.Tensor.median``
 
         Returns:
-        -------
             ``torch.return_types.median``:  The first tensor will
                 be populated with the median values and the second
                 tensor, which must have dtype long, with their indices
@@ -2871,12 +2734,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the minimum of all elements or along a dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.min``
             **kwargs: See the documentation of ``torch.Tensor.min``
 
         Returns:
-        -------
             ``torch.Tensor`` or ``torch.return_types.min``:
                 The minimum of all elements or along a dimension.
 
@@ -2904,12 +2765,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the minimum values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.min``
             **kwargs: See the documentation of ``torch.Tensor.min``
 
         Returns:
-        -------
             ``torch.return_types.min``: A batch with
                 the minimum values along the batch dimension.
 
@@ -2935,12 +2794,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the mean of all elements.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nanmean``
             **kwargs: See the documentation of ``torch.Tensor.nanmean``
 
         Returns:
-        -------
             ``torch.Tensor``: The mean of all elements.
 
         Example usage:
@@ -2963,12 +2820,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the mean values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nanmean``
             **kwargs: See the documentation of ``torch.Tensor.nanmean``
 
         Returns:
-        -------
             ``torch.Tensor``: A batch with
                 the mean values along the batch dimension.
 
@@ -2992,12 +2847,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the median of all elements.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nanmedian``
             **kwargs: See the documentation of ``torch.Tensor.nanmedian``
 
         Returns:
-        -------
             ``torch.Tensor`` or ``torch.return_types.nanmedian``:
                 The median of all elements or per dimension.
                 The first tensor will be populated with the median
@@ -3028,12 +2881,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the median values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nanmedian``
             **kwargs: See the documentation of ``torch.Tensor.nanmedian``
 
         Returns:
-        -------
             ``torch.return_types.nanmedian``:  The first tensor will
                 be populated with the median values and the second
                 tensor, which must have dtype long, with their indices
@@ -3059,12 +2910,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the sum of all elements.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nansum``
             **kwargs: See the documentation of ``torch.Tensor.nansum``
 
         Returns:
-        -------
             ``torch.Tensor``: The sum of all elements.
 
         Example usage:
@@ -3087,12 +2936,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the sum values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nansum``
             **kwargs: See the documentation of ``torch.Tensor.nansum``
 
         Returns:
-        -------
             ``torch.Tensor``: A tensor with the sum values along the
                 batch dimension.
 
@@ -3114,12 +2961,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the product of all elements.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.prod``
             **kwargs: See the documentation of ``torch.Tensor.prod``
 
         Returns:
-        -------
             ``torch.Tensor``: The product of all elements.
 
         Example usage:
@@ -3142,12 +2987,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the product values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.prod``
             **kwargs: See the documentation of ``torch.Tensor.prod``
 
         Returns:
-        -------
             ``torch.Tensor``: A batch with
                 the product values along the batch dimension.
 
@@ -3169,12 +3012,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the sum of all elements.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.sum``
             **kwargs: See the documentation of ``torch.Tensor.sum``
 
         Returns:
-        -------
             ``torch.Tensor``: The sum of all elements.
 
         Example usage:
@@ -3197,12 +3038,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the sum values along the batch dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.sum``
             **kwargs: See the documentation of ``torch.Tensor.sum``
 
         Returns:
-        -------
             ``torch.Tensor``: A tensor with the sum values along the
                 batch dimension.
 
@@ -3226,7 +3065,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the inverse cosine (arccos) of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the inverse cosine
                 (arccos) of each element.
 
@@ -3267,7 +3105,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the inverse hyperbolic
                 cosine (arccosh) of each element.
 
@@ -3289,7 +3126,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the inverse hyperbolic
                 cosine (arccosh) of each element.
 
@@ -3311,7 +3147,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the inverse cosine (arcsin) of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the inverse sine
                 (arcsin) of each element.
 
@@ -3352,7 +3187,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the inverse hyperbolic
                 sine (arcsinh) of each element.
 
@@ -3393,7 +3227,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the inverse tangent of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the inverse tangent
                 of each element.
 
@@ -3433,7 +3266,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the inverse hyperbolic tangent of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the inverse hyperbolic
                 tangent of each element.
 
@@ -3473,7 +3305,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the cosine of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the cosine of each
                 element.
 
@@ -3519,7 +3350,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the hyperbolic cosine (cosh) of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the hyperbolic
                 cosine (arccosh) of each element.
 
@@ -3559,7 +3389,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the sine of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the sine of each
                 element.
 
@@ -3605,7 +3434,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the hyperbolic sine of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the hyperbolic sine of
                 each element.
 
@@ -3645,7 +3473,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the tangent of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the tangent of each
                 element.
 
@@ -3695,7 +3522,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Computes the tangent of each element.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the tangent of each
                 element.
 
@@ -3742,13 +3568,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``True``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``):
                 Specifies the batch or tensor to compute
                 logical AND with.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 logical AND.
 
@@ -3777,7 +3601,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``True``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``):
                 Specifies the batch or tensor to compute
                 logical AND with.
@@ -3809,7 +3632,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``True``.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 logical NOT of the current batch.
 
@@ -3857,12 +3679,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``True``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``):
                 Specifies the batch to compute logical OR with.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 logical OR.
 
@@ -3891,7 +3711,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``True``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``):
                 Specifies the batch to compute logical OR with.
 
@@ -3922,12 +3741,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``True``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``):
                 Specifies the batch to compute logical XOR with.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch containing the element-wise
                 logical XOR.
 
@@ -3956,7 +3773,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``True``.
 
         Args:
-        ----
             other (``BatchedTensor`` or ``torch.Tensor``):
                 Specifies the batch to compute logical XOR with.
 
@@ -4010,12 +3826,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         along a given dimension and creates a new batch.
 
         Args:
-        ----
             tensors (``BatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the concatenated data
                 in the batch dimension.
 
@@ -4055,7 +3869,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         along a given dimension and creates a new batch.
 
         Args:
-        ----
             tensor (``BatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
@@ -4082,12 +3895,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         along the batch dimension and creates a new batch.
 
         Args:
-        ----
             tensors (``BatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
-        -------
             ``BatchedTensor``: A batch with the concatenated data
                 in the batch dimension.
 
@@ -4127,7 +3938,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         along the batch dimension and creates a new batch.
 
         Args:
-        ----
             tensors (``BatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
@@ -4166,13 +3976,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Splits the batch into chunks along a given dimension.
 
         Args:
-        ----
             chunks (int): Specifies the number of chunks.
             dim (int, optional): Specifies the dimension along which
                 to split the tensor. Default: ``0``
 
         Returns:
-        -------
             tuple: The batch split into chunks along the given
                 dimension.
 
@@ -4200,13 +4008,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Selects data at the given indices along a given dimension.
 
         Args:
-        ----
             dim (int): Specifies the index dimension.
             index (``torch.Tensor`` or list or tuple): Specifies the
                 indices to select.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch which indexes ``self``
                 along the batch dimension using the entries in
                 ``index``.
@@ -4240,13 +4046,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         ``mask`` is ``True``.
 
         Args:
-        ----
             mask (``BatchedTensor`` or ``torch.Tensor``):
                 Specifies the batch of boolean masks.
             value (number): Specifies the value to fill in with.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch with the updated values.
 
         Example usage:
@@ -4282,12 +4086,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         index.
 
         Args:
-        ----
             dim (int): Specifies the index dimension.
             index (int): Specifies the index to select.
 
         Returns:
-        -------
             ``Tensor``: The batch sliced along the batch
                 dimension at the given index.
 
@@ -4321,7 +4123,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Slices the batch in a given dimension.
 
         Args:
-        ----
             dim (int, optional): Specifies the dimension along which
                 to slice the tensor. Default: ``0``
             start (int, optional): Specifies the index where the
@@ -4333,7 +4134,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 each index for slicing. Default: ``1``
 
         Returns:
-        -------
             ``BatchedTensor``: A slice of the current batch.
 
         Example usage:
@@ -4370,14 +4170,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Splits the batch into chunks along a given dimension.
 
         Args:
-        ----
             split_size_or_sections (int or sequence): Specifies the
                 size of a single chunk or list of sizes for each chunk.
             dim (int, optional): Specifies the dimension along which
                 to split the tensor. Default: ``0``
 
         Returns:
-        -------
             tuple: The batch split into chunks along the given
                 dimension.
 
@@ -4409,13 +4207,11 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Takes values along the batch dimension.
 
         Args:
-        ----
             indices (``BaseBatch`` or ``Tensor`` or sequence):
                 Specifies the indices to take along the batch
                 dimension.
 
         Returns:
-        -------
             ``BatchedTensor``: The batch with the selected data.
 
         Example usage:
@@ -4456,7 +4252,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Takes values along the batch dimension.
 
         Args:
-        ----
             indices (``BaseBatch`` or ``numpy.ndarray`` or
                 ``torch.Tensor`` or `` Specifies the indices to take
                 along the batch dimension.
@@ -4464,7 +4259,6 @@ class BatchedTensor(BaseBatch[Tensor]):
                 to select along. Default: ``None``
 
         Returns:
-        -------
             ``BatchedTensor`` or ``torch.Tensor``: The batch with the
                 selected data.
 
@@ -4494,12 +4288,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch.
 
         Args:
-        ----
             dim (int): Specifies the dimension at which to insert the
                 singleton dimension.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch with an added singleton
                 dimension.
 
@@ -4536,11 +4328,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         but with a new shape.
 
         Args:
-        ----
             shape (tuple): Specifies the desired shape.
 
         Returns:
-        -------
             ``torch.Tensor``: A new view of the tensor in the batch.
 
         Example usage:
@@ -4569,12 +4359,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         size.
 
         Args:
-        ----
             other (``BatchedTensor``): Specifies the batch with
                 the target shape.
 
         Returns:
-        -------
             ``BatchedTensor``: A new batch with the shape of
                 ``other``.
 
@@ -4614,14 +4402,12 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch.
 
         Args:
-        ----
             fn (``Callable``): Specifies the function to be applied to
                 the tensor. It is the responsibility of the user to
                 verify the function applies a valid transformation of
                 the data.
 
         Returns:
-        -------
             ``BatchedTensor``: The transformed batch.
 
         Example usage:
@@ -4644,7 +4430,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         In-place version of ``apply``.
 
         Args:
-        ----
             fn (``Callable``): Specifies the function to be applied to
                 the tensor. It is the responsibility of the user to
                 verify the function applies a valid transformation of
@@ -4675,7 +4460,6 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Checks if the dimensions are valid.
 
         Args:
-        ----
             tensors (``Sequence``): Specifies the sequence of
                 tensors/batches to check.
         """
@@ -4685,12 +4469,10 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Creates a new batch given a ``torch.Tensor``.
 
         Args:
-        ----
             data (``torch.Tensor``): Specifies the data to put in the
                 batch.
 
         Returns:
-        -------
             ``BatchedTensor``: The new batch.
         """
         return self.__class__(data, **self._get_kwargs())

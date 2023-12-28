@@ -163,14 +163,12 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         ``permute_along_seq``.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
 
         Returns:
-        -------
             ``BatchDict``: A new batch with permuted data.
 
         Example usage:
@@ -210,7 +208,6 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         ``permute_along_seq``.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
@@ -247,13 +244,11 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         the same length.
 
         Args:
-        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Returns:
-        -------
             ``BatchDict``:  A new batch with shuffled data.
 
         Raises:
@@ -293,7 +288,6 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         the same length.
 
         Args:
-        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -354,12 +348,10 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         Note that only the sequences are concatenated.
 
         Args:
-        ----
             batches (``BatchDict`` or  ``Sequence``): Specifies the
                 batch(es) to concatenate along the sequence dimension.
 
         Returns:
-        -------
             ``BatchDict``: A batch with the concatenated data
                 along the sequence dimension.
 
@@ -400,7 +392,6 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         Note that only the sequences are concatenated.
 
         Args:
-        ----
             batches (``BatchDict`` or  ``Sequence``): Specifies the
                 batch(es) to concatenate along the sequence dimension.
 
@@ -453,13 +444,11 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         indices.
 
         Args:
-        ----
             index (``torch.Tensor`` of type long and shape
                 ``(seq_len,)`` or ``(batch_size, seq_len,)`` or
                 ``Sequence``): Specifies the indices to select.
 
         Returns:
-        -------
             ``BatchDict``: A new batch sliced along the sequence
                 dimension at the given indices.
 
@@ -502,12 +491,10 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         r"""Repeats the batch along the sequence dimension.
 
         Args:
-        ----
             repeats (int): Specifies the number of times to repeat
                 the batch along the sequence dimension.
 
         Returns:
-        -------
             ``BatchDict``: A repeated version of the input batch.
 
         Example usage:
@@ -550,7 +537,6 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         r"""Slices the batch in the sequence dimension.
 
         Args:
-        ----
             start (int, optional): Specifies the index where the
                 slicing of object starts. Default: ``0``
             stop (int, optional): Specifies the index where the
@@ -560,7 +546,6 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
                 each index for slicing. Default: ``1``
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A slice of the current batch.
 
         Example usage:
@@ -616,13 +601,11 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         r"""Takes values along the sequence dimension.
 
         Args:
-        ----
             indices (``BaseBatch`` or ``numpy.ndarray`` or
                 ``torch.Tensor`` or `` Specifies the indices to take
                 along the batch dimension.
 
         Returns:
-        -------
             ``BatchDict``: The batch with the selected data.
 
         Example usage:
