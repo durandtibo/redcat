@@ -20,6 +20,7 @@ nav:
   - Home: index.md
   - get_started.md
   - Reference:
+      - refs/base.md
       - refs/batchedarray.md
       - refs/datapipes.md
       - refs/utils.md

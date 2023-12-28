@@ -1525,10 +1525,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         monotonic order by value.
 
         Args:
-            descending (bool, optional): Controls the sorting order.
+            descending: Controls the sorting order.
                 If ``True``, the elements are sorted in descending
                 order by value. Default: ``False``
-            stable (bool, optional): Makes the sorting routine stable,
+            stable: Makes the sorting routine stable,
                 which guarantees that the order of equivalent elements
                 is preserved. Default: ``False``
 
