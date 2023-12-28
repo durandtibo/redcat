@@ -29,11 +29,10 @@ class BatchedTensor(BaseBatch[Tensor]):
     examples.
 
     Args:
-    ----
         data (array_like): Specifies the data for the tensor. It can
             be a torch.Tensor, list, tuple, NumPy ndarray, scalar,
             and other types.
-        batch_dim (int, optional): Specifies the batch dimension
+        batch_dim: Specifies the batch dimension
             in the ``torch.Tensor`` object. Default: ``0``
         kwargs: Keyword arguments that are passed to
             ``torch.as_tensor``.
@@ -1303,7 +1302,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension in monotonic order by value.
 
         Args:
-            dim (int, optional): Specifies the dimension to sort
+            dim: Specifies the dimension to sort
                 along. Default: ``-1``
             **kwargs: Arbitrary keyword arguments.
 
@@ -1356,7 +1355,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch in a given dimension.
 
         Args:
-            dim (int): Specifies the dimension of the cumulative sum.
+            dim: Specifies the dimension of the cumulative sum.
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
 
@@ -1382,7 +1381,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch in a given dimension.
 
         Args:
-            dim (int): Specifies the dimension of the cumulative product.
+            dim: Specifies the dimension of the cumulative product.
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
 
@@ -1452,7 +1451,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         in a given dimension.
 
         Args:
-            dim (int): Specifies the dimension of the cumulative sum.
+            dim: Specifies the dimension of the cumulative sum.
             **kwargs: see ``torch.cumsum`` documentation
 
         Returns:
@@ -1477,7 +1476,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         in a given dimension.
 
         Args:
-            dim (int): Specifies the dimension of the cumulative sum.
+            dim: Specifies the dimension of the cumulative sum.
             **kwargs: see ``torch.cumsum_`` documentation
 
         Example usage:
@@ -1542,7 +1541,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-            dim (int): Specifies the dimension of the cumulative sum.
+            dim: Specifies the dimension of the cumulative sum.
 
         Returns:
             ``BatchedTensor``: A batch with the cumulative
@@ -1568,7 +1567,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         dimension.
 
         Args:
-            dim (int): Specifies the dimension of the cumulative sum.
+            dim: Specifies the dimension of the cumulative sum.
 
         Example usage:
 
@@ -1646,7 +1645,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
-            dim (int): Specifies the dimension where the permutation
+            dim: Specifies the dimension where the permutation
                 is computed.
 
         Returns:
@@ -1676,7 +1675,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                 and shape ``(dimension,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
-            dim (int): Specifies the dimension where the permutation
+            dim: Specifies the dimension where the permutation
                 is computed.
 
         Example usage:
@@ -1702,7 +1701,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Shuffles the data/batch along a given dimension.
 
         Args:
-            dim (int): Specifies the shuffle dimension.
+            dim: Specifies the shuffle dimension.
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -1729,7 +1728,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Shuffles the data/batch along a given dimension.
 
         Args:
-            dim (int): Specifies the shuffle dimension.
+            dim: Specifies the shuffle dimension.
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -3976,8 +3975,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Splits the batch into chunks along a given dimension.
 
         Args:
-            chunks (int): Specifies the number of chunks.
-            dim (int, optional): Specifies the dimension along which
+            chunks: Specifies the number of chunks.
+            dim: Specifies the dimension along which
                 to split the tensor. Default: ``0``
 
         Returns:
@@ -4008,7 +4007,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Selects data at the given indices along a given dimension.
 
         Args:
-            dim (int): Specifies the index dimension.
+            dim: Specifies the index dimension.
             index (``torch.Tensor`` or list or tuple): Specifies the
                 indices to select.
 
@@ -4086,8 +4085,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         index.
 
         Args:
-            dim (int): Specifies the index dimension.
-            index (int): Specifies the index to select.
+            dim: Specifies the index dimension.
+            index: Specifies the index to select.
 
         Returns:
             ``Tensor``: The batch sliced along the batch
@@ -4123,14 +4122,14 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Slices the batch in a given dimension.
 
         Args:
-            dim (int, optional): Specifies the dimension along which
+            dim: Specifies the dimension along which
                 to slice the tensor. Default: ``0``
-            start (int, optional): Specifies the index where the
+            start: Specifies the index where the
                 slicing of object starts. Default: ``0``
-            stop (int, optional): Specifies the index where the
+            stop: Specifies the index where the
                 slicing of object stops. ``None`` means last.
                 Default: ``None``
-            step (int, optional): Specifies the increment between
+            step: Specifies the increment between
                 each index for slicing. Default: ``1``
 
         Returns:
@@ -4172,7 +4171,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         Args:
             split_size_or_sections (int or sequence): Specifies the
                 size of a single chunk or list of sizes for each chunk.
-            dim (int, optional): Specifies the dimension along which
+            dim: Specifies the dimension along which
                 to split the tensor. Default: ``0``
 
         Returns:
@@ -4288,7 +4287,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch.
 
         Args:
-            dim (int): Specifies the dimension at which to insert the
+            dim: Specifies the dimension at which to insert the
                 singleton dimension.
 
         Returns:
@@ -4485,12 +4484,10 @@ def implements(torch_function: Callable) -> Callable:
     """Registers a torch function override for BatchedTensor.
 
     Args:
-    ----
         torch_function (``Callable``):  Specifies the torch function
             to override.
 
     Returns:
-    -------
         ``Callable``: The decorated function.
 
     Example usage:

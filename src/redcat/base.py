@@ -274,7 +274,7 @@ class BaseBatch(Generic[T], ABC):
         r"""Splits the batch into chunks along the batch dimension.
 
         Args:
-            chunks (int): Specifies the number of chunks.
+            chunks: Specifies the number of chunks.
 
         Returns:
             tuple: The batch split into chunks along the batch
@@ -369,7 +369,7 @@ class BaseBatch(Generic[T], ABC):
         index.
 
         Args:
-            index (int): Specifies the index to select.
+            index: Specifies the index to select.
 
         Returns:
             ``BaseBatch``: The batch sliced along the batch
@@ -390,12 +390,12 @@ class BaseBatch(Generic[T], ABC):
         r"""Slices the batch in the batch dimension.
 
         Args:
-            start (int, optional): Specifies the index where the
+            start: Specifies the index where the
                 slicing of object starts. Default: ``0``
-            stop (int, optional): Specifies the index where the
+            stop: Specifies the index where the
                 slicing of object stops. ``None`` means last.
                 Default: ``None``
-            step (int, optional): Specifies the increment between
+            step: Specifies the increment between
                 each index for slicing. Default: ``1``
 
         Returns:
@@ -453,7 +453,7 @@ class BaseBatch(Generic[T], ABC):
         r"""Gets the number of mini-batches for a given batch size.
 
         Args:
-            batch_size (int): Specifies the target batch size of the
+            batch_size: Specifies the target batch size of the
                 mini-batches.
             drop_last (bool, optional): If ``True``, the last batch is
                 dropped if it is not full, otherwise it is returned.
@@ -487,7 +487,7 @@ class BaseBatch(Generic[T], ABC):
         r"""Gets the mini-batches of the current batch.
 
         Args:
-            batch_size (int): Specifies the target batch size of the
+            batch_size: Specifies the target batch size of the
                 mini-batches.
             drop_last (bool, optional): If ``True``, the last batch is
                 dropped if it is not full, otherwise it is returned.

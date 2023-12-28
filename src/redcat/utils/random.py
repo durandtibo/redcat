@@ -26,23 +26,22 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
     r"""Gets a random number generator.
 
     Args:
-    ----
-        rng_or_seed (``random.Random`` or int or ``None``):
-            Specifies the pseudorandom number generator for sampling
-            or the random seed for the random number generator.
+        rng_or_seed: Specifies the pseudorandom number generator for
+            sampling or the random seed for the random number
+            generator.
 
     Returns:
-    -------
-        ``random.Random``: The initialized random number generator.
+        The initialized random number generator.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.utils.random import get_random_rng
+    >>> get_random_rng(42)
+    <random.Random object at 0x...>
 
-        >>> import numpy as np
-        >>> from redcat.utils.random import get_random_rng
-        >>> get_random_rng(42)
-        <random.Random object at 0x...>
+    ```
     """
     if isinstance(rng_or_seed, random.Random):
         return rng_or_seed
@@ -55,55 +54,17 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
 
 @overload
 def randperm(n: int, rng: np.random.Generator) -> np.ndarray:
-    r"""Creates a random permutation of integers from ``0`` to ``n - 1``.
-
-    Args:
-    ----
-        n (int): Specifies the number of items.
-        rng_or_seed (``numpy.random.Generator``): Specifies the
-            pseudorandom number generator for sampling.
-
-    Returns:
-    -------
-        ``numpy.ndarray``: A random permutation of integers from
-            ``0`` to ``n - 1``.
-    """
+    r"""``randperm`` with a ``numpy.ndarray``."""
 
 
 @overload
 def randperm(n: int, rng: torch.Generator) -> torch.Tensor:
-    r"""Creates a random permutation of integers from ``0`` to ``n - 1``.
-
-    Args:
-    ----
-        n (int): Specifies the number of items.
-        rng_or_seed (``torch.Generator``): Specifies the pseudorandom
-            number generator for sampling.
-
-    Returns:
-    -------
-        ``torch.Tensor``: A random permutation of integers from
-            ``0`` to ``n - 1``.
-    """
+    r"""``randperm`` with a ``torch.Tensor``."""
 
 
 @overload
 def randperm(n: int, generator: random.Random | int | None = None) -> list[int]:
-    r"""Creates a random permutation of integers from ``0`` to ``n - 1``.
-
-    Args:
-    ----
-        n (int): Specifies the number of items.
-        rng_or_seed (``random.Random`` or int or ``None``, optional):
-            Specifies the pseudorandom number generator for sampling
-            or the random seed for the random number generator.
-            Default: ``None``
-
-    Returns:
-    -------
-        ``list``: A random permutation of integers from
-            ``0`` to ``n - 1``.
-    """
+    r"""``randperm`` with a ``list``."""
 
 
 def randperm(
@@ -112,40 +73,38 @@ def randperm(
     r"""Creates a random permutation of integers from ``0`` to ``n - 1``.
 
     Args:
-    ----
-        n (int): Specifies the number of items.
-        rng_or_seed (``numpy.random.Generator`` or ``torch.Generator``
-            or ``random.Random`` or int or ``None``, optional):
-            Specifies the pseudorandom number generator for sampling
-            or the random seed for the random number generator.
-            Default: ``None``
+        n: Specifies the number of items.
+        rng_or_seed: Specifies the pseudorandom number generator for
+            sampling or the random seed for the random number
+            generator.
 
     Returns:
-    -------
-        ``numpy.ndarray`` or ``torch.Tensor`` or ``list``: A random
-            permutation of integers from ``0`` to ``n - 1``.
+        A random permutation of integers from ``0`` to ``n - 1``.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.utils.random import randperm
+    >>> randperm(10, np.random.default_rng(42))
+    array([...])
 
-        >>> import numpy as np
-        >>> from redcat.utils.random import randperm
-        >>> randperm(10, np.random.default_rng(42))
-        array([...])
+    ```
 
-    .. code-block:: pycon
+    ```pycon
+    >>> from redcat.utils.tensor import get_torch_generator
+    >>> from redcat.utils.random import randperm
+    >>> randperm(10, get_torch_generator(42))
+    tensor([...])
 
-        >>> from redcat.utils.tensor import get_torch_generator
-        >>> from redcat.utils.random import randperm
-        >>> randperm(10, get_torch_generator(42))
-        tensor([...])
+    ```
 
-    .. code-block:: pycon
+    ```pycon
+    >>> from redcat.utils.random import randperm
+    >>> randperm(10, 42)
+    [...]
 
-        >>> from redcat.utils.random import randperm
-        >>> randperm(10, 42)
-        [...]
+    ```
     """
     if isinstance(rng_or_seed, torch.Generator):
         return torch.randperm(n, generator=rng_or_seed)

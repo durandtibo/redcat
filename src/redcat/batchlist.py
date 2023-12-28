@@ -23,7 +23,6 @@ class BatchList(BaseBatch[list[T]]):
     examples.
 
     Args:
-    ----
         data (list): Specifies the list of examples.
 
     Raises:
