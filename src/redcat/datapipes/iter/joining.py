@@ -21,41 +21,38 @@ class BatchExtenderIterDataPipe(IterDataPipe[BaseBatch[T]]):
     into a single ``BaseBatch`` object.
 
     Args:
-    ----
-        datapipe (``IterDataPipe``): Specifies the source
-            DataPipe. The DataPipe has to return compatible
-            ``BaseBatch`` objects.
-        buffer_size (int, optional): Specifies the buffer size i.e.
-            the number of batches that are combined into a bigger
-            batch. Default: ``10``
-        drop_last (bool, optional): If ``True``, the last samples are
-            dropped if the buffer is not full, otherwise it is
-            returned. Default: ``False``
+        datapipe: Specifies the source DataPipe. The DataPipe has to
+            return compatible ``BaseBatch`` objects.
+        buffer_size: Specifies the buffer size i.e. the number of
+            batches that are combined into a bigger batch.
+        drop_last: If ``True``, the last samples are dropped if the
+            buffer is not full, otherwise it is returned.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
+    >>> import torch
+    >>> from torch.utils.data.datapipes.iter import IterableWrapper
+    >>> from redcat import BatchedTensor
+    >>> from redcat.datapipes.iter import BatchExtender
+    >>> datapipe = BatchExtender(
+    ...     IterableWrapper([BatchedTensor(torch.ones(2) * i) for i in range(10)]),
+    ...     buffer_size=4,
+    ... )
+    >>> list(datapipe)
+    [tensor([0., 0., 1., 1., 2., 2., 3., 3.], batch_dim=0),
+     tensor([4., 4., 5., 5., 6., 6., 7., 7.], batch_dim=0),
+     tensor([8., 8., 9., 9.], batch_dim=0)]
+    >>> datapipe = BatchExtender(
+    ...     IterableWrapper([BatchedTensor(torch.ones(2) * i) for i in range(10)]),
+    ...     buffer_size=4,
+    ...     drop_last=True,
+    ... )
+    >>> list(datapipe)
+    [tensor([0., 0., 1., 1., 2., 2., 3., 3.], batch_dim=0),
+     tensor([4., 4., 5., 5., 6., 6., 7., 7.], batch_dim=0)]
 
-        >>> import torch
-        >>> from torch.utils.data.datapipes.iter import IterableWrapper
-        >>> from redcat import BatchedTensor
-        >>> from redcat.datapipes.iter import BatchExtender
-        >>> datapipe = BatchExtender(
-        ...     IterableWrapper([BatchedTensor(torch.ones(2) * i) for i in range(10)]),
-        ...     buffer_size=4,
-        ... )
-        >>> list(datapipe)
-        [tensor([0., 0., 1., 1., 2., 2., 3., 3.], batch_dim=0),
-         tensor([4., 4., 5., 5., 6., 6., 7., 7.], batch_dim=0),
-         tensor([8., 8., 9., 9.], batch_dim=0)]
-        >>> datapipe = BatchExtender(
-        ...     IterableWrapper([BatchedTensor(torch.ones(2) * i) for i in range(10)]),
-        ...     buffer_size=4,
-        ...     drop_last=True,
-        ... )
-        >>> list(datapipe)
-        [tensor([0., 0., 1., 1., 2., 2., 3., 3.], batch_dim=0),
-         tensor([4., 4., 5., 5., 6., 6., 7., 7.], batch_dim=0)]
+    ```
     """
 
     def __init__(
@@ -104,7 +101,7 @@ def create_large_batch(batches: Sequence[BaseBatch[T]]) -> BaseBatch[T]:
         batches: Specifies the sequence of batches.
 
     Returns:
-        ``BaseBatch``: A batch containing all the examples from the input batches.
+        A batch containing all the examples from the input batches.
     """
     batch = batches[0].clone()  # Create a deepcopy to not change the data in the batch
     batch.extend(batches[1:])

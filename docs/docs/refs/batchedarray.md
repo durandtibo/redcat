@@ -1,1 +1,3 @@
+# BatchedArray
+
 ::: redcat.BatchedArray

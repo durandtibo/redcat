@@ -23,48 +23,45 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
     (``BaseBatch`` object).
 
     Args:
-    ----
-        datapipe_or_batch (``IterDataPipe`` or ``BaseBatch``):
-            Specifies the datapipe of batches to split.
+        datapipe_or_batch: Specifies the datapipe of batches to split.
             The generated mini-batches have the same structure
             as the input batches.
-        batch_size (int): Specifies the batch size.
-        drop_last (bool, optional): If ``True``, it drops the last
-            incomplete batch, if the number of examples is not
-            divisible by the batch size. If ``False`` and the number
-            of examples is not divisible by the batch size, then the
-            last batch will be smaller. Default: ``False``
-        shuffle (bool, optional): If ``True``, the batches are
-            shuffled before to create the mini-batches. The
-            shuffling is done per batch. Default: ``False``
-        random_seed (int, optional): Specifies the random seed used to
-            shuffle the batch before to split it.
-            Default: ``5513175564631803238``
+        batch_size: Specifies the batch size.
+        drop_last: If ``True``, it drops the last incomplete batch,
+            if the number of examples is not divisible by the
+            batch size. If ``False`` and the number of examples is
+            not divisible by the batch size, then the
+            last batch will be smaller.
+        shuffle: If ``True``, the batches are shuffled before to
+            create the mini-batches. The shuffling is done per batch.
+        random_seed: Specifies the random seed used to shuffle the
+            batch before to split it.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
+    >>> import torch
+    >>> from torch.utils.data.datapipes.iter import IterableWrapper
+    >>> from redcat import BatchedTensor
+    >>> from redcat.datapipes.iter import MiniBatcher
+    >>> datapipe = MiniBatcher(
+    ...     IterableWrapper([BatchedTensor(torch.arange(4).add(i * 4)) for i in range(2)]),
+    ...     batch_size=2,
+    ... )
+    >>> list(datapipe)
+    [tensor([0, 1], batch_dim=0),
+     tensor([2, 3], batch_dim=0),
+     tensor([4, 5], batch_dim=0),
+     tensor([6, 7], batch_dim=0)]
+    >>> datapipe = MiniBatcher(BatchedTensor(torch.arange(9)), batch_size=2)
+    >>> list(datapipe)
+    [tensor([0, 1], batch_dim=0),
+     tensor([2, 3], batch_dim=0),
+     tensor([4, 5], batch_dim=0),
+     tensor([6, 7], batch_dim=0),
+     tensor([8], batch_dim=0)]
 
-        >>> import torch
-        >>> from torch.utils.data.datapipes.iter import IterableWrapper
-        >>> from redcat import BatchedTensor
-        >>> from redcat.datapipes.iter import MiniBatcher
-        >>> datapipe = MiniBatcher(
-        ...     IterableWrapper([BatchedTensor(torch.arange(4).add(i * 4)) for i in range(2)]),
-        ...     batch_size=2,
-        ... )
-        >>> list(datapipe)
-        [tensor([0, 1], batch_dim=0),
-         tensor([2, 3], batch_dim=0),
-         tensor([4, 5], batch_dim=0),
-         tensor([6, 7], batch_dim=0)]
-        >>> datapipe = MiniBatcher(BatchedTensor(torch.arange(9)), batch_size=2)
-        >>> list(datapipe)
-        [tensor([0, 1], batch_dim=0),
-         tensor([2, 3], batch_dim=0),
-         tensor([4, 5], batch_dim=0),
-         tensor([6, 7], batch_dim=0),
-         tensor([8], batch_dim=0)]
+    ```
     """
 
     def __init__(
@@ -109,11 +106,11 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
 
     @property
     def batch_size(self) -> int:
-        r"""``int``: The batch size."""
+        r"""The batch size."""
         return self._batch_size
 
     @property
     def random_seed(self) -> int:
-        r"""``int``: The random seed used to initialize the pseudo
-        random generator."""
+        r"""The random seed used to initialize the pseudo random
+        generator."""
         return self._generator.initial_seed()
