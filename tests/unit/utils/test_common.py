@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import torch
 from pytest import mark, raises
@@ -10,6 +12,7 @@ from redcat.utils.common import (
     check_data_and_dim,
     check_seq_dims,
     get_batch_dims,
+    get_data,
     get_seq_dims,
     swap2,
 )
@@ -105,6 +108,25 @@ def test_get_batch_dims_2_tensor() -> None:
 
 def test_get_batch_dims_empty() -> None:
     assert get_batch_dims(tuple()) == set()
+
+
+##############################
+#     Tests for get_data     #
+##############################
+
+
+def test_get_data_int() -> None:
+    assert get_data(42) == 42
+
+
+@mark.parametrize("data", [np.ones((2, 3)), BatchedArray(np.ones((2, 3)))])
+def test_get_data_array(data: Any) -> None:
+    assert np.array_equal(get_data(data), np.ones((2, 3)))
+
+
+@mark.parametrize("data", [torch.ones(2, 3), BatchedTensor(torch.ones(2, 3))])
+def test_get_data_tensor(data: Any) -> None:
+    assert get_data(data).equal(torch.ones(2, 3))
 
 
 ##################################

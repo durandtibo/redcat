@@ -11,11 +11,15 @@ __all__ = [
 
 import copy
 from collections.abc import Iterable, Mapping, MutableSequence
-from typing import Any, overload
+from typing import Any, TypeVar, overload
 
 import numpy as np
 from numpy import ndarray
 from torch import Tensor
+
+from redcat.base import BaseBatch
+
+T = TypeVar("T")
 
 
 def check_batch_dims(dims: set[int]) -> None:
@@ -128,6 +132,41 @@ def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     dims = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
     dims.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
     return dims
+
+
+def get_data(data: BaseBatch[T] | Any) -> T:
+    r"""Gets the data from a batch or the input data.
+
+    Args:
+        data: Specifies the data.
+
+    Returns:
+        The data.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> import torch
+    >>> from redcat import BatchedArray, BatchedTensor
+    >>> from redcat.utils.common import get_data
+    >>> get_data(BatchedArray(np.ones((2, 3))))
+    array([[1., 1., 1.],
+           [1., 1., 1.]])
+    >>> get_data(BatchedTensor(torch.ones(2, 3)))
+    tensor([[1., 1., 1.],
+            [1., 1., 1.]])
+    >>> get_data(torch.ones(2, 3))
+    tensor([[1., 1., 1.],
+            [1., 1., 1.]])
+
+    ```
+    """
+    from redcat import BatchedArray  # TODO: remove BatchedArray when finish
+
+    if isinstance(data, (BaseBatch, BatchedArray)):
+        data = data.data
+    return data
 
 
 def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = None) -> set[int]:
