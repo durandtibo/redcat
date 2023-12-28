@@ -171,14 +171,12 @@ class BatchList(BaseBatch[list[T]]):
         current batch.
 
         Args:
-        ----
             fn (``Callable``): Specifies the function to be applied to
                 the element in the list. It is the responsibility of
                 the user to verify the function applies a valid
                 transformation of the data.
 
         Returns:
-        -------
             ``BatchList``: The transformed batch.
 
         Example usage:
@@ -200,7 +198,6 @@ class BatchList(BaseBatch[list[T]]):
         In-place version of ``apply``.
 
         Args:
-        ----
             fn (``Callable``): Specifies the function to be applied to
                 the element in the list. It is the responsibility of
                 the user to verify the function applies a valid

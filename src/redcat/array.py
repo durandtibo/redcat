@@ -28,21 +28,22 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     examples.
 
     Args:
-    ----
         data (array_like): Specifies the data for the array. It can
             be a list, tuple, NumPy ndarray, scalar, and other types.
-        batch_dim (int, optional): Specifies the batch dimension
-            in the ``numpy.ndarray`` object. Default: ``0``
+        batch_dim: Specifies the batch dimension in the
+            ``numpy.ndarray`` object.
         kwargs: Keyword arguments that are passed to
             ``numpy.asarray``.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
 
-        >>> import numpy as np
-        >>> from redcat import BatchedArray
-        >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+    >>> import numpy as np
+    >>> from redcat import BatchedArray
+    >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+
+    ```
     """
 
     def __init__(self, data: Any, *, batch_dim: int = 0, **kwargs) -> None:
@@ -78,7 +79,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
     @property
     def batch_dim(self) -> int:
-        r"""int: The batch dimension in the ``numpy.ndarray`` object."""
+        r"""The batch dimension in the ``numpy.ndarray`` object."""
         return self._batch_dim
 
     @property
@@ -91,22 +92,22 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
 
     @property
     def dtype(self) -> np.dtype:
-        r"""``numpy.dtype``: The data type."""
+        r"""The data type."""
         return self._data.dtype
 
     @property
     def ndim(self) -> int:
-        r"""``int``: The number of dimensions."""
+        r"""The number of dimensions."""
         return self._data.ndim
 
     @property
     def shape(self) -> tuple[int, ...]:
-        r"""``tuple``: The shape of the array."""
+        r"""The shape of the array."""
         return self._data.shape
 
     @property
-    def size(self) -> tuple[int, ...]:
-        r"""``tuple``: The total number of elements in the array."""
+    def size(self) -> int:
+        r"""The total number of elements in the array."""
         return self._data.size
 
     ###############################
@@ -117,25 +118,24 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Creates a copy of the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.copy``
             **kwargs: See the documentation of ``numpy.copy``
 
         Returns:
-        -------
-            ``BatchedArray``: A copy of the current batch.
+            A copy of the current batch.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch_copy = batch.copy()
+        >>> batch_copy
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch_copy = batch.copy()
-            >>> batch_copy
-            array([[1., 1., 1.],
-                   [1., 1., 1.]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(self._data.copy(*args, **kwargs))
 
@@ -144,25 +144,24 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         current batch.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.empty_like``
             **kwargs: See the documentation of
                 ``numpy.empty_like``
 
         Returns:
-        -------
-            ``BatchedArray``: A uninitialized batch with the same
-                shape as the current batch.
+            A uninitialized batch with the same shape as the current
+                batch.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.empty_like()
+        array([[...]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.empty_like()
-            array([[...]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(np.empty_like(self._data, *args, **kwargs))
 
@@ -171,26 +170,25 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         same shape as the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.full_like``
             **kwargs: See the documentation of
                 ``numpy.full_like``
 
         Returns:
-        -------
-            ``BatchedArray``: A batch filled with the scalar
-                value, with the same shape as the current batch.
+            A batch filled with the scalar value, with the same shape
+                as the current batch.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.full_like(42)
+        array([[42., 42., 42.],
+               [42., 42., 42.]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.full_like(42)
-            array([[42., 42., 42.],
-                   [42., 42., 42.]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(np.full_like(self._data, *args, **kwargs))
 
@@ -206,35 +204,32 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         shape, ``numpy.dtype`` as the array in the current batch.
 
         Args:
-        ----
-            fill_value (float or int or bool): Specifies the number
-                to fill the batch with.
-            batch_size (int or ``None``): Specifies the batch size.
-                If ``None``, the batch size of the current batch is
-                used. Default: ``None``.
+            fill_value: Specifies the number to fill the batch with.
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
             **kwargs: See the documentation of
                 ``numpy.new_full``.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch filled with the scalar value.
+            A batch filled with the scalar value.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.new_full(42)
+        array([[42., 42., 42.],
+               [42., 42., 42.]], batch_dim=0)
+        >>> batch.new_full(42, batch_size=5)
+        array([[42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.new_full(42)
-            array([[42., 42., 42.],
-                   [42., 42., 42.]], batch_dim=0)
-            >>> batch.new_full(42, batch_size=5)
-            array([[42., 42., 42.],
-                   [42., 42., 42.],
-                   [42., 42., 42.],
-                   [42., 42., 42.],
-                   [42., 42., 42.]], batch_dim=0)
+        ```
         """
         shape = list(self._data.shape)
         if batch_size is not None:
@@ -253,34 +248,31 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         shape, ``numpy.dtype`` as the array in the current batch.
 
         Args:
-        ----
-            batch_size (int or ``None``): Specifies the batch size.
-                If ``None``, the batch size of the current batch is
-                used. Default: ``None``.
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
             **kwargs: See the documentation of
                 ``numpy.new_ones``.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch filled with the scalar
-                value ``1``.
+            A batch filled with the scalar value ``1``.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.zeros((2, 3)))
+        >>> batch.new_ones()
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_dim=0)
+        >>> batch.new_ones(batch_size=5)
+        array([[1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.zeros((2, 3)))
-            >>> batch.new_ones()
-            array([[1., 1., 1.],
-                   [1., 1., 1.]], batch_dim=0)
-            >>> batch.new_ones(batch_size=5)
-            array([[1., 1., 1.],
-                   [1., 1., 1.],
-                   [1., 1., 1.],
-                   [1., 1., 1.],
-                   [1., 1., 1.]], batch_dim=0)
+        ```
         """
         shape = list(self._data.shape)
         if batch_size is not None:
@@ -299,34 +291,31 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         shape, ``numpy.dtype``  as the array in the current batch.
 
         Args:
-        ----
-            batch_size (int or ``None``): Specifies the batch size.
-                If ``None``, the batch size of the current batch is
-                used. Default: ``None``.
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
             **kwargs: See the documentation of
                 ``numpy.new_zeros``.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch filled with the scalar
-                value ``0``.
+            A batch filled with the scalar value ``0``.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.new_zeros()
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_dim=0)
+        >>> batch.new_zeros(batch_size=5)
+        array([[0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.new_zeros()
-            array([[0., 0., 0.],
-                   [0., 0., 0.]], batch_dim=0)
-            >>> batch.new_zeros(batch_size=5)
-            array([[0., 0., 0.],
-                   [0., 0., 0.],
-                   [0., 0., 0.],
-                   [0., 0., 0.],
-                   [0., 0., 0.]], batch_dim=0)
+        ```
         """
         shape = list(self._data.shape)
         if batch_size is not None:
@@ -339,27 +328,25 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         same shape as the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.ones_like``
             **kwargs: See the documentation of
                 ``numpy.ones_like``
 
         Returns:
-        -------
-            ``BatchedArray``: A batch filled with the scalar
-                value ``1``, with the same shape as the current
-                batch.
+            A batch filled with the scalar value ``1``, with the same
+                shape as the current batch.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.ones_like()
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.ones_like()
-            array([[1., 1., 1.],
-                   [1., 1., 1.]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(np.ones_like(self._data, *args, **kwargs))
 
@@ -368,27 +355,25 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         same shape as the current batch.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.zeros_like``
             **kwargs: See the documentation of
                 ``numpy.zeros_like``
 
         Returns:
-        -------
-            ``BatchedArray``: A batch filled with the scalar
-                value ``0``, with the same shape as the current
-                batch.
+            A batch filled with the scalar value ``0``, with the same
+                shape as the current batch.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.zeros_like()
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.zeros_like()
-            array([[0., 0., 0.],
-                   [0., 0., 0.]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(np.zeros_like(self._data, *args, **kwargs))
 
@@ -402,25 +387,24 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Moves and/or casts the data.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.astype``
             **kwargs: See the documentation of ``numpy.astype``
 
         Returns:
-        -------
-            ``BatchedArray``: A new batch with the data after
-                dtype and/or device conversion.
+            A new batch with the data after dtype and/or device
+                conversion.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.astype(dtype=bool)
+        array([[  True,  True,  True],
+               [  True,  True,  True]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.astype(dtype=bool)
-            array([[  True,  True,  True],
-                   [  True,  True,  True]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(self._data.astype(dtype, *args, **kwargs))
 
@@ -455,31 +439,29 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Computes element-wise equality.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch containing the element-wise
-                equality.
+            A batch containing the element-wise equality.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> batch1.eq(batch2)
+        array([[False,  True, False],
+               [ True, False,  True]], batch_dim=0)
+        >>> batch1.eq(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[False,  True, False],
+               [ True, False,  True]], batch_dim=0)
+        >>> batch1.eq(2)
+        array([[False, False, False],
+               [False,  True,  True]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
-            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
-            >>> batch1.eq(batch2)
-            array([[False,  True, False],
-                   [ True, False,  True]], batch_dim=0)
-            >>> batch1.eq(np.array([[5, 3, 2], [0, 1, 2]]))
-            array([[False,  True, False],
-                   [ True, False,  True]], batch_dim=0)
-            >>> batch1.eq(2)
-            array([[False, False, False],
-                   [False,  True,  True]], batch_dim=0)
+        ```
         """
         return np.equal(self, other)
 
@@ -494,32 +476,29 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Computes ``self >= other`` element-wise.
 
         Args:
-        ----
-            other: Specifies the value to compare
-                with.
+            other: Specifies the value to compare with.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch containing the element-wise
-                comparison.
+            A batch containing the element-wise comparison.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> batch1.ge(batch2)
+        array([[False,  True,  True],
+               [ True,  True,  True]], batch_dim=0)
+        >>> batch1.ge(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[False,  True,  True],
+               [ True,  True,  True]], batch_dim=0)
+        >>> batch1.ge(2)
+        array([[False,  True,  True],
+               [False,  True,  True]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
-            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
-            >>> batch1.ge(batch2)
-            array([[False,  True,  True],
-                   [ True,  True,  True]], batch_dim=0)
-            >>> batch1.ge(np.array([[5, 3, 2], [0, 1, 2]]))
-            array([[False,  True,  True],
-                   [ True,  True,  True]], batch_dim=0)
-            >>> batch1.ge(2)
-            array([[False,  True,  True],
-                   [False,  True,  True]], batch_dim=0)
+        ```
         """
         return np.greater_equal(self, other)
 
@@ -527,31 +506,29 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Computes ``self > other`` element-wise.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch containing the element-wise
-                comparison.
+            A batch containing the element-wise comparison.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> batch1.gt(batch2)
+        array([[False, False,  True],
+               [False,  True, False]], batch_dim=0)
+        >>> batch1.gt(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[False, False,  True],
+               [False,  True, False]], batch_dim=0)
+        >>> batch1.gt(2)
+        array([[False,  True,  True],
+               [False, False, False]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
-            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
-            >>> batch1.gt(batch2)
-            array([[False, False,  True],
-                   [False,  True, False]], batch_dim=0)
-            >>> batch1.gt(np.array([[5, 3, 2], [0, 1, 2]]))
-            array([[False, False,  True],
-                   [False,  True, False]], batch_dim=0)
-            >>> batch1.gt(2)
-            array([[False,  True,  True],
-                   [False, False, False]], batch_dim=0)
+        ```
         """
         return np.greater(self, other)
 
@@ -560,21 +537,20 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         or negative infinity) or not.
 
         Returns:
-        -------
-            ``BatchedArray``:  A batch containing a boolean array
-                that is ``True`` where the current batch is infinite
-                and ``False`` elsewhere.
+            A batch containing a boolean array that is ``True`` where
+                the current batch is infinite and ``False`` elsewhere.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        >>> batch.isinf()
+        array([[False, False, True],
+               [False, False, True]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
-            >>> batch.isinf()
-            array([[False, False, True],
-                   [False, False, True]], batch_dim=0)
+        ```
         """
         return np.isinf(self)
 
@@ -583,21 +559,21 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         or not.
 
         Returns:
-        -------
-            BatchedArray:  A batch containing a boolean array
-                that is ``True`` where the current batch is negative
-                infinity and ``False`` elsewhere.
+            A batch containing a boolean array that is ``True`` where
+                the current batch is negative infinity and ``False``
+                elsewhere.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        >>> batch.isneginf()
+        array([[False, False, False],
+               [False, False,  True]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
-            >>> batch.isneginf()
-            array([[False, False, False],
-                   [False, False,  True]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(np.isneginf(self._data))
 
@@ -606,21 +582,21 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         or not.
 
         Returns:
-        -------
-            ``BatchedArray``:  A batch containing a boolean array
-                that is ``True`` where the current batch is positive
-                infinity and ``False`` elsewhere.
+            A batch containing a boolean array that is ``True`` where
+                the current batch is positive infinity and ``False``
+                elsewhere.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        >>> batch.isposinf()
+        array([[False, False,   True],
+               [False, False,  False]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
-            >>> batch.isposinf()
-            array([[False, False,   True],
-                   [False, False,  False]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(np.isposinf(self._data))
 
@@ -628,10 +604,8 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Indicates if each element in the batch is NaN or not.
 
         Returns:
-        -------
-            ``BatchedArray``:  A batch containing a boolean array
-                that is ``True`` where the current batch is infinite
-                and ``False`` elsewhere.
+            A batch containing a boolean array that is ``True`` where
+                the current batch is infinite and ``False`` elsewhere.
 
         Example usage:
 
@@ -650,13 +624,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Computes ``self <= other`` element-wise.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch containing the element-wise
-                comparison.
+            A batch containing the element-wise comparison.
 
         Example usage:
 
@@ -682,31 +653,29 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Computes ``self < other`` element-wise.
 
         Args:
-        ----
             other: Specifies the batch to compare.
 
         Returns:
-        -------
-            ``BatchedArray``: A batch containing the element-wise
-                comparison.
+            A batch containing the element-wise comparison.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> batch1.lt(batch2)
+        array([[ True, False, False],
+               [False, False, False]], batch_dim=0)
+        >>> batch1.lt(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[ True, False, False],
+              [False, False, False]], batch_dim=0)
+        >>> batch1.lt(2)
+        array([[ True, False, False],
+               [ True, False, False]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
-            >>> batch2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
-            >>> batch1.lt(batch2)
-            array([[ True, False, False],
-                   [False, False, False]], batch_dim=0)
-            >>> batch1.lt(np.array([[5, 3, 2], [0, 1, 2]]))
-            array([[ True, False, False],
-                  [False, False, False]], batch_dim=0)
-            >>> batch1.lt(2)
-            array([[ True, False, False],
-                   [ True, False, False]], batch_dim=0)
+        ```
         """
         return np.less(self, other)
 
@@ -718,19 +687,19 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Converts the current batch to bool data type.
 
         Returns:
-        -------
-            ``BatchedArray``: The current batch to bool data type.
+            The current batch to bool data type.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.bool()
+        array([[ True,  True,  True],
+               [ True,  True,  True]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.ones((2, 3)))
-            >>> batch.bool()
-            array([[ True,  True,  True],
-                   [ True,  True,  True]], batch_dim=0)
+        ```
         """
         return self._create_new_batch(self._data.astype(bool))
 
@@ -738,8 +707,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Converts the current batch to double (``float64``) data type.
 
         Returns:
-        -------
-            ``BatchedArray``: The current batch to double data type.
+            The current batch to double data type.
 
         Example usage:
 
@@ -758,7 +726,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Converts the current batch to float (``float32``) data type.
 
         Returns:
-        -------
             ``BatchedArray``: The current batch to float data type.
 
         Example usage:
@@ -778,7 +745,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Converts the current batch to int (``int32``) data type.
 
         Returns:
-        -------
             ``BatchedArray``: The current batch to int data type.
 
         Example usage:
@@ -798,7 +764,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Converts the current batch to long (``int64``) data type.
 
         Returns:
-        -------
             ``BatchedArray``: The current batch to long data type.
 
         Example usage:
@@ -867,7 +832,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``out = self + alpha * other``
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the other value to add to the
                 current batch.
@@ -875,7 +839,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 batch to add. Default: ``1.0``
 
         Returns:
-        -------
             ``BatchedArray``: A new batch containing the addition of
                 the two batches.
 
@@ -910,7 +873,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``self += alpha * other`` (in-place)
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the other value to add to the
                 current batch.
@@ -944,7 +906,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``out = self / other``
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the dividend.
             rounding_mode (str or ``None``, optional): Specifies the
@@ -954,7 +915,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 Default: ``None``
 
         Returns:
-        -------
             ``BatchedArray``: A new batch containing the division
                 of the two batches.
 
@@ -989,7 +949,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``self /= other`` (in-place)
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the dividend.
             rounding_mode (str or ``None``, optional): Specifies the
@@ -1024,12 +983,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         The current batch is the dividend.
 
         Args:
-        ----
             divisor (``BatchedArray`` or ``numpy.ndarray`` or int
                 or float): Specifies the divisor.
 
         Returns:
-        -------
             ``BatchedArray``: A new batch containing the
                 element-wise remainder of division.
 
@@ -1059,7 +1016,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         The current batch is the dividend.
 
         Args:
-        ----
             divisor (``BatchedArray`` or ``numpy.ndarray`` or int
                 or float): Specifies the divisor.
 
@@ -1086,12 +1042,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``out = self * other``
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the value to multiply.
 
         Returns:
-        -------
             ``BatchedArray``: A new batch containing the
                 multiplication of the two batches.
 
@@ -1121,12 +1075,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``self *= other`` (in-place)
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the value to multiply.
 
         Returns:
-        -------
             ``BatchedArray``: A new batch containing the
                 multiplication of the two batches.
 
@@ -1151,7 +1103,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Returns a new batch with the negative of the elements.
 
         Returns:
-        -------
             ``BatchedArray``: A new batch with the negative of
                 the elements.
 
@@ -1183,14 +1134,12 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``out = self - alpha * other``
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the value to subtract.
             alpha (int or float, optional): Specifies the scale of the
                 batch to substract. Default: ``1``
 
         Returns:
-        -------
             ``BatchedArray``: A new batch containing the diffence of
                 the two batches.
 
@@ -1225,7 +1174,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Similar to ``self -= alpha * other`` (in-place)
 
         Args:
-        ----
             other (``BatchedArray`` or ``numpy.ndarray`` or int or
                 float): Specifies the value to subtract.
             alpha (int or float, optional): Specifies the scale of the
@@ -1265,13 +1213,11 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         in a given axis.
 
         Args:
-        ----
             axis (int): Specifies the axis of the cumulative sum.
             *args: See the documentation of ``numpy.cumsum``
             **kwargs: See the documentation of ``numpy.cumsum``
 
         Returns:
-        -------
             ``BatchedArray``: A batch with the cumulative sum of
                 elements of the current batch in a given axis.
 
@@ -1296,7 +1242,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         in a given axis.
 
         Args:
-        ----
             axis (int): Specifies the axis of the cumulative sum.
             *args: See the documentation of ``numpy.cumsum``
             **kwargs: See the documentation of ``numpy.cumsum``
@@ -1320,12 +1265,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         in the batch axis.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.cumsum``
             **kwargs: See the documentation of ``numpy.cumsum``
 
         Returns:
-        -------
             ``BatchedArray``: A batch with the cumulative sum of
                 elements of the current batch in the batch axis.
 
@@ -1347,7 +1290,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         in the batch axis.
 
         Args:
-        ----
             *args: See the documentation of ``numpy.cumsum``
             **kwargs: See the documentation of ``numpy.cumsum``
 
@@ -1370,11 +1312,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         exponentiation of elements of the current batch in a given axis.
 
         Args:
-        ----
             axis (int): Specifies the axis of the cumulative sum.
 
         Returns:
-        -------
             ``BatchedArray``: A batch with the cumulative
                 summation of the exponentiation of elements of the
                 current batch in a given axis.
@@ -1397,7 +1337,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         exponentiation of elements of the current batch in a given axis.
 
         Args:
-        ----
             axis (int): Specifies the axis of the cumulative sum.
 
         Example usage:
@@ -1420,7 +1359,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         axis.
 
         Returns:
-        -------
             ``BatchedArray``: A batch with the cumulative
                 summation of the exponentiation of elements of the
                 current batch in the batch axis.
@@ -1473,7 +1411,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Permutes the data/batch along a given axis.
 
         Args:
-        ----
             permutation (``Sequence`` or ``numpy.ndarray`` of type int
                 and shape ``(axis,)``): Specifies the permutation
                 to use on the data. The axis of the permutation
@@ -1482,7 +1419,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 is computed.
 
         Returns:
-        -------
             ``BatchedArray``: A new batch with permuted data.
 
         Example usage:
@@ -1507,7 +1443,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Permutes the data/batch along a given axis.
 
         Args:
-        ----
             permutation (``Sequence`` or ``numpy.ndarray`` of type int
                 and shape ``(n,)``): Specifies the permutation
                 to use on the data. The axis of the permutation
@@ -1536,7 +1471,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Shuffles the data/batch along a given axis.
 
         Args:
-        ----
             axis (int): Specifies the shuffle axis.
             generator (``numpy.random.Generator`` or
                 ``torch.Generator`` or ``random.Random`` or ``None``,
@@ -1545,7 +1479,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 random number generator. Default: ``None``
 
         Returns:
-        -------
             ``BatchedArray``:  A new batch with shuffled data
                 along a given axis.
 
@@ -1567,7 +1500,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Shuffles the data/batch along a given axis.
 
         Args:
-        ----
             axis (int): Specifies the shuffle axis.
             generator (``numpy.random.Generator`` or
                 ``torch.Generator`` or ``random.Random`` or ``None``,
@@ -1576,7 +1508,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 random number generator. Default: ``None``
 
         Returns:
-        -------
             ``BatchedArray``:  A new batch with shuffled data
                 along a given axis.
 
@@ -1603,7 +1534,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         monotonic order by value.
 
         Args:
-        ----
             descending (bool, optional): Controls the sorting order.
                 If ``True``, the elements are sorted in descending
                 order by value. Default: ``False``
@@ -1612,7 +1542,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 is preserved. Default: ``False``
 
         Returns:
-        -------
             (``BatchedArray``, ``BatchedArray``): A tuple
                 two values:
                     - The first batch contains the batch values sorted
@@ -1652,7 +1581,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         monotonic order by value.
 
         Args:
-        ----
             descending (bool, optional): Controls the sorting order.
                 If ``True``, the elements are sorted in descending
                 order by value. Default: ``False``
@@ -1661,7 +1589,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 is preserved. Default: ``False``
 
         Returns:
-        -------
             (``BatchedArray``, ``BatchedArray``): A tuple
                 two values:
                     - The first batch contains the batch values sorted
@@ -1694,7 +1621,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Computes the absolute value of each element.
 
         Returns:
-        -------
             ``BatchedArray``: A batch with the absolute value of
                 each element.
 
@@ -1741,7 +1667,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Note: ``min`` and ``max`` cannot be both ``None``.
 
         Args:
-        ----
             min (int, float or ``None``, optional): Specifies
                 the lower bound. If ``min`` is ``None``,
                 there is no lower bound. Default: ``None``
@@ -1750,7 +1675,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
                 there is no upper bound. Default: ``None``
 
         Returns:
-        -------
             ``BatchedArray``: A batch with clamped values.
 
         Example usage:
@@ -1785,7 +1709,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         Note: ``min`` and ``max`` cannot be both ``None``.
 
         Args:
-        ----
             min (int, float or ``None``, optional): Specifies
                 the lower bound.  If ``min`` is ``None``,
                 there is no lower bound. Default: ``None``
@@ -1833,14 +1756,12 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         along a given axis and creates a new batch.
 
         Args:
-        ----
             arrays (``BatchedArray`` or ``numpy.ndarray`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
             axis (int, optional): Specifies the concatenation axis.
                 Default: ``0``
 
         Returns:
-        -------
             ``BatchedArray``: A batch with the concatenated data
                 in the given axis.
 
@@ -1877,7 +1798,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         along a given axis and creates a new batch.
 
         Args:
-        ----
             array (``BatchedArray`` or ``numpy.ndarray`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
             axis (int, optional): Specifies the concatenation axis.
@@ -1906,12 +1826,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         along the batch axis and creates a new batch.
 
         Args:
-        ----
             arrays (``BatchedArray`` or ``numpy.ndarray`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
-        -------
             ``BatchedArray``: A batch with the concatenated data
                 in the batch axis.
 
@@ -1947,42 +1865,41 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     def concatenate_along_batch_(
         self, arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray]
     ) -> None:
-        r"""Concatenates the data of the batch(es) to the current batch
+        r"""Concatenates the data of the batches to the current batch
         along the batch axis and creates a new batch.
 
         Args:
-        ----
-            arrays (``BatchedArray`` or ``numpy.ndarray`` or
-                ``Iterable``): Specifies the batch(es) to concatenate.
+            arrays: Specifies the batches to concatenate.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
+        >>> batch.concatenate_along_batch_(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
+        >>> batch
+        array([[ 0,  1,  2],
+               [ 4,  5,  6],
+               [10, 11, 12],
+               [13, 14, 15]], batch_dim=0)
+        >>> batch = BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]))
+        >>> batch.concatenate_along_batch_(
+        ...     [
+        ...         BatchedArray(np.array([[10, 12], [11, 13]])),
+        ...         BatchedArray(np.array([[20, 22], [21, 23]])),
+        ...     ]
+        ... )
+        >>> batch
+        array([[ 0,  4],
+               [ 1,  5],
+               [ 2,  6],
+               [10, 12],
+               [11, 13],
+               [20, 22],
+               [21, 23]], batch_dim=0)
 
-            >>> import numpy as np
-            >>> from redcat import BatchedArray
-            >>> batch = BatchedArray(np.array([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.concatenate_along_batch_(BatchedArray(np.array([[10, 11, 12], [13, 14, 15]])))
-            >>> batch
-            array([[ 0,  1,  2],
-                   [ 4,  5,  6],
-                   [10, 11, 12],
-                   [13, 14, 15]], batch_dim=0)
-            >>> batch = BatchedArray(np.array([[0, 4], [1, 5], [2, 6]]))
-            >>> batch.concatenate_along_batch_(
-            ...     [
-            ...         BatchedArray(np.array([[10, 12], [11, 13]])),
-            ...         BatchedArray(np.array([[20, 22], [21, 23]])),
-            ...     ]
-            ... )
-            >>> batch
-            array([[ 0,  4],
-                   [ 1,  5],
-                   [ 2,  6],
-                   [10, 12],
-                   [11, 13],
-                   [20, 22],
-                   [21, 23]], batch_dim=0)
+        ```
         """
         self.concatenate_(arrays, axis=self._batch_dim)
 
@@ -1998,9 +1915,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         r"""Checks if the dimensions are valid.
 
         Args:
-        ----
-            arrays (``Sequence``): Specifies the sequence of
-                arrays/batches to check.
+            arrays: Specifies the sequence of arrays/batches to check.
         """
         check_batch_dims(get_batch_dims(arrays))
 
@@ -2020,26 +1935,24 @@ def implements(np_function: Callable) -> Callable:
     ``BatchedArray`` objects.
 
     Args:
-    ----
-        np_function (``Callable``):  Specifies the numpy function
-            to override.
+        np_function:  Specifies the numpy function to override.
 
     Returns:
-    -------
-        ``Callable``: The decorated function.
+        The decorated function.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.array import BatchedArray, implements
+    >>> @implements(np.sum)
+    ... def mysum(input: BatchedArray, *args, **kwargs) -> np.ndarray:
+    ...     return np.sum(input.data, *args, **kwargs)
+    ...
+    >>> np.sum(BatchedArray(np.ones((2, 3))))
+    6.0
 
-        >>> import numpy as np
-        >>> from redcat.array import BatchedArray, implements
-        >>> @implements(np.sum)
-        ... def mysum(input: BatchedArray, *args, **kwargs) -> np.ndarray:
-        ...     return np.sum(input.data, *args, **kwargs)
-        ...
-        >>> np.sum(BatchedArray(np.ones((2, 3))))
-        6.0
+    ```
     """
 
     def decorator(func: Callable) -> Callable:
@@ -2057,25 +1970,25 @@ def concatenate(arrays: Sequence[BatchedArray | ndarray], axis: int = 0) -> Batc
 
 @implements(np.cumsum)
 def cumsum(a: TBatchedArray, axis: int | None = None, *args, **kwargs) -> TBatchedArray | ndarray:
-    r"""See ``np.cumsum`` documentation."""
+    r"""See ``numpy.cumsum`` documentation."""
     return a.cumsum(axis, *args, **kwargs)
 
 
 @implements(np.isneginf)
 def isneginf(x: BatchedArray) -> BatchedArray:
-    r"""See ``np.isneginf`` documentation."""
+    r"""See ``numpy.isneginf`` documentation."""
     return x.isneginf()
 
 
 @implements(np.isposinf)
 def isposinf(x: BatchedArray) -> BatchedArray:
-    r"""See ``np.isposinf`` documentation."""
+    r"""See ``numpy.isposinf`` documentation."""
     return x.isposinf()
 
 
 @implements(np.sum)
 def numpysum(input: BatchedArray, *args, **kwargs) -> ndarray:  # noqa: A002
-    r"""See ``np.sum`` documentation.
+    r"""See ``numpy.sum`` documentation.
 
     Use the name ``numpysum`` to avoid shadowing `sum` python builtin.
     """

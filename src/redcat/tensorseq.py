@@ -134,7 +134,6 @@ class BatchedTensorSeq(BatchedTensor):
         the current batch.
 
         Args:
-        ----
             fill_value (float or int or bool): Specifies the number
                 to fill the batch with.
             batch_size (int or ``None``): Specifies the batch size.
@@ -147,7 +146,6 @@ class BatchedTensorSeq(BatchedTensor):
                 ``torch.Tensor.new_full``.
 
         Returns:
-        -------
             ``BaseBatchedTensor``: A batch filled with the scalar value.
 
         Example usage:
@@ -192,7 +190,6 @@ class BatchedTensorSeq(BatchedTensor):
         the current batch.
 
         Args:
-        ----
             batch_size (int or ``None``): Specifies the batch size.
                 If ``None``, the batch size of the current batch is
                 used. Default: ``None``.
@@ -203,7 +200,6 @@ class BatchedTensorSeq(BatchedTensor):
                 ``torch.Tensor.new_ones``.
 
         Returns:
-        -------
             ``BaseBatchedTensor``: A batch filled with the scalar
                 value ``1``.
 
@@ -249,7 +245,6 @@ class BatchedTensorSeq(BatchedTensor):
         in the current batch.
 
         Args:
-        ----
             batch_size (int or ``None``): Specifies the batch size.
                 If ``None``, the batch size of the current batch is
                 used. Default: ``None``.
@@ -260,7 +255,6 @@ class BatchedTensorSeq(BatchedTensor):
                 ``torch.Tensor.new_zeros``.
 
         Returns:
-        -------
             ``BaseBatchedTensor``: A batch filled with the scalar
                 value ``0``.
 
@@ -299,7 +293,6 @@ class BatchedTensorSeq(BatchedTensor):
         dimension and the second dimension is the batch dimension.
 
         Args:
-        ----
             data (array_like): Specifies the data for the tensor. It can
                 be a torch.Tensor, list, tuple, NumPy ndarray, scalar,
                 and other types.
@@ -356,11 +349,9 @@ class BatchedTensorSeq(BatchedTensor):
         in monotonic order by value.
 
         Args:
-        ----
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-        -------
             ``BatchedTensor``: The indices that sort the batch along
                 the sequence dimension.
 
@@ -382,12 +373,10 @@ class BatchedTensorSeq(BatchedTensor):
         batch in the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A batch with the cumulative sum of
                 elements of the current batch in the sequence dimension.
 
@@ -409,7 +398,6 @@ class BatchedTensorSeq(BatchedTensor):
         batch in the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.cumprod``
             **kwargs: See the documentation of ``torch.Tensor.cumprod``
 
@@ -432,11 +420,9 @@ class BatchedTensorSeq(BatchedTensor):
         in the sequence dimension.
 
         Args:
-        ----
             **kwargs: see ``torch.cumsum`` documentation
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A batch with the cumulative sum of
                 elements of the current batch in the sequence dimension.
 
@@ -477,7 +463,6 @@ class BatchedTensorSeq(BatchedTensor):
         dimension.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A batch with the cumulative
                 summation of the exponentiation of elements of the
                 current batch in the sequence dimension.
@@ -517,14 +502,12 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Permutes the data along the sequence dimension.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(seq_len,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A new batch with permuted data.
 
         Example usage:
@@ -544,7 +527,6 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Permutes the data along the sequence dimension.
 
         Args:
-        ----
             permutation (sequence or ``torch.Tensor`` of type long
                 and shape ``(seq_len,)``): Specifies the permutation
                 to use on the data. The dimension of the permutation
@@ -568,13 +550,11 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Shuffles the data along the sequence dimension.
 
         Args:
-        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
 
         Returns:
-        -------
             ``BatchedTensorSeq``:  A new batch with shuffled data.
 
         Example usage:
@@ -593,7 +573,6 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Shuffles the data along the sequence dimension.
 
         Args:
-        ----
             generator (``torch.Generator`` or ``None``, optional):
                 Specifies an optional random generator.
                 Default: ``None``
@@ -616,12 +595,10 @@ class BatchedTensorSeq(BatchedTensor):
         in monotonic order by value.
 
         Args:
-        ----
             *args: Variable length argument list.
             **kwargs: Arbitrary keyword arguments.
 
         Returns:
-        -------
             (``BatchedTensorSeq``, ``BatchedTensorSeq``): A tuple with
                 two values:
                     - The first batch contains the batch values sorted
@@ -661,12 +638,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the maximum along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.amax``
             **kwargs: See the documentation of ``torch.Tensor.amax``
 
         Returns:
-        -------
             ``torch.Tensor``: The maximum along the sequence dimension.
 
         Example usage:
@@ -687,12 +662,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the minimum along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.amin``
             **kwargs: See the documentation of ``torch.Tensor.amin``
 
         Returns:
-        -------
             ``torch.Tensor``: The minimum along the sequence dimension.
 
         Example usage:
@@ -714,12 +687,10 @@ class BatchedTensorSeq(BatchedTensor):
         dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.argmax``
             **kwargs: See the documentation of ``torch.Tensor.argmax``
 
         Returns:
-        -------
             ``torch.Tensor``: The indices of the maximum value along
                 the sequence dimension.
 
@@ -742,12 +713,10 @@ class BatchedTensorSeq(BatchedTensor):
         dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.argmin``
             **kwargs: See the documentation of ``torch.Tensor.argmin``
 
         Returns:
-        -------
             ``torch.Tensor``: The indices of the minimum value along
                 the sequence dimension.
 
@@ -769,12 +738,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the maximum values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.max``
             **kwargs: See the documentation of ``torch.Tensor.max``
 
         Returns:
-        -------
             ``torch.return_types.max``: A batch with
                 the maximum values along the sequence dimension.
 
@@ -800,12 +767,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the mean values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.mean``
             **kwargs: See the documentation of ``torch.Tensor.mean``
 
         Returns:
-        -------
             ``torch.Tensor``: A tensor with the mean values along
                 the sequence dimension.
 
@@ -828,12 +793,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the median values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.median``
             **kwargs: See the documentation of ``torch.Tensor.median``
 
         Returns:
-        -------
             ``torch.return_types.median``:  The first tensor will
                 be populated with the median values and the second
                 tensor, which must have dtype long, with their indices
@@ -857,12 +820,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the minimum values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.min``
             **kwargs: See the documentation of ``torch.Tensor.min``
 
         Returns:
-        -------
             ``torch.return_types.min``: A batch with
                 the minimum values along the sequence dimension.
 
@@ -889,12 +850,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the mean values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nanmean``
             **kwargs: See the documentation of ``torch.Tensor.nanmean``
 
         Returns:
-        -------
             ``torch.Tensor``: A batch with
                 the mean values along the sequence dimension.
 
@@ -916,12 +875,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the median values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nanmedian``
             **kwargs: See the documentation of ``torch.Tensor.nanmedian``
 
         Returns:
-        -------
             ``torch.return_types.nanmedian``:  The first tensor will
                 be populated with the median values and the second
                 tensor, which must have dtype long, with their indices
@@ -945,12 +902,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the sum values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.nansum``
             **kwargs: See the documentation of ``torch.Tensor.nansum``
 
         Returns:
-        -------
             ``torch.Tensor``: A tensor with the sum values along the
                 sequence dimension.
 
@@ -970,12 +925,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the product values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.prod``
             **kwargs: See the documentation of ``torch.Tensor.prod``
 
         Returns:
-        -------
             ``torch.Tensor``: A batch with
                 the product values along the sequence dimension.
 
@@ -997,12 +950,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Computes the sum values along the sequence dimension.
 
         Args:
-        ----
             *args: See the documentation of ``torch.Tensor.sum``
             **kwargs: See the documentation of ``torch.Tensor.sum``
 
         Returns:
-        -------
             ``torch.Tensor``: A tensor with the sum values along the
                 sequence dimension.
 
@@ -1029,12 +980,10 @@ class BatchedTensorSeq(BatchedTensor):
         are aligned.
 
         Args:
-        ----
             other (``BatchedTensorSeq``): Specifies the batch to use to
                 align the current batch.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: The aligned batch.
 
         Example usage:
@@ -1082,7 +1031,6 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Aligns the current batch to the batch-sequence format.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: The batch in the batch-sequence
                 format.
 
@@ -1107,7 +1055,6 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Aligns the current batch to the sequence-batch format.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: The batch in the sequence-batch format.
 
         Example usage:
@@ -1137,12 +1084,10 @@ class BatchedTensorSeq(BatchedTensor):
         along the sequence dimension and creates a new batch.
 
         Args:
-        ----
             tensors (``BatchedTensorSeq`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A batch with the concatenated data
                 along the sequence dimension.
 
@@ -1182,7 +1127,6 @@ class BatchedTensorSeq(BatchedTensor):
         In-place version of ``cat_along_seq()``.
 
         Args:
-        ----
             tensors (``BatchedTensor`` or ``torch.Tensor`` or
                 ``Iterable``): Specifies the batch(es) to concatenate.
 
@@ -1223,11 +1167,9 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Splits the batch into chunks along the sequence dimension.
 
         Args:
-        ----
             chunks (int): Specifies the number of chunks.
 
         Returns:
-        -------
             tuple: The batch split into chunks along the sequence
                 dimension.
 
@@ -1250,13 +1192,11 @@ class BatchedTensorSeq(BatchedTensor):
         indices.
 
         Args:
-        ----
             index (``torch.Tensor`` of type long and shape
                 ``(seq_len,)`` or ``(batch_size, seq_len,)`` or
                 ``Sequence``): Specifies the indices to select.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A new batch sliced along the sequence
                 dimension at the given indices.
 
@@ -1292,12 +1232,10 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Repeats the batch along the sequence dimension.
 
         Args:
-        ----
             repeats (int): Specifies the number of times to repeat
                 the batch along the sequence dimension.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A repeated version of the input batch.
 
         Example usage:
@@ -1320,11 +1258,9 @@ class BatchedTensorSeq(BatchedTensor):
         index.
 
         Args:
-        ----
             index (int): Specifies the index to select.
 
         Returns:
-        -------
             ``BatchedTensor``: The batch sliced along the sequence
                 dimension at the given index.
 
@@ -1349,7 +1285,6 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Slices the batch in the sequence dimension.
 
         Args:
-        ----
             start (int, optional): Specifies the index where the
                 slicing of object starts. Default: ``0``
             stop (int, optional): Specifies the index where the
@@ -1359,7 +1294,6 @@ class BatchedTensorSeq(BatchedTensor):
                 each index for slicing. Default: ``1``
 
         Returns:
-        -------
             ``BatchedTensorSeq``: A slice of the current batch.
 
         Example usage:
@@ -1392,13 +1326,11 @@ class BatchedTensorSeq(BatchedTensor):
         r"""Takes values along the sequence dimension.
 
         Args:
-        ----
             indices (``BaseBatch`` or ``numpy.ndarray`` or
                 ``torch.Tensor`` or `` Specifies the indices to take
                 along the batch dimension.
 
         Returns:
-        -------
             ``BatchedTensorSeq``: The sequence with the selected data.
 
         Example usage:
