@@ -1725,11 +1725,11 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
         axis: int = 0,
     ) -> TBatchedArray:
-        r"""Concatenates the data of the batch(es) to the current batch
+        r"""Concatenates the data of the batches to the current batch
         along a given axis and creates a new batch.
 
         Args:
-            arrays: Specifies the batch(es) to concatenate.
+            arrays: Specifies the batches to concatenate.
             axis: Specifies the concatenation axis.
 
         Returns:
@@ -1765,7 +1765,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         arrays: BatchedArray | ndarray | Iterable[BatchedArray | ndarray],
         axis: int = 0,
     ) -> None:
-        r"""Concatenates the data of the batch(es) to the current batch
+        r"""Concatenates the data of the batches to the current batch
         along a given axis and creates a new batch.
 
         Args:

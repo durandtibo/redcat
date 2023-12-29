@@ -21,6 +21,8 @@ nav:
   - get_started.md
   - Reference:
       - refs/base.md
+      - refs/batchdict.md
+      - refs/batchlist.md
       - refs/batchedarray.md
       - refs/datapipes.md
       - refs/utils.md
