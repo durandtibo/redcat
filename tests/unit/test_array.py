@@ -1404,6 +1404,65 @@ def test_batched_array_sub__incorrect_batch_dim() -> None:
 ###########################################################
 
 
+def test_batched_array_cumprod() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumprod(axis=0)
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+    )
+
+
+def test_batched_array_cumprod_axis_1() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumprod(axis=1)
+        .equal(BatchedArray(np.array([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])))
+    )
+
+
+def test_batched_array_cumprod_axis_none() -> None:
+    assert np.array_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod(axis=None),
+        np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    )
+
+
+def test_batched_array_cumprod_custom_dims() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+        .cumprod(axis=1)
+        .equal(BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1))
+    )
+
+
+def test_batched_array_cumprod_dtype() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumprod(axis=0, dtype=int)
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]], dtype=int)))
+    )
+
+
+def test_batched_array_cumprod_() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.cumprod_(axis=0)
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+
+
+def test_batched_array_cumprod__axis_1() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.cumprod_(axis=1)
+    assert batch.equal(BatchedArray(np.array([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])))
+
+
+def test_batched_array_cumprod__custom_dims() -> None:
+    batch = BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+    batch.cumprod_(axis=1)
+    assert batch.equal(
+        BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1)
+    )
+
+
 def test_batched_array_cumsum() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5))
