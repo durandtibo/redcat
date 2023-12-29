@@ -1079,12 +1079,12 @@ class BatchedTensorSeq(BatchedTensor):
     def cat_along_seq(
         self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
     ) -> BatchedTensorSeq:
-        r"""Concatenates the data of the batch(es) to the current batch
+        r"""Concatenates the data of the batches to the current batch
         along the sequence dimension and creates a new batch.
 
         Args:
             tensors (``BatchedTensorSeq`` or ``torch.Tensor`` or
-                ``Iterable``): Specifies the batch(es) to concatenate.
+                ``Iterable``): Specifies the batches to concatenate.
 
         Returns:
             ``BatchedTensorSeq``: A batch with the concatenated data
@@ -1120,14 +1120,14 @@ class BatchedTensorSeq(BatchedTensor):
     def cat_along_seq_(
         self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
     ) -> None:
-        r"""Concatenates the data of the batch(es) to the current batch
+        r"""Concatenates the data of the batches to the current batch
         along the sequence dimension.
 
         In-place version of ``cat_along_seq()``.
 
         Args:
             tensors (``BatchedTensor`` or ``torch.Tensor`` or
-                ``Iterable``): Specifies the batch(es) to concatenate.
+                ``Iterable``): Specifies the batches to concatenate.
 
         Example usage:
 

@@ -23,20 +23,20 @@ class BatchList(BaseBatch[list[T]]):
     examples.
 
     Args:
-        data (list): Specifies the list of examples.
+        data: Specifies the list of examples.
 
     Raises:
-    ------
-        TypeError if the input is not a list.
+        TypeError: if the input is not a list.
 
     Example usage:
 
-    .. code-block:: pycon
+    ```pycon
+    >>> from redcat import BatchList
+    >>> batch = BatchList([1, 2, 3])
+    >>> batch
+    BatchList(data=[1, 2, 3])
 
-        >>> from redcat import BatchList
-        >>> batch = BatchList([1, 2, 3])
-        >>> batch
-        BatchList(data=[1, 2, 3])
+    ```
     """
 
     def __init__(self, data: list[T]) -> None:
@@ -170,23 +170,23 @@ class BatchList(BaseBatch[list[T]]):
         current batch.
 
         Args:
-            fn (``Callable``): Specifies the function to be applied to
-                the element in the list. It is the responsibility of
-                the user to verify the function applies a valid
-                transformation of the data.
+            fn: Specifies the function to be applied to the element
+                in the list. It is the responsibility of the user to
+                verify the function applies a valid transformation
+                of the data.
 
         Returns:
-            ``BatchList``: The transformed batch.
+            The transformed batch.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> from redcat import BatchList
+        >>> batch = BatchList([1, 2, 3])
+        >>> batch.apply(lambda val: val + 2)
+        BatchList(data=[3, 4, 5])
 
-
-            >>> from redcat import BatchList
-            >>> batch = BatchList([1, 2, 3])
-            >>> batch.apply(lambda val: val + 2)
-            BatchList(data=[3, 4, 5])
+        ```
         """
         return self._create_new_batch([fn(val) for val in self._data])
 
@@ -197,21 +197,21 @@ class BatchList(BaseBatch[list[T]]):
         In-place version of ``apply``.
 
         Args:
-            fn (``Callable``): Specifies the function to be applied to
-                the element in the list. It is the responsibility of
-                the user to verify the function applies a valid
-                transformation of the data.
+            fn: Specifies the function to be applied to the element
+                in the list. It is the responsibility of the user to
+                verify the function applies a valid transformation
+                of the data.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> from redcat import BatchList
+        >>> batch = BatchList([1, 2, 3])
+        >>> batch.apply_(lambda val: val + 2)
+        >>> batch
+        BatchList(data=[3, 4, 5])
 
-
-            >>> from redcat import BatchList
-            >>> batch = BatchList([1, 2, 3])
-            >>> batch.apply_(lambda val: val + 2)
-            >>> batch
-            BatchList(data=[3, 4, 5])
+        ```
         """
         self._data = [fn(val) for val in self._data]
 
