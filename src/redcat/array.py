@@ -1174,6 +1174,78 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     ###########################################################
 
     @overload
+    def cumprod(self, axis: None, *args: Any, **kwargs: Any) -> ndarray:
+        r"""See ``numpy.cumprod`` documentation."""
+
+    @overload
+    def cumprod(self, axis: int, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""See ``numpy.cumprod`` documentation."""
+
+    def cumprod(self, axis: int | None, *args: Any, **kwargs: Any) -> TBatchedArray | ndarray:
+        r"""Computes the cumulative product of elements of the current
+        batch in a given axis.
+
+        Args:
+            axis: Specifies the axis of the cumulative sum.
+            *args: See the documentation of ``numpy.cumprod``
+            **kwargs: See the documentation of ``numpy.cumprod``
+
+        Returns:
+            A batch with the cumulative sum of elements of the current
+                batch in a given axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(numpy.arange(10).reshape(2, 5))
+        >>> batch.cumprod(axis=0)
+        array([[ 0,  1,  2,  3,  4],
+               [ 0,  6, 14, 24, 36]], batch_dim=0)
+        >>> batch.cumprod(axis=1)
+        array([[    0,     0,     0,     0,     0],
+               [    5,    30,   210,  1680, 15120]], batch_dim=0)
+        >>> batch.cumprod(axis=None)
+        array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+        ```
+        """
+        out = np.cumprod(self._data, axis, *args, **kwargs)
+        if axis is None:
+            return out
+        return self._create_new_batch(out)
+
+    def cumprod_(self, axis: int, *args: Any, **kwargs: Any) -> None:
+        r"""Computes the cumulative sum of elements of the current batch
+        in a given axis.
+
+        Args:
+            axis: Specifies the axis of the cumulative sum.
+            *args: See the documentation of ``numpy.cumprod``
+            **kwargs: See the documentation of ``numpy.cumprod``
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+        >>> batch.cumprod_(axis=0)
+        >>> batch
+        array([[ 0,  1,  2,  3,  4],
+               [ 0,  6, 14, 24, 36]], batch_dim=0)
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+        >>> batch.cumprod_(axis=1)
+        >>> batch
+        array([[    0,     0,     0,     0,     0],
+               [    5,    30,   210,  1680, 15120]], batch_dim=0)
+
+        ```
+        """
+        self._data = np.cumprod(self._data, axis, *args, **kwargs)
+
+    @overload
     def cumsum(self, axis: None, *args: Any, **kwargs: Any) -> ndarray:
         r"""See ``numpy.cumsum`` documentation."""
 
