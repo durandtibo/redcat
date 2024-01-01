@@ -1,3 +1,10 @@
+r"""
+
+Notes:
+    - https://numpy.org/neps/nep-0018-array-function-protocol.html
+    - https://github.com/numpy/numpy/tree/main/numpy/ma
+"""
+
 from __future__ import annotations
 
 __all__ = ["BatchedArray"]
@@ -32,6 +39,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     r"""Implements a batched array to easily manipulate a batch of
     examples.
 
+    Links:
+        - https://numpy.org/doc/stable/reference/arrays.ndarray.html#arrays-ndarray-attributes
+
     Args:
         data (array_like): Specifies the data for the array. It can
             be a list, tuple, NumPy ndarray, scalar, and other types.
@@ -62,7 +72,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     def __array_ufunc__(self, ufunc: Callable, method: str, *inputs, **kwargs) -> TBatchedArray:
         # if method != "__call__":
         #     raise NotImplementedError
-        print(method)
         check_batch_dims(get_batch_dims(inputs, kwargs))
         args = [a._data if hasattr(a, "_data") else a for a in inputs]
         return self._create_new_batch(ufunc(*args, **kwargs))

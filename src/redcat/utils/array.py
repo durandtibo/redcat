@@ -91,7 +91,7 @@ def permute_along_axis(array: ndarray, permutation: ndarray, axis: int = 0) -> n
     return np.swapaxes(np.swapaxes(array, 0, axis)[permutation], 0, axis)
 
 
-def to_array(data: Sequence | torch.Tensor | ndarray) -> ndarray:
+def to_array(data: BaseBatch | Sequence | torch.Tensor | ndarray) -> ndarray:
     r"""Converts the input to a ``numpy.ndarray``.
 
     Args:
