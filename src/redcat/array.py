@@ -62,9 +62,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
     def __array_ufunc__(self, ufunc: Callable, method: str, *inputs, **kwargs) -> TBatchedArray:
         # if method != "__call__":
         #     raise NotImplementedError
+        print(method)
         check_batch_dims(get_batch_dims(inputs, kwargs))
         args = [a._data if hasattr(a, "_data") else a for a in inputs]
-        return self.__class__(ufunc(*args, **kwargs), batch_dim=self._batch_dim)
+        return self._create_new_batch(ufunc(*args, **kwargs))
 
     def __array_function__(
         self,
@@ -2056,6 +2057,14 @@ def implements(np_function: Callable) -> Callable:
 def concatenate(arrays: Sequence[BatchedArray | ndarray], axis: int = 0) -> BatchedArray:
     r"""See ``numpy.concatenate`` documentation."""
     return arrays[0].concatenate(arrays[1:], axis)
+
+
+@implements(np.cumprod)
+def cumprod(
+    a: TBatchedArray, axis: int | None = None, *args: Any, **kwargs: Any
+) -> TBatchedArray | ndarray:
+    r"""See ``numpy.cumprod`` documentation."""
+    return a.cumprod(axis, *args, **kwargs)
 
 
 @implements(np.cumsum)
