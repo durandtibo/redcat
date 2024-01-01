@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 from redcat import comparators  # noqa: F401
-from redcat.array_ import BatchedArray
+from redcat.array import BatchedArray
 from redcat.base import BaseBatch
 from redcat.batchdict import BatchDict
 from redcat.batchlist import BatchList

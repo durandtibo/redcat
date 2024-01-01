@@ -9,7 +9,7 @@ from coola import objects_are_equal
 from numpy import ndarray
 from pytest import mark, raises
 
-from redcat.array_ import BatchedArray
+from redcat.array import BatchedArray
 from redcat.return_types import ValuesIndicesTuple
 
 DTYPES = (bool, int, float)
@@ -1898,7 +1898,7 @@ def test_batched_array_permute_along_axis__custom_dims() -> None:
     assert batch.equal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
 
 
-@patch("redcat.array_.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
 def test_batched_array_shuffle_along_axis() -> None:
     assert (
         BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
@@ -1907,7 +1907,7 @@ def test_batched_array_shuffle_along_axis() -> None:
     )
 
 
-@patch("redcat.array_.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
 def test_batched_array_shuffle_along_axis_custom_dims() -> None:
     assert (
         BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
@@ -1930,14 +1930,14 @@ def test_batched_array_shuffle_along_axis_different_random_seeds() -> None:
     )
 
 
-@patch("redcat.array_.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
 def test_batched_array_shuffle_along_axis_() -> None:
     batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     batch.shuffle_along_axis_(axis=0)
     assert batch.equal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
 
 
-@patch("redcat.array_.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+@patch("redcat.array.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
 def test_batched_array_shuffle_along_axis__custom_dims() -> None:
     batch = BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
     batch.shuffle_along_axis_(axis=1)

@@ -2044,7 +2044,7 @@ def implements(np_function: Callable) -> Callable:
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat.array_ import BatchedArray, implements
+    >>> from redcat.array import BatchedArray, implements
     >>> @implements(np.sum)
     ... def mysum(input: BatchedArray, *args, **kwargs) -> np.ndarray:
     ...     return np.sum(input.data, *args, **kwargs)
