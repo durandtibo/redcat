@@ -1245,6 +1245,55 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         """
         self._data = np.cumprod(self._data, axis, *args, **kwargs)
 
+    def cumprod_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Computes the cumulative product of elements of the current
+        batch in the batch axis.
+
+        Args:
+            *args: See the documentation of ``numpy.cumprod``
+            **kwargs: See the documentation of ``numpy.cumprod``
+
+        Returns:
+            A batch with the cumulative sum of elements of the current
+                batch in the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+        >>> batch.cumprod_along_batch()
+        array([[ 0,  1,  2,  3,  4],
+               [ 0,  6, 14, 24, 36]], batch_dim=0)
+
+        ```
+        """
+        return self.cumprod(self._batch_dim, *args, **kwargs)
+
+    def cumprod_along_batch_(self, *args: Any, **kwargs: Any) -> None:
+        r"""Computes the cumulative sum of elements of the current batch
+        in the batch axis.
+
+        Args:
+            *args: See the documentation of ``numpy.cumprod``
+            **kwargs: See the documentation of ``numpy.cumprod``
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5))
+        >>> batch.cumprod_along_batch_()
+        >>> batch
+        array([[ 0,  1,  2,  3,  4],
+               [ 0,  6, 14, 24, 36]], batch_dim=0)
+
+        ```
+        """
+        self.cumprod_(self._batch_dim, *args, **kwargs)
+
     @overload
     def cumsum(self, axis: None, *args: Any, **kwargs: Any) -> ndarray:
         r"""See ``numpy.cumsum`` documentation."""

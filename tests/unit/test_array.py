@@ -1463,6 +1463,44 @@ def test_batched_array_cumprod__custom_dims() -> None:
     )
 
 
+def test_batched_array_cumprod_along_batch() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumprod_along_batch()
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+    )
+
+
+def test_batched_array_cumprod_along_batch_custom_dims() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+        .cumprod_along_batch()
+        .equal(BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1))
+    )
+
+
+def test_batched_array_cumprod_along_batch_dtype() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .cumprod_along_batch(dtype=float)
+        .equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]], dtype=float)))
+    )
+
+
+def test_batched_array_cumprod_along_batch_() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.cumprod_along_batch_()
+    assert batch.equal(BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])))
+
+
+def test_batched_array_cumprod_along_batch__custom_dims() -> None:
+    batch = BatchedArray(np.arange(10).reshape(5, 2), batch_dim=1)
+    batch.cumprod_along_batch_()
+    assert batch.equal(
+        BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_dim=1)
+    )
+
+
 def test_batched_array_cumsum() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5))
