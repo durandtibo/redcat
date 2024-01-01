@@ -208,13 +208,13 @@ files = [
 
 [[package]]
 name = "coola"
-version = "0.2.1"
+version = "0.2.2"
 description = "A library to check if two complex/nested objects are equal or not"
 optional = false
 python-versions = ">=3.9,<3.13"
 files = [
-    {file = "coola-0.2.1-py3-none-any.whl", hash = "sha256:31a64adc3fd7b827a42924419cb44e1f8866763db9cd607f0a3d8411aa0977a5"},
-    {file = "coola-0.2.1.tar.gz", hash = "sha256:6a7e2bcc67d75e179167e3a3badaa0dd87c6099f4b53d155f0432f9385fdd1fe"},
+    {file = "coola-0.2.2-py3-none-any.whl", hash = "sha256:13f71b92bfa525ef48ce789c41858a783ea054a5d2a3252f2b5ac933d0d8e757"},
+    {file = "coola-0.2.2.tar.gz", hash = "sha256:82b3639d438f1531970abd62cff9aabf5e0411c1108380e8e53527070b511a85"},
 ]
 
 [package.extras]
@@ -1060,13 +1060,13 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.6"
+version = "10.7"
 description = "Extension pack for Python Markdown."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pymdown_extensions-10.6-py3-none-any.whl", hash = "sha256:561eb3a5f3c3c2512952a4d6f5b311aa124b7147bd54a3ea0f36ce030c7e3dd9"},
-    {file = "pymdown_extensions-10.6.tar.gz", hash = "sha256:e4531379e0d74b329ff264217ef5b8b1a37bed3afe36f98001b74ecff52215c0"},
+    {file = "pymdown_extensions-10.7-py3-none-any.whl", hash = "sha256:6ca215bc57bc12bf32b414887a68b810637d039124ed9b2e5bd3325cbb2c050c"},
+    {file = "pymdown_extensions-10.7.tar.gz", hash = "sha256:c0d64d5cf62566f59e6b2b690a4095c931107c250a8c8e1351c1de5f6b036deb"},
 ]
 
 [package.dependencies]
@@ -1078,13 +1078,13 @@ extra = ["pygments (>=2.12)"]
 
 [[package]]
 name = "pytest"
-version = "7.4.3"
+version = "7.4.4"
 description = "pytest: simple powerful testing with Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pytest-7.4.3-py3-none-any.whl", hash = "sha256:0d009c083ea859a71b76adf7c1d502e4bc170b80a8ef002da5806527b9591fac"},
-    {file = "pytest-7.4.3.tar.gz", hash = "sha256:d989d136982de4e3b29dabcc838ad581c64e8ed52c11fbe86ddebd9da0818cd5"},
+    {file = "pytest-7.4.4-py3-none-any.whl", hash = "sha256:b090cdf5ed60bf4c45261be03239c2c1c22df034fbffe691abe93cd80cea01d8"},
+    {file = "pytest-7.4.4.tar.gz", hash = "sha256:2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280"},
 ]
 
 [package.dependencies]
