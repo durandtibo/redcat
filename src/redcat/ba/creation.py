@@ -3,8 +3,8 @@ r"""Contain functions to create ``BatchedArray`` objects.
 The functions in this module are designed to be a plug-and-play
 replacement of their associated numpy functions.
 
-Notes:
-- https://numpy.org/doc/stable/reference/routines.array-creation.html
+Notes and links:
+    - [https://numpy.org/doc/stable/reference/routines.array-creation.html](https://numpy.org/doc/stable/reference/routines.array-creation.html)
 """
 
 from __future__ import annotations
@@ -12,6 +12,7 @@ from __future__ import annotations
 __all__ = ["array", "ones", "zeros", "empty", "full"]
 
 from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
@@ -20,7 +21,7 @@ from redcat.ba import BatchedArray
 
 
 def array(
-    data: ArrayLike, dtype: DTypeLike | None = None, *, batch_axis: int = 0, **kwargs
+    data: ArrayLike, dtype: DTypeLike = None, *, batch_axis: int = 0, **kwargs: Any
 ) -> BatchedArray:
     r"""Create an array.
 
@@ -57,11 +58,11 @@ def array(
 
 def empty(
     shape: int | Sequence[int],
-    dtype: DTypeLike | None = None,
+    dtype: DTypeLike = None,
     order: str = "C",
     *,
     batch_axis: int = 0,
-    **kwargs,
+    **kwargs: Any,
 ) -> BatchedArray:
     r"""Return a new array of given shape and type, without initializing
     entries.
@@ -97,11 +98,11 @@ def empty(
 def full(
     shape: int | Sequence[int],
     fill_value: float | ArrayLike,
-    dtype: DTypeLike | None = None,
+    dtype: DTypeLike = None,
     order: str = "C",
     *,
     batch_axis: int = 0,
-    **kwargs,
+    **kwargs: Any,
 ) -> BatchedArray:
     r"""Return a new array of given shape and type, filled with
     ``fill_value``.
@@ -141,11 +142,11 @@ def full(
 
 def ones(
     shape: int | Sequence[int],
-    dtype: DTypeLike | None = None,
+    dtype: DTypeLike = None,
     order: str = "C",
     *,
     batch_axis: int = 0,
-    **kwargs,
+    **kwargs: Any,
 ) -> BatchedArray:
     r"""Return a new array of given shape and type, filled with ones.
 
@@ -180,11 +181,11 @@ def ones(
 
 def zeros(
     shape: int | Sequence[int],
-    dtype: DTypeLike | None = None,
+    dtype: DTypeLike = None,
     order: str = "C",
     *,
     batch_axis: int = 0,
-    **kwargs,
+    **kwargs: Any,
 ) -> BatchedArray:
     r"""Return a new array of given shape and type, filled with zeros.
 

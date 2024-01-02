@@ -112,7 +112,7 @@ PAIRWISE_FUNCTIONS = (
     # partial(np.min, axis=1),
     np.add,
     np.divide,
-    np.divmod,
+    # np.divmod,
     np.equal,
     np.float_power,
     np.floor_divide,

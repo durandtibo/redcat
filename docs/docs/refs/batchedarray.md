@@ -1,3 +1,5 @@
 # BatchedArray
 
-::: redcat.BatchedArray
+::: redcat.ba.BatchedArray
+
+::: redcat.ba.creation
