@@ -18,7 +18,6 @@ def check_same_batch_axis(axes: set[int]) -> None:
     Example usage:
 
     ```pycon
-
     >>> from redcat.ba import check_same_batch_axis
     >>> check_same_batch_axis({0})
 
