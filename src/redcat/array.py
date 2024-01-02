@@ -3,6 +3,7 @@ r"""
 Notes:
     - https://numpy.org/neps/nep-0018-array-function-protocol.html
     - https://github.com/numpy/numpy/tree/main/numpy/ma
+    - https://numpy.org/doc/stable/user/basics.subclassing.html
 """
 
 from __future__ import annotations

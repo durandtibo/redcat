@@ -72,8 +72,7 @@ def get_batch_axes(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     ```pycon
     >>> import numpy as np
     >>> import torch
-    >>> from redcat import BatchedArray
-    >>> from redcat.ba import get_batch_axes
+    >>> from redcat.ba import BatchedArray, get_batch_axes
     >>> get_batch_axes(
     ...     args=(BatchedArray(torch.ones(2, 3)), BatchedArray(torch.ones(2, 6))),
     ...     kwargs={"batch": BatchedArray(torch.ones(2, 4))},
@@ -83,6 +82,6 @@ def get_batch_axes(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     ```
     """
     kwargs = kwargs or {}
-    axes = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
-    axes.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
+    axes = {val.batch_axis for val in args if hasattr(val, "batch_axis")}
+    axes.update({val.batch_axis for val in kwargs.values() if hasattr(val, "batch_axis")})
     return axes
