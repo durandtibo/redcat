@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-__all__ = ["check_same_batch_axis", "get_batch_axes"]
+__all__ = ["check_same_batch_axis", "check_data_and_axis", "get_batch_axes"]
 
 from collections.abc import Iterable, Mapping
 from typing import Any
+
+from numpy import ndarray
 
 
 def check_same_batch_axis(axes: set[int]) -> None:
@@ -25,6 +27,34 @@ def check_same_batch_axis(axes: set[int]) -> None:
     """
     if len(axes) != 1:
         raise RuntimeError(f"The batch axes do not match. Received multiple values: {axes}")
+
+
+def check_data_and_axis(data: ndarray, batch_axis: int) -> None:
+    r"""Check if the array ``data`` and ``batch_axis`` are correct.
+
+    Args:
+        data: Specifies the array in the batch.
+        batch_axis: Specifies the batch axis in the array object.
+
+    Raises:
+        RuntimeError: if one of the input is incorrect.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.ba.utils import check_data_and_axis
+    >>> check_data_and_axis(np.ones((2, 3)), batch_axis=0)
+
+    ```
+    """
+    ndim = data.ndim
+    if ndim < 1:
+        raise RuntimeError(f"data needs at least 1 axis (received: {ndim})")
+    if batch_axis < 0 or batch_axis >= ndim:
+        raise RuntimeError(
+            f"Incorrect `batch_axis` ({batch_axis}) but the value should be in [0, {ndim - 1}]"
+        )
 
 
 def get_batch_axes(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:
