@@ -137,16 +137,15 @@ class BatchedArray(ndarray):
         Example usage:
 
         ```pycon
-        >>> import numpy as np
-        >>> from redcat import BatchedArray
-        >>> batch = BatchedArray(np.ones((2, 3)))
-        >>> out = batch.sub(BatchedArray(np.full((2, 3), 2.0)))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> out = batch.sub(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
-               [1., 1., 1.]], batch_dim=0)
+               [1., 1., 1.]], batch_axis=0)
         >>> out
         array([[-1., -1., -1.],
-               [-1., -1., -1.]], batch_dim=0)
+               [-1., -1., -1.]], batch_axis=0)
 
         ```
         """
@@ -175,7 +174,7 @@ class BatchedArray(ndarray):
         >>> batch.sub_(ba.full((2, 3), 2.0))
         >>> batch
         array([[-1., -1., -1.],
-               [-1., -1., -1.]], batch_dim=0)
+               [-1., -1., -1.]], batch_axis=0)
 
         ```
         """
