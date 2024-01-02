@@ -122,17 +122,17 @@ class BatchedArray(ndarray):
         self.__iadd__(other * alpha if alpha != 1 else other)
 
     def sub(self, other: ndarray | float, alpha: float = 1) -> TBatchedArray:
-        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
-        ``self`` batch.
+        r"""Subtract the input ``other``, scaled by ``alpha``, to the
+        ``self`` array.
 
         Similar to ``out = self - alpha * other``
 
         Args:
             other: Specifies the value to subtract.
-            alpha: Specifies the scale of the batch to substract.
+            alpha: Specifies the scale of the array to substract.
 
         Returns:
-            A new batch containing the diffence of the two batches.
+            A new array containing the diffence of the two batchs.
 
         Example usage:
 
@@ -157,7 +157,7 @@ class BatchedArray(ndarray):
         other: ndarray | float,
         alpha: float = 1,
     ) -> None:
-        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        r"""Subtract the input ``other``, scaled by ``alpha``, to the
         ``self`` array.
 
         Similar to ``self -= alpha * other`` (in-place)

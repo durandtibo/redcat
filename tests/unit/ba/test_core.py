@@ -64,19 +64,19 @@ def test_batched_array_batch_size(batch_size: int) -> None:
 
 
 def test_batched_array_dtype() -> None:
-    assert BatchedArray(np.ones((2, 3))).dtype == float
+    assert ba.ones(shape=(2, 3)).dtype == float
 
 
 def test_batched_array_ndim() -> None:
-    assert BatchedArray(np.ones((2, 3))).ndim == 2
+    assert ba.ones(shape=(2, 3)).ndim == 2
 
 
 def test_batched_array_shape() -> None:
-    assert BatchedArray(np.ones((2, 3))).shape == (2, 3)
+    assert ba.ones(shape=(2, 3)).shape == (2, 3)
 
 
 def test_batched_array_size() -> None:
-    assert BatchedArray(np.ones((2, 3))).size == 6
+    assert ba.ones(shape=(2, 3)).size == 6
 
 
 #################################
@@ -124,7 +124,7 @@ def test_batched_array_copy_custom_batch_axis() -> None:
 
 
 def test_batched_array_allclose_true() -> None:
-    assert BatchedArray(np.ones((2, 3))).allclose(BatchedArray(np.ones((2, 3))))
+    assert ba.ones(shape=(2, 3)).allclose(ba.ones(shape=(2, 3)))
 
 
 def test_batched_array_allclose_false_different_type() -> None:
@@ -132,19 +132,19 @@ def test_batched_array_allclose_false_different_type() -> None:
 
 
 def test_batched_array_allclose_false_different_data() -> None:
-    assert not BatchedArray(np.ones((2, 3))).allclose(BatchedArray(np.zeros((2, 3))))
+    assert not ba.ones(shape=(2, 3)).allclose(BatchedArray(np.zeros((2, 3))))
 
 
 def test_batched_array_allclose_false_different_shape() -> None:
-    assert not BatchedArray(np.ones((2, 3))).allclose(BatchedArray(np.ones((2, 3, 1))))
+    assert not ba.ones(shape=(2, 3)).allclose(BatchedArray(np.ones((2, 3, 1))))
 
 
 def test_batched_array_allclose_false_different_batch_axis() -> None:
-    assert not BatchedArray(np.ones((2, 3))).allclose(BatchedArray(np.ones((2, 3)), batch_axis=1))
+    assert not ba.ones(shape=(2, 3)).allclose(BatchedArray(np.ones((2, 3)), batch_axis=1))
 
 
 def test_batched_array_allequal_true() -> None:
-    assert BatchedArray(np.ones((2, 3))).allequal(BatchedArray(np.ones((2, 3))))
+    assert ba.ones(shape=(2, 3)).allequal(ba.ones(shape=(2, 3)))
 
 
 def test_batched_array_allequal_false_different_type() -> None:
@@ -152,20 +152,240 @@ def test_batched_array_allequal_false_different_type() -> None:
 
 
 def test_batched_array_allequal_false_different_data() -> None:
-    assert not BatchedArray(np.ones((2, 3))).allequal(BatchedArray(np.zeros((2, 3))))
+    assert not ba.ones(shape=(2, 3)).allequal(BatchedArray(np.zeros((2, 3))))
 
 
 def test_batched_array_allequal_false_different_shape() -> None:
-    assert not BatchedArray(np.ones((2, 3))).allequal(BatchedArray(np.ones((2, 3, 1))))
+    assert not ba.ones(shape=(2, 3)).allequal(BatchedArray(np.ones((2, 3, 1))))
 
 
 def test_batched_array_allequal_false_different_batch_axis() -> None:
-    assert not BatchedArray(np.ones((2, 3)), batch_axis=1).allequal(BatchedArray(np.ones((2, 3))))
+    assert not BatchedArray(np.ones((2, 3)), batch_axis=1).allequal(ba.ones(shape=(2, 3)))
 
 
 ##################################################
 #     Mathematical | arithmetical operations     #
 ##################################################
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.ones(shape=(2, 3)),
+        np.ones(shape=(2, 3)),
+        ba.ones(shape=(2, 1)),
+        1,
+        1.0,
+    ),
+)
+def test_batched_array__add__(other: np.ndarray | int | float) -> None:
+    assert (ba.zeros(shape=(2, 3)) + other).allequal(ba.ones(shape=(2, 3)))
+
+
+def test_batched_array__add___custom_axes() -> None:
+    assert (ba.zeros(shape=(2, 3), batch_axis=1) + ba.ones(shape=(2, 3), batch_axis=1)).allequal(
+        ba.ones(shape=(2, 3), batch_axis=1)
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.ones(shape=(2, 3)),
+        np.ones(shape=(2, 3)),
+        ba.ones(shape=(2, 1)),
+        1,
+        1.0,
+    ),
+)
+def test_batched_array__iadd__(other: np.ndarray | int | float) -> None:
+    batch = ba.zeros(shape=(2, 3))
+    batch += other
+    assert batch.allequal(ba.ones(shape=(2, 3)))
+
+
+def test_batched_array__iadd___custom_axes() -> None:
+    batch = ba.zeros(shape=(2, 3), batch_axis=1)
+    batch += ba.ones(shape=(2, 3), batch_axis=1)
+    assert batch.allequal(ba.ones(shape=(2, 3), batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__floordiv__(other: np.ndarray | int | float) -> None:
+    assert (ba.ones(shape=(2, 3)) // other).allequal(ba.zeros(shape=(2, 3)))
+
+
+def test_batched_array__floordiv__custom_axes() -> None:
+    assert (
+        ba.ones(shape=(2, 3), batch_axis=1) // ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    ).allequal(ba.zeros(shape=(2, 3), batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__ifloordiv__(other: np.ndarray | int | float) -> None:
+    batch = ba.ones(shape=(2, 3))
+    batch //= other
+    assert batch.allequal(ba.zeros(shape=(2, 3)))
+
+
+def test_batched_array__ifloordiv___custom_axes() -> None:
+    batch = ba.ones(shape=(2, 3), batch_axis=1)
+    batch //= ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    assert batch.allequal(ba.zeros(shape=(2, 3), batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__mul__(other: np.ndarray | int | float) -> None:
+    assert (ba.ones(shape=(2, 3)) * other).allequal(ba.full(shape=(2, 3), fill_value=2.0))
+
+
+def test_batched_array__mul___custom_axes() -> None:
+    assert (
+        ba.ones(shape=(2, 3), batch_axis=1) * ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    ).allequal(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__imul__(other: np.ndarray | int | float) -> None:
+    batch = ba.ones(shape=(2, 3))
+    batch *= other
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=2.0))
+
+
+def test_batched_array__imul__custom_axes() -> None:
+    batch = ba.ones(shape=(2, 3), batch_axis=1)
+    batch *= ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
+
+
+def test_batched_array__neg__() -> None:
+    assert (-ba.ones(shape=(2, 3))).allequal(ba.full(shape=(2, 3), fill_value=-1.0))
+
+
+def test_batched_array__neg__custom_axes() -> None:
+    assert (-ba.ones(shape=(2, 3), batch_axis=1)).allequal(
+        ba.full(shape=(2, 3), fill_value=-1.0, batch_axis=1)
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__sub__(other: np.ndarray | int | float) -> None:
+    assert (ba.ones(shape=(2, 3)) - other).allequal(ba.full(shape=(2, 3), fill_value=-1.0))
+
+
+def test_batched_array__sub__custom_axes() -> None:
+    assert (
+        ba.ones(shape=(2, 3), batch_axis=1) - ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    ).allequal(ba.full(shape=(2, 3), fill_value=-1.0, batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ),
+)
+def test_batched_array__isub__(other: np.ndarray | int | float) -> None:
+    batch = ba.ones(shape=(2, 3))
+    batch -= other
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=-1.0))
+
+
+def test_batched_array__isub__custom_axes() -> None:
+    batch = ba.ones(shape=(2, 3), batch_axis=1)
+    batch -= ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=-1.0, batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ],
+)
+def test_batched_array__truediv__(other: np.ndarray | int | float) -> None:
+    assert (ba.ones(shape=(2, 3)) / other).allequal(ba.full(shape=(2, 3), fill_value=0.5))
+
+
+def test_batched_array__truediv__custom_axes() -> None:
+    assert (
+        ba.ones(shape=(2, 3), batch_axis=1) / ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    ).allequal(ba.full(shape=(2, 3), fill_value=0.5, batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ],
+)
+def test_batched_array__itruediv__(other: np.ndarray | int | float) -> None:
+    batch = ba.ones(shape=(2, 3))
+    batch /= other
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=0.5))
+
+
+def test_batched_array__itruediv__custom_axes() -> None:
+    batch = ba.ones(shape=(2, 3), batch_axis=1)
+    batch /= ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1)
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=0.5, batch_axis=1))
 
 
 @pytest.mark.parametrize(
