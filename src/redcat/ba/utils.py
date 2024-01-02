@@ -7,13 +7,13 @@ from typing import Any
 
 
 def check_same_batch_axis(axes: set[int]) -> None:
-    r"""Gets the batch axes from the inputs.
+    r"""Check the batch axes are the same.
 
     Args:
         axes: Specifies the batch axes to check.
 
     Raises:
-        RuntimeError: if there are more than one batch dimension.
+        RuntimeError: if there are more than one batch axis.
 
     Example usage:
 
