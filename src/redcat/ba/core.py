@@ -23,8 +23,8 @@ TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
 class BatchedArray(ndarray):
-    def __new__(cls, array_like: ArrayLike, batch_axis: int = 0) -> TBatchedArray:
-        obj = np.asarray(array_like).view(cls)
+    def __new__(cls, data: ArrayLike, batch_axis: int = 0) -> TBatchedArray:
+        obj = np.asarray(data).view(cls)
         check_data_and_axis(obj, batch_axis)
         obj.batch_axis = batch_axis
         return obj

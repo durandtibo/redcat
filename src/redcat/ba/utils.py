@@ -48,8 +48,6 @@ def check_data_and_axis(data: ndarray, batch_axis: int) -> None:
 
     ```
     """
-    print(data)
-    print(type(data))
     ndim = data.ndim
     if ndim < 1:
         raise RuntimeError(f"data needs at least 1 axis (received: {ndim})")
@@ -74,8 +72,7 @@ def get_batch_axes(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     ```pycon
     >>> import numpy as np
     >>> import torch
-    >>> from redcat import BatchedArray
-    >>> from redcat.ba import get_batch_axes
+    >>> from redcat.ba import BatchedArray, get_batch_axes
     >>> get_batch_axes(
     ...     args=(BatchedArray(torch.ones(2, 3)), BatchedArray(torch.ones(2, 6))),
     ...     kwargs={"batch": BatchedArray(torch.ones(2, 4))},
