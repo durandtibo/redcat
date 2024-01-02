@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import Any
-
 import numpy as np
 import pytest
+from numpy.typing import ArrayLike
 
 from redcat.ba import BatchedArray
 
@@ -26,7 +25,7 @@ def test_batched_array_str() -> None:
         ((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)),
     ],
 )
-def test_batched_array_explicit_constructor_call(data: Any) -> None:
+def test_batched_array_explicit_constructor_call(data: ArrayLike) -> None:
     array = BatchedArray(data)
     assert np.array_equal(array, np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=float))
     assert array.batch_axis == 0

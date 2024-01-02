@@ -1,6 +1,17 @@
 from __future__ import annotations
 
-__all__ = ["BatchedArray", "check_same_batch_axis", "check_data_and_axis", "get_batch_axes"]
+__all__ = [
+    "BatchedArray",
+    "array",
+    "check_data_and_axis",
+    "check_same_batch_axis",
+    "empty",
+    "full",
+    "get_batch_axes",
+    "ones",
+    "zeros",
+]
 
 from redcat.ba.core import BatchedArray
+from redcat.ba.creation import array, empty, full, ones, zeros
 from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
