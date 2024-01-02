@@ -48,6 +48,8 @@ def check_data_and_axis(data: ndarray, batch_axis: int) -> None:
 
     ```
     """
+    print(data)
+    print(type(data))
     ndim = data.ndim
     if ndim < 1:
         raise RuntimeError(f"data needs at least 1 axis (received: {ndim})")
@@ -83,6 +85,6 @@ def get_batch_axes(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     ```
     """
     kwargs = kwargs or {}
-    axes = {val._batch_dim for val in args if hasattr(val, "_batch_dim")}
-    axes.update({val._batch_dim for val in kwargs.values() if hasattr(val, "_batch_dim")})
+    axes = {val.batch_axis for val in args if hasattr(val, "batch_axis")}
+    axes.update({val.batch_axis for val in kwargs.values() if hasattr(val, "batch_axis")})
     return axes

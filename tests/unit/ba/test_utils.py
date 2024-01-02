@@ -3,8 +3,12 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from redcat import BatchedArray
-from redcat.ba import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.ba import (
+    BatchedArray,
+    check_data_and_axis,
+    check_same_batch_axis,
+    get_batch_axes,
+)
 
 ###########################################
 #     Tests for check_same_batch_axis     #
@@ -60,7 +64,7 @@ def test_get_batch_axes_1_array() -> None:
 
 def test_get_batch_axes_2_array() -> None:
     assert get_batch_axes(
-        (BatchedArray(np.ones((2, 3))), BatchedArray(np.ones((2, 3)), batch_dim=1)),
+        (BatchedArray(np.ones((2, 3))), BatchedArray(np.ones((2, 3)), batch_axis=1)),
         {"val": BatchedArray(np.ones((2, 3)))},
     ) == {0, 1}
 
