@@ -59,7 +59,11 @@ class BatchedArray(ndarray):
             return False
         return objects_are_equal(self.__array__(), other.__array__())
 
-    def add(self, other: ndarray | int | float, alpha: int | float = 1.0) -> TBatchedArray:
+    ##################################################
+    #     Mathematical | arithmetical operations     #
+    ##################################################
+
+    def add(self, other: ndarray | float, alpha: float = 1.0) -> TBatchedArray:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         array.
 
@@ -91,7 +95,7 @@ class BatchedArray(ndarray):
         self._check_valid_axes((self, other))
         return self.__add__(other * alpha if alpha != 1 else other)
 
-    def add_(self, other: ndarray | int | float, alpha: int | float = 1.0) -> None:
+    def add_(self, other: ndarray | float, alpha: float = 1.0) -> None:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         array.
 
@@ -116,6 +120,67 @@ class BatchedArray(ndarray):
         """
         self._check_valid_axes((self, other))
         self.__iadd__(other * alpha if alpha != 1 else other)
+
+    def sub(self, other: ndarray | float, alpha: float = 1) -> TBatchedArray:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
+
+        Similar to ``out = self - alpha * other``
+
+        Args:
+            other: Specifies the value to subtract.
+            alpha: Specifies the scale of the batch to substract.
+
+        Returns:
+            A new batch containing the diffence of the two batches.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> out = batch.sub(BatchedArray(np.full((2, 3), 2.0)))
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_dim=0)
+        >>> out
+        array([[-1., -1., -1.],
+               [-1., -1., -1.]], batch_dim=0)
+
+        ```
+        """
+        self._check_valid_axes((self, other))
+        return self.__sub__(other * alpha if alpha != 1 else other)
+
+    def sub_(
+        self,
+        other: ndarray | float,
+        alpha: float = 1,
+    ) -> None:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` array.
+
+        Similar to ``self -= alpha * other`` (in-place)
+
+        Args:
+            other: Specifies the value to subtract.
+            alpha: Specifies the scale of the array to substract.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> batch.sub_(ba.full((2, 3), 2.0))
+        >>> batch
+        array([[-1., -1., -1.],
+               [-1., -1., -1.]], batch_dim=0)
+
+        ```
+        """
+        self._check_valid_axes((self, other))
+        self.__isub__(other * alpha if alpha != 1 else other)
 
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
