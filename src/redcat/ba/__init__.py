@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = [
     "BatchedArray",
     "array",
+    "arrays_share_data",
     "check_data_and_axis",
     "check_same_batch_axis",
     "empty",
@@ -10,6 +11,7 @@ __all__ = [
     "full",
     "full_like",
     "get_batch_axes",
+    "get_data_base",
     "ones",
     "ones_like",
     "zeros",
@@ -28,4 +30,10 @@ from redcat.ba.creation import (
     zeros,
     zeros_like,
 )
-from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.ba.utils import (
+    arrays_share_data,
+    check_data_and_axis,
+    check_same_batch_axis,
+    get_batch_axes,
+    get_data_base,
+)
