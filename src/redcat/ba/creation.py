@@ -9,7 +9,17 @@ Notes and links:
 
 from __future__ import annotations
 
-__all__ = ["array", "ones", "zeros", "empty", "full"]
+__all__ = [
+    "array",
+    "empty",
+    "empty_like",
+    "full",
+    "full_like",
+    "ones",
+    "ones_like",
+    "zeros",
+    "zeros_like",
+]
 
 from collections.abc import Sequence
 from typing import Any
@@ -18,6 +28,11 @@ import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba import BatchedArray
+
+empty_like = np.empty_like
+full_like = np.full_like
+ones_like = np.ones_like
+zeros_like = np.zeros_like
 
 
 def array(

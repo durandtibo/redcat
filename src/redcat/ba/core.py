@@ -2,6 +2,7 @@ r"""Implement an extension of ``numpy.ndarray`` to represent a batch.
 
 Notes:
     - https://numpy.org/doc/stable/user/basics.subclassing.html
+    - [N-dimensional array (ndarray)](https://numpy.org/doc/1.26/reference/arrays.ndarray.html)
 """
 
 from __future__ import annotations
