@@ -284,6 +284,181 @@ class BatchedArray(ndarray):
             return False
         return objects_are_equal(self.__array__(), other.__array__())
 
+    def eq(self, other: ndarray | bool | float) -> TBatchedArray:
+        r"""Return element-wise equality ``(self == other)`` array.
+
+        Args:
+            other: Specifies the array to compare.
+
+        Returns:
+            A array containing the element-wise equality.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat.ba import BatchedArray
+        >>> x1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> x2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> x1.eq(x2)
+        array([[False,  True, False],
+               [ True, False,  True]], batch_axis=0)
+        >>> x1.eq(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[False,  True, False],
+               [ True, False,  True]], batch_axis=0)
+        >>> x1.eq(2)
+        array([[False, False, False],
+               [False,  True,  True]], batch_axis=0)
+
+        ```
+        """
+        return self.__eq__(other)
+
+    def ge(self, other: ndarray | bool | float) -> TBatchedArray:
+        r"""Return ``self >= other`` element-wise.
+
+        Args:
+            other: Specifies the value to compare with.
+
+        Returns:
+            An array containing the element-wise comparison.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat.ba import BatchedArray
+        >>> x1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> x2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> x1.ge(x2)
+        array([[False,  True,  True],
+               [ True,  True,  True]], batch_axis=0)
+        >>> x1.ge(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[False,  True,  True],
+               [ True,  True,  True]], batch_axis=0)
+        >>> x1.ge(2)
+        array([[False,  True,  True],
+               [False,  True,  True]], batch_axis=0)
+
+        ```
+        """
+        return self.__ge__(other)
+
+    def gt(self, other: ndarray | bool | float) -> TBatchedArray:
+        r"""Return ``self > other`` element-wise.
+
+        Args:
+            other: Specifies the batch to compare.
+
+        Returns:
+            An array containing the element-wise comparison.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat.ba import BatchedArray
+        >>> x1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> x2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> x1.gt(x2)
+        array([[False, False,  True],
+               [False,  True, False]], batch_axis=0)
+        >>> x1.gt(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[False, False,  True],
+               [False,  True, False]], batch_axis=0)
+        >>> x1.gt(2)
+        array([[False,  True,  True],
+               [False, False, False]], batch_axis=0)
+
+        ```
+        """
+        return self.__gt__(other)
+
+    def le(self, other: ndarray | bool | float) -> TBatchedArray:
+        r"""Return ``self <= other`` element-wise.
+
+        Args:
+            other: Specifies the batch to compare.
+
+        Returns:
+            An array containing the element-wise comparison.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from redcat.ba import BatchedArray
+        >>> x1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> x2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> x1.le(x2)
+        array([[ True,  True, False],
+               [ True, False,  True]], batch_axis=0)
+        >>> x1.le(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[ True,  True, False],
+               [ True, False,  True]], batch_axis=0)
+        >>> x1.le(2)
+        array([[ True, False, False],
+               [ True,  True,  True]], batch_axis=0)
+
+        ```
+        """
+        return self.__le__(other)
+
+    def lt(self, other: ndarray | bool | float) -> TBatchedArray:
+        r"""Return ``self < other`` element-wise.
+
+        Args:
+            other: Specifies the batch to compare.
+
+        Returns:
+            An array containing the element-wise comparison.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat.ba import BatchedArray
+        >>> x1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> x2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> x1.lt(x2)
+        array([[ True, False, False],
+               [False, False, False]], batch_axis=0)
+        >>> x1.lt(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[ True, False, False],
+               [False, False, False]], batch_axis=0)
+        >>> x1.lt(2)
+        array([[ True, False, False],
+               [ True, False, False]], batch_axis=0)
+
+        ```
+        """
+        return self.__lt__(other)
+
+    def ne(self, other: ndarray | bool | float) -> TBatchedArray:
+        r"""Return ``self != other`` element-wise.
+
+        Args:
+            other: Specifies the batch to compare.
+
+        Returns:
+            An array containing the element-wise comparison.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat.ba import BatchedArray
+        >>> x1 = BatchedArray(np.array([[1, 3, 4], [0, 2, 2]]))
+        >>> x2 = BatchedArray(np.array([[5, 3, 2], [0, 1, 2]]))
+        >>> x1.ne(x2)
+        array([[ True, False,  True],
+               [False,  True, False]], batch_axis=0)
+        >>> x1.ne(np.array([[5, 3, 2], [0, 1, 2]]))
+        array([[ True, False,  True],
+               [False,  True, False]], batch_axis=0)
+        >>> x1.ne(2)
+        array([[ True,  True,  True],
+               [ True, False, False]], batch_axis=0)
+
+        ```
+        """
+        return self.__ne__(other)
+
     ##################################################
     #     Mathematical | arithmetical operations     #
     ##################################################
