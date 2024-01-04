@@ -95,6 +95,8 @@ UNARY_FUNCTIONS = (
     np.tan,
     np.tanh,
     np.trunc,
+    partial(np.argsort, axis=0),
+    partial(np.argsort, axis=1),
     partial(np.cumprod, axis=0),
     partial(np.cumprod, axis=0, dtype=float),
     partial(np.cumprod, axis=0, dtype=int),

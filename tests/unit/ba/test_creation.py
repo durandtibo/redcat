@@ -3,7 +3,7 @@ import pytest
 from numpy.typing import DTypeLike
 
 from redcat import ba
-from redcat.ba import BatchedArray
+from redcat.ba import BatchedArray, arrays_share_data
 
 DTYPES = (bool, int, float)
 
@@ -14,9 +14,10 @@ DTYPES = (bool, int, float)
 
 
 def test_array() -> None:
-    assert ba.array(np.arange(10).reshape(2, 5)).allequal(
-        BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]))
-    )
+    x = np.arange(10).reshape(2, 5)
+    y = ba.array(x)
+    assert not arrays_share_data(x, y)
+    assert y.allequal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])))
 
 
 @pytest.mark.parametrize("dtype", DTYPES)
@@ -33,10 +34,11 @@ def test_array_batch_axis(batch_axis: int) -> None:
     )
 
 
-def test_array_copy() -> None:
-    array = np.arange(10).reshape(2, 5)
-    barray = ba.array(array, copy=False)
-    assert barray.allequal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])))
+def test_array_copy_false() -> None:
+    x = np.arange(10).reshape(2, 5)
+    y = ba.array(x, copy=False)
+    assert arrays_share_data(x, y)
+    assert y.allequal(BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])))
 
 
 ###########################
