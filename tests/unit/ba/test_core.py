@@ -603,6 +603,252 @@ def test_batched_array_allequal_false_different_batch_axis() -> None:
     assert not BatchedArray(np.ones((2, 3)), batch_axis=1).allequal(ba.ones(shape=(2, 3)))
 
 
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5.0),
+        5,
+        5.0,
+    ],
+)
+def test_batched_array_eq(other: np.ndarray | int | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .eq(other)
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, False, False, False, False]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_eq_custom_batch_axis() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .eq(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, False, False, False, False]],
+                    dtype=bool,
+                ),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5.0),
+        5,
+        5.0,
+    ],
+)
+def test_batched_array_ge(other: np.ndarray | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .ge(other)
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, True, True, True, True]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_ge_custom_batch_axis() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .ge(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [True, True, True, True, True]],
+                    dtype=bool,
+                ),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5.0),
+        5,
+        5.0,
+    ],
+)
+def test_batched_array_gt(other: np.ndarray | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .gt(other)
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [False, True, True, True, True]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_gt_custom_batch_axis() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .gt(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[False, False, False, False, False], [False, True, True, True, True]],
+                    dtype=bool,
+                ),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5.0),
+        5,
+        5.0,
+    ],
+)
+def test_batched_array_le(other: np.ndarray | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .le(other)
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [True, False, False, False, False]],
+                    dtype=bool,
+                )
+            )
+        )
+    )
+
+
+def test_batched_array_le_custom_batch_axis() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .le(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [True, False, False, False, False]],
+                    dtype=bool,
+                ),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5.0),
+        5,
+        5.0,
+    ],
+)
+def test_batched_array_lt(other: np.ndarray | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .lt(other)
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [False, False, False, False, False]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_lt_custom_batch_axis() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .lt(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [False, False, False, False, False]],
+                    dtype=bool,
+                ),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5.0),
+        5,
+        5.0,
+    ],
+)
+def test_batched_array_ne(other: np.ndarray | int | float) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .ne(other)
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [False, True, True, True, True]],
+                    dtype=bool,
+                ),
+            )
+        )
+    )
+
+
+def test_batched_array_ne_custom_batch_axis() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .ne(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
+        .allequal(
+            BatchedArray(
+                np.array(
+                    [[True, True, True, True, True], [False, True, True, True, True]],
+                    dtype=bool,
+                ),
+                batch_axis=1,
+            )
+        )
+    )
+
+
 ##################################################
 #     Mathematical | arithmetical operations     #
 ##################################################
