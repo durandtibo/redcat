@@ -65,7 +65,6 @@ class BatchedArray(ndarray):
         Example usage:
 
         ```pycon
-        >>> import numpy as np
         >>> from redcat import ba
         >>> array = ba.zeros((2, 3))
         >>> array.empty_like()
@@ -91,7 +90,6 @@ class BatchedArray(ndarray):
         Example usage:
 
         ```pycon
-        >>> import numpy as np
         >>> from redcat import ba
         >>> array = ba.zeros((2, 3))
         >>> array.full_like(42.0)
@@ -101,6 +99,122 @@ class BatchedArray(ndarray):
         ```
         """
         return np.full_like(self, *args, fill_value=fill_value, **kwargs)
+
+    def new_full(
+        self, fill_value: float | ArrayLike, batch_size: int | None = None, **kwargs: Any
+    ) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``fill_value``,
+        with the same shape as the current array.
+
+        By default, the array in the returned array has the same
+        shape, ``numpy.dtype``  as the current array.
+
+        Args:
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
+            **kwargs: See the documentation of
+                ``numpy.new_full``.
+
+        Returns:
+            A batch filled with the scalar value ``fill_value``.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba
+        >>> array = ba.ones((2, 3))
+        >>> array.new_full(42.0)
+        array([[42., 42., 42.],
+               [42., 42., 42.]], batch_axis=0)
+        >>> array.new_full(fill_value=42.0, batch_size=5)
+        array([[42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.]], batch_axis=0)
+
+        ```
+        """
+        shape = list(self.shape)
+        if batch_size is not None:
+            shape[self.batch_axis] = batch_size
+        return self.full_like(fill_value=fill_value, shape=shape, **kwargs)
+
+    def new_ones(self, batch_size: int | None = None, **kwargs: Any) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``1``, with the
+        same shape as the current array.
+
+        By default, the array in the returned array has the same
+        shape, ``numpy.dtype``  as the current array.
+
+        Args:
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
+            **kwargs: See the documentation of
+                ``numpy.new_ones``.
+
+        Returns:
+            A batch filled with the scalar value ``1``.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba
+        >>> array = ba.zeros((2, 3))
+        >>> array.new_ones()
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> array.new_ones(batch_size=5)
+        array([[1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+
+        ```
+        """
+        shape = list(self.shape)
+        if batch_size is not None:
+            shape[self.batch_axis] = batch_size
+        return self.ones_like(shape=shape, **kwargs)
+
+    def new_zeros(self, batch_size: int | None = None, **kwargs: Any) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``0``, with the
+        same shape as the current array.
+
+        By default, the array in the returned array has the same
+        shape, ``numpy.dtype``  as the current array.
+
+        Args:
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
+            **kwargs: See the documentation of
+                ``numpy.new_zeros``.
+
+        Returns:
+            A batch filled with the scalar value ``0``.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba
+        >>> array = ba.ones((2, 3))
+        >>> array.new_zeros()
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+        >>> array.new_zeros(batch_size=5)
+        array([[0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+
+        ```
+        """
+        shape = list(self.shape)
+        if batch_size is not None:
+            shape[self.batch_axis] = batch_size
+        return self.zeros_like(shape=shape, **kwargs)
 
     def ones_like(self, *args: Any, **kwargs: Any) -> TBatchedArray:
         r"""Return an array filled with the scalar value ``1``, with the
@@ -117,7 +231,6 @@ class BatchedArray(ndarray):
         Example usage:
 
         ```pycon
-        >>> import numpy as np
         >>> from redcat import ba
         >>> array = ba.zeros((2, 3))
         >>> array.ones_like()
@@ -143,7 +256,6 @@ class BatchedArray(ndarray):
         Example usage:
 
         ```pycon
-        >>> import numpy as np
         >>> from redcat import ba
         >>> array = ba.ones((2, 3))
         >>> array.zeros_like()
