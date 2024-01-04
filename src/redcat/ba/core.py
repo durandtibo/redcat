@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from typing import Any, TypeVar
 
 import numpy as np
-from coola import objects_are_allclose, objects_are_equal
+from coola import objects_are_allclose
 from numpy import ndarray
 from numpy.typing import ArrayLike
 
@@ -279,10 +279,10 @@ class BatchedArray(ndarray):
             self.__array__(), other.__array__(), rtol=rtol, atol=atol, equal_nan=equal_nan
         )
 
-    def allequal(self, other: Any) -> bool:
+    def allequal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__) or self.batch_axis != other.batch_axis:
             return False
-        return objects_are_equal(self.__array__(), other.__array__())
+        return np.array_equal(self.__array__(), other.__array__(), equal_nan)
 
     def eq(self, other: ndarray | bool | float) -> TBatchedArray:
         r"""Return element-wise equality ``(self == other)`` array.

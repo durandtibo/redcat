@@ -228,6 +228,44 @@ def test_ne_custom_batch_axis() -> None:
     )
 
 
+def test_array_equal_true() -> None:
+    assert ba.array_equal(ba.ones(shape=(2, 3)), ba.ones(shape=(2, 3)))
+
+
+def test_array_equal_false_different_type() -> None:
+    assert not ba.array_equal(ba.ones(shape=(2, 3)), np.ones(shape=(2, 3)))
+
+
+def test_array_equal_false_different_data() -> None:
+    assert not ba.array_equal(ba.ones(shape=(2, 3)), ba.zeros(shape=(2, 3)))
+
+
+def test_array_equal_false_different_shape() -> None:
+    assert not ba.array_equal(ba.ones(shape=(2, 3)), ba.ones(shape=(2, 3, 1)))
+
+
+def test_array_equal_false_different_batch_axis() -> None:
+    assert not ba.array_equal(ba.ones(shape=(2, 3), batch_axis=1), ba.ones(shape=(2, 3)))
+
+
+def test_array_equal_equal_nan_false() -> None:
+    assert not ba.array_equal(
+        BatchedArray(np.array([1, np.nan, 3])), BatchedArray(np.array([1, np.nan, 3]))
+    )
+
+
+def test_array_equal_equal_nan_true() -> None:
+    assert ba.array_equal(
+        BatchedArray(np.array([1, np.nan, 3])),
+        BatchedArray(np.array([1, np.nan, 3])),
+        equal_nan=True,
+    )
+
+
+def test_array_equal_true_numpy() -> None:
+    assert ba.array_equal(np.ones(shape=(2, 3)), np.ones(shape=(2, 3)))
+
+
 ###########################################
 #     Item selection and manipulation     #
 ###########################################
