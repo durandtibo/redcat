@@ -46,6 +46,118 @@ class BatchedArray(ndarray):
     def batch_size(self) -> int:
         return self.shape[self.batch_axis]
 
+    ###############################
+    #     Creation operations     #
+    ###############################
+
+    def empty_like(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Return an array without initializing entries, with the same
+        shape as the current array.
+
+        Args:
+            *args: See the documentation of ``numpy.empty_like``.
+            **kwargs: See the documentation of ``numpy.empty_like``.
+
+        Returns:
+            An array filled without initializing entries, with the same
+                shape as the current array.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import ba
+        >>> array = ba.zeros((2, 3))
+        >>> array.empty_like()
+        array([...], batch_axis=0)
+
+        ```
+        """
+        return np.empty_like(self, *args, **kwargs)
+
+    def full_like(self, fill_value: float | ArrayLike, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``1``, with the
+        same shape as the current array.
+
+        Args:
+            fill_value: Specifies the fill value.
+            *args: See the documentation of ``numpy.full_like``.
+            **kwargs: See the documentation of ``numpy.full_like``.
+
+        Returns:
+            An array filled with the scalar value ``1``, with the same
+                shape as the current array.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import ba
+        >>> array = ba.zeros((2, 3))
+        >>> array.full_like(42.0)
+        array([[42., 42., 42.],
+               [42., 42., 42.]], batch_axis=0)
+
+        ```
+        """
+        return np.full_like(self, *args, fill_value=fill_value, **kwargs)
+
+    def ones_like(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``1``, with the
+        same shape as the current array.
+
+        Args:
+            *args: See the documentation of ``numpy.ones_like``.
+            **kwargs: See the documentation of ``numpy.ones_like``.
+
+        Returns:
+            An array filled with the scalar value ``1``, with the same
+                shape as the current array.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import ba
+        >>> array = ba.zeros((2, 3))
+        >>> array.ones_like()
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+
+        ```
+        """
+        return np.ones_like(self, *args, **kwargs)
+
+    def zeros_like(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``0``, with the
+        same shape as the current array.
+
+        Args:
+            *args: See the documentation of ``numpy.zeros_like``.
+            **kwargs: See the documentation of ``numpy.zeros_like``.
+
+        Returns:
+            An array filled with the scalar value ``0``, with the same
+                shape as the current array.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import ba
+        >>> array = ba.ones((2, 3))
+        >>> array.zeros_like()
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+
+        ```
+        """
+        return np.zeros_like(self, *args, **kwargs)
+
+    #################################
+    #     Comparison operations     #
+    #################################
+
     def allclose(
         self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
     ) -> bool:
