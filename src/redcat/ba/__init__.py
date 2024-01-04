@@ -4,6 +4,7 @@ __all__ = [
     "BatchedArray",
     "argsort_along_batch",
     "array",
+    "array_equal",
     "arrays_share_data",
     "check_data_and_axis",
     "check_same_batch_axis",
@@ -39,6 +40,7 @@ from redcat.ba.creation import (
 )
 from redcat.ba.func import (
     argsort_along_batch,
+    array_equal,
     equal,
     greater,
     greater_equal,

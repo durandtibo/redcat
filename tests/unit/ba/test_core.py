@@ -588,19 +588,31 @@ def test_batched_array_allequal_true() -> None:
 
 
 def test_batched_array_allequal_false_different_type() -> None:
-    assert not BatchedArray(np.ones((2, 3), dtype=float)).allequal(np.ones((2, 3), dtype=int))
+    assert not ba.ones(shape=(2, 3)).allequal(np.ones(shape=(2, 3)))
 
 
 def test_batched_array_allequal_false_different_data() -> None:
-    assert not ba.ones(shape=(2, 3)).allequal(BatchedArray(np.zeros((2, 3))))
+    assert not ba.ones(shape=(2, 3)).allequal(ba.zeros(shape=(2, 3)))
 
 
 def test_batched_array_allequal_false_different_shape() -> None:
-    assert not ba.ones(shape=(2, 3)).allequal(BatchedArray(np.ones((2, 3, 1))))
+    assert not ba.ones(shape=(2, 3)).allequal(ba.ones(shape=(2, 3, 1)))
 
 
 def test_batched_array_allequal_false_different_batch_axis() -> None:
-    assert not BatchedArray(np.ones((2, 3)), batch_axis=1).allequal(ba.ones(shape=(2, 3)))
+    assert not ba.ones(shape=(2, 3), batch_axis=1).allequal(ba.ones(shape=(2, 3)))
+
+
+def test_batched_array_allequal_equal_nan_false() -> None:
+    assert not BatchedArray(np.array([1, np.nan, 3])).allequal(
+        BatchedArray(np.array([1, np.nan, 3]))
+    )
+
+
+def test_batched_array_allequal_equal_nan_true() -> None:
+    assert BatchedArray(np.array([1, np.nan, 3])).allequal(
+        BatchedArray(np.array([1, np.nan, 3])), equal_nan=True
+    )
 
 
 @pytest.mark.parametrize(
