@@ -757,9 +757,9 @@ def test_batched_array_sub__incorrect_batch_axis() -> None:
         batch.sub_(ba.ones(shape=(2, 2), batch_axis=1))
 
 
-##########################################################
-#     Mathematical | item manipulation and reduction     #
-##########################################################
+################################################
+#     Mathematical | advanced arithmetical     #
+################################################
 
 
 def test_batched_array_argsort() -> None:

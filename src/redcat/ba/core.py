@@ -182,9 +182,9 @@ class BatchedArray(ndarray):
         self._check_valid_axes((self, other))
         self.__isub__(other * alpha if alpha != 1 else other)
 
-    ##########################################################
-    #     Mathematical | item manipulation and reduction     #
-    ##########################################################
+    ################################################
+    #     Mathematical | advanced arithmetical     #
+    ################################################
 
     def argsort_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
         r"""Sort the elements of the batch along the batch axis in
