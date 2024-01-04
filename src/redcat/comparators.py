@@ -76,7 +76,7 @@ class BatchEqualityOperator(BaseEqualityOperator[BaseBatch]):
             if show_difference:
                 logger.info(f"object2 is not a `BaseBatch` object: {type(object2)}")
             return False
-        object_equal = object1.equal(object2)
+        object_equal = object1.allequal(object2)
         if show_difference and not object_equal:
             logger.info(
                 f"`BaseBatch` objects are different\nobject1=\n{object1}\nobject2=\n{object2}"

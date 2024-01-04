@@ -443,6 +443,16 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
             self._data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
         )
 
+    def allequal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        if self._batch_dim != other.batch_dim:
+            return False
+        return objects_are_equal(self._data, other.data)
+
+    def equal(self, other: Any) -> bool:
+        return self.allequal(other)
+
     def eq(self, other: BatchedArray | ndarray | bool | int | float) -> TBatchedArray:
         r"""Computes element-wise equality.
 
@@ -472,13 +482,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[ndarray])
         ```
         """
         return np.equal(self, other)
-
-    def equal(self, other: Any) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        if self._batch_dim != other.batch_dim:
-            return False
-        return objects_are_equal(self._data, other.data)
 
     def ge(self, other: BatchedArray | ndarray | bool | int | float) -> TBatchedArray:
         r"""Computes ``self >= other`` element-wise.

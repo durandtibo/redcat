@@ -484,6 +484,26 @@ def test_batched_array_allclose_true_rtol(batch: BatchedArray, rtol: float) -> N
     assert BatchedArray(np.ones((2, 3))).allclose(batch, rtol=rtol)
 
 
+def test_batched_array_allequal_true() -> None:
+    assert BatchedArray(np.ones((2, 3))).allequal(BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_allequal_false_different_type() -> None:
+    assert not BatchedArray(np.ones((2, 3), dtype=float)).allequal(np.ones((2, 3), dtype=int))
+
+
+def test_batched_array_allequal_false_different_data() -> None:
+    assert not BatchedArray(np.ones((2, 3))).allequal(BatchedArray(np.zeros((2, 3))))
+
+
+def test_batched_array_allequal_false_different_shape() -> None:
+    assert not BatchedArray(np.ones((2, 3))).allequal(BatchedArray(np.ones((2, 3, 1))))
+
+
+def test_batched_array_allequal_false_different_batch_dim() -> None:
+    assert not BatchedArray(np.ones((2, 3)), batch_dim=1).allequal(BatchedArray(np.ones((2, 3))))
+
+
 @mark.parametrize(
     "other",
     (
@@ -523,26 +543,6 @@ def test_batched_array_eq_custom_batch_dim() -> None:
             )
         )
     )
-
-
-def test_batched_array_equal_true() -> None:
-    assert BatchedArray(np.ones((2, 3))).equal(BatchedArray(np.ones((2, 3))))
-
-
-def test_batched_array_equal_false_different_type() -> None:
-    assert not BatchedArray(np.ones((2, 3), dtype=float)).equal(np.ones((2, 3), dtype=int))
-
-
-def test_batched_array_equal_false_different_data() -> None:
-    assert not BatchedArray(np.ones((2, 3))).equal(BatchedArray(np.zeros((2, 3))))
-
-
-def test_batched_array_equal_false_different_shape() -> None:
-    assert not BatchedArray(np.ones((2, 3))).equal(BatchedArray(np.ones((2, 3, 1))))
-
-
-def test_batched_array_equal_false_different_batch_dim() -> None:
-    assert not BatchedArray(np.ones((2, 3)), batch_dim=1).equal(BatchedArray(np.ones((2, 3))))
 
 
 @mark.parametrize(

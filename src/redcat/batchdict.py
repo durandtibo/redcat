@@ -134,7 +134,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             self.data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
         )
 
-    def equal(self, other: Any) -> bool:
+    def allequal(self, other: Any) -> bool:
         if not isinstance(other, self.__class__):
             return False
         return objects_are_equal(self.data, other.data)
