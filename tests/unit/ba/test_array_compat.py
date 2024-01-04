@@ -120,6 +120,7 @@ PAIRWISE_FUNCTIONS = (
     np.greater,
     np.greater_equal,
     np.heaviside,
+    np.isclose,
     np.less,
     np.less_equal,
     np.logaddexp,

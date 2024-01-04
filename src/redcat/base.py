@@ -84,7 +84,7 @@ class BaseBatch(Generic[T], ABC):
     def allclose(
         self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
     ) -> bool:
-        r"""Indicates if two batches are equal within a tolerance or not.
+        r"""Indicate if two batches are equal within a tolerance or not.
 
         Args:
             other: Specifies the value to compare.
@@ -110,8 +110,8 @@ class BaseBatch(Generic[T], ABC):
         """
 
     @abstractmethod
-    def equal(self, other: Any) -> bool:
-        r"""Indicates if two batches are equal or not.
+    def allequal(self, other: Any) -> bool:
+        r"""Indicate if two batches are equal or not.
 
         Args:
             other: Specifies the value to compare.
@@ -125,7 +125,7 @@ class BaseBatch(Generic[T], ABC):
         ```pycon
         >>> import torch
         >>> from redcat import BatchedTensor
-        >>> BatchedTensor(torch.ones(2, 3)).equal(BatchedTensor(torch.zeros(2, 3)))
+        >>> BatchedTensor(torch.ones(2, 3)).allequal(BatchedTensor(torch.zeros(2, 3)))
         False
 
         ```

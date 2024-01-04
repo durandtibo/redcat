@@ -49,8 +49,8 @@ def test_batch_list_clone() -> None:
     batch = BatchList(["a", "b", "c"])
     clone = batch.clone()
     batch[1] = "d"
-    assert batch.equal(BatchList(["a", "d", "c"]))
-    assert clone.equal(BatchList(["a", "b", "c"]))
+    assert batch.allequal(BatchList(["a", "d", "c"]))
+    assert clone.allequal(BatchList(["a", "b", "c"]))
 
 
 #################################
@@ -94,16 +94,16 @@ def test_batch_list_allclose_true_rtol(batch: BatchList, rtol: float) -> None:
     assert BatchList([1.0, 2.0, 3.0]).allclose(batch, rtol=rtol)
 
 
-def test_batch_list_equal_true() -> None:
-    assert BatchList(["a", "b", "c"]).equal(BatchList(["a", "b", "c"]))
+def test_batch_list_allequal_true() -> None:
+    assert BatchList(["a", "b", "c"]).allequal(BatchList(["a", "b", "c"]))
 
 
-def test_batch_list_equal_false_different_type() -> None:
-    assert not BatchList(["a", "b", "c"]).equal(["a", "b", "c"])
+def test_batch_list_allequal_false_different_type() -> None:
+    assert not BatchList(["a", "b", "c"]).allequal(["a", "b", "c"])
 
 
-def test_batch_list_equal_false_different_data() -> None:
-    assert not BatchList(["a", "b", "c"]).equal(BatchList(["a", "b", "c", "d"]))
+def test_batch_list_allequal_false_different_data() -> None:
+    assert not BatchList(["a", "b", "c"]).allequal(BatchList(["a", "b", "c", "d"]))
 
 
 ###########################################################
@@ -116,7 +116,7 @@ def test_batch_list_permute_along_batch(permutation: Sequence[int] | Tensor) -> 
     assert (
         BatchList(["a", "b", "c", "d"])
         .permute_along_batch(permutation)
-        .equal(BatchList(["c", "b", "d", "a"]))
+        .allequal(BatchList(["c", "b", "d", "a"]))
     )
 
 
@@ -124,26 +124,28 @@ def test_batch_list_permute_along_batch(permutation: Sequence[int] | Tensor) -> 
 def test_batch_list_permute_along_batch_(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchList(["a", "b", "c", "d"])
     batch.permute_along_batch_(permutation)
-    assert batch.equal(BatchList(["c", "b", "d", "a"]))
+    assert batch.allequal(BatchList(["c", "b", "d", "a"]))
 
 
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
 def test_batch_list_shuffle_along_batch() -> None:
     assert (
-        BatchList(["a", "b", "c", "d"]).shuffle_along_batch().equal(BatchList(["c", "b", "d", "a"]))
+        BatchList(["a", "b", "c", "d"])
+        .shuffle_along_batch()
+        .allequal(BatchList(["c", "b", "d", "a"]))
     )
 
 
 def test_batch_list_shuffle_along_batch_same_random_seed() -> None:
     batch = BatchList(["a", "b", "c", "d", "e"])
-    assert batch.shuffle_along_batch(get_torch_generator(1)).equal(
+    assert batch.shuffle_along_batch(get_torch_generator(1)).allequal(
         batch.shuffle_along_batch(get_torch_generator(1))
     )
 
 
 def test_batch_list_shuffle_along_batch_different_random_seeds() -> None:
     batch = BatchList(["a", "b", "c", "d", "e"])
-    assert not batch.shuffle_along_batch(get_torch_generator(1)).equal(
+    assert not batch.shuffle_along_batch(get_torch_generator(1)).allequal(
         batch.shuffle_along_batch(get_torch_generator(2))
     )
 
@@ -151,14 +153,14 @@ def test_batch_list_shuffle_along_batch_different_random_seeds() -> None:
 def test_batch_list_shuffle_along_batch_multiple_shuffle() -> None:
     batch = BatchList(["a", "b", "c", "d", "e"])
     generator = get_torch_generator(1)
-    assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
+    assert not batch.shuffle_along_batch(generator).allequal(batch.shuffle_along_batch(generator))
 
 
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
 def test_batch_list_shuffle_along_batch_() -> None:
     batch = BatchList(["a", "b", "c", "d"])
     batch.shuffle_along_batch_()
-    assert batch.equal(BatchList(["c", "b", "d", "a"]))
+    assert batch.allequal(BatchList(["c", "b", "d", "a"]))
 
 
 def test_batch_list_shuffle_along_batch__same_random_seed() -> None:
@@ -166,7 +168,7 @@ def test_batch_list_shuffle_along_batch__same_random_seed() -> None:
     batch1.shuffle_along_batch_(get_torch_generator(1))
     batch2 = BatchList(["a", "b", "c", "d", "e"])
     batch2.shuffle_along_batch_(get_torch_generator(1))
-    assert batch1.equal(batch2)
+    assert batch1.allequal(batch2)
 
 
 def test_batch_list_shuffle_along_batch__different_random_seeds() -> None:
@@ -174,7 +176,7 @@ def test_batch_list_shuffle_along_batch__different_random_seeds() -> None:
     batch1.shuffle_along_batch_(get_torch_generator(1))
     batch2 = BatchList(["a", "b", "c", "d", "e"])
     batch2.shuffle_along_batch_(get_torch_generator(2))
-    assert not batch1.equal(batch2)
+    assert not batch1.allequal(batch2)
 
 
 ################################################
@@ -203,21 +205,21 @@ def test_batch_list__getitem___slice() -> None:
 def test_batch_list__setitem___int() -> None:
     batch = BatchList(["a", "b", "c", "d", "e"])
     batch[0] = 7
-    assert batch.equal(BatchList([7, "b", "c", "d", "e"]))
+    assert batch.allequal(BatchList([7, "b", "c", "d", "e"]))
 
 
 @mark.parametrize("value", ([1, 2], (1, 2), BatchList([1, 2])))
 def test_batch_list__setitem___slice(value: Sequence | BatchList) -> None:
     batch = BatchList(["a", "b", "c", "d", "e"])
     batch[1:3] = value
-    assert batch.equal(BatchList(["a", 1, 2, "d", "e"]))
+    assert batch.allequal(BatchList(["a", 1, 2, "d", "e"]))
 
 
 @mark.parametrize("other", (BatchList(["d", "e"]), ["d", "e"], ("d", "e")))
 def test_batch_list_append(other: BatchList | Tensor) -> None:
     batch = BatchList(["a", "b", "c"])
     batch.append(other)
-    assert batch.equal(BatchList(["a", "b", "c", "d", "e"]))
+    assert batch.allequal(BatchList(["a", "b", "c", "d", "e"]))
 
 
 def test_batch_list_chunk_along_batch_5() -> None:
@@ -252,7 +254,7 @@ def test_batch_list_extend(
 ) -> None:
     batch = BatchList(["a", "b", "c"])
     batch.extend(other)
-    assert batch.equal(BatchList(["a", "b", "c", "d", "e"]))
+    assert batch.allequal(BatchList(["a", "b", "c", "d", "e"]))
 
 
 @mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
@@ -260,7 +262,7 @@ def test_batch_list_index_select_along_batch(index: Tensor | Sequence[int]) -> N
     assert (
         BatchList(["a", "b", "c", "d", "e"])
         .index_select_along_batch(index)
-        .equal(BatchList(["c", "a"]))
+        .allequal(BatchList(["c", "a"]))
     )
 
 
@@ -272,7 +274,7 @@ def test_batch_list_slice_along_batch() -> None:
     assert (
         BatchList(["a", "b", "c", "d", "e"])
         .slice_along_batch()
-        .equal(BatchList(["a", "b", "c", "d", "e"]))
+        .allequal(BatchList(["a", "b", "c", "d", "e"]))
     )
 
 
@@ -280,7 +282,7 @@ def test_batch_list_slice_along_batch_start_2() -> None:
     assert (
         BatchList(["a", "b", "c", "d", "e"])
         .slice_along_batch(start=2)
-        .equal(BatchList(["c", "d", "e"]))
+        .allequal(BatchList(["c", "d", "e"]))
     )
 
 
@@ -288,7 +290,7 @@ def test_batch_list_slice_along_batch_stop_3() -> None:
     assert (
         BatchList(["a", "b", "c", "d", "e"])
         .slice_along_batch(stop=3)
-        .equal(BatchList(["a", "b", "c"]))
+        .allequal(BatchList(["a", "b", "c"]))
     )
 
 
@@ -296,7 +298,7 @@ def test_batch_list_slice_along_batch_stop_100() -> None:
     assert (
         BatchList(["a", "b", "c", "d", "e"])
         .slice_along_batch(stop=100)
-        .equal(BatchList(["a", "b", "c", "d", "e"]))
+        .allequal(BatchList(["a", "b", "c", "d", "e"]))
     )
 
 
@@ -304,7 +306,7 @@ def test_batch_list_slice_along_batch_step_2() -> None:
     assert (
         BatchList(["a", "b", "c", "d", "e"])
         .slice_along_batch(step=2)
-        .equal(BatchList(["a", "c", "e"]))
+        .allequal(BatchList(["a", "c", "e"]))
     )
 
 
@@ -312,7 +314,7 @@ def test_batch_list_slice_along_batch_start_1_stop_4_step_2() -> None:
     assert (
         BatchList(["a", "b", "c", "d", "e"])
         .slice_along_batch(start=1, stop=4, step=2)
-        .equal(BatchList(["b", "d"]))
+        .allequal(BatchList(["b", "d"]))
     )
 
 
@@ -439,13 +441,13 @@ def test_batch_list_to_minibatches_drop_last_true_10_batch_size_4() -> None:
 
 
 def test_batch_list_apply() -> None:
-    assert BatchList([1, 2, 3]).apply(lambda val: val + 2).equal(BatchList([3, 4, 5]))
+    assert BatchList([1, 2, 3]).apply(lambda val: val + 2).allequal(BatchList([3, 4, 5]))
 
 
 def test_batch_list_apply_() -> None:
     batch = BatchList([1, 2, 3])
     batch.apply_(lambda val: val + 2)
-    assert batch.equal(BatchList([3, 4, 5]))
+    assert batch.allequal(BatchList([3, 4, 5]))
 
 
 def test_batch_list_summary() -> None:

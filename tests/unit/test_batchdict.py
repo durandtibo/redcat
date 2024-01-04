@@ -74,7 +74,7 @@ def test_batch_dict__contains__false() -> None:
 def test_batch_dict__getitem__() -> None:
     assert BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})[
         "key2"
-    ].equal(BatchList(["a", "b", "c"]))
+    ].allequal(BatchList(["a", "b", "c"]))
 
 
 def test_batch_dict__getitem__missing_key() -> None:
@@ -104,7 +104,7 @@ def test_batch_dict__len__2() -> None:
 def test_batch_dict__setitem__update_value() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     batch["key2"] = BatchList(["d", "e", "f"])
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["d", "e", "f"])})
     )
 
@@ -112,7 +112,7 @@ def test_batch_dict__setitem__update_value() -> None:
 def test_batch_dict__setitem__new_key() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3])})
     batch["key2"] = BatchList(["a", "b", "c"])
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     )
 
@@ -127,7 +127,7 @@ def test_batch_dict_get() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
         .get("key2")
-        .equal(BatchList(["a", "b", "c"]))
+        .allequal(BatchList(["a", "b", "c"]))
     )
 
 
@@ -139,7 +139,7 @@ def test_batch_dict_get_missing_key_custom_default() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3])})
         .get("key2", default=BatchList(["a", "b", "c"]))
-        .equal(BatchList(["a", "b", "c"]))
+        .allequal(BatchList(["a", "b", "c"]))
     )
 
 
@@ -194,10 +194,10 @@ def test_batch_dict_clone() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     clone = batch.clone()
     batch["key2"][1] = "d"
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "d", "c"])})
     )
-    assert clone.equal(
+    assert clone.allequal(
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     )
 
@@ -249,18 +249,20 @@ def test_batch_dict_allclose_true_rtol(batch: BatchList, rtol: float) -> None:
     assert BatchDict({"key": BatchList([1.0, 2.0, 3.0])}).allclose(batch, rtol=rtol)
 
 
-def test_batch_dict_equal_true() -> None:
-    assert BatchDict({"key": BatchList(["a", "b", "c"])}).equal(
+def test_batch_dict_allequal_true() -> None:
+    assert BatchDict({"key": BatchList(["a", "b", "c"])}).allequal(
         BatchDict({"key": BatchList(["a", "b", "c"])})
     )
 
 
-def test_batch_dict_equal_false_different_type() -> None:
-    assert not BatchDict({"key": BatchList(["a", "b", "c"])}).equal(["a", "b", "c"])
+def test_batch_dict_allequal_false_different_type() -> None:
+    assert not BatchDict({"key": BatchList(["a", "b", "c"])}).allequal(["a", "b", "c"])
 
 
-def test_batch_dict_equal_false_different_data() -> None:
-    assert not BatchDict({"key": BatchList(["a", "b", "c"])}).equal(BatchList(["a", "b", "c", "d"]))
+def test_batch_dict_allequal_false_different_data() -> None:
+    assert not BatchDict({"key": BatchList(["a", "b", "c"])}).allequal(
+        BatchList(["a", "b", "c", "d"])
+    )
 
 
 ###########################################################
@@ -273,7 +275,7 @@ def test_batch_dict_permute_along_batch(permutation: Sequence[int] | Tensor) -> 
     assert (
         BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
         .permute_along_batch(permutation)
-        .equal(
+        .allequal(
             BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
         )
     )
@@ -283,7 +285,7 @@ def test_batch_dict_permute_along_batch(permutation: Sequence[int] | Tensor) -> 
 def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
     batch.permute_along_batch_(permutation)
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
     )
 
@@ -295,7 +297,7 @@ def test_batch_dict_permute_along_seq(permutation: Sequence[int] | Tensor) -> No
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .permute_along_seq(permutation)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
@@ -310,7 +312,7 @@ def test_batch_dict_permute_along_seq_no_seq() -> None:
     assert (
         BatchDict({"key": BatchList(["a", "b"])})
         .permute_along_seq((2, 4, 1, 3, 0))
-        .equal(BatchDict({"key": BatchList(["a", "b"])}))
+        .allequal(BatchDict({"key": BatchList(["a", "b"])}))
     )
 
 
@@ -320,7 +322,7 @@ def test_batch_dict_permute_along_seq_(permutation: Sequence[int] | Tensor) -> N
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
     batch.permute_along_seq_(permutation)
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict(
             {
                 "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
@@ -333,7 +335,7 @@ def test_batch_dict_permute_along_seq_(permutation: Sequence[int] | Tensor) -> N
 def test_batch_dict_permute_along_seq__no_seq() -> None:
     batch = BatchDict({"key": BatchList(["a", "b"])})
     batch.permute_along_seq_((2, 4, 1, 3, 0))
-    assert batch.equal(BatchDict({"key": BatchList(["a", "b"])}))
+    assert batch.allequal(BatchDict({"key": BatchList(["a", "b"])}))
 
 
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
@@ -341,7 +343,7 @@ def test_batch_dict_shuffle_along_batch() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
         .shuffle_along_batch()
-        .equal(
+        .allequal(
             BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
         )
     )
@@ -351,7 +353,7 @@ def test_batch_dict_shuffle_along_batch_same_random_seed() -> None:
     batch = BatchDict(
         {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
     )
-    assert batch.shuffle_along_batch(get_torch_generator(1)).equal(
+    assert batch.shuffle_along_batch(get_torch_generator(1)).allequal(
         batch.shuffle_along_batch(get_torch_generator(1))
     )
 
@@ -360,7 +362,7 @@ def test_batch_dict_shuffle_along_batch_different_random_seeds() -> None:
     batch = BatchDict(
         {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
     )
-    assert not batch.shuffle_along_batch(get_torch_generator(1)).equal(
+    assert not batch.shuffle_along_batch(get_torch_generator(1)).allequal(
         batch.shuffle_along_batch(get_torch_generator(2))
     )
 
@@ -370,14 +372,14 @@ def test_batch_dict_shuffle_along_batch_multiple_shuffle() -> None:
         {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
     )
     generator = get_torch_generator(1)
-    assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
+    assert not batch.shuffle_along_batch(generator).allequal(batch.shuffle_along_batch(generator))
 
 
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
 def test_batch_dict_shuffle_along_batch_() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
     batch.shuffle_along_batch_()
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict({"key1": BatchList([3, 2, 4, 1]), "key2": BatchList(["c", "b", "d", "a"])})
     )
 
@@ -391,7 +393,7 @@ def test_batch_dict_shuffle_along_batch__same_random_seed() -> None:
         {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
     )
     batch2.shuffle_along_batch_(get_torch_generator(1))
-    assert batch1.equal(batch2)
+    assert batch1.allequal(batch2)
 
 
 def test_batch_dict_shuffle_along_batch__different_random_seeds() -> None:
@@ -403,7 +405,7 @@ def test_batch_dict_shuffle_along_batch__different_random_seeds() -> None:
         {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
     )
     batch2.shuffle_along_batch_(get_torch_generator(2))
-    assert not batch1.equal(batch2)
+    assert not batch1.allequal(batch2)
 
 
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
@@ -413,7 +415,7 @@ def test_batch_dict_shuffle_along_seq_mix() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .shuffle_along_seq()
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
@@ -429,7 +431,7 @@ def test_batch_dict_shuffle_along_seq_no_seq() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
         .shuffle_along_seq()
-        .equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+        .allequal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
     )
 
 
@@ -450,7 +452,7 @@ def test_batch_dict_shuffle_along_seq_same_random_seed() -> None:
     batch = BatchDict(
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
-    assert batch.shuffle_along_seq(get_torch_generator(1)).equal(
+    assert batch.shuffle_along_seq(get_torch_generator(1)).allequal(
         batch.shuffle_along_seq(get_torch_generator(1))
     )
 
@@ -459,7 +461,7 @@ def test_batch_dict_shuffle_along_seq_different_random_seeds() -> None:
     batch = BatchDict(
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
-    assert not batch.shuffle_along_seq(get_torch_generator(1)).equal(
+    assert not batch.shuffle_along_seq(get_torch_generator(1)).allequal(
         batch.shuffle_along_seq(get_torch_generator(2))
     )
 
@@ -469,7 +471,7 @@ def test_batch_dict_shuffle_along_seq_multiple_shuffle() -> None:
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
     generator = get_torch_generator(1)
-    assert not batch.shuffle_along_seq(generator).equal(batch.shuffle_along_seq(generator))
+    assert not batch.shuffle_along_seq(generator).allequal(batch.shuffle_along_seq(generator))
 
 
 @patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
@@ -478,7 +480,7 @@ def test_batch_dict_shuffle_along_seq__mix() -> None:
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
     batch.shuffle_along_seq_()
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict(
             {
                 "key1": BatchedTensorSeq(torch.tensor([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])),
@@ -492,7 +494,7 @@ def test_batch_dict_shuffle_along_seq__mix() -> None:
 def test_batch_dict_shuffle_along_seq__no_seq() -> None:
     batch = BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
     batch.shuffle_along_seq_()
-    assert batch.equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+    assert batch.allequal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
 
 
 def test_batch_dict_shuffle_along_seq__multiple_sequence_lengths() -> None:
@@ -517,7 +519,7 @@ def test_batch_dict_shuffle_along_seq__same_random_seed() -> None:
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
     batch2.shuffle_along_seq_(get_torch_generator(1))
-    assert batch1.equal(batch2)
+    assert batch1.allequal(batch2)
 
 
 def test_batch_dict_shuffle_along_seq__different_random_seeds() -> None:
@@ -529,7 +531,7 @@ def test_batch_dict_shuffle_along_seq__different_random_seeds() -> None:
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
     batch2.shuffle_along_seq_(get_torch_generator(2))
-    assert not batch1.equal(batch2)
+    assert not batch1.allequal(batch2)
 
 
 ################################################
@@ -548,13 +550,13 @@ def test_batch_dict_shuffle_along_seq__different_random_seeds() -> None:
 def test_batch_dict_append_1_item() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3])})
     batch.append(BatchDict({"key1": BatchList(["a", "b"])}))
-    assert batch.equal(BatchDict({"key1": BatchList([1, 2, 3, "a", "b"])}))
+    assert batch.allequal(BatchDict({"key1": BatchList([1, 2, 3, "a", "b"])}))
 
 
 def test_batch_dict_append_2_items() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     batch.append(BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])}))
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict(
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
@@ -591,7 +593,7 @@ def test_batched_tensor_seq_cat_along_seq(other: BatchDict | Sequence[BatchDict]
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .cat_along_seq(other)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(
@@ -608,7 +610,7 @@ def test_batch_dict_cat_along_seq_empty() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
         .cat_along_seq([])
-        .equal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
+        .allequal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
     )
 
 
@@ -635,7 +637,7 @@ def test_batched_tensor_seq_cat_along_seq_(other: BatchDict | Sequence[BatchDict
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
     )
     batch.cat_along_seq_(other)
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict(
             {
                 "key1": BatchedTensorSeq(
@@ -650,7 +652,7 @@ def test_batched_tensor_seq_cat_along_seq_(other: BatchDict | Sequence[BatchDict
 def test_batch_dict_cat_along_seq__empty() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     batch.cat_along_seq_([])
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     )
 
@@ -717,7 +719,7 @@ def test_batch_dict_extend(
 ) -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
     batch.extend(other)
-    assert batch.equal(
+    assert batch.allequal(
         BatchDict(
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
@@ -731,7 +733,7 @@ def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> N
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
         .index_select_along_batch(index)
-        .equal(BatchDict({"key1": BatchList([3, 1]), "key2": BatchList(["c", "a"])}))
+        .allequal(BatchDict({"key1": BatchList([3, 1]), "key2": BatchList(["c", "a"])}))
     )
 
 
@@ -742,7 +744,7 @@ def test_batch_dict_index_select_along_seq(index: Tensor | Sequence[int]) -> Non
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .index_select_along_seq(index)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[2, 0], [7, 5]])),
@@ -757,7 +759,7 @@ def test_batch_dict_index_select_along_seq_missing() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
         .index_select_along_seq([2, 0])
-        .equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+        .allequal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
     )
 
 
@@ -767,7 +769,7 @@ def test_batched_tensor_seq_repeat_along_seq_2() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .repeat_along_seq(2)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(
@@ -788,7 +790,7 @@ def test_batched_tensor_seq_repeat_along_seq_3() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .repeat_along_seq(3)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(
@@ -810,7 +812,7 @@ def test_batch_dict_repeat_along_seq_empty() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
         .repeat_along_seq(2)
-        .equal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
+        .allequal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
     )
 
 
@@ -826,7 +828,7 @@ def test_batch_dict_slice_along_batch() -> None:
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
         .slice_along_batch()
-        .equal(
+        .allequal(
             BatchDict(
                 {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
             )
@@ -840,7 +842,7 @@ def test_batch_dict_slice_along_batch_start_2() -> None:
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
         .slice_along_batch(start=2)
-        .equal(BatchDict({"key1": BatchList([3, 4, 5]), "key2": BatchList(["c", "d", "e"])}))
+        .allequal(BatchDict({"key1": BatchList([3, 4, 5]), "key2": BatchList(["c", "d", "e"])}))
     )
 
 
@@ -850,7 +852,7 @@ def test_batch_dict_slice_along_batch_stop_3() -> None:
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
         .slice_along_batch(stop=3)
-        .equal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
+        .allequal(BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])}))
     )
 
 
@@ -860,7 +862,7 @@ def test_batch_dict_slice_along_batch_stop_100() -> None:
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
         .slice_along_batch(stop=100)
-        .equal(
+        .allequal(
             BatchDict(
                 {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
             )
@@ -874,7 +876,7 @@ def test_batch_dict_slice_along_batch_step_2() -> None:
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
         .slice_along_batch(step=2)
-        .equal(BatchDict({"key1": BatchList([1, 3, 5]), "key2": BatchList(["a", "c", "e"])}))
+        .allequal(BatchDict({"key1": BatchList([1, 3, 5]), "key2": BatchList(["a", "c", "e"])}))
     )
 
 
@@ -884,7 +886,7 @@ def test_batch_dict_slice_along_batch_start_1_stop_4_step_2() -> None:
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         )
         .slice_along_batch(start=1, stop=4, step=2)
-        .equal(BatchDict({"key1": BatchList([2, 4]), "key2": BatchList(["b", "d"])}))
+        .allequal(BatchDict({"key1": BatchList([2, 4]), "key2": BatchList(["b", "d"])}))
     )
 
 
@@ -894,7 +896,7 @@ def test_batch_dict_slice_along_seq() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .slice_along_seq()
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])),
@@ -911,7 +913,7 @@ def test_batch_dict_slice_along_seq_start_2() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .slice_along_seq(start=2)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[2, 3, 4], [7, 8, 9]])),
@@ -928,7 +930,7 @@ def test_batch_dict_slice_along_seq_stop_3() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .slice_along_seq(stop=3)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[0, 1, 2], [5, 6, 7]])),
@@ -945,7 +947,7 @@ def test_batch_dict_slice_along_seq_stop_100() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .slice_along_seq(stop=100)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])),
@@ -962,7 +964,7 @@ def test_batch_dict_slice_along_seq_step_2() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .slice_along_seq(step=2)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[0, 2, 4], [5, 7, 9]])),
@@ -979,7 +981,7 @@ def test_batch_dict_slice_along_seq_start_1_stop_4_step_2() -> None:
             {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
         )
         .slice_along_seq(start=1, stop=4, step=2)
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[1, 3], [6, 8]])),
@@ -1074,7 +1076,7 @@ def test_batch_dict_take_along_seq() -> None:
             }
         )
         .take_along_seq(torch.tensor([[3, 0, 1], [2, 3, 4]]))
-        .equal(
+        .allequal(
             BatchDict(
                 {
                     "key1": BatchedTensorSeq(torch.tensor([[3, 0, 1], [7, 8, 9]])),
@@ -1089,7 +1091,7 @@ def test_batch_dict_take_along_seq_empty() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
         .take_along_seq(torch.tensor([[3, 0, 1], [2, 3, 4]]))
-        .equal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
+        .allequal(BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])}))
     )
 
 

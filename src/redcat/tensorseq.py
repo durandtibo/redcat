@@ -328,7 +328,7 @@ class BatchedTensorSeq(BatchedTensor):
             self._data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
         )
 
-    def equal(self, other: Any) -> bool:
+    def allequal(self, other: Any) -> bool:
         if not isinstance(other, BatchedTensorSeq):
             return False
         if self._batch_dim != other.batch_dim or self._seq_dim != other.seq_dim:

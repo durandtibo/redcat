@@ -551,6 +551,13 @@ class BatchedTensor(BaseBatch[Tensor]):
             self._data, other.data, rtol=rtol, atol=atol, equal_nan=equal_nan
         )
 
+    def allequal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        if self._batch_dim != other.batch_dim:
+            return False
+        return objects_are_equal(self._data, other.data)
+
     def eq(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes element-wise equality.
 
@@ -582,11 +589,26 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.eq(self, other)
 
     def equal(self, other: Any) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        if self._batch_dim != other.batch_dim:
-            return False
-        return objects_are_equal(self._data, other.data)
+        r"""Indicate if two batches are equal or not.
+
+        Args:
+            other: Specifies the value to compare.
+
+        Returns:
+            ``True`` if the batches have the same size, elements and
+                same batch dimension, ``False`` otherwise.
+
+        Example usage:
+
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> BatchedTensor(torch.ones(2, 3)).equal(BatchedTensor(torch.zeros(2, 3)))
+        False
+
+        ```
+        """
+        return self.allequal(other)
 
     def ge(self, other: BatchedTensor | Tensor | bool | int | float) -> TBatchedTensor:
         r"""Computes ``self >= other`` element-wise.
