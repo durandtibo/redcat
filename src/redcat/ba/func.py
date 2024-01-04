@@ -1,12 +1,36 @@
 from __future__ import annotations
 
-__all__ = ["argsort_along_batch"]
+__all__ = [
+    "argsort_along_batch",
+    "equal",
+    "greater",
+    "greater_equal",
+    "less",
+    "less_equal",
+    "not_equal",
+]
 
 from typing import Any, TypeVar
+
+import numpy as np
 
 from redcat.ba.core import BatchedArray
 
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
+
+#################################
+#     Comparison operations     #
+#################################
+
+# TODO: array_equal
+
+equal = np.equal
+greater = np.greater
+greater_equal = np.greater_equal
+less = np.less
+less_equal = np.less_equal
+not_equal = np.not_equal
+
 
 ###########################################
 #     Item selection and manipulation     #
