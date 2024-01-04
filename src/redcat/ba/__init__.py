@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "BatchedArray",
+    "argsort_along_batch",
     "array",
     "arrays_share_data",
     "check_data_and_axis",
@@ -30,6 +31,7 @@ from redcat.ba.creation import (
     zeros,
     zeros_like,
 )
+from redcat.ba.func import argsort_along_batch
 from redcat.ba.utils import (
     arrays_share_data,
     check_data_and_axis,

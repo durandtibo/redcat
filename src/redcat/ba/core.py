@@ -182,6 +182,44 @@ class BatchedArray(ndarray):
         self._check_valid_axes((self, other))
         self.__isub__(other * alpha if alpha != 1 else other)
 
+    ##########################################################
+    #     Mathematical | item manipulation and reduction     #
+    ##########################################################
+
+    def argsort_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Sort the elements of the batch along the batch axis in
+        monotonic order by value.
+
+        Args:
+            args: See the documentation of ``numpy.argsort``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.argsort``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The indices that sort the batch along the batch dimension.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.argsort_along_batch()
+        array([[0, 0],
+               [1, 1],
+               [2, 2],
+               [3, 3],
+               [4, 4]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.argsort_along_batch()
+        array([[0, 1, 2, 3, 4],
+               [0, 1, 2, 3, 4]], batch_axis=1)
+
+        ```
+        """
+        return np.argsort(self, *args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 

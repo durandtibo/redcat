@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from coola import objects_are_equal
 from numpy.typing import ArrayLike, DTypeLike
 
 from redcat import ba
-from redcat.ba import BatchedArray
+from redcat.ba import BatchedArray, arrays_share_data
 
 DTYPES = (bool, int, float)
 
@@ -16,6 +17,14 @@ def test_batched_array_repr() -> None:
 
 def test_batched_array_str() -> None:
     assert str(BatchedArray(np.arange(3))) == "[0 1 2]\nwith batch_axis=0"
+
+
+def test_batched_array_constructor() -> None:
+    x = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=float)
+    array = BatchedArray(x)
+    assert arrays_share_data(array, x)
+    assert np.array_equal(array, x)
+    assert array.batch_axis == 0
 
 
 @pytest.mark.parametrize(
@@ -746,3 +755,68 @@ def test_batched_array_sub__incorrect_batch_axis() -> None:
     batch = ba.ones(shape=(2, 2))
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         batch.sub_(ba.ones(shape=(2, 2), batch_axis=1))
+
+
+##########################################################
+#     Mathematical | item manipulation and reduction     #
+##########################################################
+
+
+def test_batched_array_argsort() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])).argsort(),
+        BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])),
+    )
+
+
+def test_batched_array_argsort_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argsort(axis=0),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+    )
+
+
+def test_batched_array_argsort_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.asarray(
+                [
+                    [[0, 1], [-2, 3], [-4, 5], [-6, 7], [-8, 9]],
+                    [[10, -11], [12, -13], [14, -15], [16, -17], [18, -19]],
+                ]
+            )
+        ).argsort(axis=1),
+        BatchedArray(
+            np.asarray(
+                [
+                    [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]],
+                    [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]],
+                ]
+            )
+        ),
+    )
+
+
+def test_batched_array_argsort_custom_axis() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_axis=1).argsort(
+            axis=0
+        ),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_argsort_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argsort_along_batch(),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+    )
+
+
+def test_batched_array_argsort_along_batch_custom_axis() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1
+        ).argsort_along_batch(),
+        BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), batch_axis=1),
+    )
