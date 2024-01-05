@@ -125,7 +125,7 @@ def test_batched_array_copy() -> None:
     assert clone.allequal(ba.ones(shape=(2, 3)))
 
 
-def test_batched_array_copy_custom_batch_axis() -> None:
+def test_batched_array_copy_custom_axes() -> None:
     assert ba.ones(shape=(2, 3), batch_axis=1).copy().allequal(ba.ones(shape=(2, 3), batch_axis=1))
 
 
@@ -147,7 +147,7 @@ def test_batched_array_empty_like_target_dtype(dtype: np.dtype) -> None:
     assert array.batch_axis == 0
 
 
-def test_batched_array_empty_like_custom_batch_axis() -> None:
+def test_batched_array_empty_like_custom_axes() -> None:
     array = ba.zeros(shape=(3, 2), batch_axis=1).empty_like()
     assert isinstance(array, BatchedArray)
     assert array.data.shape == (3, 2)
@@ -164,7 +164,7 @@ def test_batched_array_full_like(fill_value: float) -> None:
     )
 
 
-def test_batched_array_full_like_custom_batch_axis() -> None:
+def test_batched_array_full_like_custom_axes() -> None:
     assert (
         ba.zeros(shape=(3, 2), batch_axis=1)
         .full_like(fill_value=2.0)
@@ -199,7 +199,7 @@ def test_batched_array_new_full_fill_value(fill_value: float | int | bool) -> No
     )
 
 
-def test_batched_array_new_full_custom_batch_axis() -> None:
+def test_batched_array_new_full_custom_axes() -> None:
     assert (
         ba.zeros(shape=(3, 2), batch_axis=1)
         .new_full(2.0)
@@ -238,7 +238,7 @@ def test_batched_array_new_ones() -> None:
     assert ba.zeros(shape=(2, 3)).new_ones().allequal(ba.ones(shape=(2, 3)))
 
 
-def test_batched_array_new_ones_custom_batch_axis() -> None:
+def test_batched_array_new_ones_custom_axes() -> None:
     assert (
         ba.zeros(shape=(3, 2), batch_axis=1)
         .new_ones()
@@ -267,7 +267,7 @@ def test_batched_array_new_zeros() -> None:
     assert ba.ones(shape=(2, 3)).new_zeros().allequal(ba.zeros(shape=(2, 3)))
 
 
-def test_batched_array_new_zeros_custom_batch_axis() -> None:
+def test_batched_array_new_zeros_custom_axes() -> None:
     assert ba.ones(shape=(3, 2), batch_axis=1).new_zeros().allequal(ba.zeros((3, 2), batch_axis=1))
 
 
@@ -296,7 +296,7 @@ def test_batched_array_ones_like() -> None:
     assert ba.zeros(shape=(2, 3)).ones_like().allequal(ba.ones(shape=(2, 3)))
 
 
-def test_batched_array_ones_like_custom_batch_axis() -> None:
+def test_batched_array_ones_like_custom_axes() -> None:
     assert (
         ba.zeros(shape=(3, 2), batch_axis=1)
         .ones_like()
@@ -320,7 +320,7 @@ def test_batched_array_zeros_like() -> None:
     assert ba.ones(shape=(2, 3)).zeros_like().allequal(ba.zeros(shape=(2, 3)))
 
 
-def test_batched_array_zeros_like_custom_batch_axis() -> None:
+def test_batched_array_zeros_like_custom_axes() -> None:
     assert (
         ba.ones(shape=(3, 2), batch_axis=1)
         .zeros_like()
@@ -714,7 +714,7 @@ def test_batched_array_eq(other: np.ndarray | int | float) -> None:
     )
 
 
-def test_batched_array_eq_custom_batch_axis() -> None:
+def test_batched_array_eq_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .eq(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
@@ -762,7 +762,7 @@ def test_batched_array_ge(other: np.ndarray | float) -> None:
     )
 
 
-def test_batched_array_ge_custom_batch_axis() -> None:
+def test_batched_array_ge_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .ge(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
@@ -810,7 +810,7 @@ def test_batched_array_gt(other: np.ndarray | float) -> None:
     )
 
 
-def test_batched_array_gt_custom_batch_axis() -> None:
+def test_batched_array_gt_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .gt(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
@@ -858,7 +858,7 @@ def test_batched_array_le(other: np.ndarray | float) -> None:
     )
 
 
-def test_batched_array_le_custom_batch_axis() -> None:
+def test_batched_array_le_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .le(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
@@ -906,7 +906,7 @@ def test_batched_array_lt(other: np.ndarray | float) -> None:
     )
 
 
-def test_batched_array_lt_custom_batch_axis() -> None:
+def test_batched_array_lt_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .lt(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
@@ -954,7 +954,7 @@ def test_batched_array_ne(other: np.ndarray | int | float) -> None:
     )
 
 
-def test_batched_array_ne_custom_batch_axis() -> None:
+def test_batched_array_ne_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .ne(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
@@ -975,6 +975,102 @@ def test_batched_array_ne_different_axes() -> None:
     array = BatchedArray(np.arange(10).reshape(2, 5))
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         array.ne(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
+
+
+def test_batched_array_isinf() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isinf()
+        .allequal(BatchedArray(np.array([[False, False, True], [False, False, True]], dtype=bool)))
+    )
+
+
+def test_batched_array_isinf_custom_axes() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_axis=1,
+        )
+        .isinf()
+        .allequal(
+            BatchedArray(
+                np.array([[False, False, True], [False, False, True]], dtype=bool),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+def test_batched_array_isneginf() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isneginf()
+        .allequal(BatchedArray(np.array([[False, False, False], [False, False, True]], dtype=bool)))
+    )
+
+
+def test_batched_array_isneginf_custom_axes() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_axis=1,
+        )
+        .isneginf()
+        .allequal(
+            BatchedArray(
+                np.array([[False, False, False], [False, False, True]], dtype=bool),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+def test_batched_array_isposinf() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
+        .isposinf()
+        .allequal(BatchedArray(np.array([[False, False, True], [False, False, False]], dtype=bool)))
+    )
+
+
+def test_batched_array_isposinf_custom_axes() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]),
+            batch_axis=1,
+        )
+        .isposinf()
+        .allequal(
+            BatchedArray(
+                np.array([[False, False, True], [False, False, False]], dtype=bool),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+def test_batched_array_isnan() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]))
+        .isnan()
+        .allequal(BatchedArray(np.array([[False, False, True], [True, False, False]], dtype=bool)))
+    )
+
+
+def test_batched_array_isnan_custom_axes() -> None:
+    assert (
+        BatchedArray(
+            np.array([[1.0, 0.0, float("nan")], [float("nan"), -2.0, -1.0]]),
+            batch_axis=1,
+        )
+        .isnan()
+        .allequal(
+            BatchedArray(
+                np.array([[False, False, True], [True, False, False]], dtype=bool),
+                batch_axis=1,
+            )
+        )
+    )
 
 
 ##################################################
@@ -1342,7 +1438,7 @@ def test_batched_array_add__alpha_2(dtype: DTypeLike) -> None:
     assert batch.allequal(ba.full(shape=(2, 3), fill_value=5.0, dtype=int))
 
 
-def test_batched_array_add__custom_batch_axis() -> None:
+def test_batched_array_add__custom_axes() -> None:
     batch = ba.ones(shape=(2, 3), batch_axis=1)
     batch.add_(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
     assert batch.allequal(ba.full(shape=(2, 3), fill_value=3.0, batch_axis=1))
@@ -1377,7 +1473,7 @@ def test_batched_array_sub_alpha_2(dtype: DTypeLike) -> None:
     )
 
 
-def test_batched_array_sub_custom_batch_axiss() -> None:
+def test_batched_array_sub_custom_axess() -> None:
     assert (
         ba.ones(shape=(2, 3), batch_axis=1)
         .sub(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
@@ -1414,7 +1510,7 @@ def test_batched_array_sub__alpha_2(dtype: DTypeLike) -> None:
     assert batch.allequal(ba.full(shape=(2, 3), fill_value=-3, dtype=dtype))
 
 
-def test_batched_array_sub__custom_batch_axis() -> None:
+def test_batched_array_sub__custom_axes() -> None:
     batch = ba.ones(shape=(2, 3), batch_axis=1)
     batch.sub_(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
     assert batch.allequal(ba.full(shape=(2, 3), fill_value=-1.0, batch_axis=1))
