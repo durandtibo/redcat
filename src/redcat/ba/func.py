@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "allclose",
     "argsort_along_batch",
     "array_equal",
     "equal",
@@ -32,8 +33,45 @@ less_equal = np.less_equal
 not_equal = np.not_equal
 
 
+def allclose(
+    a: ArrayLike, b: ArrayLike, rtol: float = 1e-05, atol: float = 1e-08, equal_nan: bool = False
+) -> bool:
+    r"""Indicate if two arrays are element-wise equal within a tolerance.
+
+    Args:
+        a: Specifies the first array.
+        b: Specifies the second array.
+        rtol: The relative tolerance parameter (see Notes in ``numpy.allclose``).
+        atol: The absolute tolerance parameter (see Notes in ``numpy.allclose``).
+        equal_nan: Whether to compare NaN’s as equal. If ``True``,
+            NaN’s in a will be considered equal to NaN’s in b in the
+            output array.
+
+    Returns:
+        ``True`` if the arrays are element-wise equal within a
+            tolerance, otherwise ``False``.
+
+    Example usage:
+
+    ```pycon
+    >>> from redcat import ba
+    >>> x1 = ba.ones((2, 3))
+    >>> x2 = ba.ones((2, 3)) + 1e-4
+    >>> x3 = ba.zeros((2, 3))
+    >>> ba.allclose(x1, x2, atol=1e-3)
+    True
+    >>> ba.allclose(x1, x3)
+    False
+
+    ```
+    """
+    if isinstance(a, BatchedArray):
+        return a.allclose(b, rtol=rtol, atol=atol, equal_nan=equal_nan)
+    return np.allclose(a=a, b=b, rtol=rtol, atol=atol, equal_nan=equal_nan)
+
+
 def array_equal(a1: ArrayLike, a2: ArrayLike, equal_nan: bool = False) -> bool:
-    r"""Indicate if two arrays are equal.
+    r"""Indicate if two arrays are element-wise equal.
 
     Args:
         a1: Specifies the first array.
@@ -62,7 +100,7 @@ def array_equal(a1: ArrayLike, a2: ArrayLike, equal_nan: bool = False) -> bool:
     """
     if isinstance(a1, BatchedArray):
         return a1.allequal(a2, equal_nan)
-    return np.array_equal(a1, a2, equal_nan)
+    return np.array_equal(a1=a1, a2=a2, equal_nan=equal_nan)
 
 
 ###########################################
