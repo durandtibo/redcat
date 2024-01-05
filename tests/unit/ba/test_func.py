@@ -228,6 +228,68 @@ def test_ne_custom_batch_axis() -> None:
     )
 
 
+def test_allclose_true() -> None:
+    assert ba.allclose(ba.ones(shape=(2, 3)), ba.ones(shape=(2, 3)))
+
+
+def test_allclose_false_different_type() -> None:
+    assert not ba.allclose(ba.ones(shape=(2, 3)), np.ones(shape=(2, 3)))
+
+
+def test_allclose_false_different_data() -> None:
+    assert not ba.allclose(ba.ones(shape=(2, 3)), ba.zeros(shape=(2, 3)))
+
+
+def test_allclose_false_different_shape() -> None:
+    assert not ba.allclose(ba.ones(shape=(2, 3)), ba.ones(shape=(2, 3, 1)))
+
+
+def test_allclose_false_different_batch_axis() -> None:
+    assert not ba.allclose(ba.ones(shape=(2, 3), batch_axis=1), ba.ones(shape=(2, 3)))
+
+
+@pytest.mark.parametrize(
+    ("array", "atol"),
+    (
+        (ba.ones((2, 3)) + 0.5, 1),
+        (ba.ones((2, 3)) + 0.05, 1e-1),
+        (ba.ones((2, 3)) + 5e-3, 1e-2),
+    ),
+)
+def test_allclose_true_atol(array: BatchedArray, atol: float) -> None:
+    assert ba.allclose(ba.ones((2, 3)), array, atol=atol, rtol=0)
+
+
+@pytest.mark.parametrize(
+    ("array", "rtol"),
+    (
+        (ba.ones((2, 3)) + 0.5, 1),
+        (ba.ones((2, 3)) + 0.05, 1e-1),
+        (ba.ones((2, 3)) + 5e-3, 1e-2),
+    ),
+)
+def test_allclose_true_rtol(array: BatchedArray, rtol: float) -> None:
+    assert ba.allclose(ba.ones((2, 3)), array, rtol=rtol)
+
+
+def test_allclose_equal_nan_false() -> None:
+    assert not ba.allclose(
+        BatchedArray(np.array([1, np.nan, 3])), BatchedArray(np.array([1, np.nan, 3]))
+    )
+
+
+def test_allclose_equal_nan_true() -> None:
+    assert ba.allclose(
+        BatchedArray(np.array([1, np.nan, 3])),
+        BatchedArray(np.array([1, np.nan, 3])),
+        equal_nan=True,
+    )
+
+
+def test_allclose_true_numpy() -> None:
+    assert ba.allclose(np.ones(shape=(2, 3)), np.ones(shape=(2, 3)))
+
+
 def test_array_equal_true() -> None:
     assert ba.array_equal(ba.ones(shape=(2, 3)), ba.ones(shape=(2, 3)))
 

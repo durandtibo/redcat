@@ -633,6 +633,30 @@ def test_batched_array_allclose_false_different_axes() -> None:
     assert not ba.ones(shape=(2, 3)).allclose(BatchedArray(np.ones((2, 3)), batch_axis=1))
 
 
+@pytest.mark.parametrize(
+    ("array", "atol"),
+    (
+        (ba.ones((2, 3)) + 0.5, 1),
+        (ba.ones((2, 3)) + 0.05, 1e-1),
+        (ba.ones((2, 3)) + 5e-3, 1e-2),
+    ),
+)
+def test_batched_array_allclose_true_atol(array: BatchedArray, atol: float) -> None:
+    assert ba.ones((2, 3)).allclose(array, atol=atol, rtol=0)
+
+
+@pytest.mark.parametrize(
+    ("array", "rtol"),
+    (
+        (ba.ones((2, 3)) + 0.5, 1),
+        (ba.ones((2, 3)) + 0.05, 1e-1),
+        (ba.ones((2, 3)) + 5e-3, 1e-2),
+    ),
+)
+def test_batched_array_allclose_true_rtol(array: BatchedArray, rtol: float) -> None:
+    assert ba.ones((2, 3)).allclose(array, rtol=rtol)
+
+
 def test_batched_array_allequal_true() -> None:
     assert ba.ones(shape=(2, 3)).allequal(ba.ones(shape=(2, 3)))
 

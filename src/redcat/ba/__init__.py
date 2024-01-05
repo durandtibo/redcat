@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "BatchedArray",
+    "allclose",
     "argsort_along_batch",
     "array",
     "array_equal",
@@ -39,6 +40,7 @@ from redcat.ba.creation import (
     zeros_like,
 )
 from redcat.ba.func import (
+    allclose,
     argsort_along_batch,
     array_equal,
     equal,
