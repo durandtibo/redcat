@@ -1623,3 +1623,47 @@ def test_batched_array_argsort_along_batch_custom_axis() -> None:
         ).argsort_along_batch(),
         BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), batch_axis=1),
     )
+
+
+@future_test
+def test_batched_array_cumprod() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod(),
+        np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    )
+
+
+def test_batched_array_cumprod_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod(axis=0),
+        BatchedArray(np.asarray([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+    )
+
+
+def test_batched_array_cumprod_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod(axis=1),
+        BatchedArray(np.array([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])),
+    )
+
+
+def test_batched_array_cumprod_custom_axis() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumprod(axis=0),
+        BatchedArray(np.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]), batch_axis=1),
+        show_difference=True,
+    )
+
+
+def test_batched_array_cumprod_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod_along_batch(),
+        BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+    )
+
+
+def test_batched_array_cumprod_along_batch_custom_axis() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumprod_along_batch(),
+        BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_axis=1),
+    )
