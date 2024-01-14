@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -1799,4 +1800,76 @@ def test_batched_array_permute_batch_custom_axes() -> None:
             ),
             batch_axis=1,
         ),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_axis() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])).shuffle_along_axis(
+            axis=0
+        ),
+        BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_axis_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_axis=1
+        ).shuffle_along_axis(axis=1),
+        BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_axis=1),
+    )
+
+
+def test_batched_array_shuffle_along_axis_same_random_seed() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert objects_are_equal(
+        batch.shuffle_along_axis(axis=0, generator=np.random.default_rng(1)),
+        batch.shuffle_along_axis(axis=0, generator=np.random.default_rng(1)),
+    )
+
+
+def test_batched_array_shuffle_along_axis_different_random_seeds() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert not objects_are_equal(
+        batch.shuffle_along_axis(axis=0, generator=np.random.default_rng(1)),
+        batch.shuffle_along_axis(axis=0, generator=np.random.default_rng(2)),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        ).shuffle_along_batch(),
+        BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_batched_array_shuffle_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_axis=1
+        ).shuffle_along_batch(),
+        BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_axis=1),
+    )
+
+
+def test_batched_array_shuffle_along_batch_same_random_seed() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert objects_are_equal(
+        batch.shuffle_along_batch(generator=np.random.default_rng(1)),
+        batch.shuffle_along_batch(generator=np.random.default_rng(1)),
+    )
+
+
+def test_batched_array_shuffle_along_batch_different_random_seeds() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert not objects_are_equal(
+        batch.shuffle_along_batch(generator=np.random.default_rng(1)),
+        batch.shuffle_along_batch(generator=np.random.default_rng(2)),
     )

@@ -18,6 +18,9 @@ from numpy import ndarray
 from numpy.typing import ArrayLike
 
 from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.types import RNGType
+from redcat.utils.array import to_array
+from redcat.utils.random import randperm
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -878,6 +881,55 @@ class BatchedArray(ndarray):
         ```
         """
         return self.permute_along_axis(permutation, axis=self.batch_axis)
+
+    def shuffle_along_axis(self, axis: int, generator: RNGType | None = None) -> TBatchedArray:
+        r"""Shuffle the batch along a given axis.
+
+        Args:
+            axis: Specifies the shuffle axis.
+            generator: Specifies the pseudorandom number generator for
+                sampling or the random seed for the random number
+                generator.
+
+        Returns:
+            A new batch with shuffled data along the given axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.shuffle_along_axis(axis=0)
+        array([[...]], batch_axis=0)
+
+        ```
+        """
+        return self.permute_along_axis(to_array(randperm(self.shape[axis], generator)), axis=axis)
+
+    def shuffle_along_batch(self, generator: RNGType | None = None) -> TBatchedArray:
+        r"""Shuffle the batch along the batch axis.
+
+        Args:
+            generator: Specifies the pseudorandom number generator for
+                sampling or the random seed for the random number
+                generator.
+
+        Returns:
+            A new batch with shuffled data along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.shuffle_along_batch()
+        array([[...]], batch_axis=0)
+
+        ```
+        """
+        return self.shuffle_along_axis(axis=self.batch_axis, generator=generator)
 
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
