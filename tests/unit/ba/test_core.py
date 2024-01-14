@@ -9,10 +9,9 @@ from numpy.typing import ArrayLike, DTypeLike
 
 from redcat import ba
 from redcat.ba import BatchedArray, arrays_share_data
+from tests.conftest import future_test
 
 DTYPES = (bool, int, float)
-
-future_test = pytest.mark.skipif(True, reason="Future tests")
 
 
 def test_batched_array_repr() -> None:
@@ -1653,7 +1652,6 @@ def test_batched_array_cumprod_custom_axis() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumprod(axis=0),
         BatchedArray(np.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]), batch_axis=1),
-        show_difference=True,
     )
 
 
@@ -1697,7 +1695,6 @@ def test_batched_array_cumsum_custom_axis() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumsum(axis=0),
         BatchedArray(np.array([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]), batch_axis=1),
-        show_difference=True,
     )
 
 

@@ -6,6 +6,7 @@ from coola import objects_are_equal
 
 from redcat import ba
 from redcat.ba import BatchedArray
+from tests.conftest import future_test
 
 #################################
 #     Comparison operations     #
@@ -333,6 +334,27 @@ def test_array_equal_true_numpy() -> None:
 ###########################################
 
 
+def test_argsort_1d() -> None:
+    assert objects_are_equal(
+        ba.argsort_along_batch(BatchedArray(np.array([4, 1, 3, 2, 0]))),
+        BatchedArray(np.asarray([4, 1, 3, 2, 0])),
+    )
+
+
+def test_argsort_2d_axis_0() -> None:
+    assert objects_are_equal(
+        ba.argsort(BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=0),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+    )
+
+
+def test_argsort_custom_axis() -> None:
+    assert objects_are_equal(
+        ba.argsort(BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)),
+        BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), batch_axis=1),
+    )
+
+
 def test_argsort_along_batch() -> None:
     assert objects_are_equal(
         ba.argsort_along_batch(BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))),
@@ -346,4 +368,90 @@ def test_argsort_along_batch_custom_axis() -> None:
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
         ),
         BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), batch_axis=1),
+    )
+
+
+@future_test
+def test_cumprod() -> None:
+    assert objects_are_equal(
+        ba.cumprod(BatchedArray(np.arange(10).reshape(2, 5))),
+        np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    )
+
+
+def test_cumprod_axis_0() -> None:
+    assert objects_are_equal(
+        ba.cumprod(BatchedArray(np.arange(10).reshape(2, 5)), axis=0),
+        BatchedArray(np.asarray([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+    )
+
+
+def test_cumprod_axis_1() -> None:
+    assert objects_are_equal(
+        ba.cumprod(BatchedArray(np.arange(10).reshape(2, 5)), axis=1),
+        BatchedArray(np.array([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])),
+    )
+
+
+def test_cumprod_custom_axis() -> None:
+    assert objects_are_equal(
+        ba.cumprod(BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1), axis=0),
+        BatchedArray(np.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]), batch_axis=1),
+    )
+
+
+def test_cumprod_along_batch() -> None:
+    assert objects_are_equal(
+        ba.cumprod_along_batch(BatchedArray(np.arange(10).reshape(2, 5))),
+        BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+    )
+
+
+def test_cumprod_along_batch_custom_axis() -> None:
+    assert objects_are_equal(
+        ba.cumprod_along_batch(BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)),
+        BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_axis=1),
+    )
+
+
+@future_test
+def test_cumsum() -> None:
+    assert objects_are_equal(
+        ba.cumsum(BatchedArray(np.arange(10).reshape(2, 5))),
+        np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    )
+
+
+def test_cumsum_axis_0() -> None:
+    assert objects_are_equal(
+        ba.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=0),
+        BatchedArray(np.asarray([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])),
+    )
+
+
+def test_cumsum_axis_1() -> None:
+    assert objects_are_equal(
+        ba.cumsum(BatchedArray(np.arange(10).reshape(2, 5)), axis=1),
+        BatchedArray(np.array([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]])),
+    )
+
+
+def test_cumsum_custom_axis() -> None:
+    assert objects_are_equal(
+        ba.cumsum(BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1), axis=0),
+        BatchedArray(np.array([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]), batch_axis=1),
+    )
+
+
+def test_cumsum_along_batch() -> None:
+    assert objects_are_equal(
+        ba.cumsum_along_batch(BatchedArray(np.arange(10).reshape(2, 5))),
+        BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])),
+    )
+
+
+def test_cumsum_along_batch_custom_axis() -> None:
+    assert objects_are_equal(
+        ba.cumsum_along_batch(BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)),
+        BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
     )
