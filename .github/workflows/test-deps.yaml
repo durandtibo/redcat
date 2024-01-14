@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.11', '3.10', '3.9' ]
-        coola-version: [ 0.2.2, 0.1.2 ]
+        coola-version: [ 0.3.0 ]
 
     steps:
       - name: Checkout
@@ -54,7 +54,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.11', '3.10', '3.9' ]
-        numpy-version: [ 1.26.2, 1.25.2, 1.24.3, 1.23.5, 1.22.4 ]
+        numpy-version: [ 1.26.3, 1.25.2, 1.24.3, 1.23.5, 1.22.4 ]
         exclude:
           - numpy-version: 1.22.4
             python-version: 3.11
