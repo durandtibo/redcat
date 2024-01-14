@@ -977,6 +977,44 @@ def test_batched_array_ne_different_axes() -> None:
         array.ne(ba.full(shape=(2, 5), fill_value=5, batch_axis=1))
 
 
+@pytest.mark.parametrize(
+    "array",
+    [
+        BatchedArray(np.array([[1.001, 0.5, 2.0], [0.0, -2.5, -0.5]])),
+        np.array([[1.001, 0.5, 2.0], [0.0, -2.5, -0.5]]),
+    ],
+)
+def test_batched_array_isclose(array: np.ndarray) -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [0.0, -2.0, -1.0]]))
+        .isclose(array, atol=0.01)
+        .allequal(BatchedArray(np.array([[True, False, True], [True, False, False]], dtype=bool)))
+    )
+
+
+def test_batched_array_isclose_custom_axes() -> None:
+    assert (
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [0.0, -2.0, -1.0]]), batch_axis=1)
+        .isclose(
+            BatchedArray(np.array([[1.001, 0.5, 2.0], [0.0, -2.5, -0.5]]), batch_axis=1), atol=0.01
+        )
+        .allequal(
+            BatchedArray(
+                np.array([[True, False, True], [True, False, False]], dtype=bool),
+                batch_axis=1,
+            )
+        )
+    )
+
+
+@future_test
+def test_batched_array_isclose_different_axes() -> None:
+    batch1 = BatchedArray(np.array([[1.0, 0.0, 2.0], [0.0, -2.0, -1.0]]), batch_axis=1)
+    batch2 = BatchedArray(np.array([[1.001, 0.5, 2.0], [0.0, -2.5, -0.5]]))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch1.isclose(batch2)
+
+
 def test_batched_array_isinf() -> None:
     assert (
         BatchedArray(np.array([[1.0, 0.0, float("inf")], [-1.0, -2.0, float("-inf")]]))
