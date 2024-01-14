@@ -98,18 +98,16 @@ def test_batched_array_size() -> None:
 
 
 def test_batched_array_astype() -> None:
-    assert (
-        BatchedArray(np.ones(shape=(2, 3)))
-        .astype(bool)
-        .allequal(BatchedArray(np.ones(shape=(2, 3), dtype=bool)))
+    assert objects_are_equal(
+        BatchedArray(np.ones(shape=(2, 3))).astype(bool),
+        BatchedArray(np.ones(shape=(2, 3), dtype=bool)),
     )
 
 
-def test_batched_array_astype_custom_axis() -> None:
-    assert (
-        BatchedArray(np.ones(shape=(2, 3)), batch_axis=1)
-        .astype(bool)
-        .allequal(BatchedArray(np.ones(shape=(2, 3), dtype=bool), batch_axis=1))
+def test_batched_array_astype_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.ones(shape=(2, 3)), batch_axis=1).astype(bool),
+        BatchedArray(np.ones(shape=(2, 3), dtype=bool), batch_axis=1),
     )
 
 
@@ -362,28 +360,28 @@ def test_batched_array_zeros_like_target_dtype(dtype: np.dtype) -> None:
     ),
 )
 def test_batched_array__eq__(other: np.ndarray | float) -> None:
-    assert (BatchedArray(np.arange(10).reshape(2, 5)) == other).allequal(
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) == other,
         BatchedArray(
             np.array(
                 [[False, False, False, False, False], [True, False, False, False, False]],
                 dtype=bool,
             ),
-        )
+        ),
     )
 
 
-def test_batched_array__eq__custom_axis() -> None:
-    assert (
+def test_batched_array__eq__custom_axes() -> None:
+    assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
-        == ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
-    ).allequal(
+        == ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
         BatchedArray(
             np.array(
                 [[False, False, False, False, False], [True, False, False, False, False]],
                 dtype=bool,
             ),
             batch_axis=1,
-        )
+        ),
     )
 
 
@@ -416,7 +414,7 @@ def test_batched_array__ge__(other: np.ndarray | int | float) -> None:
     )
 
 
-def test_batched_array__ge__custom_axis() -> None:
+def test_batched_array__ge__custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         >= ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
@@ -460,7 +458,7 @@ def test_batched_array__gt__(other: np.ndarray | int | float) -> None:
     )
 
 
-def test_batched_array__gt__custom_axis() -> None:
+def test_batched_array__gt__custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         > ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
@@ -504,7 +502,7 @@ def test_batched_array__le__(other: np.ndarray | int | float) -> None:
     )
 
 
-def test_batched_array__le__custom_axis() -> None:
+def test_batched_array__le__custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         <= ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
@@ -548,7 +546,7 @@ def test_batched_array__lt__(other: np.ndarray | int | float) -> None:
     )
 
 
-def test_batched_array__lt__custom_axis() -> None:
+def test_batched_array__lt__custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         < ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
@@ -582,28 +580,28 @@ def test_batched_array__lt__different_axes() -> None:
     ),
 )
 def test_batched_array__ne__(other: np.ndarray | float) -> None:
-    assert (BatchedArray(np.arange(10).reshape(2, 5)) != other).allequal(
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) != other,
         BatchedArray(
             np.array(
                 [[True, True, True, True, True], [False, True, True, True, True]],
                 dtype=bool,
             ),
-        )
+        ),
     )
 
 
-def test_batched_array__ne__custom_axis() -> None:
-    assert (
+def test_batched_array__ne__custom_axes() -> None:
+    assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
-        != ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
-    ).allequal(
+        != ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
         BatchedArray(
             np.array(
                 [[True, True, True, True, True], [False, True, True, True, True]],
                 dtype=bool,
             ),
             batch_axis=1,
-        )
+        ),
     )
 
 
@@ -1602,7 +1600,7 @@ def test_batched_array_argsort_axis_1() -> None:
     )
 
 
-def test_batched_array_argsort_custom_axis() -> None:
+def test_batched_array_argsort_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_axis=1).argsort(
             axis=0
@@ -1618,7 +1616,7 @@ def test_batched_array_argsort_along_batch() -> None:
     )
 
 
-def test_batched_array_argsort_along_batch_custom_axis() -> None:
+def test_batched_array_argsort_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(
             np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1
@@ -1649,7 +1647,7 @@ def test_batched_array_cumprod_axis_1() -> None:
     )
 
 
-def test_batched_array_cumprod_custom_axis() -> None:
+def test_batched_array_cumprod_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumprod(axis=0),
         BatchedArray(np.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]), batch_axis=1),
@@ -1663,7 +1661,7 @@ def test_batched_array_cumprod_along_batch() -> None:
     )
 
 
-def test_batched_array_cumprod_along_batch_custom_axis() -> None:
+def test_batched_array_cumprod_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumprod_along_batch(),
         BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_axis=1),
@@ -1692,7 +1690,7 @@ def test_batched_array_cumsum_axis_1() -> None:
     )
 
 
-def test_batched_array_cumsum_custom_axis() -> None:
+def test_batched_array_cumsum_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumsum(axis=0),
         BatchedArray(np.array([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]), batch_axis=1),
@@ -1706,7 +1704,7 @@ def test_batched_array_cumsum_along_batch() -> None:
     )
 
 
-def test_batched_array_cumsum_along_batch_custom_axis() -> None:
+def test_batched_array_cumsum_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumsum_along_batch(),
         BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
@@ -1872,4 +1870,66 @@ def test_batched_array_shuffle_along_batch_different_random_seeds() -> None:
     assert not objects_are_equal(
         batch.shuffle_along_batch(generator=np.random.default_rng(1)),
         batch.shuffle_along_batch(generator=np.random.default_rng(2)),
+    )
+
+
+def test_batched_array_sort() -> None:
+    batch = BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]))
+    batch.sort()
+    assert objects_are_equal(batch, BatchedArray(np.asarray([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])))
+
+
+def test_batched_array_sort_axis_0() -> None:
+    batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))
+    batch.sort(axis=0)
+    assert objects_are_equal(
+        batch,
+        BatchedArray(np.asarray([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
+    )
+
+
+def test_batched_array_sort_axis_1() -> None:
+    batch = BatchedArray(
+        np.asarray(
+            [
+                [[0, 1], [-2, 3], [-4, 5], [-6, 7], [-8, 9]],
+                [[10, -11], [12, -13], [14, -15], [16, -17], [18, -19]],
+            ]
+        )
+    )
+    batch.sort(axis=1)
+    assert objects_are_equal(
+        batch,
+        BatchedArray(
+            np.asarray(
+                [
+                    [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
+                    [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
+                ]
+            )
+        ),
+    )
+
+
+def test_batched_array_sort_custom_axes() -> None:
+    batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_axis=1)
+    batch.sort(axis=0)
+    assert objects_are_equal(
+        batch, BatchedArray(np.asarray([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), batch_axis=1)
+    )
+
+
+def test_batched_array_sort_along_batch() -> None:
+    batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))
+    batch.sort_along_batch()
+    assert objects_are_equal(
+        batch, BatchedArray(np.asarray([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]))
+    )
+
+
+def test_batched_array_sort_along_batch_custom_axes() -> None:
+    batch = BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
+    batch.sort_along_batch()
+    assert objects_are_equal(
+        batch, BatchedArray(np.asarray([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]), batch_axis=1)
     )

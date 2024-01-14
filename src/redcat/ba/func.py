@@ -124,8 +124,8 @@ cumsum = np.cumsum
 
 
 def argsort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
-    r"""Sort the elements of the batch along the batch axis in monotonic
-    order by value.
+    r"""Return the indices that would sort the batch along the batch
+    dimension.
 
     Args:
         a: Array to sort.
