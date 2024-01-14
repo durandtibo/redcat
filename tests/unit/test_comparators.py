@@ -2,208 +2,233 @@ from __future__ import annotations
 
 import logging
 
-import torch
-from coola import AllCloseTester, EqualityTester
-from pytest import LogCaptureFixture, mark
+import pytest
+from coola.equality import EqualityConfig
+from coola.equality.handlers import FalseHandler
+from coola.equality.testers import EqualityTester
 
-from redcat import BaseBatch, BatchedTensor
-from redcat.comparators import BatchAllCloseOperator, BatchEqualityOperator
+from redcat import BaseBatch, BatchList
+from redcat.comparators import BatchEqualHandler, BatchEqualityComparator
+from tests.unit.helpers import ExamplePair
+
+
+@pytest.fixture()
+def config() -> EqualityConfig:
+    return EqualityConfig(tester=EqualityTester())
+
+
+BATCH_EQUAL = [
+    pytest.param(
+        ExamplePair(object1=BatchList([]), object2=BatchList([])),
+        id="list empty",
+    ),
+    pytest.param(
+        ExamplePair(object1=BatchList([1, 2, 3]), object2=BatchList([1, 2, 3])),
+        id="list int",
+    ),
+    pytest.param(
+        ExamplePair(
+            object1=BatchList([1.0, 2.0, 3.0, 4.0]), object2=BatchList([1.0, 2.0, 3.0, 4.0])
+        ),
+        id="list float",
+    ),
+    pytest.param(
+        ExamplePair(object1=BatchList(["a", "b", "c"]), object2=BatchList(["a", "b", "c"])),
+        id="list str",
+    ),
+]
+BATCH_NOT_EQUAL = [
+    pytest.param(
+        ExamplePair(
+            object1=BatchList([1, 2, 3]),
+            object2=BatchList([1, 2, 4]),
+            expected_message="batches are not equal:",
+        ),
+        id="different values",
+    ),
+    pytest.param(
+        ExamplePair(
+            object1=BatchList([1, 2, 3]),
+            object2=BatchList([1, 2, 3, 4]),
+            expected_message="batches are not equal:",
+        ),
+        id="different batch sizes",
+    ),
+    pytest.param(
+        ExamplePair(
+            object1=BatchList([1, 2, 3]),
+            object2=[1, 2, 3, 4],
+            expected_message="objects have different types:",
+        ),
+        id="different types",
+    ),
+]
+BATCH_EQUAL_TOLERANCE = [
+    # atol
+    pytest.param(
+        ExamplePair(object1=BatchList([1, 2, 3]), object2=BatchList([1, 2, 4]), atol=1.0),
+        id="atol=1",
+    ),
+]
 
 
 def test_registered_batch_comparators() -> None:
-    assert isinstance(EqualityTester.registry[BaseBatch], BatchEqualityOperator)
-    assert isinstance(AllCloseTester.registry[BaseBatch], BatchAllCloseOperator)
+    assert isinstance(EqualityTester.registry[BaseBatch], BatchEqualityComparator)
 
 
-###########################################
-#     Tests for BatchAllCloseOperator     #
-###########################################
+#######################################
+#     Tests for BatchEqualHandler     #
+#######################################
 
 
-def test_batch_allclose_operator_str() -> None:
-    assert str(BatchAllCloseOperator()) == "BatchAllCloseOperator()"
+def test_batch_equal_handler_eq_true() -> None:
+    assert BatchEqualHandler() == BatchEqualHandler()
 
 
-def test_batch_allclose_operator__eq__true() -> None:
-    assert BatchAllCloseOperator() == BatchAllCloseOperator()
+def test_batch_equal_handler_eq_false() -> None:
+    assert BatchEqualHandler() != FalseHandler()
 
 
-def test_batch_allclose_operator__eq__false() -> None:
-    assert BatchAllCloseOperator() != 123
+def test_batch_equal_handler_repr() -> None:
+    assert repr(BatchEqualHandler()).startswith("BatchEqualHandler(")
 
 
-def test_batch_allclose_operator_allclose_true() -> None:
-    assert BatchAllCloseOperator().allclose(
-        AllCloseTester(), BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 3))
-    )
+def test_batch_equal_handler_str() -> None:
+    assert str(BatchEqualHandler()).startswith("BatchEqualHandler(")
 
 
-def test_batch_allclose_operator_allclose_true_same_object() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
-    assert BatchAllCloseOperator().allclose(AllCloseTester(), batch, batch)
+def test_batch_equal_handler_handle_true(config: EqualityConfig) -> None:
+    assert BatchEqualHandler().handle(BatchList([1, 2, 3]), BatchList([1, 2, 3]), config)
 
 
-def test_batch_allclose_operator_allclose_true_show_difference(caplog: LogCaptureFixture) -> None:
-    with caplog.at_level(logging.INFO):
-        assert BatchAllCloseOperator().allclose(
-            tester=AllCloseTester(),
-            object1=BatchedTensor(torch.ones(2, 3)),
-            object2=BatchedTensor(torch.ones(2, 3)),
-            show_difference=True,
-        )
-        assert not caplog.messages
-
-
-def test_batch_allclose_operator_allclose_false_different_value() -> None:
-    assert not BatchAllCloseOperator().allclose(
-        AllCloseTester(), BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.zeros(2, 3))
-    )
-
-
-def test_batch_allclose_operator_allclose_false_different_value_show_difference(
-    caplog: LogCaptureFixture,
-) -> None:
-    with caplog.at_level(logging.INFO):
-        assert not BatchAllCloseOperator().allclose(
-            tester=AllCloseTester(),
-            object1=BatchedTensor(torch.ones(2, 3)),
-            object2=BatchedTensor(torch.zeros(2, 3)),
-            show_difference=True,
-        )
-        assert caplog.messages[0].startswith("`BaseBatch` objects are different")
-
-
-def test_batch_allclose_operator_allclose_false_different_type() -> None:
-    assert not BatchAllCloseOperator().allclose(
-        AllCloseTester(), BatchedTensor(torch.ones(2, 3)), 42
-    )
-
-
-def test_batch_allclose_operator_allclose_false_different_type_show_difference(
-    caplog: LogCaptureFixture,
-) -> None:
-    with caplog.at_level(logging.INFO):
-        assert not BatchAllCloseOperator().allclose(
-            tester=AllCloseTester(),
-            object1=BatchedTensor(torch.ones(2, 3)),
-            object2=42,
-            show_difference=True,
-        )
-        assert caplog.messages[0].startswith("object2 is not a `BaseBatch` object")
-
-
-@mark.parametrize(
-    "tensor,atol",
-    (
-        (BatchedTensor(torch.ones(2, 3).add(0.5)), 1),
-        (BatchedTensor(torch.ones(2, 3).add(0.05)), 1e-1),
-        (BatchedTensor(torch.ones(2, 3).add(5e-3)), 1e-2),
-    ),
+@pytest.mark.parametrize(
+    ("object1", "object2"),
+    [
+        (BatchList([1, 2, 3]), BatchList([1, 2, 4])),
+        (BatchList([1, 2, 3]), BatchList([1, 2, 3, 4])),
+        (BatchList([1, 2, 3]), BatchList([1.0, 2.0, 3.0])),
+    ],
 )
-def test_batch_allclose_operator_allclose_true_atol(tensor: BatchedTensor, atol: float) -> None:
-    assert BatchAllCloseOperator().allclose(
-        AllCloseTester(), BatchedTensor(torch.ones(2, 3)), tensor, atol=atol, rtol=0
-    )
+def test_batch_equal_handler_handle_false(
+    object1: BaseBatch, object2: BaseBatch, config: EqualityConfig
+) -> None:
+    assert not BatchEqualHandler().handle(object1, object2, config)
 
 
-@mark.parametrize(
-    "tensor,rtol",
-    (
-        (BatchedTensor(torch.ones(2, 3).add(0.5)), 1),
-        (BatchedTensor(torch.ones(2, 3).add(0.05)), 1e-1),
-        (BatchedTensor(torch.ones(2, 3).add(5e-3)), 1e-2),
-    ),
-)
-def test_batch_allclose_operator_allclose_true_rtol(tensor: BatchedTensor, rtol: float) -> None:
-    assert BatchAllCloseOperator().allclose(
-        AllCloseTester(), BatchedTensor(torch.ones(2, 3)), tensor, rtol=rtol
-    )
+def test_batch_equal_handler_handle_false_show_difference(
+    config: EqualityConfig, caplog: pytest.LogCaptureFixture
+) -> None:
+    config.show_difference = True
+    handler = BatchEqualHandler()
+    with caplog.at_level(logging.INFO):
+        assert not handler.handle(
+            object1=BatchList([1, 2, 3]), object2=BatchList([1, 2, 4]), config=config
+        )
+        assert caplog.messages[-1].startswith("batches are not equal:")
 
 
-def test_batch_allclose_operator_clone() -> None:
-    op = BatchAllCloseOperator()
+def test_batch_equal_handler_set_next_handler() -> None:
+    BatchEqualHandler().set_next_handler(FalseHandler())
+
+
+#############################################
+#     Tests for BatchEqualityComparator     #
+#############################################
+
+
+def test_batch_equality_comparator_str() -> None:
+    assert str(BatchEqualityComparator()) == "BatchEqualityComparator()"
+
+
+def test_batch_equality_comparator__eq__true() -> None:
+    assert BatchEqualityComparator() == BatchEqualityComparator()
+
+
+def test_batch_equality_comparator__eq__false() -> None:
+    assert BatchEqualityComparator() != 123
+
+
+def test_batch_equality_comparator_clone() -> None:
+    op = BatchEqualityComparator()
     op_cloned = op.clone()
     assert op is not op_cloned
     assert op == op_cloned
 
 
-###########################################
-#     Tests for BatchEqualityOperator     #
-###########################################
+def test_batch_equality_comparator_equal_true_same_object(config: EqualityConfig) -> None:
+    obj = BatchList([1, 2, 3])
+    assert BatchEqualityComparator().equal(obj, obj, config)
 
 
-def test_batch_equality_operator_str() -> None:
-    assert str(BatchEqualityOperator()) == "BatchEqualityOperator()"
-
-
-def test_batch_equality_operator__eq__true() -> None:
-    assert BatchEqualityOperator() == BatchEqualityOperator()
-
-
-def test_batch_equality_operator__eq__false() -> None:
-    assert BatchEqualityOperator() != 123
-
-
-def test_batch_equality_operator_clone() -> None:
-    op = BatchEqualityOperator()
-    op_cloned = op.clone()
-    assert op is not op_cloned
-    assert op == op_cloned
-
-
-def test_batch_equality_operator_equal_true() -> None:
-    assert BatchEqualityOperator().equal(
-        EqualityTester(), BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 3))
-    )
-
-
-def test_batch_equality_operator_equal_true_same_object() -> None:
-    batch = BatchedTensor(torch.ones(2, 3))
-    assert BatchEqualityOperator().equal(EqualityTester(), batch, batch)
-
-
-def test_batch_equality_operator_equal_true_show_difference(caplog: LogCaptureFixture) -> None:
+@pytest.mark.parametrize("example", BATCH_EQUAL)
+def test_batch_equality_comparator_equal_yes(
+    example: ExamplePair,
+    config: EqualityConfig,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    comparator = BatchEqualityComparator()
     with caplog.at_level(logging.INFO):
-        assert BatchEqualityOperator().equal(
-            tester=EqualityTester(),
-            object1=BatchedTensor(torch.ones(2, 3)),
-            object2=BatchedTensor(torch.ones(2, 3)),
-            show_difference=True,
-        )
+        assert comparator.equal(object1=example.object1, object2=example.object2, config=config)
         assert not caplog.messages
 
 
-def test_batch_equality_operator_equal_false_different_value() -> None:
-    assert not BatchEqualityOperator().equal(
-        EqualityTester(), BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.zeros(2, 3))
+@pytest.mark.parametrize("example", BATCH_EQUAL)
+def test_batch_equality_comparator_equal_yes_show_difference(
+    example: ExamplePair,
+    config: EqualityConfig,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    config.show_difference = True
+    comparator = BatchEqualityComparator()
+    with caplog.at_level(logging.INFO):
+        assert comparator.equal(object1=example.object1, object2=example.object2, config=config)
+        assert not caplog.messages
+
+
+@pytest.mark.parametrize("example", BATCH_NOT_EQUAL)
+def test_batch_equality_comparator_equal_false(
+    example: ExamplePair,
+    config: EqualityConfig,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    comparator = BatchEqualityComparator()
+    with caplog.at_level(logging.INFO):
+        assert not comparator.equal(object1=example.object1, object2=example.object2, config=config)
+        assert not caplog.messages
+
+
+@pytest.mark.parametrize("example", BATCH_NOT_EQUAL)
+def test_batch_equality_comparator_equal_false_show_difference(
+    example: ExamplePair,
+    config: EqualityConfig,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    config.show_difference = True
+    comparator = BatchEqualityComparator()
+    with caplog.at_level(logging.INFO):
+        assert not comparator.equal(object1=example.object1, object2=example.object2, config=config)
+        assert caplog.messages[-1].startswith(example.expected_message)
+
+
+@pytest.mark.parametrize("equal_nan", [False, True])
+def test_batch_equality_comparator_equal_nan(config: EqualityConfig, equal_nan: bool) -> None:
+    config.equal_nan = equal_nan
+    assert (
+        BatchEqualityComparator().equal(
+            object1=BatchList([1, 2, float("nan")]),
+            object2=BatchList([1, 2, float("nan")]),
+            config=config,
+        )
+        == equal_nan
     )
 
 
-def test_batch_equality_operator_equal_false_different_value_show_difference(
-    caplog: LogCaptureFixture,
+@pytest.mark.parametrize("example", BATCH_EQUAL_TOLERANCE)
+def test_batch_equality_comparator_equal_true_tolerance(
+    example: ExamplePair, config: EqualityConfig
 ) -> None:
-    with caplog.at_level(logging.INFO):
-        assert not BatchEqualityOperator().equal(
-            tester=EqualityTester(),
-            object1=BatchedTensor(torch.ones(2, 3)),
-            object2=BatchedTensor(torch.zeros(2, 3)),
-            show_difference=True,
-        )
-        assert caplog.messages[0].startswith("`BaseBatch` objects are different")
-
-
-def test_batch_equality_operator_equal_false_different_type() -> None:
-    assert not BatchEqualityOperator().equal(EqualityTester(), BatchedTensor(torch.ones(2, 3)), 42)
-
-
-def test_batch_equality_operator_equal_false_different_type_show_difference(
-    caplog: LogCaptureFixture,
-) -> None:
-    with caplog.at_level(logging.INFO):
-        assert not BatchEqualityOperator().equal(
-            tester=EqualityTester(),
-            object1=BatchedTensor(torch.ones(2, 3)),
-            object2=42,
-            show_difference=True,
-        )
-        assert caplog.messages[0].startswith("object2 is not a `BaseBatch` object")
+    config.atol = example.atol
+    config.rtol = example.rtol
+    assert BatchEqualityComparator().equal(
+        object1=example.object1, object2=example.object2, config=config
+    )
