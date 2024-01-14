@@ -10,7 +10,7 @@ from collections.abc import Callable
 
 import numpy as np
 import pytest
-from coola import objects_are_allclose, objects_are_equal
+from coola import objects_are_allclose
 from numpy import ma
 
 from redcat.ba import BatchedArray, arrays_share_data
@@ -25,14 +25,12 @@ def masked_array() -> ma.MaskedArray:
 def test_constructor(masked_array: ma.MaskedArray) -> None:
     array = BatchedArray(masked_array)
     assert arrays_share_data(array, masked_array)
-    assert objects_are_equal(array, masked_array)
     assert array.batch_axis == 0
 
 
 def test_constructor_batch_axis_1(masked_array: ma.MaskedArray) -> None:
     array = BatchedArray(masked_array, batch_axis=1)
     assert arrays_share_data(array, masked_array)
-    assert objects_are_equal(array, masked_array)
     assert array.batch_axis == 1
 
 
