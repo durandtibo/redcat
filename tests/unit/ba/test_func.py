@@ -625,3 +625,66 @@ def test_shuffle_along_batch_different_random_seeds() -> None:
         ba.shuffle_along_batch(batch, generator=np.random.default_rng(1)),
         ba.shuffle_along_batch(batch, generator=np.random.default_rng(2)),
     )
+
+
+def test_sort() -> None:
+    assert objects_are_equal(
+        ba.sort(BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]))),
+        BatchedArray(np.asarray([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]])),
+    )
+
+
+def test_sort_axis_0() -> None:
+    assert objects_are_equal(
+        ba.sort(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=0),
+        BatchedArray(np.asarray([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
+    )
+
+
+def test_sort_axis_1() -> None:
+    assert objects_are_equal(
+        ba.sort(
+            BatchedArray(
+                np.asarray(
+                    [
+                        [[0, 1], [-2, 3], [-4, 5], [-6, 7], [-8, 9]],
+                        [[10, -11], [12, -13], [14, -15], [16, -17], [18, -19]],
+                    ]
+                )
+            ),
+            axis=1,
+        ),
+        BatchedArray(
+            np.asarray(
+                [
+                    [[-8, 1], [-6, 3], [-4, 5], [-2, 7], [0, 9]],
+                    [[10, -19], [12, -17], [14, -15], [16, -13], [18, -11]],
+                ]
+            )
+        ),
+    )
+
+
+def test_sort_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.sort(
+            BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_axis=1), axis=0
+        ),
+        BatchedArray(np.asarray([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]]), batch_axis=1),
+    )
+
+
+def test_sort_along_batch() -> None:
+    assert objects_are_equal(
+        ba.sort_along_batch(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))),
+        BatchedArray(np.asarray([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
+    )
+
+
+def test_sort_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.sort_along_batch(
+            BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
+        ),
+        BatchedArray(np.asarray([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]), batch_axis=1),
+    )
