@@ -2,8 +2,13 @@ from __future__ import annotations
 
 __all__ = [
     "allclose",
+    "argsort",
     "argsort_along_batch",
     "array_equal",
+    "cumprod",
+    "cumprod_along_batch",
+    "cumsum",
+    "cumsum_along_batch",
     "equal",
     "greater",
     "greater_equal",
@@ -107,6 +112,10 @@ def array_equal(a1: ArrayLike, a2: ArrayLike, equal_nan: bool = False) -> bool:
 #     Item selection and manipulation     #
 ###########################################
 
+argsort = np.argsort
+cumprod = np.cumprod
+cumsum = np.cumsum
+
 
 def argsort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
     r"""Sort the elements of the batch along the batch axis in monotonic
@@ -144,3 +153,77 @@ def argsort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatched
     ```
     """
     return a.argsort_along_batch(*args, **kwargs)
+
+
+def cumprod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
+    r"""Return the cumulative product of elements along a batch axis.
+
+    Args:
+        a: Array to sort.
+        args: See the documentation of ``numpy.cumprod``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.cumprod``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The cumulative product of elements along a batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> x = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> y = ba.cumprod_along_batch(x)
+    >>> y
+    array([[  0,   1],
+           [  0,   3],
+           [  0,  15],
+           [  0, 105],
+           [  0, 945]], batch_axis=0)
+    >>> x = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> y = ba.cumprod_along_batch(x)
+    >>> y
+    array([[    0,     0,     0,     0,     0],
+           [    5,    30,   210,  1680, 15120]], batch_axis=1)
+
+    ```
+    """
+    return a.cumprod_along_batch(*args, **kwargs)
+
+
+def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
+    r"""Return the cumulative sum of elements along a batch axis.
+
+    Args:
+        a: Array to sort.
+        args: See the documentation of ``numpy.cumsum``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.cumsum``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The cumulative sum of elements along a batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> x = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> y = ba.cumsum_along_batch(x)
+    >>> y
+    array([[ 0,  1],
+           [ 2,  4],
+           [ 6,  9],
+           [12, 16],
+           [20, 25]], batch_axis=0)
+    >>> x = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> y = ba.cumsum_along_batch(x)
+    >>> y
+    array([[ 0,  1,  3,  6, 10],
+           [ 5, 11, 18, 26, 35]], batch_axis=1)
+
+    ```
+    """
+    return a.cumsum_along_batch(*args, **kwargs)

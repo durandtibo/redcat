@@ -2005,7 +2005,6 @@ def test_batched_array_sort_axis_0() -> None:
             BatchedArray(np.array([[1, 5], [2, 6], [3, 7], [4, 8], [5, 9]])),
             BatchedArray(np.array([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
         ),
-        show_difference=True,
     )
 
 
