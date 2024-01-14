@@ -23,7 +23,7 @@ from redcat.utils.random import randperm
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
-TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
+TBatchedArray = TypeVar("TBatchedArray", np.ndarray, "BatchedArray")
 
 
 class BatchedArray(np.ndarray):
@@ -702,8 +702,8 @@ class BatchedArray(np.ndarray):
     ################################################
 
     def argsort_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
-        r"""Sort the elements of the batch along the batch axis in
-        monotonic order by value.
+        r"""Return the indices that would sort the batch along the batch
+        dimension.
 
         Args:
             args: See the documentation of ``numpy.argsort``.
@@ -931,6 +931,38 @@ class BatchedArray(np.ndarray):
         ```
         """
         return self.shuffle_along_axis(axis=self.batch_axis, generator=generator)
+
+    def sort_along_batch(self, *args: Any, **kwargs: Any) -> None:
+        r"""Sort an array in-place along the batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.ndarray.sort``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.ndarray.sort``.
+                ``axis`` should not be passed.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[4, 5], [2, 3], [6, 7], [8, 9], [0, 1]]))
+        >>> batch.sort_along_batch()
+        >>> batch
+        array([[0, 1],
+               [2, 3],
+               [4, 5],
+               [6, 7],
+               [8, 9]], batch_axis=0)
+        >>> batch = BatchedArray(np.array([[4, 1, 3, 0, 2], [9, 6, 8, 5, 7]]), batch_axis=1)
+        >>> batch.sort_along_batch()
+        >>> batch
+        array([[0, 1, 2, 3, 4],
+               [5, 6, 7, 8, 9]], batch_axis=1)
+
+        ```
+        """
+        self.sort(*args, axis=self.batch_axis, **kwargs)
 
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
