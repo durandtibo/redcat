@@ -459,8 +459,33 @@ class BatchedArray(ndarray):
         """
         return self.__ne__(other)
 
+    def isclose(
+        self, other: ndarray, rtol: float = 1e-05, atol: float = 1e-08, equal_nan: bool = False
+    ) -> TBatchedArray:
+        r"""Return a boolean batch where two arrays are element-wise
+        equal within a tolerance.
+
+        Returns:
+            A batch containing a boolean array that is ``True`` where
+                the current batch is infinite and ``False`` elsewhere.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch1 = BatchedArray(np.array([[1.0, 0.0, 2.0], [0.0, -2.0, -1.0]]))
+        >>> batch2 = BatchedArray(np.array([[1.001, 0.5, 2.0], [0.0, -2.5, -0.5]]))
+        >>> batch1.isclose(batch2, atol=0.01)
+        array([[ True, False,  True],
+               [ True, False, False]], batch_axis=0)
+
+        ```
+        """
+        return np.isclose(self, other, rtol=rtol, atol=atol, equal_nan=equal_nan)
+
     def isinf(self) -> TBatchedArray:
-        r"""Indicates if each element of the batch is infinite (positive
+        r"""Indicate if each element of the batch is infinite (positive
         or negative infinity) or not.
 
         Returns:
@@ -482,8 +507,8 @@ class BatchedArray(ndarray):
         return np.isinf(self)
 
     def isneginf(self) -> TBatchedArray:
-        r"""Indicates if each element of the batch is negative infinity
-        or not.
+        r"""Indicate if each element of the batch is negative infinity or
+        not.
 
         Returns:
             A batch containing a boolean array that is ``True`` where
@@ -505,8 +530,8 @@ class BatchedArray(ndarray):
         return np.isneginf(self)
 
     def isposinf(self) -> TBatchedArray:
-        r"""Indicates if each element of the batch is positive infinity
-        or not.
+        r"""Indicate if each element of the batch is positive infinity or
+        not.
 
         Returns:
             A batch containing a boolean array that is ``True`` where
@@ -528,7 +553,7 @@ class BatchedArray(ndarray):
         return np.isposinf(self)
 
     def isnan(self) -> TBatchedArray:
-        r"""Indicates if each element in the batch is NaN or not.
+        r"""Indicate if each element in the batch is NaN or not.
 
         Returns:
             A batch containing a boolean array that is ``True`` where
