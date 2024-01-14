@@ -30,7 +30,7 @@ packages = [
 
 [tool.poetry.dependencies]
 # Core dependencies
-coola = ">=0.1,<0.3"
+coola = ">=0.3,<0.4"
 numpy = ">=1.22,<2.0"
 python = ">=3.9,<3.12"
 torch = ">=1.11,<3.0"  # TODO: make optional
@@ -52,7 +52,7 @@ pygments = "^2.17"
 pytest = "^7.4"
 pytest-cov = "^4.1"
 pytest-timeout = "^2.2"
-ruff = ">=0.1.9,<1.0"
+ruff = ">=0.1.13,<1.0"
 xdoctest = "^1.1"
 
 [build-system]
