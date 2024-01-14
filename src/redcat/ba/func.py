@@ -15,14 +15,20 @@ __all__ = [
     "less",
     "less_equal",
     "not_equal",
+    "permute_along_axis",
+    "permute_along_batch",
+    "shuffle_along_axis",
+    "shuffle_along_batch",
 ]
 
+from collections.abc import Sequence
 from typing import Any, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike
 
 from redcat.ba.core import BatchedArray
+from redcat.types import RNGType
 
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
@@ -159,7 +165,7 @@ def cumprod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatched
     r"""Return the cumulative product of elements along a batch axis.
 
     Args:
-        a: Array to sort.
+        a: Specifies the input array.
         args: See the documentation of ``numpy.cumprod``.
             ``axis`` should not be passed.
         kwargs: See the documentation of ``numpy.cumprod``.
@@ -196,7 +202,7 @@ def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedA
     r"""Return the cumulative sum of elements along a batch axis.
 
     Args:
-        a: Array to sort.
+        a: Specifies the input array.
         args: See the documentation of ``numpy.cumsum``.
             ``axis`` should not be passed.
         kwargs: See the documentation of ``numpy.cumsum``.
@@ -227,3 +233,143 @@ def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedA
     ```
     """
     return a.cumsum_along_batch(*args, **kwargs)
+
+
+def permute_along_axis(
+    a: TBatchedArray, permutation: np.ndarray | Sequence, axis: int = 0
+) -> TBatchedArray:
+    r"""Permute the values of an array along a given axis.
+
+    Args:
+        a: Specifies the array to permute.
+        permutation: Specifies the permutation to use on the array.
+            The dimension of this array should be compatible with the
+            shape of the array to permute.
+        axis: Specifies the axis used to permute the array.
+
+    Returns:
+        The permuted array.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(4))
+    >>> ba.permute_along_axis(batch, permutation=np.array([0, 2, 1, 3]))
+    array([0, 2, 1, 3], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.arange(20).reshape(4, 5))
+    >>> ba.permute_along_axis(batch, permutation=np.array([0, 2, 1, 3]))
+    array([[ 0,  1,  2,  3,  4],
+           [10, 11, 12, 13, 14],
+           [ 5,  6,  7,  8,  9],
+           [15, 16, 17, 18, 19]], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.arange(20).reshape(4, 5))
+    >>> ba.permute_along_axis(batch, permutation=np.array([0, 4, 2, 1, 3]), axis=1)
+    array([[ 0,  4,  2,  1,  3],
+           [ 5,  9,  7,  6,  8],
+           [10, 14, 12, 11, 13],
+           [15, 19, 17, 16, 18]], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.arange(20).reshape(2, 2, 5))
+    >>> ba.permute_along_axis(batch, permutation=np.array([0, 4, 2, 1, 3]), axis=2)
+    array([[[ 0,  4,  2,  1,  3],
+            [ 5,  9,  7,  6,  8]],
+           [[10, 14, 12, 11, 13],
+            [15, 19, 17, 16, 18]]], batch_axis=0)
+
+    ```
+    """
+    return a.permute_along_axis(permutation, axis)
+
+
+def permute_along_batch(a: TBatchedArray, permutation: np.ndarray | Sequence) -> TBatchedArray:
+    r"""Permute the values of an array along the batch axis.
+
+    Args:
+        a: Specifies the array to permute.
+        permutation: Specifies the permutation to use on the array.
+            The dimension of this array should be compatible with the
+            shape of the array to permute.
+
+    Returns:
+        The permuted array along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(4))
+    >>> ba.permute_along_batch(batch, permutation=np.array([0, 2, 1, 3]))
+    array([0, 2, 1, 3], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.arange(20).reshape(4, 5))
+    >>> ba.permute_along_batch(batch, permutation=np.array([0, 2, 1, 3]))
+    array([[ 0,  1,  2,  3,  4],
+           [10, 11, 12, 13, 14],
+           [ 5,  6,  7,  8,  9],
+           [15, 16, 17, 18, 19]], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.arange(20).reshape(4, 5), batch_axis=1)
+    >>> ba.permute_along_batch(batch, permutation=np.array([0, 4, 2, 1, 3]))
+    array([[ 0,  4,  2,  1,  3],
+           [ 5,  9,  7,  6,  8],
+           [10, 14, 12, 11, 13],
+           [15, 19, 17, 16, 18]], batch_axis=1)
+
+    ```
+    """
+    return a.permute_along_batch(permutation)
+
+
+def shuffle_along_axis(
+    a: TBatchedArray, axis: int, generator: RNGType | None = None
+) -> TBatchedArray:
+    r"""Shuffle the batch along a given axis.
+
+    Args:
+        a: Specifies the array to shuffle.
+        axis: Specifies the shuffle axis.
+        generator: Specifies the pseudorandom number generator for
+            sampling or the random seed for the random number
+            generator.
+
+    Returns:
+        A new batch with shuffled data along the given axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.shuffle_along_axis(batch, axis=0)
+    array([[...]], batch_axis=0)
+
+    ```
+    """
+    return a.shuffle_along_axis(axis=axis, generator=generator)
+
+
+def shuffle_along_batch(a: TBatchedArray, generator: RNGType | None = None) -> TBatchedArray:
+    r"""Shuffle the batch along the batch axis.
+
+    Args:
+        a: Specifies the array to shuffle.
+        generator: Specifies the pseudorandom number generator for
+            sampling or the random seed for the random number
+            generator.
+
+    Returns:
+        A new batch with shuffled data along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.shuffle_along_batch(batch)
+    array([[...]], batch_axis=0)
+
+    ```
+    """
+    return a.shuffle_along_batch(generator=generator)
