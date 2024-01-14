@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import numpy as np
 import pytest
 from coola import objects_are_equal
@@ -1710,4 +1712,94 @@ def test_batched_array_cumsum_along_batch_custom_axis() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumsum_along_batch(),
         BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
+    )
+
+
+@pytest.mark.parametrize("permutation", [np.array([0, 2, 1, 3]), [0, 2, 1, 3], (0, 2, 1, 3)])
+def test_batched_array_permute_along_axis_1d(permutation: np.ndarray | Sequence) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(4)).permute_along_axis(permutation),
+        BatchedArray(np.array([0, 2, 1, 3])),
+    )
+
+
+def test_batched_array_permute_along_axis_2d_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(20).reshape(4, 5)).permute_along_axis(
+            permutation=np.array([0, 2, 1, 3])
+        ),
+        BatchedArray(
+            np.array([[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]])
+        ),
+    )
+
+
+def test_batched_array_permute_along_axis_2d_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(20).reshape(4, 5)).permute_along_axis(
+            permutation=np.array([0, 4, 2, 1, 3]), axis=1
+        ),
+        BatchedArray(
+            np.array([[0, 4, 2, 1, 3], [5, 9, 7, 6, 8], [10, 14, 12, 11, 13], [15, 19, 17, 16, 18]])
+        ),
+    )
+
+
+def test_batched_array_permute_along_axis_3d_axis_2() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(20).reshape(2, 2, 5)).permute_along_axis(
+            permutation=np.array([0, 4, 2, 1, 3]), axis=2
+        ),
+        BatchedArray(
+            np.array(
+                [[[0, 4, 2, 1, 3], [5, 9, 7, 6, 8]], [[10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]]
+            )
+        ),
+    )
+
+
+def test_batched_array_permute_along_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(20).reshape(4, 5), batch_axis=1).permute_along_axis(
+            permutation=np.array([0, 2, 1, 3])
+        ),
+        BatchedArray(
+            np.array(
+                [[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]]
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+@pytest.mark.parametrize("permutation", [np.array([0, 2, 1, 3]), [0, 2, 1, 3], (0, 2, 1, 3)])
+def test_batched_array_permute_along_batch_1d(permutation: np.ndarray | Sequence) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(4)).permute_along_batch(permutation),
+        BatchedArray(np.array([0, 2, 1, 3])),
+    )
+
+
+def test_batched_array_permute_along_batch_2d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(20).reshape(4, 5)).permute_along_batch(
+            permutation=np.array([0, 2, 1, 3])
+        ),
+        BatchedArray(
+            np.array([[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]])
+        ),
+    )
+
+
+def test_batched_array_permute_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(20).reshape(4, 5), batch_axis=1).permute_along_batch(
+            permutation=np.array([0, 4, 2, 1, 3])
+        ),
+        BatchedArray(
+            np.array(
+                [[0, 4, 2, 1, 3], [5, 9, 7, 6, 8], [10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]
+            ),
+            batch_axis=1,
+        ),
     )

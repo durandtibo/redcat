@@ -799,6 +799,86 @@ class BatchedArray(ndarray):
         """
         return self.cumsum(*args, axis=self.batch_axis, **kwargs)
 
+    def permute_along_axis(self, permutation: ndarray | Sequence, axis: int = 0) -> TBatchedArray:
+        r"""Permute the values of an array along a given axis.
+
+        Args:
+            permutation: Specifies the permutation to use on the array.
+                The dimension of this array should be compatible with the
+                shape of the array to permute.
+            axis: Specifies the axis used to permute the array.
+
+        Returns:
+            The permuted array.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(4))
+        >>> batch.permute_along_axis(permutation=np.array([0, 2, 1, 3]))
+        array([0, 2, 1, 3], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(20).reshape(4, 5))
+        >>> batch.permute_along_axis(permutation=np.array([0, 2, 1, 3]))
+        array([[ 0,  1,  2,  3,  4],
+               [10, 11, 12, 13, 14],
+               [ 5,  6,  7,  8,  9],
+               [15, 16, 17, 18, 19]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(20).reshape(4, 5))
+        >>> batch.permute_along_axis(permutation=np.array([0, 4, 2, 1, 3]), axis=1)
+        array([[ 0,  4,  2,  1,  3],
+               [ 5,  9,  7,  6,  8],
+               [10, 14, 12, 11, 13],
+               [15, 19, 17, 16, 18]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(20).reshape(2, 2, 5))
+        >>> batch.permute_along_axis(permutation=np.array([0, 4, 2, 1, 3]), axis=2)
+        array([[[ 0,  4,  2,  1,  3],
+                [ 5,  9,  7,  6,  8]],
+               [[10, 14, 12, 11, 13],
+                [15, 19, 17, 16, 18]]], batch_axis=0)
+
+        ```
+        """
+        permutation = np.asarray(permutation)
+        return np.swapaxes(np.swapaxes(self, 0, axis)[permutation], 0, axis)
+
+    def permute_along_batch(self, permutation: ndarray | Sequence) -> TBatchedArray:
+        r"""Permute the values of an array along the batch axis.
+
+        Args:
+            permutation: Specifies the permutation to use on the array.
+                The dimension of this array should be compatible with the
+                shape of the array to permute.
+
+        Returns:
+            The permuted array along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(4))
+        >>> batch.permute_along_batch(permutation=np.array([0, 2, 1, 3]))
+        array([0, 2, 1, 3], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(20).reshape(4, 5))
+        >>> batch.permute_along_batch(permutation=np.array([0, 2, 1, 3]))
+        array([[ 0,  1,  2,  3,  4],
+               [10, 11, 12, 13, 14],
+               [ 5,  6,  7,  8,  9],
+               [15, 16, 17, 18, 19]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(20).reshape(4, 5), batch_axis=1)
+        >>> batch.permute_along_batch(permutation=np.array([0, 4, 2, 1, 3]))
+        array([[ 0,  4,  2,  1,  3],
+               [ 5,  9,  7,  6,  8],
+               [10, 14, 12, 11, 13],
+               [15, 19, 17, 16, 18]], batch_axis=1)
+
+        ```
+        """
+        return self.permute_along_axis(permutation, axis=self.batch_axis)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
