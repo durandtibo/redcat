@@ -764,7 +764,40 @@ class BatchedArray(ndarray):
 
         ```
         """
-        return np.cumprod(self, *args, axis=self.batch_axis, **kwargs)
+        return self.cumprod(*args, axis=self.batch_axis, **kwargs)
+
+    def cumsum_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Return the cumulative sum of elements along a batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.cumsum``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.cumsum``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The cumulative sum of elements along a batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.cumsum_along_batch()
+        array([[ 0,  1],
+               [ 2,  4],
+               [ 6,  9],
+               [12, 16],
+               [20, 25]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.cumsum_along_batch()
+        array([[ 0,  1,  3,  6, 10],
+               [ 5, 11, 18, 26, 35]], batch_axis=1)
+
+        ```
+        """
+        return self.cumsum(*args, axis=self.batch_axis, **kwargs)
 
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
