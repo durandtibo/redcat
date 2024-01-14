@@ -28,6 +28,10 @@ __all__ = [
     "not_equal",
     "ones",
     "ones_like",
+    "permute_along_axis",
+    "permute_along_batch",
+    "shuffle_along_axis",
+    "shuffle_along_batch",
     "zeros",
     "zeros_like",
 ]
@@ -59,6 +63,10 @@ from redcat.ba.func import (
     less,
     less_equal,
     not_equal,
+    permute_along_axis,
+    permute_along_batch,
+    shuffle_along_axis,
+    shuffle_along_batch,
 )
 from redcat.ba.utils import (
     arrays_share_data,

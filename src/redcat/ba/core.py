@@ -14,7 +14,6 @@ from typing import Any, TypeVar
 
 import numpy as np
 from coola import objects_are_allclose
-from numpy import ndarray
 from numpy.typing import ArrayLike
 
 from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
@@ -27,7 +26,7 @@ from redcat.utils.random import randperm
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
-class BatchedArray(ndarray):
+class BatchedArray(np.ndarray):
     def __new__(cls, data: ArrayLike, batch_axis: int = 0) -> TBatchedArray:
         obj = np.array(data, copy=False, subok=True).view(cls)
         check_data_and_axis(obj, batch_axis)
@@ -287,7 +286,7 @@ class BatchedArray(ndarray):
             return False
         return np.array_equal(self.__array__(), other.__array__(), equal_nan)
 
-    def eq(self, other: ndarray | bool | float) -> TBatchedArray:
+    def eq(self, other: np.ndarray | bool | float) -> TBatchedArray:
         r"""Return element-wise equality ``(self == other)`` array.
 
         Args:
@@ -316,7 +315,7 @@ class BatchedArray(ndarray):
         """
         return self.__eq__(other)
 
-    def ge(self, other: ndarray | bool | float) -> TBatchedArray:
+    def ge(self, other: np.ndarray | bool | float) -> TBatchedArray:
         r"""Return ``self >= other`` element-wise.
 
         Args:
@@ -345,7 +344,7 @@ class BatchedArray(ndarray):
         """
         return self.__ge__(other)
 
-    def gt(self, other: ndarray | bool | float) -> TBatchedArray:
+    def gt(self, other: np.ndarray | bool | float) -> TBatchedArray:
         r"""Return ``self > other`` element-wise.
 
         Args:
@@ -374,7 +373,7 @@ class BatchedArray(ndarray):
         """
         return self.__gt__(other)
 
-    def le(self, other: ndarray | bool | float) -> TBatchedArray:
+    def le(self, other: np.ndarray | bool | float) -> TBatchedArray:
         r"""Return ``self <= other`` element-wise.
 
         Args:
@@ -404,7 +403,7 @@ class BatchedArray(ndarray):
         """
         return self.__le__(other)
 
-    def lt(self, other: ndarray | bool | float) -> TBatchedArray:
+    def lt(self, other: np.ndarray | bool | float) -> TBatchedArray:
         r"""Return ``self < other`` element-wise.
 
         Args:
@@ -433,7 +432,7 @@ class BatchedArray(ndarray):
         """
         return self.__lt__(other)
 
-    def ne(self, other: ndarray | bool | float) -> TBatchedArray:
+    def ne(self, other: np.ndarray | bool | float) -> TBatchedArray:
         r"""Return ``self != other`` element-wise.
 
         Args:
@@ -463,7 +462,7 @@ class BatchedArray(ndarray):
         return self.__ne__(other)
 
     def isclose(
-        self, other: ndarray, rtol: float = 1e-05, atol: float = 1e-08, equal_nan: bool = False
+        self, other: np.ndarray, rtol: float = 1e-05, atol: float = 1e-08, equal_nan: bool = False
     ) -> TBatchedArray:
         r"""Return a boolean batch where two arrays are element-wise
         equal within a tolerance.
@@ -580,7 +579,7 @@ class BatchedArray(ndarray):
     #     Mathematical | arithmetical operations     #
     ##################################################
 
-    def add(self, other: ndarray | float, alpha: float = 1.0) -> TBatchedArray:
+    def add(self, other: np.ndarray | float, alpha: float = 1.0) -> TBatchedArray:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         array.
 
@@ -612,7 +611,7 @@ class BatchedArray(ndarray):
         self._check_valid_axes((self, other))
         return self.__add__(other * alpha if alpha != 1 else other)
 
-    def add_(self, other: ndarray | float, alpha: float = 1.0) -> None:
+    def add_(self, other: np.ndarray | float, alpha: float = 1.0) -> None:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         array.
 
@@ -638,7 +637,7 @@ class BatchedArray(ndarray):
         self._check_valid_axes((self, other))
         self.__iadd__(other * alpha if alpha != 1 else other)
 
-    def sub(self, other: ndarray | float, alpha: float = 1) -> TBatchedArray:
+    def sub(self, other: np.ndarray | float, alpha: float = 1) -> TBatchedArray:
         r"""Subtract the input ``other``, scaled by ``alpha``, to the
         ``self`` array.
 
@@ -671,7 +670,7 @@ class BatchedArray(ndarray):
 
     def sub_(
         self,
-        other: ndarray | float,
+        other: np.ndarray | float,
         alpha: float = 1,
     ) -> None:
         r"""Subtract the input ``other``, scaled by ``alpha``, to the
@@ -802,7 +801,9 @@ class BatchedArray(ndarray):
         """
         return self.cumsum(*args, axis=self.batch_axis, **kwargs)
 
-    def permute_along_axis(self, permutation: ndarray | Sequence, axis: int = 0) -> TBatchedArray:
+    def permute_along_axis(
+        self, permutation: np.ndarray | Sequence, axis: int = 0
+    ) -> TBatchedArray:
         r"""Permute the values of an array along a given axis.
 
         Args:
@@ -846,7 +847,7 @@ class BatchedArray(ndarray):
         permutation = np.asarray(permutation)
         return np.swapaxes(np.swapaxes(self, 0, axis)[permutation], 0, axis)
 
-    def permute_along_batch(self, permutation: ndarray | Sequence) -> TBatchedArray:
+    def permute_along_batch(self, permutation: np.ndarray | Sequence) -> TBatchedArray:
         r"""Permute the values of an array along the batch axis.
 
         Args:

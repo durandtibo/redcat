@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
+from unittest.mock import patch
+
 import numpy as np
 import pytest
 from coola import objects_are_equal
@@ -454,4 +457,171 @@ def test_cumsum_along_batch_custom_axis() -> None:
     assert objects_are_equal(
         ba.cumsum_along_batch(BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)),
         BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
+    )
+
+
+@pytest.mark.parametrize("permutation", [np.array([0, 2, 1, 3]), [0, 2, 1, 3], (0, 2, 1, 3)])
+def test_permute_along_axis_1d(permutation: np.ndarray | Sequence) -> None:
+    assert objects_are_equal(
+        ba.permute_along_axis(BatchedArray(np.arange(4)), permutation),
+        BatchedArray(np.array([0, 2, 1, 3])),
+    )
+
+
+def test_permute_along_axis_2d_axis_0() -> None:
+    assert objects_are_equal(
+        ba.permute_along_axis(
+            BatchedArray(np.arange(20).reshape(4, 5)), permutation=np.array([0, 2, 1, 3])
+        ),
+        BatchedArray(
+            np.array([[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]])
+        ),
+    )
+
+
+def test_permute_along_axis_2d_axis_1() -> None:
+    assert objects_are_equal(
+        ba.permute_along_axis(
+            BatchedArray(np.arange(20).reshape(4, 5)), permutation=np.array([0, 4, 2, 1, 3]), axis=1
+        ),
+        BatchedArray(
+            np.array([[0, 4, 2, 1, 3], [5, 9, 7, 6, 8], [10, 14, 12, 11, 13], [15, 19, 17, 16, 18]])
+        ),
+    )
+
+
+def test_permute_along_axis_3d_axis_2() -> None:
+    assert objects_are_equal(
+        ba.permute_along_axis(
+            BatchedArray(np.arange(20).reshape(2, 2, 5)),
+            permutation=np.array([0, 4, 2, 1, 3]),
+            axis=2,
+        ),
+        BatchedArray(
+            np.array(
+                [[[0, 4, 2, 1, 3], [5, 9, 7, 6, 8]], [[10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]]
+            )
+        ),
+    )
+
+
+def test_permute_along_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.permute_along_axis(
+            BatchedArray(np.arange(20).reshape(4, 5), batch_axis=1),
+            permutation=np.array([0, 2, 1, 3]),
+        ),
+        BatchedArray(
+            np.array(
+                [[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]]
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+@pytest.mark.parametrize("permutation", [np.array([0, 2, 1, 3]), [0, 2, 1, 3], (0, 2, 1, 3)])
+def test_permute_along_batch_1d(permutation: np.ndarray | Sequence) -> None:
+    assert objects_are_equal(
+        ba.permute_along_batch(BatchedArray(np.arange(4)), permutation),
+        BatchedArray(np.array([0, 2, 1, 3])),
+    )
+
+
+def test_permute_along_batch_2d() -> None:
+    assert objects_are_equal(
+        ba.permute_along_batch(
+            BatchedArray(np.arange(20).reshape(4, 5)), permutation=np.array([0, 2, 1, 3])
+        ),
+        BatchedArray(
+            np.array([[0, 1, 2, 3, 4], [10, 11, 12, 13, 14], [5, 6, 7, 8, 9], [15, 16, 17, 18, 19]])
+        ),
+    )
+
+
+def test_permute_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.permute_along_batch(
+            BatchedArray(np.arange(20).reshape(4, 5), batch_axis=1),
+            permutation=np.array([0, 4, 2, 1, 3]),
+        ),
+        BatchedArray(
+            np.array(
+                [[0, 4, 2, 1, 3], [5, 9, 7, 6, 8], [10, 14, 12, 11, 13], [15, 19, 17, 16, 18]]
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_shuffle_along_axis() -> None:
+    assert objects_are_equal(
+        ba.shuffle_along_axis(
+            BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])), axis=0
+        ),
+        BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_shuffle_along_axis_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.shuffle_along_axis(
+            BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_axis=1),
+            axis=1,
+        ),
+        BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_axis=1),
+    )
+
+
+def test_shuffle_along_axis_same_random_seed() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert objects_are_equal(
+        ba.shuffle_along_axis(batch, axis=0, generator=np.random.default_rng(1)),
+        ba.shuffle_along_axis(batch, axis=0, generator=np.random.default_rng(1)),
+    )
+
+
+def test_shuffle_along_axis_different_random_seeds() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert not objects_are_equal(
+        ba.shuffle_along_axis(batch, axis=0, generator=np.random.default_rng(1)),
+        ba.shuffle_along_axis(batch, axis=0, generator=np.random.default_rng(2)),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_shuffle_along_batch() -> None:
+    assert objects_are_equal(
+        ba.shuffle_along_batch(
+            BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        ),
+        BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])),
+    )
+
+
+@patch("redcat.ba.core.randperm", lambda *args, **kwargs: np.array([2, 1, 3, 0]))
+def test_shuffle_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.shuffle_along_batch(
+            BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_axis=1)
+        ),
+        BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]]), batch_axis=1),
+    )
+
+
+def test_shuffle_along_batch_same_random_seed() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert objects_are_equal(
+        ba.shuffle_along_batch(batch, generator=np.random.default_rng(1)),
+        ba.shuffle_along_batch(batch, generator=np.random.default_rng(1)),
+    )
+
+
+def test_shuffle_along_batch_different_random_seeds() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    assert not objects_are_equal(
+        ba.shuffle_along_batch(batch, generator=np.random.default_rng(1)),
+        ba.shuffle_along_batch(batch, generator=np.random.default_rng(2)),
     )
