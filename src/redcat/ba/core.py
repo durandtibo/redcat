@@ -733,6 +733,39 @@ class BatchedArray(ndarray):
         """
         return np.argsort(self, *args, axis=self.batch_axis, **kwargs)
 
+    def cumprod_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+        r"""Return the cumulative product of elements along a batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.cumprod``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.cumprod``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The cumulative product of elements along a batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.cumprod_along_batch()
+        array([[  0,   1],
+               [  0,   3],
+               [  0,  15],
+               [  0, 105],
+               [  0, 945]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.cumprod_along_batch()
+        array([[    0,     0,     0,     0,     0],
+               [    5,    30,   210,  1680, 15120]], batch_axis=1)
+
+        ```
+        """
+        return np.cumprod(self, *args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
