@@ -32,6 +32,8 @@ __all__ = [
     "permute_along_batch",
     "shuffle_along_axis",
     "shuffle_along_batch",
+    "sort",
+    "sort_along_batch",
     "zeros",
     "zeros_like",
 ]
@@ -67,6 +69,8 @@ from redcat.ba.func import (
     permute_along_batch,
     shuffle_along_axis,
     shuffle_along_batch,
+    sort,
+    sort_along_batch,
 )
 from redcat.ba.utils import (
     arrays_share_data,

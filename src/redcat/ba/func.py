@@ -19,6 +19,8 @@ __all__ = [
     "permute_along_batch",
     "shuffle_along_axis",
     "shuffle_along_batch",
+    "sort",
+    "sort_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -30,7 +32,7 @@ from numpy.typing import ArrayLike
 from redcat.ba.core import BatchedArray
 from redcat.types import RNGType
 
-TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
+TBatchedArray = TypeVar("TBatchedArray", np.ndarray, "BatchedArray")
 
 #################################
 #     Comparison operations     #
@@ -121,6 +123,7 @@ def array_equal(a1: ArrayLike, a2: ArrayLike, equal_nan: bool = False) -> bool:
 argsort = np.argsort
 cumprod = np.cumprod
 cumsum = np.cumsum
+sort = np.sort
 
 
 def argsort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
@@ -373,3 +376,40 @@ def shuffle_along_batch(a: TBatchedArray, generator: RNGType | None = None) -> T
     ```
     """
     return a.shuffle_along_batch(generator=generator)
+
+
+def sort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
+    r"""Return a sorted copy of an array along the batch axis.
+
+    Args:
+        a: Array to sort.
+        args: See the documentation of ``numpy.argsort``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.argsort``.
+            ``axis`` should not be passed.
+
+    Returns:
+        A sorted copy of an array along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> x = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> y = ba.sort_along_batch(x)
+    >>> y
+    array([[0, 1],
+           [2, 3],
+           [4, 5],
+           [6, 7],
+           [8, 9]], batch_axis=0)
+    >>> x = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> y = ba.sort_along_batch(x)
+    >>> y
+    array([[0, 1, 2, 3, 4],
+           [5, 6, 7, 8, 9]], batch_axis=1)
+
+    ```
+    """
+    return np.sort(a, *args, axis=a.batch_axis, **kwargs)
