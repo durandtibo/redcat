@@ -28,10 +28,12 @@ TBatchedArray = TypeVar("TBatchedArray", np.ndarray, "BatchedArray")
 
 class BatchedArray(np.ndarray):
     def __new__(cls, data: ArrayLike, batch_axis: int = 0) -> TBatchedArray:
-        obj = np.array(data, copy=False, subok=True).view(cls)
-        check_data_and_axis(obj, batch_axis)
-        obj.batch_axis = batch_axis
-        return obj
+        _data = np.array(data, copy=False, subok=True).view(cls)
+        _baseclass = getattr(data, "_baseclass", type(_data))
+        check_data_and_axis(_data, batch_axis)
+        _data.batch_axis = batch_axis
+        _data._baseclass = _baseclass
+        return _data
 
     def __array_finalize__(self, obj: BatchedArray | None) -> None:
         # if obj is None:
@@ -964,6 +966,68 @@ class BatchedArray(np.ndarray):
         """
         self.sort(*args, axis=self.batch_axis, **kwargs)
 
+    #####################
+    #     Reduction     #
+    #####################
+
+    def argmax(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return indices of the maximum values along an axis.
+
+        Args:
+            args: See the documentation of ``numpy.argmax``.
+            kwargs: See the documentation of ``numpy.argmax``.
+
+        Returns:
+            The indices of the maximum values along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.argmax(axis=0)
+        array([4, 4])
+        >>> batch.argmax(axis=0, keepdims=True)
+        array([[4, 4]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.argmax(axis=1)
+        array([4, 4])
+
+        ```
+        """
+        return self.get_ndarray().argmax(*args, **kwargs)
+
+    def argmax_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return indices of the maximum values along the batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.argmax``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.argmax``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The indices of the maximum values along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.argmax_along_batch()
+        array([4, 4])
+        >>> batch.argmax_along_batch(keepdims=True)
+        array([[4, 4]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.argmax_along_batch()
+        array([4, 4])
+
+        ```
+        """
+        return self.argmax(*args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
@@ -971,3 +1035,6 @@ class BatchedArray(np.ndarray):
             arrays: Specifies the arrays to check.
         """
         check_same_batch_axis(get_batch_axes(arrays))
+
+    def get_ndarray(self) -> np.ndarray:
+        return self.view(np.ndarray)
