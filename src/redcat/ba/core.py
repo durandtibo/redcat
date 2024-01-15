@@ -1028,6 +1028,64 @@ class BatchedArray(np.ndarray):
         """
         return self.argmax(*args, axis=self.batch_axis, **kwargs)
 
+    def argmin(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return indices of the minimum values along an axis.
+
+        Args:
+            args: See the documentation of ``numpy.argmin``.
+            kwargs: See the documentation of ``numpy.argmin``.
+
+        Returns:
+            The indices of the minimum values along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.argmin(axis=0)
+        array([0, 0])
+        >>> batch.argmin(axis=0, keepdims=True)
+        array([[0, 0]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.argmin(axis=1)
+        array([0, 0])
+
+        ```
+        """
+        return self.get_ndarray().argmin(*args, **kwargs)
+
+    def argmin_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return indices of the minimum values along the batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.argmin``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.argmin``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The indices of the minimum values along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.argmin_along_batch()
+        array([0, 0])
+        >>> batch.argmin_along_batch(keepdims=True)
+        array([[0, 0]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.argmin_along_batch()
+        array([0, 0])
+
+        ```
+        """
+        return self.argmin(*args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
