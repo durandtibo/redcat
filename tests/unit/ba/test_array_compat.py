@@ -4,6 +4,7 @@ from collections.abc import Callable
 from functools import partial
 
 import numpy as np
+from coola import objects_are_allclose
 from pytest import mark
 
 from redcat.ba import BatchedArray
@@ -105,8 +106,6 @@ UNARY_FUNCTIONS = (
     partial(np.cumsum, axis=0, dtype=float),
     partial(np.cumsum, axis=0, dtype=int),
     partial(np.cumsum, axis=1),
-    partial(np.max, axis=2),
-    partial(np.min, axis=2),
 )
 
 PAIRWISE_FUNCTIONS = (
@@ -142,12 +141,34 @@ PAIRWISE_FUNCTIONS = (
     np.true_divide,
 )
 
+UNARY_TO_NDARRAY_FUNCTIONS = (
+    np.argmax,
+    np.argmin,
+    np.max,
+    np.min,
+    partial(np.argmax, axis=0),
+    partial(np.argmax, axis=1),
+    partial(np.argmin, axis=0),
+    partial(np.argmin, axis=1),
+    partial(np.max, axis=0),
+    partial(np.max, axis=1),
+    partial(np.min, axis=0),
+    partial(np.min, axis=1),
+)
+
 
 @mark.parametrize("func", UNARY_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_unary(func: Callable, cls: type[np.ndarray]) -> None:
-    array = np.random.rand(2, 3, 4) * 2.0
+    array = np.random.rand(2, 3) * 2.0
     assert func(cls(array)).allclose(cls(func(array)), equal_nan=True)
+
+
+@mark.parametrize("func", UNARY_TO_NDARRAY_FUNCTIONS)
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_unary_to_ndarray(func: Callable, cls: type[np.ndarray]) -> None:
+    array = np.random.rand(2, 3) * 2.0
+    assert objects_are_allclose(func(cls(array)), func(array), equal_nan=True)
 
 
 @mark.parametrize("func", UNARY_FUNCTIONS)
