@@ -2,6 +2,10 @@ from __future__ import annotations
 
 __all__ = [
     "allclose",
+    "argmax",
+    "argmax_along_batch",
+    "argmin",
+    "argmin_along_batch",
     "argsort",
     "argsort_along_batch",
     "array_equal",
@@ -14,6 +18,14 @@ __all__ = [
     "greater_equal",
     "less",
     "less_equal",
+    "max",
+    "max_along_batch",
+    "mean",
+    "mean_along_batch",
+    "median",
+    "median_along_batch",
+    "min",
+    "min_along_batch",
     "not_equal",
     "permute_along_axis",
     "permute_along_batch",
@@ -413,3 +425,380 @@ def sort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArr
     ```
     """
     return np.sort(a, *args, axis=a.batch_axis, **kwargs)
+
+
+#####################
+#     Reduction     #
+#####################
+
+
+def argmax(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return indices of the maximum values along an axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.argmax``.
+        kwargs: See the documentation of ``numpy.argmax``.
+
+    Returns:
+        The indices of the maximum values along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.argmax(batch, axis=0)
+    array([4, 4])
+    >>> ba.argmax(batch, axis=0, keepdims=True)
+    array([[4, 4]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.argmax(batch, axis=1)
+    array([4, 4])
+
+    ```
+    """
+    return a.argmax(*args, **kwargs)
+
+
+def argmax_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return indices of the maximum values along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.argmax``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.argmax``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The indices of the maximum values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.argmax_along_batch(batch)
+    array([4, 4])
+    >>> ba.argmax_along_batch(batch, keepdims=True)
+    array([[4, 4]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.argmax_along_batch(batch)
+    array([4, 4])
+
+    ```
+    """
+    return a.argmax_along_batch(*args, **kwargs)
+
+
+def argmin(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return indices of the minimum values along an axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.argmin``.
+        kwargs: See the documentation of ``numpy.argmin``.
+
+    Returns:
+        The indices of the minimum values along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.argmin(batch, axis=0)
+    array([0, 0])
+    >>> ba.argmin(batch, axis=0, keepdims=True)
+    array([[0, 0]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.argmin(batch, axis=1)
+    array([0, 0])
+
+    ```
+    """
+    return a.argmin(*args, **kwargs)
+
+
+def argmin_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return indices of the minimum values along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.argmin``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.argmin``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The indices of the minimum values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.argmin_along_batch(batch)
+    array([0, 0])
+    >>> ba.argmin_along_batch(batch, keepdims=True)
+    array([[0, 0]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.argmin_along_batch(batch)
+    array([0, 0])
+
+    ```
+    """
+    return a.argmin_along_batch(*args, **kwargs)
+
+
+def max(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:  # noqa: A001
+    r"""Return the maximum along a given axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.max``.
+        kwargs: See the documentation of ``numpy.max``.
+
+    Returns:
+        The maximum values along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.max(batch, axis=0)
+    array([8, 9])
+    >>> ba.max(batch, axis=0, keepdims=True)
+    array([[8, 9]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.max(batch, axis=1)
+    array([4, 9])
+
+    ```
+    """
+    return a.max(*args, **kwargs)
+
+
+def max_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the maximum along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.max``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.max``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The maximum values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.max_along_batch(batch)
+    array([8, 9])
+    >>> ba.max_along_batch(batch, keepdims=True)
+    array([[8, 9]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.max_along_batch(batch)
+    array([4, 9])
+
+    ```
+    """
+    return a.max_along_batch(*args, **kwargs)
+
+
+def mean(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the mean along a given axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.mean``.
+        kwargs: See the documentation of ``numpy.mean``.
+
+    Returns:
+        The mean values along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.ba import BatchedArray
+    >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+    >>> batch.mean(axis=0)
+    array([4., 5.])
+    >>> batch.mean(axis=0, keepdims=True)
+    array([[4., 5.]])
+    >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> batch.mean(axis=1)
+    array([2., 7.])
+
+    ```
+    """
+    return a.mean(*args, **kwargs)
+
+
+def mean_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the mean along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.mean``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.mean``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The mean values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.ba import BatchedArray
+    >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+    >>> batch.mean_along_batch()
+    array([4., 5.])
+    >>> batch.mean_along_batch(keepdims=True)
+    array([[4., 5.]])
+    >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> batch.mean_along_batch()
+    array([2., 7.])
+
+    ```
+    """
+    return a.mean_along_batch(*args, **kwargs)
+
+
+def median(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the median along a given axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.median``.
+        kwargs: See the documentation of ``numpy.median``.
+
+    Returns:
+        The median values along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.ba import BatchedArray
+    >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+    >>> batch.median(axis=0)
+    array([4., 5.])
+    >>> batch.median(axis=0, keepdims=True)
+    array([[4., 5.]])
+    >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> batch.median(axis=1)
+    array([2., 7.])
+
+    ```
+    """
+    return a.median(*args, **kwargs)
+
+
+def median_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the median along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.median``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.median``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The median values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.ba import BatchedArray
+    >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+    >>> batch.median_along_batch()
+    array([4., 5.])
+    >>> batch.median_along_batch(keepdims=True)
+    array([[4., 5.]])
+    >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> batch.median_along_batch()
+    array([2., 7.])
+
+    ```
+    """
+    return a.median_along_batch(*args, **kwargs)
+
+
+def min(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:  # noqa: A001
+    r"""Return the minimum along a given axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.min``.
+        kwargs: See the documentation of ``numpy.min``.
+
+    Returns:
+        The minimum values along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.min(batch, axis=0)
+    array([0, 1])
+    >>> ba.min(batch, axis=0, keepdims=True)
+    array([[0, 1]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.min(batch, axis=1)
+    array([0, 5])
+
+    ```
+    """
+    return a.min(*args, **kwargs)
+
+
+def min_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the minimum along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.min``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.min``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The minimum values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.min_along_batch(batch)
+    array([0, 1])
+    >>> ba.min_along_batch(batch, keepdims=True)
+    array([[0, 1]])
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> ba.min_along_batch(batch)
+    array([0, 5])
+
+    ```
+    """
+    return a.min_along_batch(*args, **kwargs)
