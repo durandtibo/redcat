@@ -1202,6 +1202,64 @@ class BatchedArray(np.ndarray):
         """
         return self.mean(*args, axis=self.batch_axis, **kwargs)
 
+    def median(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the median along a given axis.
+
+        Args:
+            args: See the documentation of ``numpy.median``.
+            kwargs: See the documentation of ``numpy.median``.
+
+        Returns:
+            The median values along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.median(axis=0)
+        array([4., 5.])
+        >>> batch.median(axis=0, keepdims=True)
+        array([[4., 5.]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.median(axis=1)
+        array([2., 7.])
+
+        ```
+        """
+        return np.median(self.get_ndarray(), *args, **kwargs)
+
+    def median_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the median along the batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.median``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.median``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The median values along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.median_along_batch()
+        array([4., 5.])
+        >>> batch.median_along_batch(keepdims=True)
+        array([[4., 5.]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.median_along_batch()
+        array([2., 7.])
+
+        ```
+        """
+        return self.median(*args, axis=self.batch_axis, **kwargs)
+
     def min(self, *args: Any, **kwargs: Any) -> np.ndarray:
         r"""Return the minimum along a given axis.
 
