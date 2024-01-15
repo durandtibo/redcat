@@ -1144,6 +1144,64 @@ class BatchedArray(np.ndarray):
         """
         return self.max(*args, axis=self.batch_axis, **kwargs)
 
+    def mean(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the mean along a given axis.
+
+        Args:
+            args: See the documentation of ``numpy.mean``.
+            kwargs: See the documentation of ``numpy.mean``.
+
+        Returns:
+            The mean values along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.mean(axis=0)
+        array([4., 5.])
+        >>> batch.mean(axis=0, keepdims=True)
+        array([[4., 5.]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.mean(axis=1)
+        array([2., 7.])
+
+        ```
+        """
+        return self.get_ndarray().mean(*args, **kwargs)
+
+    def mean_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the mean along the batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.mean``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.mean``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The mean values along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.mean_along_batch()
+        array([4., 5.])
+        >>> batch.mean_along_batch(keepdims=True)
+        array([[4., 5.]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.mean_along_batch()
+        array([2., 7.])
+
+        ```
+        """
+        return self.mean(*args, axis=self.batch_axis, **kwargs)
+
     def min(self, *args: Any, **kwargs: Any) -> np.ndarray:
         r"""Return the minimum along a given axis.
 
