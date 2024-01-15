@@ -1935,6 +1935,11 @@ def test_batched_array_sort_along_batch_custom_axes() -> None:
     )
 
 
+#####################
+#     Reduction     #
+#####################
+
+
 def test_batched_array_argmax_1d() -> None:
     assert objects_are_equal(
         BatchedArray(np.asarray([4, 1, 2, 5, 3])).argmax(axis=0),
@@ -1985,4 +1990,57 @@ def test_batched_array_argmax_along_batch_custom_axes() -> None:
             np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1
         ).argmax_along_batch(),
         np.asarray([3, 0]),
+    )
+
+
+def test_batched_array_argmin_1d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([4, 1, 2, 5, 3])).argmin(axis=0),
+        np.int64(1),
+    )
+
+
+def test_batched_array_argmin_2d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin(axis=0),
+        np.asarray([1, 2]),
+    )
+
+
+def test_batched_array_argmin_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin(axis=None),
+        np.int64(2),
+    )
+
+
+def test_batched_array_argmin_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1).argmin(axis=1),
+        np.asarray([1, 2]),
+    )
+
+
+def test_batched_array_argmin_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin_along_batch(),
+        np.asarray([1, 2]),
+    )
+
+
+def test_batched_array_argmin_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin_along_batch(
+            keepdims=True
+        ),
+        np.asarray([[1, 2]]),
+    )
+
+
+def test_batched_array_argmin_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1
+        ).argmin_along_batch(),
+        np.asarray([1, 2]),
     )
