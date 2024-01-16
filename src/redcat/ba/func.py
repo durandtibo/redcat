@@ -45,6 +45,8 @@ __all__ = [
     "sort_along_batch",
     "sum",
     "sum_along_batch",
+    "nanmin_along_batch",
+    "nanmin",
 ]
 
 from collections.abc import Sequence
@@ -939,6 +941,70 @@ def nanmedian_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.nda
     ```
     """
     return a.nanmedian_along_batch(*args, **kwargs)
+
+
+def nanmin(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the minimum or the minimum along the specified axis,
+    ignoring NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanmin``.
+        kwargs: See the documentation of ``numpy.nanmin``.
+
+    Returns:
+        The minimum or the minimum along the specified axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmin(batch, axis=0)
+    array([1., 4., 2.])
+    >>> ba.nanmin(batch, axis=0, keepdims=True)
+    array([[1., 4., 2.]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmin(batch, axis=1)
+    array([1., 3.])
+
+    ```
+    """
+    return a.nanmin(*args, **kwargs)
+
+
+def nanmin_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the minimum or the minimum along the batch axis, ignoring
+    NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanmin``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.nanmin``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The minimum or the minimum along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmin_along_batch(batch)
+    array([1., 4., 2.])
+    >>> ba.nanmin_along_batch(batch, keepdims=True)
+    array([[1., 4., 2.]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmin_along_batch(batch)
+    array([1., 3.])
+
+    ```
+    """
+    return a.nanmin_along_batch(*args, **kwargs)
 
 
 def nanprod(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
