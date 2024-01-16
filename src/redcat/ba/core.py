@@ -1327,7 +1327,7 @@ class BatchedArray(np.ndarray):
             kwargs: See the documentation of ``numpy.nanmean``.
 
         Returns:
-            The nanmean values along an axis.
+            The mean values along the specified axis,
 
         Example usage:
 
@@ -1358,7 +1358,7 @@ class BatchedArray(np.ndarray):
                 ``axis`` should not be passed.
 
         Returns:
-            The nanmean values along the batch axis.
+            The mean values along the batch axis,
 
         Example usage:
 
@@ -1435,6 +1435,66 @@ class BatchedArray(np.ndarray):
         ```
         """
         return self.nanmedian(*args, axis=self.batch_axis, **kwargs)
+
+    def nanmin(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the minimum or the minimum along the specified axis,
+        ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmin``.
+            kwargs: See the documentation of ``numpy.nanmin``.
+
+        Returns:
+            The minimum or the minimum along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmin(axis=0)
+        array([1., 4., 2.])
+        >>> batch.nanmin(axis=0, keepdims=True)
+        array([[1., 4., 2.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmin(axis=1)
+        array([1., 3.])
+
+        ```
+        """
+        return np.nanmin(self.get_ndarray(), *args, **kwargs)
+
+    def nanmin_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the minimum or the minimum along the batch axis,
+        ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmin``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanmin``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The minimum or the minimum along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmin_along_batch()
+        array([1., 4., 2.])
+        >>> batch.nanmin_along_batch(keepdims=True)
+        array([[1., 4., 2.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmin_along_batch()
+        array([1., 3.])
+
+        ```
+        """
+        return self.nanmin(*args, axis=self.batch_axis, **kwargs)
 
     def nanprod(self, *args: Any, **kwargs: Any) -> np.ndarray:
         r"""Compute the product along the specified axis, ignoring NaNs.
