@@ -1318,6 +1318,68 @@ class BatchedArray(np.ndarray):
         """
         return self.min(*args, axis=self.batch_axis, **kwargs)
 
+    def nanargmax(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the indices of the maximum values in the specified
+        axis ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmax``.
+            kwargs: See the documentation of ``numpy.nanmax``.
+
+        Returns:
+            The indices of the maximum values in the specified axis
+                ignoring NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmax(axis=0)
+        array([1, 1, 1])
+        >>> batch.nanargmax(axis=0, keepdims=True)
+        array([[1, 1, 1]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanargmax(axis=1)
+        array([2, 2])
+
+        ```
+        """
+        return np.nanargmax(self.get_ndarray(), *args, **kwargs)
+
+    def nanargmax_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the indices of the maximum values in the batch axis
+        ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmax``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanmax``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The indices of the maximum values in the batch axis
+                ignoring NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmax_along_batch()
+        array([1, 1, 1])
+        >>> batch.nanargmax_along_batch(keepdims=True)
+        array([[1, 1, 1]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanargmax_along_batch()
+        array([2, 2])
+
+        ```
+        """
+        return self.nanargmax(*args, axis=self.batch_axis, **kwargs)
+
     def nanmax(self, *args: Any, **kwargs: Any) -> np.ndarray:
         r"""Compute the maximum or the maximum along the specified axis,
         ignoring NaNs.
