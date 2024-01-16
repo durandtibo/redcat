@@ -41,6 +41,8 @@ __all__ = [
     "shuffle_along_batch",
     "sort",
     "sort_along_batch",
+    "prod",
+    "prod_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -1014,14 +1016,14 @@ def nansum(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat.ba import BatchedArray
-    >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> batch.nansum(axis=0)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nansum(batch,axis=0)
     array([4., 4., 7.])
-    >>> batch.nansum(axis=0, keepdims=True)
+    >>> ba.nansum(batch,axis=0, keepdims=True)
     array([[4., 4., 7.]])
-    >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-    >>> batch.nansum(axis=1)
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nansum(batch, axis=1)
     array([ 3., 12.])
 
     ```
@@ -1046,16 +1048,78 @@ def nansum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarra
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat.ba import BatchedArray
-    >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> batch.nansum_along_batch()
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nansum_along_batch(batch)
     array([4., 4., 7.])
-    >>> batch.nansum_along_batch(keepdims=True)
+    >>> ba.nansum_along_batch(batch, keepdims=True)
     array([[4., 4., 7.]])
-    >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-    >>> batch.nansum_along_batch()
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nansum_along_batch(batch)
     array([ 3., 12.])
 
     ```
     """
     return a.nansum_along_batch(*args, **kwargs)
+
+
+def prod(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the product along the specified axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.prod``.
+        kwargs: See the documentation of ``numpy.prod``.
+
+    Returns:
+        The product along the specified axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+    >>> ba.prod(batch, axis=0)
+    array([ 3, 12, 10])
+    >>> ba.prod(batch, axis=0, keepdims=True)
+    array([[ 3, 12, 10]])
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.prod(batch, axis=1)
+    array([ 6, 60])
+
+    ```
+    """
+    return a.prod(*args, **kwargs)
+
+
+def prod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the product along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.prod``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.prod``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The product along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+    >>> ba.prod_along_batch(batch)
+    array([ 3, 12, 10])
+    >>> ba.prod_along_batch(batch, keepdims=True)
+    array([[ 3, 12, 10]])
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.prod_along_batch(batch)
+    array([ 6, 60])
+
+    ```
+    """
+    return a.prod_along_batch(*args, **kwargs)
