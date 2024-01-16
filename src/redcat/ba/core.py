@@ -1552,6 +1552,64 @@ class BatchedArray(np.ndarray):
         """
         return self.nansum(*args, axis=self.batch_axis, **kwargs)
 
+    def prod(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the product along the specified axis.
+
+        Args:
+            args: See the documentation of ``numpy.prod``.
+            kwargs: See the documentation of ``numpy.prod``.
+
+        Returns:
+            The product along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+        >>> batch.prod(axis=0)
+        array([ 3, 12, 10])
+        >>> batch.prod(axis=0, keepdims=True)
+        array([[ 3, 12, 10]])
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.prod(axis=1)
+        array([ 6, 60])
+
+        ```
+        """
+        return np.prod(self.get_ndarray(), *args, **kwargs)
+
+    def prod_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the product along the batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.prod``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.prod``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The product along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+        >>> batch.prod_along_batch()
+        array([ 3, 12, 10])
+        >>> batch.prod_along_batch(keepdims=True)
+        array([[ 3, 12, 10]])
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.prod_along_batch()
+        array([ 6, 60])
+
+        ```
+        """
+        return self.prod(*args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
