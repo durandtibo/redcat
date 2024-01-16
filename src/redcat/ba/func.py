@@ -1145,9 +1145,9 @@ def sum(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:  # noqa: A00
     >>> from redcat import ba
     >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
     >>> ba.sum(batch, axis=0)
-    array([4, 4, 7])
+    array([4, 7, 7])
     >>> ba.sum(batch, axis=0, keepdims=True)
-    array([[4, 4, 7]])
+    array([[4, 7, 7]])
     >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
     >>> ba.sum(batch, axis=1)
     array([ 6, 12])
@@ -1177,9 +1177,9 @@ def sum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
     >>> from redcat import ba
     >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
     >>> ba.sum_along_batch(batch)
-    array([4, 4, 7])
+    array([4, 7, 7])
     >>> ba.sum_along_batch(batch, keepdims=True)
-    array([[4, 4, 7]])
+    array([[4, 7, 7]])
     >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
     >>> ba.sum_along_batch(batch)
     array([ 6, 12])
