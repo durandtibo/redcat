@@ -26,6 +26,14 @@ __all__ = [
     "median_along_batch",
     "min",
     "min_along_batch",
+    "nanmean",
+    "nanmean_along_batch",
+    "nanmedian",
+    "nanmedian_along_batch",
+    "nanprod",
+    "nanprod_along_batch",
+    "nansum",
+    "nansum_along_batch",
     "not_equal",
     "permute_along_axis",
     "permute_along_batch",
@@ -33,12 +41,6 @@ __all__ = [
     "shuffle_along_batch",
     "sort",
     "sort_along_batch",
-    "nanmean",
-    "nanmean_along_batch",
-    "nanmedian",
-    "nanmedian_along_batch",
-    "nansum",
-    "nansum_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -933,6 +935,68 @@ def nanmedian_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.nda
     ```
     """
     return a.nanmedian_along_batch(*args, **kwargs)
+
+
+def nanprod(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the product along the specified axis, ignoring NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanprod``.
+        kwargs: See the documentation of ``numpy.nanprod``.
+
+    Returns:
+        The product along the specified axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanprod(batch, axis=0)
+    array([ 3., 4., 10.])
+    >>> ba.nanprod(batch, axis=0, keepdims=True)
+    array([[ 3., 4., 10.]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanprod(batch, axis=1)
+    array([ 2., 60.])
+
+    ```
+    """
+    return a.nanprod(*args, **kwargs)
+
+
+def nanprod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the product along the batch axis, ignoring NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanprod``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.nanprod``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The product along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanprod_along_batch(batch)
+    array([ 3., 4., 10.])
+    >>> ba.nanprod_along_batch(batch, keepdims=True)
+    array([[ 3., 4., 10.]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanprod_along_batch(batch)
+    array([ 2., 60.])
+
+    ```
+    """
+    return a.nanprod_along_batch(*args, **kwargs)
 
 
 def nansum(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
