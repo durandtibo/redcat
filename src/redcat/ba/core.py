@@ -1610,6 +1610,64 @@ class BatchedArray(np.ndarray):
         """
         return self.prod(*args, axis=self.batch_axis, **kwargs)
 
+    def sum(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the sum along the specified axis.
+
+        Args:
+            args: See the documentation of ``numpy.sum``.
+            kwargs: See the documentation of ``numpy.sum``.
+
+        Returns:
+            The sum along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+        >>> batch.sum(axis=0)
+        array([4, 7, 7])
+        >>> batch.sum(axis=0, keepdims=True)
+        array([[4, 7, 7]])
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.sum(axis=1)
+        array([ 6, 12])
+
+        ```
+        """
+        return np.sum(self.get_ndarray(), *args, **kwargs)
+
+    def sum_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the sum along the batch axis.
+
+        Args:
+            args: See the documentation of ``numpy.sum``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.sum``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The sum along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+        >>> batch.sum_along_batch()
+        array([4, 7, 7])
+        >>> batch.sum_along_batch(keepdims=True)
+        array([[4, 7, 7]])
+        >>> batch = BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.sum_along_batch()
+        array([ 6, 12])
+
+        ```
+        """
+        return self.sum(*args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
