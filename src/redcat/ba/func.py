@@ -47,6 +47,8 @@ __all__ = [
     "sum_along_batch",
     "nanmin_along_batch",
     "nanmin",
+    "nanmax",
+    "nanmax_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -816,6 +818,70 @@ def min_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
     ```
     """
     return a.min_along_batch(*args, **kwargs)
+
+
+def nanmax(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the maximum or the maximum along the specified axis,
+    ignoring NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanmax``.
+        kwargs: See the documentation of ``numpy.nanmax``.
+
+    Returns:
+        The maximum or the maximum along the specified axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmax(batch, axis=0)
+    array([3., 4., 5.])
+    >>> ba.nanmax(batch, axis=0, keepdims=True)
+    array([[3., 4., 5.]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmax(batch, axis=1)
+    array([2., 5.])
+
+    ```
+    """
+    return a.nanmax(*args, **kwargs)
+
+
+def nanmax_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the maximum or the maximum along the batch axis, ignoring
+    NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanmax``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.nanmax``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The maximum or the maximum along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmax_along_batch(batch)
+    array([3., 4., 5.])
+    >>> ba.nanmax_along_batch(batch, keepdims=True)
+    array([[3., 4., 5.]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmax_along_batch(batch)
+    array([2., 5.])
+
+    ```
+    """
+    return a.nanmax_along_batch(*args, **kwargs)
 
 
 def nanmean(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
