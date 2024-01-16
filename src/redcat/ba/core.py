@@ -1436,6 +1436,64 @@ class BatchedArray(np.ndarray):
         """
         return self.nanmedian(*args, axis=self.batch_axis, **kwargs)
 
+    def nansum(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the sum along the specified axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nansum``.
+            kwargs: See the documentation of ``numpy.nansum``.
+
+        Returns:
+            The sum along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nansum(axis=0)
+        array([4., 4., 7.])
+        >>> batch.nansum(axis=0, keepdims=True)
+        array([[4., 4., 7.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nansum(axis=1)
+        array([ 3., 12.])
+
+        ```
+        """
+        return np.nansum(self.get_ndarray(), *args, **kwargs)
+
+    def nansum_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the sum along the batch axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nansum``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nansum``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The sum along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nansum_along_batch()
+        array([4., 4., 7.])
+        >>> batch.nansum_along_batch(keepdims=True)
+        array([[4., 4., 7.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nansum_along_batch()
+        array([ 3., 12.])
+
+        ```
+        """
+        return self.nansum(*args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
