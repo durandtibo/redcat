@@ -1436,6 +1436,64 @@ class BatchedArray(np.ndarray):
         """
         return self.nanmedian(*args, axis=self.batch_axis, **kwargs)
 
+    def nanprod(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the product along the specified axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanprod``.
+            kwargs: See the documentation of ``numpy.nanprod``.
+
+        Returns:
+            The product along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanprod(axis=0)
+        array([ 3., 4., 10.])
+        >>> batch.nanprod(axis=0, keepdims=True)
+        array([[ 3., 4., 10.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanprod(axis=1)
+        array([ 2., 60.])
+
+        ```
+        """
+        return np.nanprod(self.get_ndarray(), *args, **kwargs)
+
+    def nanprod_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the product along the batch axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanprod``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanprod``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The product along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanprod_along_batch()
+        array([ 3., 4., 10.])
+        >>> batch.nanprod_along_batch(keepdims=True)
+        array([[ 3., 4., 10.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanprod_along_batch()
+        array([ 2., 60.])
+
+        ```
+        """
+        return self.nanprod(*args, axis=self.batch_axis, **kwargs)
+
     def nansum(self, *args: Any, **kwargs: Any) -> np.ndarray:
         r"""Compute the sum along the specified axis, ignoring NaNs.
 

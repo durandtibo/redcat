@@ -54,6 +54,8 @@ __all__ = [
     "nanmedian_along_batch",
     "nansum",
     "nansum_along_batch",
+    "nanprod",
+    "nanprod_along_batch",
 ]
 
 from redcat.ba.core import BatchedArray
@@ -98,6 +100,8 @@ from redcat.ba.func import (
     nanmean_along_batch,
     nanmedian,
     nanmedian_along_batch,
+    nanprod,
+    nanprod_along_batch,
     nansum,
     nansum_along_batch,
     not_equal,
