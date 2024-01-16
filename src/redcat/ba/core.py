@@ -847,7 +847,7 @@ class BatchedArray(np.ndarray):
         ```
         """
         permutation = np.asarray(permutation)
-        return np.swapaxes(np.swapaxes(self, 0, axis)[permutation], 0, axis)
+        return self.swapaxes(0, axis)[permutation].swapaxes(0, axis)
 
     def permute_along_batch(self, permutation: np.ndarray | Sequence) -> TBatchedArray:
         r"""Permute the values of an array along the batch axis.
@@ -1317,6 +1317,240 @@ class BatchedArray(np.ndarray):
         ```
         """
         return self.min(*args, axis=self.batch_axis, **kwargs)
+
+    def nanmean(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the arithmetic mean along the specified axis,
+        ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmean``.
+            kwargs: See the documentation of ``numpy.nanmean``.
+
+        Returns:
+            The nanmean values along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmean(axis=0)
+        array([2. , 4. , 3.5])
+        >>> batch.nanmean(axis=0, keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmean(axis=1)
+        array([1.5, 4. ])
+
+        ```
+        """
+        return np.nanmean(self.get_ndarray(), *args, **kwargs)
+
+    def nanmean_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the arithmetic mean along the batch axis, ignoring
+        NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmean``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanmean``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The nanmean values along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmean_along_batch()
+        array([2. , 4. , 3.5])
+        >>> batch.nanmean_along_batch(keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmean_along_batch()
+        array([1.5, 4. ])
+
+        ```
+        """
+        return self.nanmean(*args, axis=self.batch_axis, **kwargs)
+
+    def nanmedian(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the median along the specified axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmedian``.
+            kwargs: See the documentation of ``numpy.nanmedian``.
+
+        Returns:
+            The median along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmedian(axis=0)
+        array([2. , 4. , 3.5])
+        >>> batch.nanmedian(axis=0, keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmedian(axis=1)
+        array([1.5, 4. ])
+
+        ```
+        """
+        return np.nanmedian(self.get_ndarray(), *args, **kwargs)
+
+    def nanmedian_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the median along the batch axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmedian``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanmedian``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The median along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmedian_along_batch()
+        array([2. , 4. , 3.5])
+        >>> batch.nanmedian_along_batch(keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmedian_along_batch()
+        array([1.5, 4. ])
+
+        ```
+        """
+        return self.nanmedian(*args, axis=self.batch_axis, **kwargs)
+
+    def nanprod(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the product along the specified axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanprod``.
+            kwargs: See the documentation of ``numpy.nanprod``.
+
+        Returns:
+            The product along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanprod(axis=0)
+        array([ 3., 4., 10.])
+        >>> batch.nanprod(axis=0, keepdims=True)
+        array([[ 3., 4., 10.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanprod(axis=1)
+        array([ 2., 60.])
+
+        ```
+        """
+        return np.nanprod(self.get_ndarray(), *args, **kwargs)
+
+    def nanprod_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the product along the batch axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanprod``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanprod``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The product along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanprod_along_batch()
+        array([ 3., 4., 10.])
+        >>> batch.nanprod_along_batch(keepdims=True)
+        array([[ 3., 4., 10.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanprod_along_batch()
+        array([ 2., 60.])
+
+        ```
+        """
+        return self.nanprod(*args, axis=self.batch_axis, **kwargs)
+
+    def nansum(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the sum along the specified axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nansum``.
+            kwargs: See the documentation of ``numpy.nansum``.
+
+        Returns:
+            The sum along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nansum(axis=0)
+        array([4., 4., 7.])
+        >>> batch.nansum(axis=0, keepdims=True)
+        array([[4., 4., 7.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nansum(axis=1)
+        array([ 3., 12.])
+
+        ```
+        """
+        return np.nansum(self.get_ndarray(), *args, **kwargs)
+
+    def nansum_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the sum along the batch axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nansum``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nansum``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The sum along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nansum_along_batch()
+        array([4., 4., 7.])
+        >>> batch.nansum_along_batch(keepdims=True)
+        array([[4., 4., 7.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nansum_along_batch()
+        array([ 3., 12.])
+
+        ```
+        """
+        return self.nansum(*args, axis=self.batch_axis, **kwargs)
 
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
