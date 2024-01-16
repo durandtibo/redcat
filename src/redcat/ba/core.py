@@ -1378,6 +1378,64 @@ class BatchedArray(np.ndarray):
         """
         return self.nanmean(*args, axis=self.batch_axis, **kwargs)
 
+    def nanmedian(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the median along the specified axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmedian``.
+            kwargs: See the documentation of ``numpy.nanmedian``.
+
+        Returns:
+            The median along the specified axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmedian(axis=0)
+        array([2. , 4. , 3.5])
+        >>> batch.nanmedian(axis=0, keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmedian(axis=1)
+        array([1.5, 4. ])
+
+        ```
+        """
+        return np.nanmedian(self.get_ndarray(), *args, **kwargs)
+
+    def nanmedian_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the median along the batch axis, ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmedian``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanmedian``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The median along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmedian_along_batch()
+        array([2. , 4. , 3.5])
+        >>> batch.nanmedian_along_batch(keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmedian_along_batch()
+        array([1.5, 4. ])
+
+        ```
+        """
+        return self.nanmedian(*args, axis=self.batch_axis, **kwargs)
+
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.
 
