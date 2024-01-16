@@ -56,6 +56,8 @@ __all__ = [
     "nansum_along_batch",
     "nanprod",
     "nanprod_along_batch",
+    "prod",
+    "prod_along_batch",
 ]
 
 from redcat.ba.core import BatchedArray
@@ -107,6 +109,8 @@ from redcat.ba.func import (
     not_equal,
     permute_along_axis,
     permute_along_batch,
+    prod,
+    prod_along_batch,
     shuffle_along_axis,
     shuffle_along_batch,
     sort,
