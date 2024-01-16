@@ -847,7 +847,7 @@ class BatchedArray(np.ndarray):
         ```
         """
         permutation = np.asarray(permutation)
-        return np.swapaxes(np.swapaxes(self, 0, axis)[permutation], 0, axis)
+        return self.swapaxes(0, axis)[permutation].swapaxes(0, axis)
 
     def permute_along_batch(self, permutation: np.ndarray | Sequence) -> TBatchedArray:
         r"""Permute the values of an array along the batch axis.
@@ -1317,6 +1317,66 @@ class BatchedArray(np.ndarray):
         ```
         """
         return self.min(*args, axis=self.batch_axis, **kwargs)
+
+    def nanmean(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the arithmetic mean along the specified axis,
+        ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmean``.
+            kwargs: See the documentation of ``numpy.nanmean``.
+
+        Returns:
+            The nanmean values along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmean(axis=0)
+        array([2. , 4. , 3.5])
+        >>> batch.nanmean(axis=0, keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmean(axis=1)
+        array([1.5, 4. ])
+
+        ```
+        """
+        return np.nanmean(self.get_ndarray(), *args, **kwargs)
+
+    def nanmean_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Compute the arithmetic mean along the batch axis, ignoring
+        NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmean``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanmean``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The nanmean values along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanmean_along_batch()
+        array([2. , 4. , 3.5])
+        >>> batch.nanmean_along_batch(keepdims=True)
+        array([[2. , 4. , 3.5]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanmean_along_batch()
+        array([1.5, 4. ])
+
+        ```
+        """
+        return self.nanmean(*args, axis=self.batch_axis, **kwargs)
 
     def _check_valid_axes(self, arrays: Sequence) -> None:
         r"""Check if the axes are valid/compatible.

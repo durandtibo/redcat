@@ -696,7 +696,7 @@ def test_sort_along_batch_custom_axes() -> None:
 #####################
 
 
-def test_batched_array_argmax_1d() -> None:
+def test_argmax_1d() -> None:
     assert objects_are_equal(
         ba.argmax(BatchedArray(np.asarray([4, 1, 2, 5, 3])), axis=0),
         np.int64(3),
@@ -704,7 +704,7 @@ def test_batched_array_argmax_1d() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_argmax_2d(dtype: np.dtype) -> None:
+def test_argmax_2d(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.argmax(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)), axis=0
@@ -713,14 +713,14 @@ def test_batched_array_argmax_2d(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_argmax_axis_none() -> None:
+def test_argmax_axis_none() -> None:
     assert objects_are_equal(
         ba.argmax(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=None),
         np.int64(1),
     )
 
 
-def test_batched_array_argmax_custom_axes() -> None:
+def test_argmax_custom_axes() -> None:
     assert objects_are_equal(
         ba.argmax(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1), axis=1
@@ -730,7 +730,7 @@ def test_batched_array_argmax_custom_axes() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_argmax_along_batch(dtype: np.dtype) -> None:
+def test_argmax_along_batch(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.argmax_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype))
@@ -739,7 +739,7 @@ def test_batched_array_argmax_along_batch(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_argmax_along_batch_keepdims() -> None:
+def test_argmax_along_batch_keepdims() -> None:
     assert objects_are_equal(
         ba.argmax_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), keepdims=True
@@ -748,7 +748,7 @@ def test_batched_array_argmax_along_batch_keepdims() -> None:
     )
 
 
-def test_batched_array_argmax_along_batch_custom_axes() -> None:
+def test_argmax_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.argmax_along_batch(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
@@ -757,7 +757,7 @@ def test_batched_array_argmax_along_batch_custom_axes() -> None:
     )
 
 
-def test_batched_array_argmin_1d() -> None:
+def test_argmin_1d() -> None:
     assert objects_are_equal(
         ba.argmin(BatchedArray(np.asarray([4, 1, 2, 5, 3])), axis=0),
         np.int64(1),
@@ -765,7 +765,7 @@ def test_batched_array_argmin_1d() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_argmin_2d(dtype: np.dtype) -> None:
+def test_argmin_2d(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.argmin(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)), axis=0
@@ -774,14 +774,14 @@ def test_batched_array_argmin_2d(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_argmin_axis_none() -> None:
+def test_argmin_axis_none() -> None:
     assert objects_are_equal(
         ba.argmin(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=None),
         np.int64(2),
     )
 
 
-def test_batched_array_argmin_custom_axes() -> None:
+def test_argmin_custom_axes() -> None:
     assert objects_are_equal(
         ba.argmin(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1), axis=1
@@ -791,7 +791,7 @@ def test_batched_array_argmin_custom_axes() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_argmin_along_batch(dtype: np.dtype) -> None:
+def test_argmin_along_batch(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.argmin_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype))
@@ -800,7 +800,7 @@ def test_batched_array_argmin_along_batch(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_argmin_along_batch_keepdims() -> None:
+def test_argmin_along_batch_keepdims() -> None:
     assert objects_are_equal(
         ba.argmin_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), keepdims=True
@@ -809,7 +809,7 @@ def test_batched_array_argmin_along_batch_keepdims() -> None:
     )
 
 
-def test_batched_array_argmin_along_batch_custom_axes() -> None:
+def test_argmin_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.argmin_along_batch(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
@@ -818,7 +818,7 @@ def test_batched_array_argmin_along_batch_custom_axes() -> None:
     )
 
 
-def test_batched_array_max_1d() -> None:
+def test_max_1d() -> None:
     assert objects_are_equal(
         ba.max(BatchedArray(np.asarray([4, 1, 2, 5, 3])), axis=0),
         np.int64(5),
@@ -826,7 +826,7 @@ def test_batched_array_max_1d() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_max_2d(dtype: np.dtype) -> None:
+def test_max_2d(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.max(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)), axis=0
@@ -835,14 +835,14 @@ def test_batched_array_max_2d(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_max_axis_none() -> None:
+def test_max_axis_none() -> None:
     assert objects_are_equal(
         ba.max(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=None),
         np.int64(9),
     )
 
 
-def test_batched_array_max_custom_axes() -> None:
+def test_max_custom_axes() -> None:
     assert objects_are_equal(
         ba.max(BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1), axis=1),
         np.asarray([5, 9]),
@@ -850,7 +850,7 @@ def test_batched_array_max_custom_axes() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_max_along_batch(dtype: np.dtype) -> None:
+def test_max_along_batch(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.max_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype))
@@ -859,7 +859,7 @@ def test_batched_array_max_along_batch(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_max_along_batch_keepdims() -> None:
+def test_max_along_batch_keepdims() -> None:
     assert objects_are_equal(
         ba.max_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), keepdims=True
@@ -868,7 +868,7 @@ def test_batched_array_max_along_batch_keepdims() -> None:
     )
 
 
-def test_batched_array_max_along_batch_custom_axes() -> None:
+def test_max_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.max_along_batch(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
@@ -877,7 +877,7 @@ def test_batched_array_max_along_batch_custom_axes() -> None:
     )
 
 
-def test_batched_array_mean_1d() -> None:
+def test_mean_1d() -> None:
     assert objects_are_equal(
         ba.mean(BatchedArray(np.asarray([4, 1, 2, 5, 3])), axis=0),
         np.float64(3.0),
@@ -885,7 +885,7 @@ def test_batched_array_mean_1d() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_mean_2d(dtype: np.dtype) -> None:
+def test_mean_2d(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.mean(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)), axis=0
@@ -894,14 +894,14 @@ def test_batched_array_mean_2d(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_mean_axis_none() -> None:
+def test_mean_axis_none() -> None:
     assert objects_are_equal(
         ba.mean(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=None),
         np.float64(5.0),
     )
 
 
-def test_batched_array_mean_custom_axes() -> None:
+def test_mean_custom_axes() -> None:
     assert objects_are_equal(
         ba.mean(BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1), axis=1),
         np.asarray([3.0, 7.0]),
@@ -909,7 +909,7 @@ def test_batched_array_mean_custom_axes() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_mean_along_batch(dtype: np.dtype) -> None:
+def test_mean_along_batch(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.mean_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype))
@@ -918,7 +918,7 @@ def test_batched_array_mean_along_batch(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_mean_along_batch_keepdims() -> None:
+def test_mean_along_batch_keepdims() -> None:
     assert objects_are_equal(
         ba.mean_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), keepdims=True
@@ -927,7 +927,7 @@ def test_batched_array_mean_along_batch_keepdims() -> None:
     )
 
 
-def test_batched_array_mean_along_batch_custom_axes() -> None:
+def test_mean_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.mean_along_batch(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
@@ -936,7 +936,7 @@ def test_batched_array_mean_along_batch_custom_axes() -> None:
     )
 
 
-def test_batched_array_median_1d() -> None:
+def test_median_1d() -> None:
     assert objects_are_equal(
         ba.median(BatchedArray(np.asarray([4, 1, 2, 5, 3])), axis=0),
         np.float64(3.0),
@@ -944,7 +944,7 @@ def test_batched_array_median_1d() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_median_2d(dtype: np.dtype) -> None:
+def test_median_2d(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.median(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)), axis=0
@@ -953,14 +953,14 @@ def test_batched_array_median_2d(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_median_axis_none() -> None:
+def test_median_axis_none() -> None:
     assert objects_are_equal(
         ba.median(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=None),
         np.float64(5.0),
     )
 
 
-def test_batched_array_median_custom_axes() -> None:
+def test_median_custom_axes() -> None:
     assert objects_are_equal(
         ba.median(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1), axis=1
@@ -970,7 +970,7 @@ def test_batched_array_median_custom_axes() -> None:
 
 
 @pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
-def test_batched_array_median_along_batch(dtype: np.dtype) -> None:
+def test_median_along_batch(dtype: np.dtype) -> None:
     assert objects_are_equal(
         ba.median_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype))
@@ -979,7 +979,7 @@ def test_batched_array_median_along_batch(dtype: np.dtype) -> None:
     )
 
 
-def test_batched_array_median_along_batch_keepdims() -> None:
+def test_median_along_batch_keepdims() -> None:
     assert objects_are_equal(
         ba.median_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), keepdims=True
@@ -988,7 +988,7 @@ def test_batched_array_median_along_batch_keepdims() -> None:
     )
 
 
-def test_batched_array_median_along_batch_custom_axes() -> None:
+def test_median_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.median_along_batch(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
@@ -997,42 +997,42 @@ def test_batched_array_median_along_batch_custom_axes() -> None:
     )
 
 
-def test_batched_array_min_1d() -> None:
+def test_min_1d() -> None:
     assert objects_are_equal(
         ba.min(BatchedArray(np.asarray([4, 1, 2, 5, 3])), axis=0),
         np.int64(1),
     )
 
 
-def test_batched_array_min_2d() -> None:
+def test_min_2d() -> None:
     assert objects_are_equal(
         ba.min(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=0),
         np.asarray([1, 5]),
     )
 
 
-def test_batched_array_min_axis_none() -> None:
+def test_min_axis_none() -> None:
     assert objects_are_equal(
         ba.min(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=None),
         np.int64(1),
     )
 
 
-def test_batched_array_min_custom_axes() -> None:
+def test_min_custom_axes() -> None:
     assert objects_are_equal(
         ba.min(BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1), axis=1),
         np.asarray([1, 5]),
     )
 
 
-def test_batched_array_min_along_batch() -> None:
+def test_min_along_batch() -> None:
     assert objects_are_equal(
         ba.min_along_batch(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))),
         np.asarray([1, 5]),
     )
 
 
-def test_batched_array_min_along_batch_keepdims() -> None:
+def test_min_along_batch_keepdims() -> None:
     assert objects_are_equal(
         ba.min_along_batch(
             BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), keepdims=True
@@ -1041,10 +1041,59 @@ def test_batched_array_min_along_batch_keepdims() -> None:
     )
 
 
-def test_batched_array_min_along_batch_custom_axes() -> None:
+def test_min_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.min_along_batch(
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
         ),
         np.asarray([1, 5]),
+    )
+
+
+def test_nanmean_1d() -> None:
+    assert objects_are_equal(
+        ba.nanmean(BatchedArray(np.array([1, np.nan, 2])), axis=0),
+        np.float64(1.5),
+    )
+
+
+def test_nanmean_2d() -> None:
+    assert objects_are_equal(
+        ba.nanmean(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0),
+        np.asarray([2.0, 4.0, 3.5]),
+    )
+
+
+def test_nanmean_axis_none() -> None:
+    assert objects_are_equal(
+        ba.nanmean(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=None),
+        np.float64(3.0),
+    )
+
+
+def test_nanmean_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.nanmean(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1), axis=1),
+        np.asarray([1.5, 4.0]),
+    )
+
+
+def test_nanmean_along_batch() -> None:
+    assert objects_are_equal(
+        ba.nanmean_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
+        np.asarray([2.0, 4.0, 3.5]),
+    )
+
+
+def test_nanmean_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        ba.nanmean_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), keepdims=True),
+        np.asarray([[2.0, 4.0, 3.5]]),
+    )
+
+
+def test_nanmean_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.nanmean_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)),
+        np.asarray([1.5, 4.0]),
     )

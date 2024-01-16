@@ -2285,3 +2285,52 @@ def test_batched_array_min_along_batch_custom_axes() -> None:
         ).min_along_batch(),
         np.asarray([1, 5]),
     )
+
+
+def test_batched_array_nanmean_1d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([1, np.nan, 2])).nanmean(axis=0),
+        np.float64(1.5),
+    )
+
+
+def test_batched_array_nanmean_2d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanmean(axis=0),
+        np.asarray([2.0, 4.0, 3.5]),
+    )
+
+
+def test_batched_array_nanmean_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanmean(axis=None),
+        np.float64(3.0),
+    )
+
+
+def test_batched_array_nanmean_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nanmean(axis=1),
+        np.asarray([1.5, 4.0]),
+    )
+
+
+def test_batched_array_nanmean_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanmean_along_batch(),
+        np.asarray([2.0, 4.0, 3.5]),
+    )
+
+
+def test_batched_array_nanmean_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanmean_along_batch(keepdims=True),
+        np.asarray([[2.0, 4.0, 3.5]]),
+    )
+
+
+def test_batched_array_nanmean_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nanmean_along_batch(),
+        np.asarray([1.5, 4.0]),
+    )

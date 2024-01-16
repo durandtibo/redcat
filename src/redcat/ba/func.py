@@ -33,6 +33,8 @@ __all__ = [
     "shuffle_along_batch",
     "sort",
     "sort_along_batch",
+    "nanmean",
+    "nanmean_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -802,3 +804,66 @@ def min_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
     ```
     """
     return a.min_along_batch(*args, **kwargs)
+
+
+def nanmean(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the arithmetic mean along the specified axis, ignoring
+    NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanmean``.
+        kwargs: See the documentation of ``numpy.nanmean``.
+
+    Returns:
+        The nanmean values along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmean(batch, axis=0)
+    array([2. , 4. , 3.5])
+    >>> ba.nanmean(batch, axis=0, keepdims=True)
+    array([[2. , 4. , 3.5]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmean(batch, axis=1)
+    array([1.5, 4. ])
+
+    ```
+    """
+    return a.nanmean(*args, **kwargs)
+
+
+def nanmean_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the arithmetic mean along the batch axis, ignoring NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanmean``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.nanmean``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The nanmean values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmean_along_batch(batch)
+    array([2. , 4. , 3.5])
+    >>> ba.nanmean_along_batch(batch,keepdims=True)
+    array([[2. , 4. , 3.5]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmean_along_batch(batch)
+    array([1.5, 4. ])
+
+    ```
+    """
+    return a.nanmean_along_batch(*args, **kwargs)
