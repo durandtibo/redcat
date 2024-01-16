@@ -37,12 +37,14 @@ __all__ = [
     "not_equal",
     "permute_along_axis",
     "permute_along_batch",
+    "prod",
+    "prod_along_batch",
     "shuffle_along_axis",
     "shuffle_along_batch",
     "sort",
     "sort_along_batch",
-    "prod",
-    "prod_along_batch",
+    "sum",
+    "sum_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -1123,3 +1125,65 @@ def prod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
     ```
     """
     return a.prod_along_batch(*args, **kwargs)
+
+
+def sum(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:  # noqa: A001
+    r"""Compute the sum along the specified axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.sum``.
+        kwargs: See the documentation of ``numpy.sum``.
+
+    Returns:
+        The sum along the specified axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+    >>> ba.sum(batch, axis=0)
+    array([4, 4, 7])
+    >>> ba.sum(batch, axis=0, keepdims=True)
+    array([[4, 4, 7]])
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.sum(batch, axis=1)
+    array([ 6, 12])
+
+    ```
+    """
+    return a.sum(*args, **kwargs)
+
+
+def sum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Compute the sum along the batch axis.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.sum``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.sum``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The sum along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))
+    >>> ba.sum_along_batch(batch)
+    array([4, 4, 7])
+    >>> ba.sum_along_batch(batch, keepdims=True)
+    array([[4, 4, 7]])
+    >>> batch = ba.BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.sum_along_batch(batch)
+    array([ 6, 12])
+
+    ```
+    """
+    return a.sum_along_batch(*args, **kwargs)

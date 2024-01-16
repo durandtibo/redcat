@@ -1248,50 +1248,99 @@ def test_nansum_along_batch_custom_axes() -> None:
     )
 
 
-def test_batched_array_prod_1d() -> None:
+def test_prod_1d() -> None:
     assert objects_are_equal(
         ba.prod(BatchedArray(np.array([1, 3, 2])), axis=0),
         np.int64(6),
     )
 
 
-def test_batched_array_prod_2d() -> None:
+def test_prod_2d() -> None:
     assert objects_are_equal(
         ba.prod(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]])), axis=0),
         np.asarray([3, 12, 10]),
     )
 
 
-def test_batched_array_prod_axis_none() -> None:
+def test_prod_axis_none() -> None:
     assert objects_are_equal(
         ba.prod(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]])), axis=None),
         np.int64(360),
     )
 
 
-def test_batched_array_prod_custom_axes() -> None:
+def test_prod_custom_axes() -> None:
     assert objects_are_equal(
         ba.prod(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1), axis=1),
         np.asarray([6, 60]),
     )
 
 
-def test_batched_array_prod_along_batch() -> None:
+def test_prod_along_batch() -> None:
     assert objects_are_equal(
         ba.prod_along_batch(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))),
         np.asarray([3, 12, 10]),
     )
 
 
-def test_batched_array_prod_along_batch_keepdims() -> None:
+def test_prod_along_batch_keepdims() -> None:
     assert objects_are_equal(
         ba.prod_along_batch(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]])), keepdims=True),
         np.asarray([[3, 12, 10]]),
     )
 
 
-def test_batched_array_prod_along_batch_custom_axes() -> None:
+def test_prod_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.prod_along_batch(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)),
         np.asarray([6, 60]),
+    )
+
+
+def test_sum_1d() -> None:
+    assert objects_are_equal(
+        ba.sum(BatchedArray(np.array([1, 3, 2])), axis=0),
+        np.int64(6),
+    )
+
+
+def test_sum_2d() -> None:
+    assert objects_are_equal(
+        ba.sum(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]])), axis=0),
+        np.asarray([4, 7, 7]),
+    )
+
+
+def test_sum_axis_none() -> None:
+    assert objects_are_equal(
+        ba.sum(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]])), axis=None),
+        np.int64(18),
+    )
+
+
+def test_sum_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.sum(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1), axis=1),
+        np.asarray([6, 12]),
+    )
+
+
+def test_sum_along_batch() -> None:
+    assert objects_are_equal(
+        ba.sum_along_batch(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]))),
+        np.asarray([4, 7, 7]),
+    )
+
+
+def test_sum_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        ba.sum_along_batch(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]])), keepdims=True),
+        np.asarray([[4, 7, 7]]),
+    )
+
+
+def test_sum_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.sum_along_batch(BatchedArray(np.array([[1, 3, 2], [3, 4, 5]]), batch_axis=1)),
+        np.asarray([6, 12]),
     )
