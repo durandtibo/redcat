@@ -759,6 +759,70 @@ def test_exp_custom_axes() -> None:
     )
 
 
+def test_exp2() -> None:
+    assert objects_are_allclose(
+        ba.exp2(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]))),
+        BatchedArray(np.asarray([[2.0, 4.0, 8.0], [16.0, 32.0, 64.0]])),
+        atol=1e-6,
+    )
+
+
+def test_exp2_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.exp2(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray([[2.0, 4.0, 8.0], [16.0, 32.0, 64.0]]),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
+def test_expm1() -> None:
+    assert objects_are_allclose(
+        ba.expm1(BatchedArray(np.asarray([[0, 1, 2], [3, 4, 5]]))),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 1.7182818284590453, 6.38905609893065],
+                    [19.085536923187668, 53.598150033144236, 147.4131591025766],
+                ]
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_expm1_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.expm1(BatchedArray(np.asarray([[0, 1, 2], [3, 4, 5]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 1.7182818284590453, 6.38905609893065],
+                    [19.085536923187668, 53.598150033144236, 147.4131591025766],
+                ]
+            ),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
+def test_fabs() -> None:
+    assert objects_are_equal(
+        ba.fabs(BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]]))),
+        BatchedArray(np.asarray([[1.0, 2.0], [0.0, 0.0], [1.0, 2.0]])),
+    )
+
+
+def test_fabs_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.fabs(BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]]), batch_axis=1)),
+        BatchedArray(np.asarray([[1.0, 2.0], [0.0, 0.0], [1.0, 2.0]]), batch_axis=1),
+    )
+
+
 @pytest.mark.parametrize(
     "exponent",
     (BatchedArray(np.full((2, 5), 2.0)), np.full((2, 5), 2.0), 2, 2.0),
@@ -788,6 +852,79 @@ def test_float_power_different_axes() -> None:
             BatchedArray(np.full((2, 5), 2.0), batch_axis=1),
         ),
         BatchedArray(np.array([[0, 1, 4, 9, 16], [25, 36, 49, 64, 81]], dtype=float), batch_axis=1),
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.array([[2, 0, 1], [0, 1, 0]])),
+        np.array([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_fmax(other: BatchedArray | np.ndarray) -> None:
+    assert objects_are_allclose(
+        np.fmax(
+            BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])),
+            other,
+        ),
+        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]])),
+    )
+
+
+def test_fmax_custom_axes() -> None:
+    assert objects_are_allclose(
+        np.fmax(
+            BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]]), batch_axis=1),
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
+        ),
+        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]]), batch_axis=1),
+    )
+
+
+@future_test
+def test_fmax_different_axes() -> None:
+    assert objects_are_allclose(
+        np.fmax(
+            BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])),
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
+        ),
+        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]]), batch_axis=1),
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.array([[2, 0, 1], [0, 1, 0]])),
+        np.array([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_fmin(other: BatchedArray | np.ndarray) -> None:
+    assert objects_are_allclose(
+        np.fmin(BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])), other),
+        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]])),
+    )
+
+
+def test_fmin_custom_axes() -> None:
+    assert objects_are_allclose(
+        np.fmin(
+            BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]]), batch_axis=1),
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
+        ),
+        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]]), batch_axis=1),
+    )
+
+
+@future_test
+def test_fmin_different_axes() -> None:
+    assert objects_are_allclose(
+        np.fmin(
+            BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])),
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
+        ),
+        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]]), batch_axis=1),
     )
 
 
@@ -982,6 +1119,57 @@ def test_minimum_different_axes() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "exponent",
+    (BatchedArray(np.full((2, 5), 2.0)), np.full((2, 5), 2.0), 2, 2.0),
+)
+def test_power(exponent: BatchedArray | np.ndarray) -> None:
+    assert objects_are_allclose(
+        np.power(BatchedArray(np.arange(10, dtype=float).reshape(2, 5)), exponent),
+        BatchedArray(np.array([[0, 1, 4, 9, 16], [25, 36, 49, 64, 81]], dtype=float)),
+    )
+
+
+def test_power_custom_axes() -> None:
+    assert objects_are_allclose(
+        np.power(
+            BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1),
+            BatchedArray(np.full((2, 5), 2.0), batch_axis=1),
+        ),
+        BatchedArray(np.array([[0, 1, 4, 9, 16], [25, 36, 49, 64, 81]], dtype=float), batch_axis=1),
+    )
+
+
+@future_test
+def test_power_different_axes() -> None:
+    assert objects_are_allclose(
+        np.power(
+            BatchedArray(np.arange(10).reshape(2, 5)),
+            BatchedArray(np.full((2, 5), 2.0), batch_axis=1),
+        ),
+        BatchedArray(np.array([[0, 1, 4, 9, 16], [25, 36, 49, 64, 81]]), batch_axis=1),
+    )
+
+
+def test_sign() -> None:
+    assert objects_are_allclose(
+        ba.sign(BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]]))),
+        BatchedArray(np.asarray([[-1, 1], [0, 0], [1, -1]])),
+        atol=1e-6,
+    )
+
+
+def test_sign_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.sign(BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray([[-1, 1], [0, 0], [1, -1]]),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
 def test_sqrt() -> None:
     assert objects_are_allclose(
         ba.sqrt(BatchedArray(np.asarray([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]]))),
@@ -995,6 +1183,25 @@ def test_sqrt_custom_axes() -> None:
         ba.sqrt(BatchedArray(np.asarray([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]]), batch_axis=1)),
         BatchedArray(
             np.asarray([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
+def test_square() -> None:
+    assert objects_are_allclose(
+        ba.square(BatchedArray(np.asarray([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]))),
+        BatchedArray(np.asarray([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]])),
+        atol=1e-6,
+    )
+
+
+def test_square_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.square(BatchedArray(np.asarray([[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray([[0.0, 1.0, 4.0], [9.0, 16.0, 25.0]]),
             batch_axis=1,
         ),
         atol=1e-6,
