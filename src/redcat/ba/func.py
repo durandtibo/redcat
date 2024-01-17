@@ -17,6 +17,7 @@ __all__ = [
     "cumsum_along_batch",
     "equal",
     "exp",
+    "float_power",
     "greater",
     "greater_equal",
     "less",
@@ -27,12 +28,14 @@ __all__ = [
     "log2",
     "max",
     "max_along_batch",
+    "maximum",
     "mean",
     "mean_along_batch",
     "median",
     "median_along_batch",
     "min",
     "min_along_batch",
+    "minimum",
     "nanargmax",
     "nanargmax_along_batch",
     "nanargmin",
@@ -58,6 +61,7 @@ __all__ = [
     "shuffle_along_batch",
     "sort",
     "sort_along_batch",
+    "sqrt",
     "sum",
     "sum_along_batch",
 ]
@@ -462,10 +466,14 @@ def sort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArr
 absolute = np.absolute
 clip = np.clip
 exp = np.exp
+float_power = np.float_power
 log = np.log
 log10 = np.log10
 log1p = np.log1p
 log2 = np.log2
+maximum = np.maximum
+minimum = np.minimum
+sqrt = np.sqrt
 
 
 #####################
