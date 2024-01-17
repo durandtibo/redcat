@@ -26,10 +26,18 @@ __all__ = [
     "median_along_batch",
     "min",
     "min_along_batch",
+    "nanargmax",
+    "nanargmax_along_batch",
+    "nanargmin",
+    "nanargmin_along_batch",
+    "nanmax",
+    "nanmax_along_batch",
     "nanmean",
     "nanmean_along_batch",
     "nanmedian",
     "nanmedian_along_batch",
+    "nanmin",
+    "nanmin_along_batch",
     "nanprod",
     "nanprod_along_batch",
     "nansum",
@@ -45,12 +53,6 @@ __all__ = [
     "sort_along_batch",
     "sum",
     "sum_along_batch",
-    "nanmin_along_batch",
-    "nanmin",
-    "nanmax",
-    "nanmax_along_batch",
-    "nanargmax",
-    "nanargmax_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -828,8 +830,8 @@ def nanargmax(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
 
     Args:
         a: Input array.
-        args: See the documentation of ``numpy.nanmax``.
-        kwargs: See the documentation of ``numpy.nanmax``.
+        args: See the documentation of ``numpy.nanargmax``.
+        kwargs: See the documentation of ``numpy.nanargmax``.
 
     Returns:
         The indices of the maximum values in the specified axis
@@ -860,9 +862,9 @@ def nanargmax_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.nda
 
     Args:
         a: Input array.
-        args: See the documentation of ``numpy.nanmax``.
+        args: See the documentation of ``numpy.nanargmax``.
             ``axis`` should not be passed.
-        kwargs: See the documentation of ``numpy.nanmax``.
+        kwargs: See the documentation of ``numpy.nanargmax``.
             ``axis`` should not be passed.
 
     Returns:
@@ -886,6 +888,72 @@ def nanargmax_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.nda
     ```
     """
     return a.nanargmax_along_batch(*args, **kwargs)
+
+
+def nanargmin(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the indices of the maximum values in the specified axis
+    ignoring NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanargmin``.
+        kwargs: See the documentation of ``numpy.nanargmin``.
+
+    Returns:
+        The indices of the maximum values in the specified axis
+            ignoring NaNs.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanargmin(batch, axis=0)
+    array([0, 1, 0])
+    >>> ba.nanargmin(batch, axis=0, keepdims=True)
+    array([[0, 1, 0]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanargmin(batch, axis=1)
+    array([0, 0])
+
+    ```
+    """
+    return a.nanargmin(*args, **kwargs)
+
+
+def nanargmin_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:
+    r"""Return the indices of the maximum values in the batch axis
+    ignoring NaNs.
+
+    Args:
+        a: Input array.
+        args: See the documentation of ``numpy.nanargmin``.
+            ``axis`` should not be passed.
+        kwargs: See the documentation of ``numpy.nanargmin``.
+            ``axis`` should not be passed.
+
+    Returns:
+        The indices of the maximum values in the batch axis
+            ignoring NaNs.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanargmin_along_batch(batch)
+    array([0, 1, 0])
+    >>> ba.nanargmin_along_batch(batch, keepdims=True)
+    array([[0, 1, 0]])
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanargmin_along_batch(batch)
+    array([0, 0])
+
+    ```
+    """
+    return a.nanargmin_along_batch(*args, **kwargs)
 
 
 def nanmax(a: TBatchedArray, *args: Any, **kwargs: Any) -> np.ndarray:

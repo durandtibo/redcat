@@ -1323,8 +1323,8 @@ class BatchedArray(np.ndarray):
         axis ignoring NaNs.
 
         Args:
-            args: See the documentation of ``numpy.nanmax``.
-            kwargs: See the documentation of ``numpy.nanmax``.
+            args: See the documentation of ``numpy.nanargmax``.
+            kwargs: See the documentation of ``numpy.nanargmax``.
 
         Returns:
             The indices of the maximum values in the specified axis
@@ -1353,9 +1353,9 @@ class BatchedArray(np.ndarray):
         ignoring NaNs.
 
         Args:
-            args: See the documentation of ``numpy.nanmax``.
+            args: See the documentation of ``numpy.nanargmax``.
                 ``axis`` should not be passed.
-            kwargs: See the documentation of ``numpy.nanmax``.
+            kwargs: See the documentation of ``numpy.nanargmax``.
                 ``axis`` should not be passed.
 
         Returns:
@@ -1379,6 +1379,68 @@ class BatchedArray(np.ndarray):
         ```
         """
         return self.nanargmax(*args, axis=self.batch_axis, **kwargs)
+
+    def nanargmin(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the indices of the minimum values in the specified
+        axis ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmin``.
+            kwargs: See the documentation of ``numpy.nanmin``.
+
+        Returns:
+            The indices of the minimum values in the specified axis
+                ignoring NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmin(axis=0)
+        array([0, 1, 0])
+        >>> batch.nanargmin(axis=0, keepdims=True)
+        array([[0, 1, 0]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanargmin(axis=1)
+        array([0, 0])
+
+        ```
+        """
+        return np.nanargmin(self.get_ndarray(), *args, **kwargs)
+
+    def nanargmin_along_batch(self, *args: Any, **kwargs: Any) -> np.ndarray:
+        r"""Return the indices of the minimum values in the batch axis
+        ignoring NaNs.
+
+        Args:
+            args: See the documentation of ``numpy.nanmin``.
+                ``axis`` should not be passed.
+            kwargs: See the documentation of ``numpy.nanmin``.
+                ``axis`` should not be passed.
+
+        Returns:
+            The indices of the minimum values in the batch axis
+                ignoring NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmin_along_batch()
+        array([0, 1, 0])
+        >>> batch.nanargmin_along_batch(keepdims=True)
+        array([[0, 1, 0]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nanargmin_along_batch()
+        array([0, 0])
+
+        ```
+        """
+        return self.nanargmin(*args, axis=self.batch_axis, **kwargs)
 
     def nanmax(self, *args: Any, **kwargs: Any) -> np.ndarray:
         r"""Compute the maximum or the maximum along the specified axis,
