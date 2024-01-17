@@ -2287,6 +2287,55 @@ def test_batched_array_min_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_nanargmax_1d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([1, np.nan, 2])).nanargmax(axis=0),
+        np.int64(2),
+    )
+
+
+def test_batched_array_nanargmax_2d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanargmax(axis=0),
+        np.asarray([1, 1, 1]),
+    )
+
+
+def test_batched_array_nanargmax_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanargmax(axis=None),
+        np.int64(5),
+    )
+
+
+def test_batched_array_nanargmax_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nanargmax(axis=1),
+        np.asarray([2, 2]),
+    )
+
+
+def test_batched_array_nanargmax_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanargmax_along_batch(),
+        np.asarray([1, 1, 1]),
+    )
+
+
+def test_batched_array_nanargmax_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nanargmax_along_batch(keepdims=True),
+        np.asarray([[1, 1, 1]]),
+    )
+
+
+def test_batched_array_nanargmax_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nanargmax_along_batch(),
+        np.asarray([2, 2]),
+    )
+
+
 def test_batched_array_nanmax_1d() -> None:
     assert objects_are_equal(
         BatchedArray(np.array([1, np.nan, 2])).nanmax(axis=0),
