@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "absolute",
     "allclose",
     "argmax",
     "argmax_along_batch",
@@ -9,15 +10,21 @@ __all__ = [
     "argsort",
     "argsort_along_batch",
     "array_equal",
+    "clip",
     "cumprod",
     "cumprod_along_batch",
     "cumsum",
     "cumsum_along_batch",
     "equal",
+    "exp",
     "greater",
     "greater_equal",
     "less",
     "less_equal",
+    "log",
+    "log10",
+    "log1p",
+    "log2",
     "max",
     "max_along_batch",
     "mean",
@@ -445,6 +452,20 @@ def sort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArr
     ```
     """
     return np.sort(a, *args, axis=a.batch_axis, **kwargs)
+
+
+#####################
+#     Pointwise     #
+#####################
+
+
+absolute = np.absolute
+clip = np.clip
+exp = np.exp
+log = np.log
+log10 = np.log10
+log1p = np.log1p
+log2 = np.log2
 
 
 #####################

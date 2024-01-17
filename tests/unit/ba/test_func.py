@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
-from coola import objects_are_equal
+from coola import objects_are_allclose, objects_are_equal
 
 from redcat import ba
 from redcat.ba import BatchedArray
@@ -688,6 +688,192 @@ def test_sort_along_batch_custom_axes() -> None:
             BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
         ),
         BatchedArray(np.asarray([[1, 2, 3, 4, 5], [5, 6, 7, 8, 9]]), batch_axis=1),
+    )
+
+
+#####################
+#     Pointwise     #
+#####################
+
+
+def test_absolute() -> None:
+    assert objects_are_equal(
+        ba.absolute(BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]]))),
+        BatchedArray(np.asarray([[1, 2], [0, 0], [1, 2]])),
+    )
+
+
+def test_absolute_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.absolute(BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]]), batch_axis=1)),
+        BatchedArray(np.asarray([[1, 2], [0, 0], [1, 2]]), batch_axis=1),
+    )
+
+
+def test_clip() -> None:
+    assert objects_are_equal(
+        ba.clip(BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]])), a_min=-1.0, a_max=1.5),
+        BatchedArray(np.asarray([[-1.0, 1.5], [0.0, 0.0], [1.0, -1.0]])),
+    )
+
+
+def test_clip_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.clip(
+            BatchedArray(np.asarray([[-1, 2], [0, 0], [1, -2]]), batch_axis=1),
+            a_min=-1.0,
+            a_max=1.5,
+        ),
+        BatchedArray(np.asarray([[-1.0, 1.5], [0.0, 0.0], [1.0, -1.0]]), batch_axis=1),
+    )
+
+
+def test_exp() -> None:
+    assert objects_are_allclose(
+        ba.exp(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]))),
+        BatchedArray(
+            np.asarray(
+                [
+                    [2.7182817459106445, 7.389056205749512, 20.08553695678711],
+                    [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                ]
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_exp_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.exp(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray(
+                [
+                    [2.7182817459106445, 7.389056205749512, 20.08553695678711],
+                    [54.598148345947266, 148.4131622314453, 403.4288024902344],
+                ]
+            ),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log() -> None:
+    assert objects_are_allclose(
+        ba.log(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]))),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                ]
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.log(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                ]
+            ),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log10() -> None:
+    assert objects_are_allclose(
+        ba.log10(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]))),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 0.3010300099849701, 0.4771212637424469],
+                    [0.6020600199699402, 0.6989700198173523, 0.778151273727417],
+                ]
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log10_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.log10(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 0.3010300099849701, 0.4771212637424469],
+                    [0.6020600199699402, 0.6989700198173523, 0.778151273727417],
+                ]
+            ),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log1p() -> None:
+    assert objects_are_allclose(
+        ba.log1p(BatchedArray(np.asarray([[0, 1, 2], [3, 4, 5]]))),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                ]
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log1p_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.log1p(BatchedArray(np.asarray([[0, 1, 2], [3, 4, 5]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray(
+                [
+                    [0.0, 0.6931471824645996, 1.0986123085021973],
+                    [1.3862943649291992, 1.6094379425048828, 1.7917594909667969],
+                ]
+            ),
+            batch_axis=1,
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log2() -> None:
+    assert objects_are_allclose(
+        ba.log2(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]))),
+        BatchedArray(
+            np.asarray(
+                [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+            )
+        ),
+        atol=1e-6,
+    )
+
+
+def test_log2_custom_axes() -> None:
+    assert objects_are_allclose(
+        ba.log2(BatchedArray(np.asarray([[1, 2, 3], [4, 5, 6]]), batch_axis=1)),
+        BatchedArray(
+            np.asarray(
+                [[0.0, 1.0, 1.5849624872207642], [2.0, 2.321928024291992, 2.5849626064300537]]
+            ),
+            batch_axis=1,
+        ),
+        atol=1e-6,
     )
 
 
