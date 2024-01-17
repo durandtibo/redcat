@@ -1936,6 +1936,72 @@ def test_batched_array_sort_along_batch_custom_axes() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.array([[2, 0, 1], [0, 1, 0]])),
+        np.array([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_maximum(other: BatchedArray | np.ndarray) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])).maximum(other),
+        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]])),
+    )
+
+
+def test_maximum_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]]), batch_axis=1).maximum(
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1)
+        ),
+        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]]), batch_axis=1),
+    )
+
+
+@future_test
+def test_maximum_different_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])).maximum(
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1)
+        ),
+        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]]), batch_axis=1),
+    )
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        BatchedArray(np.array([[2, 0, 1], [0, 1, 0]])),
+        np.array([[2, 0, 1], [0, 1, 0]]),
+    ),
+)
+def test_minimum(other: BatchedArray | np.ndarray) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])).minimum(other),
+        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]])),
+    )
+
+
+def test_minimum_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]]), batch_axis=1).minimum(
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1)
+        ),
+        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]]), batch_axis=1),
+    )
+
+
+@future_test
+def test_minimum_different_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])).minimum(
+            BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1)
+        ),
+        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]]), batch_axis=1),
+    )
+
+
 #####################
 #     Reduction     #
 #####################

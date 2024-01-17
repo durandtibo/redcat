@@ -967,6 +967,66 @@ class BatchedArray(np.ndarray):
         self.sort(*args, axis=self.batch_axis, **kwargs)
 
     #####################
+    #     Pointwise     #
+    #####################
+
+    def maximum(self, other: TBatchedArray, **kwargs) -> TBatchedArray:
+        r"""Return the element-wise maximum of array elements.
+
+        Args:
+            x2: Specifies the input array to compare with.
+            kwargs: See the documentation of ``numpy.maximum``.
+
+        Returns:
+            The maximum of x1 and x2, element-wise.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[2, 3, 4], [1, 5, 2]]))
+        >>> batch.maximum(BatchedArray(np.array([[1, 5, 2], [4, 3, 2]])))
+        array([[2, 5, 4],
+               [4, 5, 2]], batch_axis=0)
+        >>> batch = BatchedArray(np.array([[2, 3, 4], [1, 5, 2]]), batch_axis=1)
+        >>> batch.maximum(BatchedArray(np.array([[1, 5, 2], [4, 3, 2]]), batch_axis=1))
+        array([[2, 5, 4],
+               [4, 5, 2]], batch_axis=1)
+
+        ```
+        """
+        return np.maximum(self, other, **kwargs)
+
+    def minimum(self, other: TBatchedArray, **kwargs) -> TBatchedArray:
+        r"""Return the element-wise minimum of array elements.
+
+        Args:
+            other: Specifies the input array to compare with.
+            kwargs: See the documentation of ``numpy.minimum``.
+
+        Returns:
+            The minimum of x1 and x2, element-wise.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[2, 3, 4], [1, 5, 2]]))
+        >>> batch.minimum(BatchedArray(np.array([[1, 5, 2], [4, 3, 2]])))
+        array([[1, 3, 2],
+               [1, 3, 2]], batch_axis=0)
+        >>> batch = BatchedArray(np.array([[2, 3, 4], [1, 5, 2]]), batch_axis=1)
+        >>> batch.minimum(BatchedArray(np.array([[1, 5, 2], [4, 3, 2]]), batch_axis=1))
+        array([[1, 3, 2],
+               [1, 3, 2]], batch_axis=1)
+
+        ```
+        """
+        return np.minimum(self, other, **kwargs)
+
+    #####################
     #     Reduction     #
     #####################
 
