@@ -56,6 +56,10 @@ __all__ = [
     "nanargmax_along_batch",
     "nanargmin",
     "nanargmin_along_batch",
+    "nancumprod",
+    "nancumprod_along_batch",
+    "nancumsum",
+    "nancumsum_along_batch",
     "nanmax",
     "nanmax_along_batch",
     "nanmean",
@@ -87,8 +91,6 @@ __all__ = [
     "sum_along_batch",
     "zeros",
     "zeros_like",
-    "nancumsum",
-    "nancumsum_along_batch",
 ]
 
 from redcat.ba.core import BatchedArray
@@ -148,6 +150,8 @@ from redcat.ba.func import (
     nanargmax_along_batch,
     nanargmin,
     nanargmin_along_batch,
+    nancumprod,
+    nancumprod_along_batch,
     nancumsum,
     nancumsum_along_batch,
     nanmax,
