@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from dataclasses import dataclass
+from typing import Any
 from unittest.mock import patch
 
 import numpy as np
@@ -14,6 +16,13 @@ from tests.conftest import future_test
 
 DTYPES = (bool, int, float)
 NUMERIC_DTYPES = [np.float64, np.int64]
+
+
+@dataclass
+class ExamplePair:
+    input: Any
+    output: Any
+    axis: int | None
 
 
 def test_batched_array_repr() -> None:
@@ -1710,6 +1719,66 @@ def test_batched_array_cumsum_along_batch_custom_axes() -> None:
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumsum_along_batch(),
         BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
     )
+
+
+def test_batched_array_nancumsum() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(),
+        np.array([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]),
+    )
+
+
+def test_batched_array_nancumsum_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=0),
+        BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+    )
+
+
+def test_batched_array_nancumsum_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=1),
+        BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]])),
+    )
+
+
+def test_batched_array_nancumsum_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumsum(axis=0),
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_nancumsum_out() -> None:
+    out = ba.zeros((2, 3))
+    assert BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=0, out=out) is out
+    assert objects_are_equal(out, BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])))
+
+
+def test_batched_array_nancumsum_array() -> None:
+    out = np.zeros(6)
+    assert BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(out=out) is out
+    assert objects_are_equal(out, np.asarray([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]))
+
+
+def test_batched_array_nancumsum_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum_along_batch(),
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+    )
+
+
+def test_batched_array_nancumsum_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumsum_along_batch(),
+        BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_nancumsum_along_batch_out() -> None:
+    out = ba.zeros((2, 3))
+    assert BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum_along_batch(out=out) is out
+    assert objects_are_equal(out, BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])))
 
 
 @pytest.mark.parametrize("permutation", [np.array([0, 2, 1, 3]), [0, 2, 1, 3], (0, 2, 1, 3)])
