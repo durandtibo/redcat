@@ -1,5 +1,7 @@
 r"""Implement an extension of ``numpy.ndarray`` to represent a batch.
 
+BatchedArray only implements a subset of the methods.
+
 Notes:
     - https://numpy.org/doc/stable/user/basics.subclassing.html
     - [N-dimensional array (ndarray)](https://numpy.org/doc/1.26/reference/arrays.ndarray.html)
@@ -10,10 +12,11 @@ from __future__ import annotations
 __all__ = ["BatchedArray"]
 
 from collections.abc import Sequence
-from typing import Any, TypeVar
+from typing import Any, SupportsIndex, TypeVar
 
 import numpy as np
 from coola import objects_are_allclose
+from numpy._typing import DTypeLike
 from numpy.typing import ArrayLike
 
 from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
@@ -803,7 +806,12 @@ class BatchedArray(np.ndarray):
         """
         return self.cumsum(*args, axis=self.batch_axis, **kwargs)
 
-    def nancumsum(self, axis: int | None = None, dtype: np.dtype | None = None) -> TBatchedArray:
+    def nancumsum(
+        self,
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+    ) -> TBatchedArray:
         r"""Return the cumulative sum of array elements over a specified
         axis, treating Not a Numbers (NaNs) as zero.
 
@@ -817,6 +825,9 @@ class BatchedArray(np.ndarray):
                 unless a has an integer dtype with a precision less
                 than that of  the default platform integer.
                 In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
 
         Returns:
             The cumulative sum of elements along a specified axis,
@@ -838,9 +849,14 @@ class BatchedArray(np.ndarray):
 
         ```
         """
-        return np.nancumsum(self, axis=axis, dtype=dtype).view(np.ndarray if axis is None else None)
+        x = np.nancumsum(self, axis=axis, dtype=dtype, out=out)
+        if out is None and axis is None:
+            x = x.view(np.ndarray)
+        return x
 
-    def nancumsum_along_batch(self, dtype: np.dtype | None = None) -> TBatchedArray:
+    def nancumsum_along_batch(
+        self, dtype: DTypeLike = None, out: np.ndarray | None = None
+    ) -> TBatchedArray:
         r"""Return the cumulative sum of array elements over a given axis
         treating Not a Numbers (NaNs) as zero.
 
@@ -851,6 +867,9 @@ class BatchedArray(np.ndarray):
                 unless a has an integer dtype with a precision less
                 than that of  the default platform integer.
                 In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
 
         Returns:
             The cumulative sum of elements along a batch axis,
@@ -872,7 +891,7 @@ class BatchedArray(np.ndarray):
 
         ```
         """
-        return self.nancumsum(axis=self.batch_axis, dtype=dtype)
+        return self.nancumsum(axis=self.batch_axis, dtype=dtype, out=out)
 
     def permute_along_axis(
         self, permutation: np.ndarray | Sequence, axis: int = 0

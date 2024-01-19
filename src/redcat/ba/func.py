@@ -77,10 +77,10 @@ __all__ = [
 ]
 
 from collections.abc import Sequence
-from typing import Any, TypeVar
+from typing import Any, SupportsIndex, TypeVar
 
 import numpy as np
-from numpy.typing import ArrayLike
+from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba.core import BatchedArray
 from redcat.types import RNGType
@@ -292,7 +292,10 @@ def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedA
 
 
 def nancumsum(
-    a: TBatchedArray, axis: int | None = None, dtype: np.dtype | None = None
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
 ) -> TBatchedArray:
     r"""Return the cumulative sum of array elements over a specified
     axis, treating Not a Numbers (NaNs) as zero.
@@ -303,10 +306,13 @@ def nancumsum(
             flattened array.
         dtype: Type of the returned array and of the accumulator
             in which the elements are summed. If dtype is not
-            specified, it defaults to the dtype of ``self``,
-            unless a has an integer dtype with a precision less
-            than that of  the default platform integer.
+            specified, it defaults to the dtype of ``a``,
+            unless ``a`` has an integer dtype with a precision
+            less than that of  the default platform integer.
             In that case, the default platform integer is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
 
     Returns:
         The cumulative sum of elements along a specified axis,
@@ -328,10 +334,14 @@ def nancumsum(
 
     ```
     """
-    return a.nancumsum(axis=axis, dtype=dtype)
+    return a.nancumsum(axis=axis, dtype=dtype, out=out)
 
 
-def nancumsum_along_batch(a: TBatchedArray, dtype: np.dtype | None = None) -> TBatchedArray:
+def nancumsum_along_batch(
+    a: TBatchedArray,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
+) -> TBatchedArray:
     r"""Return the cumulative sum of array elements over a given axis
     treating Not a Numbers (NaNs) as zero.
 
@@ -342,6 +352,9 @@ def nancumsum_along_batch(a: TBatchedArray, dtype: np.dtype | None = None) -> TB
             unless a has an integer dtype with a precision less
             than that of  the default platform integer.
             In that case, the default platform integer is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
 
     Returns:
         The cumulative sum of elements along a batch axis,
@@ -363,7 +376,7 @@ def nancumsum_along_batch(a: TBatchedArray, dtype: np.dtype | None = None) -> TB
 
     ```
     """
-    return a.nancumsum_along_batch(dtype=dtype)
+    return a.nancumsum_along_batch(dtype=dtype, out=out)
 
 
 def permute_along_axis(

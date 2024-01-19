@@ -503,6 +503,27 @@ def test_nancumsum_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_nancumsum_out() -> None:
+    out = ba.zeros((2, 3))
+    assert ba.nancumsum(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0, out=out) is out
+    assert objects_are_equal(out, BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])))
+
+
+def test_batched_array_nancumsum_array() -> None:
+    out = np.zeros(6)
+    assert ba.nancumsum(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out) is out
+    assert objects_are_equal(out, np.asarray([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]))
+
+
+def test_batched_array_nancumsum_along_batch_out() -> None:
+    out = ba.zeros((2, 3))
+    assert (
+        ba.nancumsum_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out)
+        is out
+    )
+    assert objects_are_equal(out, BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])))
+
+
 @pytest.mark.parametrize("permutation", [np.array([0, 2, 1, 3]), [0, 2, 1, 3], (0, 2, 1, 3)])
 def test_permute_along_axis_1d(permutation: np.ndarray | Sequence) -> None:
     assert objects_are_equal(
