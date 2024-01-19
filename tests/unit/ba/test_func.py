@@ -846,13 +846,11 @@ def test_float_power_custom_axes() -> None:
 
 @future_test
 def test_float_power_different_axes() -> None:
-    assert objects_are_allclose(
+    with pytest.raises(RuntimeError, match="The batch axes do not match."):
         np.float_power(
             BatchedArray(np.arange(10).reshape(2, 5)),
             BatchedArray(np.full((2, 5), 2.0), batch_axis=1),
-        ),
-        BatchedArray(np.array([[0, 1, 4, 9, 16], [25, 36, 49, 64, 81]], dtype=float), batch_axis=1),
-    )
+        )
 
 
 @pytest.mark.parametrize(
@@ -884,13 +882,11 @@ def test_fmax_custom_axes() -> None:
 
 @future_test
 def test_fmax_different_axes() -> None:
-    assert objects_are_allclose(
+    with pytest.raises(RuntimeError, match="The batch axes do not match."):
         np.fmax(
             BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])),
             BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
-        ),
-        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]]), batch_axis=1),
-    )
+        )
 
 
 @pytest.mark.parametrize(
@@ -919,13 +915,11 @@ def test_fmin_custom_axes() -> None:
 
 @future_test
 def test_fmin_different_axes() -> None:
-    assert objects_are_allclose(
+    with pytest.raises(RuntimeError, match="The batch axes do not match."):
         np.fmin(
             BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])),
             BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
-        ),
-        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]]), batch_axis=1),
-    )
+        )
 
 
 def test_log() -> None:
@@ -1075,13 +1069,11 @@ def test_maximum_custom_axes() -> None:
 
 @future_test
 def test_maximum_different_axes() -> None:
-    assert objects_are_allclose(
+    with pytest.raises(RuntimeError, match="The batch axes do not match."):
         np.maximum(
             BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])),
             BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
-        ),
-        BatchedArray(np.array([[2, 1, 2], [0, 1, 0]]), batch_axis=1),
-    )
+        )
 
 
 @pytest.mark.parametrize(
@@ -1110,13 +1102,11 @@ def test_minimum_custom_axes() -> None:
 
 @future_test
 def test_minimum_different_axes() -> None:
-    assert objects_are_allclose(
+    with pytest.raises(RuntimeError, match="The batch axes do not match."):
         np.minimum(
             BatchedArray(np.array([[0, 1, 2], [-2, -1, 0]])),
             BatchedArray(np.array([[2, 0, 1], [0, 1, 0]]), batch_axis=1),
-        ),
-        BatchedArray(np.array([[0, 0, 1], [-2, -1, 0]]), batch_axis=1),
-    )
+        )
 
 
 @pytest.mark.parametrize(
@@ -1142,13 +1132,11 @@ def test_power_custom_axes() -> None:
 
 @future_test
 def test_power_different_axes() -> None:
-    assert objects_are_allclose(
+    with pytest.raises(RuntimeError, match="The batch axes do not match."):
         np.power(
             BatchedArray(np.arange(10).reshape(2, 5)),
             BatchedArray(np.full((2, 5), 2.0), batch_axis=1),
-        ),
-        BatchedArray(np.array([[0, 1, 4, 9, 16], [25, 36, 49, 64, 81]]), batch_axis=1),
-    )
+        )
 
 
 def test_sign() -> None:
