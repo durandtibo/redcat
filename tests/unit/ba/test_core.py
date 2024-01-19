@@ -1712,6 +1712,48 @@ def test_batched_array_cumsum_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_nancumsum() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(),
+        np.array([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]),
+    )
+
+
+def test_batched_array_nancumsum_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=0),
+        BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+    )
+
+
+def test_batched_array_nancumsum_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=1),
+        BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]])),
+    )
+
+
+def test_batched_array_nancumsum_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumsum(axis=0),
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_nancumsum_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum_along_batch(),
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+    )
+
+
+def test_batched_array_nancumsum_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumsum_along_batch(),
+        BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]]), batch_axis=1),
+    )
+
+
 @pytest.mark.parametrize("permutation", [np.array([0, 2, 1, 3]), [0, 2, 1, 3], (0, 2, 1, 3)])
 def test_batched_array_permute_along_axis_1d(permutation: np.ndarray | Sequence) -> None:
     assert objects_are_equal(

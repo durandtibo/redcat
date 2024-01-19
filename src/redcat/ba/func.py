@@ -72,6 +72,8 @@ __all__ = [
     "square",
     "sum",
     "sum_along_batch",
+    "nancumsum",
+    "nancumsum_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -287,6 +289,81 @@ def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedA
     ```
     """
     return a.cumsum_along_batch(*args, **kwargs)
+
+
+def nancumsum(
+    a: TBatchedArray, axis: int | None = None, dtype: np.dtype | None = None
+) -> TBatchedArray:
+    r"""Return the cumulative sum of array elements over a specified
+    axis, treating Not a Numbers (NaNs) as zero.
+
+    Args:
+        axis: Axis along which the cumulative sum is computed.
+            The default (None) is to compute the cumsum over the
+            flattened array.
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are summed. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+
+    Returns:
+        The cumulative sum of elements along a specified axis,
+            treating Not a Numbers (NaNs) as zero.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nancumsum(batch, axis=0)
+    array([[1., 0., 2.],
+           [4., 4., 7.]], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nancumsum(batch, axis=1)
+    array([[ 1.,  1.,  3.],
+           [ 3.,  7., 12.]], batch_axis=1)
+
+    ```
+    """
+    return a.nancumsum(axis=axis, dtype=dtype)
+
+
+def nancumsum_along_batch(a: TBatchedArray, dtype: np.dtype | None = None) -> TBatchedArray:
+    r"""Return the cumulative sum of array elements over a given axis
+    treating Not a Numbers (NaNs) as zero.
+
+    Args:
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are summed. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+
+    Returns:
+        The cumulative sum of elements along a batch axis,
+            treating Not a Numbers (NaNs) as zero.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nancumsum_along_batch(batch)
+    array([[1., 0., 2.],
+           [4., 4., 7.]], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nancumsum_along_batch(batch)
+    array([[ 1.,  1.,  3.],
+           [ 3.,  7., 12.]], batch_axis=1)
+
+    ```
+    """
+    return a.nancumsum_along_batch(dtype=dtype)
 
 
 def permute_along_axis(
