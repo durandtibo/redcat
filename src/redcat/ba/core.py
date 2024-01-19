@@ -16,8 +16,7 @@ from typing import Any, SupportsIndex, TypeVar
 
 import numpy as np
 from coola import objects_are_allclose
-from numpy._typing import DTypeLike
-from numpy.typing import ArrayLike
+from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
 from redcat.types import RNGType
