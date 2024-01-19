@@ -739,14 +739,26 @@ class BatchedArray(np.ndarray):
         """
         return np.argsort(self, *args, axis=self.batch_axis, **kwargs)
 
-    def cumprod_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+    def cumprod(
+        self,
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+    ) -> TBatchedArray:
         r"""Return the cumulative product of elements along a batch axis.
 
         Args:
-            args: See the documentation of ``numpy.cumprod``.
-                ``axis`` should not be passed.
-            kwargs: See the documentation of ``numpy.cumprod``.
-                ``axis`` should not be passed.
+            axis: Axis along which the cumulative product is computed.
+                By default the input is flattened.
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
 
         Returns:
             The cumulative product of elements along a batch axis.
@@ -770,16 +782,119 @@ class BatchedArray(np.ndarray):
 
         ```
         """
-        return self.cumprod(*args, axis=self.batch_axis, **kwargs)
+        x = super().cumprod(axis=axis, dtype=dtype, out=out)
+        if out is None and axis is None:
+            x = x.view(np.ndarray)
+        return x
 
-    def cumsum_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+    def cumprod_along_batch(
+        self,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+    ) -> TBatchedArray:
+        r"""Return the cumulative product of elements along a batch axis.
+
+        Args:
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+
+        Returns:
+            The cumulative product of elements along a batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.cumprod_along_batch()
+        array([[  0,   1],
+               [  0,   3],
+               [  0,  15],
+               [  0, 105],
+               [  0, 945]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.cumprod_along_batch()
+        array([[    0,     0,     0,     0,     0],
+               [    5,    30,   210,  1680, 15120]], batch_axis=1)
+
+        ```
+        """
+        return self.cumprod(axis=self.batch_axis, dtype=dtype, out=out)
+
+    def cumsum(
+        self,
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+    ) -> TBatchedArray:
         r"""Return the cumulative sum of elements along a batch axis.
 
         Args:
-            args: See the documentation of ``numpy.cumsum``.
-                ``axis`` should not be passed.
-            kwargs: See the documentation of ``numpy.cumsum``.
-                ``axis`` should not be passed.
+            axis: Axis along which the cumulative sum is computed.
+                The default (None) is to compute the cumsum over the
+                flattened array.
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+
+        Returns:
+            The cumulative sum of elements along a batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.cumsum(axis=0)
+        array([[ 0,  1],
+               [ 2,  4],
+               [ 6,  9],
+               [12, 16],
+               [20, 25]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.cumsum(axis=1)
+        array([[ 0,  1,  3,  6, 10],
+               [ 5, 11, 18, 26, 35]], batch_axis=1)
+
+        ```
+        """
+        x = super().cumsum(axis=axis, dtype=dtype, out=out)
+        if out is None and axis is None:
+            x = x.view(np.ndarray)
+        return x
+
+    def cumsum_along_batch(
+        self,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+    ) -> TBatchedArray:
+        r"""Return the cumulative sum of elements along a batch axis.
+
+        Args:
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
 
         Returns:
             The cumulative sum of elements along a batch axis.
@@ -803,7 +918,7 @@ class BatchedArray(np.ndarray):
 
         ```
         """
-        return self.cumsum(*args, axis=self.batch_axis, **kwargs)
+        return self.cumsum(axis=self.batch_axis, dtype=dtype, out=out)
 
     def nancumprod(
         self,
@@ -815,11 +930,11 @@ class BatchedArray(np.ndarray):
         specified axis, treating Not a Numbers (NaNs) as ones.
 
         Args:
-            axis: Axis along which the cumulative sum is computed.
-                The default (None) is to compute the cumsum over the
+            axis: Axis along which the cumulative product is computed.
+                The default (None) is to compute the cumprod over the
                 flattened array.
             dtype: Type of the returned array and of the accumulator
-                in which the elements are summed. If dtype is not
+                in which the elements are multiplied. If dtype is not
                 specified, it defaults to the dtype of ``self``,
                 unless a has an integer dtype with a precision less
                 than that of  the default platform integer.
@@ -861,7 +976,7 @@ class BatchedArray(np.ndarray):
 
         Args:
             dtype: Type of the returned array and of the accumulator
-                in which the elements are summed. If dtype is not
+                in which the elements are multiplied. If dtype is not
                 specified, it defaults to the dtype of ``self``,
                 unless a has an integer dtype with a precision less
                 than that of  the default platform integer.
