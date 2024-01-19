@@ -256,15 +256,24 @@ def cumprod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatched
     return a.cumprod_along_batch(*args, **kwargs)
 
 
-def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
+def cumsum_along_batch(
+    a: TBatchedArray,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
+) -> TBatchedArray:
     r"""Return the cumulative sum of elements along a batch axis.
 
     Args:
         a: Specifies the input array.
-        args: See the documentation of ``numpy.cumsum``.
-            ``axis`` should not be passed.
-        kwargs: See the documentation of ``numpy.cumsum``.
-            ``axis`` should not be passed.
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are multiplied. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
 
     Returns:
         The cumulative sum of elements along a batch axis.
@@ -290,7 +299,7 @@ def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedA
 
     ```
     """
-    return a.cumsum_along_batch(*args, **kwargs)
+    return a.cumsum_along_batch(dtype=dtype, out=out)
 
 
 def nancumprod(
