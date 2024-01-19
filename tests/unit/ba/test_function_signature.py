@@ -9,6 +9,7 @@ import pytest
 from redcat import ba
 
 FUNCTIONS = [
+    (np.nancumprod, ba.nancumprod),
     (np.nancumsum, ba.nancumsum),
 ]
 

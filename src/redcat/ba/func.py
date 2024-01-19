@@ -45,6 +45,10 @@ __all__ = [
     "nanargmax_along_batch",
     "nanargmin",
     "nanargmin_along_batch",
+    "nancumprod",
+    "nancumprod_along_batch",
+    "nancumsum",
+    "nancumsum_along_batch",
     "nanmax",
     "nanmax_along_batch",
     "nanmean",
@@ -72,8 +76,6 @@ __all__ = [
     "square",
     "sum",
     "sum_along_batch",
-    "nancumsum",
-    "nancumsum_along_batch",
 ]
 
 from collections.abc import Sequence
@@ -289,6 +291,94 @@ def cumsum_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedA
     ```
     """
     return a.cumsum_along_batch(*args, **kwargs)
+
+
+def nancumprod(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
+) -> TBatchedArray:
+    r"""Return the cumulative product of array elements over a specified
+    axis, treating Not a Numbers (NaNs) as zero.
+
+    Args:
+        axis: Axis along which the cumulative product is computed.
+            The default (None) is to compute the product over the
+            flattened array.
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are multiplied. If dtype is not
+            specified, it defaults to the dtype of ``a``,
+            unless ``a`` has an integer dtype with a precision
+            less than that of  the default platform integer.
+            In that case, the default platform integer is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+
+    Returns:
+        The cumulative product of elements along a specified axis,
+            treating Not a Numbers (NaNs) as zero.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nancumprod(batch, axis=0)
+    array([[ 1.,  1.,  2.],
+           [ 3.,  4., 10.]], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nancumprod(batch, axis=1)
+    array([[ 1.,  1.,  2.],
+           [ 3., 12., 60.]], batch_axis=1)
+
+    ```
+    """
+    return a.nancumprod(axis=axis, dtype=dtype, out=out)
+
+
+def nancumprod_along_batch(
+    a: TBatchedArray,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
+) -> TBatchedArray:
+    r"""Return the cumulative product of array elements over a given axis
+    treating Not a Numbers (NaNs) as zero.
+
+    Args:
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are summed. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+
+    Returns:
+        The cumulative product of elements along a batch axis,
+            treating Not a Numbers (NaNs) as zero.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nancumprod_along_batch(batch)
+    array([[ 1.,  1.,  2.],
+           [ 3.,  4., 10.]], batch_axis=0)
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nancumprod_along_batch(batch)
+    array([[ 1.,  1.,  2.],
+           [ 3., 12., 60.]], batch_axis=1)
+
+    ```
+    """
+    return a.nancumprod_along_batch(dtype=dtype, out=out)
 
 
 def nancumsum(
