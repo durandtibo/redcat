@@ -808,6 +808,13 @@ def test_sort() -> None:
     )
 
 
+def test_sort_axis_none() -> None:
+    assert objects_are_equal(
+        ba.sort(BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])), axis=None),
+        np.asarray([1, 2, 3, 4, 5, 5, 6, 7, 8, 9]),
+    )
+
+
 def test_sort_axis_0() -> None:
     assert objects_are_equal(
         ba.sort(BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=0),

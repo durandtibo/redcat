@@ -178,7 +178,6 @@ def array_equal(a1: ArrayLike, a2: ArrayLike, equal_nan: bool = False) -> bool:
 argsort = np.argsort
 cumprod = np.cumprod
 cumsum = np.cumsum
-sort = np.sort
 
 
 def argsort_along_batch(
@@ -627,15 +626,79 @@ def shuffle_along_batch(a: TBatchedArray, generator: RNGType | None = None) -> T
     return a.shuffle_along_batch(generator=generator)
 
 
-def sort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
+def sort(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = -1,
+    kind: SortKind | None = None,
+    order: str | Sequence[str] | None = None,
+) -> TBatchedArray:
+    r"""Return a sorted copy of an array.
+
+    Args:
+        a: Array to sort.
+        axis: Axis along which to sort. If None, the array is flattened
+            before sorting. The default is -1, which sorts along the
+            last axis.
+        kind: Sorting algorithm. The default is ‘quicksort’. Note
+            that both ‘stable’ and ‘mergesort’ use timsort under
+            the covers and, in general, the actual implementation
+            will vary with data type. The ‘mergesort’ option is
+            retained for backwards compatibility.
+        order: When ``self`` is an array with fields defined, this
+            argument specifies which fields to compare first,
+            second, etc. A single field can be specified as a
+            string, and not all fields need be specified, but
+            unspecified fields will still be used, in the order in
+            which they come up in the dtype, to break ties.
+
+    Returns:
+        A sorted copy of an array.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> x = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> y = ba.sort(x, axis=0)
+    >>> y
+    array([[0, 1],
+           [2, 3],
+           [4, 5],
+           [6, 7],
+           [8, 9]], batch_axis=0)
+    >>> x = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> y = ba.sort(x, axis=1)
+    >>> y
+    array([[0, 1, 2, 3, 4],
+           [5, 6, 7, 8, 9]], batch_axis=1)
+
+    ```
+    """
+    out = np.sort(a, axis=axis, kind=kind, order=order)
+    if axis is None:
+        out = out.view(np.ndarray)
+    return out
+
+
+def sort_along_batch(
+    a: TBatchedArray, kind: SortKind | None = None, order: str | Sequence[str] | None = None
+) -> TBatchedArray:
     r"""Return a sorted copy of an array along the batch axis.
 
     Args:
         a: Array to sort.
-        args: See the documentation of ``numpy.sort``.
-            ``axis`` should not be passed.
-        kwargs: See the documentation of ``numpy.sort``.
-            ``axis`` should not be passed.
+        kind: Sorting algorithm. The default is ‘quicksort’. Note
+            that both ‘stable’ and ‘mergesort’ use timsort under
+            the covers and, in general, the actual implementation
+            will vary with data type. The ‘mergesort’ option is
+            retained for backwards compatibility.
+        order: When ``self`` is an array with fields defined, this
+            argument specifies which fields to compare first,
+            second, etc. A single field can be specified as a
+            string, and not all fields need be specified, but
+            unspecified fields will still be used, in the order in
+            which they come up in the dtype, to break ties.
 
     Returns:
         A sorted copy of an array along the batch axis.
@@ -661,7 +724,7 @@ def sort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArr
 
     ```
     """
-    return np.sort(a, *args, axis=a.batch_axis, **kwargs)
+    return np.sort(a, axis=a.batch_axis, kind=kind, order=order)
 
 
 #####################
