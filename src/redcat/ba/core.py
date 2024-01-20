@@ -12,7 +12,7 @@ from __future__ import annotations
 __all__ = ["BatchedArray"]
 
 from collections.abc import Sequence
-from typing import Any, SupportsIndex, TypeVar
+from typing import Any, Literal, SupportsIndex, TypeVar
 
 import numpy as np
 from coola import objects_are_allclose
@@ -26,6 +26,8 @@ from redcat.utils.random import randperm
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchedArray = TypeVar("TBatchedArray", np.ndarray, "BatchedArray")
+
+SortKind = Literal["quicksort", "mergesort", "heapsort", "stable"]
 
 
 class BatchedArray(np.ndarray):
@@ -705,15 +707,24 @@ class BatchedArray(np.ndarray):
     #     Mathematical | advanced arithmetical     #
     ################################################
 
-    def argsort_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedArray:
+    def argsort_along_batch(
+        self, kind: SortKind | None = None, order: str | Sequence[str] | None = None
+    ) -> TBatchedArray:
         r"""Return the indices that would sort the batch along the batch
         dimension.
 
         Args:
-            args: See the documentation of ``numpy.argsort``.
-                ``axis`` should not be passed.
-            kwargs: See the documentation of ``numpy.argsort``.
-                ``axis`` should not be passed.
+            kind: Sorting algorithm. The default is ‘quicksort’. Note
+                that both ‘stable’ and ‘mergesort’ use timsort under
+                the covers and, in general, the actual implementation
+                will vary with data type. The ‘mergesort’ option is
+                retained for backwards compatibility.
+            order: When ``self`` is an array with fields defined, this
+                argument specifies which fields to compare first,
+                second, etc. A single field can be specified as a
+                string, and not all fields need be specified, but
+                unspecified fields will still be used, in the order in
+                which they come up in the dtype, to break ties.
 
         Returns:
             The indices that sort the batch along the batch dimension.
@@ -737,7 +748,7 @@ class BatchedArray(np.ndarray):
 
         ```
         """
-        return np.argsort(self, *args, axis=self.batch_axis, **kwargs)
+        return self.argsort(axis=self.batch_axis, kind=kind, order=order)
 
     def cumprod(
         self,
