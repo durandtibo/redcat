@@ -14,6 +14,7 @@ FUNCTIONS = [
     (np.cumsum, ba.cumsum),
     (np.nancumprod, ba.nancumprod),
     (np.nancumsum, ba.nancumsum),
+    (np.sort, ba.sort),
 ]
 
 

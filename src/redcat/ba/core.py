@@ -760,7 +760,7 @@ class BatchedArray(np.ndarray):
 
         Args:
             axis: Axis along which the cumulative product is computed.
-                By default the input is flattened.
+                By default, the input is flattened.
             dtype: Type of the returned array and of the accumulator
                 in which the elements are multiplied. If dtype is not
                 specified, it defaults to the dtype of ``self``,
@@ -1236,14 +1236,23 @@ class BatchedArray(np.ndarray):
         """
         return self.shuffle_along_axis(axis=self.batch_axis, generator=generator)
 
-    def sort_along_batch(self, *args: Any, **kwargs: Any) -> None:
+    def sort_along_batch(
+        self, kind: SortKind | None = None, order: str | Sequence[str] | None = None
+    ) -> None:
         r"""Sort an array in-place along the batch axis.
 
         Args:
-            args: See the documentation of ``numpy.ndarray.sort``.
-                ``axis`` should not be passed.
-            kwargs: See the documentation of ``numpy.ndarray.sort``.
-                ``axis`` should not be passed.
+            kind: Sorting algorithm. The default is ‘quicksort’. Note
+                that both ‘stable’ and ‘mergesort’ use timsort under
+                the covers and, in general, the actual implementation
+                will vary with data type. The ‘mergesort’ option is
+                retained for backwards compatibility.
+            order: When ``self`` is an array with fields defined, this
+                argument specifies which fields to compare first,
+                second, etc. A single field can be specified as a
+                string, and not all fields need be specified, but
+                unspecified fields will still be used, in the order in
+                which they come up in the dtype, to break ties.
 
         Example usage:
 
@@ -1266,7 +1275,7 @@ class BatchedArray(np.ndarray):
 
         ```
         """
-        self.sort(*args, axis=self.batch_axis, **kwargs)
+        self.sort(axis=self.batch_axis, kind=kind, order=order)
 
     #####################
     #     Pointwise     #
