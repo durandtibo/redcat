@@ -9,6 +9,7 @@ import pytest
 from redcat import ba
 
 FUNCTIONS = [
+    (np.argsort, ba.argsort),
     (np.cumprod, ba.cumprod),
     (np.cumsum, ba.cumsum),
     (np.nancumprod, ba.nancumprod),

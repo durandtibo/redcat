@@ -84,7 +84,7 @@ from typing import Any, SupportsIndex, TypeVar
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
-from redcat.ba.core import BatchedArray
+from redcat.ba.core import BatchedArray, SortKind
 from redcat.types import RNGType
 
 TBatchedArray = TypeVar("TBatchedArray", np.ndarray, "BatchedArray")
@@ -181,16 +181,25 @@ cumsum = np.cumsum
 sort = np.sort
 
 
-def argsort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
+def argsort_along_batch(
+    a: TBatchedArray, kind: SortKind | None = None, order: str | Sequence[str] | None = None
+) -> TBatchedArray:
     r"""Return the indices that would sort the batch along the batch
     dimension.
 
     Args:
         a: Array to sort.
-        args: See the documentation of ``numpy.argsort``.
-            ``axis`` should not be passed.
-        kwargs: See the documentation of ``numpy.argsort``.
-            ``axis`` should not be passed.
+        kind: Sorting algorithm. The default is ‘quicksort’. Note
+            that both ‘stable’ and ‘mergesort’ use timsort under
+            the covers and, in general, the actual implementation
+            will vary with data type. The ‘mergesort’ option is
+            retained for backwards compatibility.
+        order: When ``self`` is an array with fields defined, this
+            argument specifies which fields to compare first,
+            second, etc. A single field can be specified as a
+            string, and not all fields need be specified, but
+            unspecified fields will still be used, in the order in
+            which they come up in the dtype, to break ties.
 
     Returns:
         The indices that sort the batch along the batch dimension.
@@ -216,7 +225,7 @@ def argsort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatched
 
     ```
     """
-    return a.argsort_along_batch(*args, **kwargs)
+    return a.argsort_along_batch(kind=kind, order=order)
 
 
 def cumprod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
@@ -623,9 +632,9 @@ def sort_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArr
 
     Args:
         a: Array to sort.
-        args: See the documentation of ``numpy.argsort``.
+        args: See the documentation of ``numpy.sort``.
             ``axis`` should not be passed.
-        kwargs: See the documentation of ``numpy.argsort``.
+        kwargs: See the documentation of ``numpy.sort``.
             ``axis`` should not be passed.
 
     Returns:
