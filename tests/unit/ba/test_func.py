@@ -352,6 +352,20 @@ def test_argsort_2d_axis_0() -> None:
     )
 
 
+def test_argsort_2d_axis_1() -> None:
+    assert objects_are_equal(
+        ba.argsort(BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]])), axis=1),
+        BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]])),
+    )
+
+
+def test_argsort_2d_axis_none() -> None:
+    assert objects_are_equal(
+        ba.argsort(BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])), axis=None),
+        np.asarray([2, 4, 8, 0, 5, 6, 7, 3, 9, 1]),
+    )
+
+
 def test_argsort_custom_axis() -> None:
     assert objects_are_equal(
         ba.argsort(BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)),

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "BatchedArray",
+    "abs",
     "absolute",
     "allclose",
     "argmax",
@@ -106,6 +107,7 @@ from redcat.ba.creation import (
     zeros_like,
 )
 from redcat.ba.func import (
+    abs,
     absolute,
     allclose,
     argmax,

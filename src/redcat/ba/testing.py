@@ -7,6 +7,9 @@ from dataclasses import dataclass
 
 import numpy as np
 
+# Default shape value
+SHAPE = (4, 10)
+
 
 def make_rand_arrays(shape: int | Sequence[int], n: int) -> tuple[np.ndarray, ...]:
     r"""Make a tuple of arrays filled with random values sampled from a
@@ -96,7 +99,7 @@ class FunctionCheck:
         ```
         """
         if self.arrays is None:
-            return make_rand_arrays(shape=(4, 10), n=self.nin)
+            return make_rand_arrays(shape=SHAPE, n=self.nin)
         return self.arrays
 
     @classmethod
