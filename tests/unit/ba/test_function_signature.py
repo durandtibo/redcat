@@ -17,6 +17,27 @@ FUNCTIONS = [
     (np.sort, ba.sort),
 ]
 
+U_FUNCTIONS = [
+    (np.absolute, ba.absolute),
+    (np.clip, ba.clip),
+    (np.exp, ba.exp),
+    (np.exp2, ba.exp2),
+    (np.expm1, ba.expm1),
+    (np.float_power, ba.float_power),
+    (np.fmax, ba.fmax),
+    (np.fmin, ba.fmin),
+    (np.log, ba.log),
+    (np.log10, ba.log10),
+    (np.log1p, ba.log1p),
+    (np.log2, ba.log2),
+    (np.maximum, ba.maximum),
+    (np.minimum, ba.minimum),
+    (np.power, ba.power),
+    (np.sign, ba.sign),
+    (np.sqrt, ba.sqrt),
+    (np.square, ba.square),
+]
+
 
 @pytest.mark.parametrize(("func1", "func2"), FUNCTIONS)
 def test_function_signature(func1: Callable, func2: Callable) -> None:

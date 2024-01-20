@@ -175,9 +175,64 @@ def array_equal(a1: ArrayLike, a2: ArrayLike, equal_nan: bool = False) -> bool:
 #     Item selection and manipulation     #
 ###########################################
 
-argsort = np.argsort
 cumprod = np.cumprod
 cumsum = np.cumsum
+
+
+def argsort(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = -1,
+    kind: SortKind | None = None,
+    order: str | Sequence[str] | None = None,
+) -> TBatchedArray:
+    r"""Return the indices that would sort the batch along the specified
+    dimension.
+
+    Args:
+        a: Array to sort.
+        axis: Axis along which to sort. If None, the array is flattened
+            before sorting. The default is -1, which sorts along the
+            last axis.
+        kind: Sorting algorithm. The default is ‘quicksort’. Note
+            that both ‘stable’ and ‘mergesort’ use timsort under
+            the covers and, in general, the actual implementation
+            will vary with data type. The ‘mergesort’ option is
+            retained for backwards compatibility.
+        order: When ``self`` is an array with fields defined, this
+            argument specifies which fields to compare first,
+            second, etc. A single field can be specified as a
+            string, and not all fields need be specified, but
+            unspecified fields will still be used, in the order in
+            which they come up in the dtype, to break ties.
+
+    Returns:
+        The indices that sort the batch along the batch dimension.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba
+    >>> x = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> y = ba.argsort(x, axis=0)
+    >>> y
+     array([[0, 0],
+            [1, 1],
+            [2, 2],
+            [3, 3],
+            [4, 4]], batch_axis=0)
+    >>> x = ba.BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+    >>> y = ba.argsort(x, axis=1)
+    >>> y
+    array([[0, 1, 2, 3, 4],
+           [0, 1, 2, 3, 4]], batch_axis=1)
+
+    ```
+    """
+    out = np.argsort(a, axis=axis, kind=kind, order=order)
+    if axis is None:
+        out = out.view(np.ndarray)
+    return out
 
 
 def argsort_along_batch(
@@ -227,15 +282,24 @@ def argsort_along_batch(
     return a.argsort_along_batch(kind=kind, order=order)
 
 
-def cumprod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatchedArray:
+def cumprod_along_batch(
+    a: TBatchedArray,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
+) -> TBatchedArray:
     r"""Return the cumulative product of elements along a batch axis.
 
     Args:
         a: Specifies the input array.
-        args: See the documentation of ``numpy.cumprod``.
-            ``axis`` should not be passed.
-        kwargs: See the documentation of ``numpy.cumprod``.
-            ``axis`` should not be passed.
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are multiplied. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
 
     Returns:
         The cumulative product of elements along a batch axis.
@@ -261,7 +325,7 @@ def cumprod_along_batch(a: TBatchedArray, *args: Any, **kwargs: Any) -> TBatched
 
     ```
     """
-    return a.cumprod_along_batch(*args, **kwargs)
+    return a.cumprod_along_batch(dtype=dtype, out=out)
 
 
 def cumsum_along_batch(
@@ -274,7 +338,7 @@ def cumsum_along_batch(
     Args:
         a: Specifies the input array.
         dtype: Type of the returned array and of the accumulator
-            in which the elements are multiplied. If dtype is not
+            in which the elements are summed. If dtype is not
             specified, it defaults to the dtype of ``self``,
             unless a has an integer dtype with a precision less
             than that of  the default platform integer.
@@ -731,7 +795,7 @@ def sort_along_batch(
 #     Pointwise     #
 #####################
 
-
+abs = np.abs  # noqa: A001
 absolute = np.absolute
 clip = np.clip
 exp = np.exp

@@ -8,10 +8,13 @@ from coola import objects_are_allclose
 from pytest import mark
 
 from redcat.ba import BatchedArray
+from redcat.ba.testing import FunctionCheck, make_randn_arrays
 
-BATCH_CLASSES = (BatchedArray,)
+BATCH_CLASSES = (BatchedArray, partial(BatchedArray, batch_axis=1))
 DTYPES = (int, float)
 SHAPES = ((2, 3), (2, 3, 4), (2, 3, 4, 5))
+
+SHAPE = (4, 10)
 
 
 @mark.parametrize("cls", BATCH_CLASSES)
@@ -42,7 +45,54 @@ def test_array_size(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
     assert cls(array).size == array.size
 
 
-UNARY_FUNCTIONS = (
+FLOATING_FUNCTIONS = [
+    FunctionCheck.create_ufunc(np.ceil, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.copysign, arrays=make_randn_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.fabs, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.floor, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.fmod, arrays=make_randn_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.frexp, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.isfinite, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.isinf, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.isnan, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(
+        np.isnat,
+        arrays=(
+            np.array(
+                [
+                    ["2007-07-13", "2007-07-14"],
+                    ["2006-01-13", "2006-01-14"],
+                    ["2010-08-13", "2010-08-14"],
+                ],
+                dtype="datetime64",
+            ),
+        ),
+    ),
+    FunctionCheck.create_ufunc(
+        np.ldexp, arrays=(np.random.rand(*SHAPE), np.random.randint(0, 10, size=SHAPE))
+    ),
+    FunctionCheck.create_ufunc(np.modf, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.nextafter, arrays=make_randn_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.signbit, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.spacing, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.trunc, arrays=make_randn_arrays(shape=SHAPE, n=1)),
+]
+
+FUNCTIONS = FLOATING_FUNCTIONS
+
+
+@mark.parametrize("func_check", FUNCTIONS)
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_array_checks(func_check: FunctionCheck, cls: type[np.ndarray]) -> None:
+    func = func_check.function
+    arrays = func_check.get_arrays()
+    outputs = func(*[cls(arr) for arr in arrays])
+    outs = func(*arrays)
+    expected_outputs = tuple([cls(out) for out in outs]) if func_check.nout > 1 else cls(outs)
+    assert objects_are_allclose(outputs, expected_outputs, equal_nan=True)
+
+
+UNARY_FUNCTIONS = [
     # np.arctan2,
     # np.max,
     # np.min,
@@ -54,6 +104,7 @@ UNARY_FUNCTIONS = (
     # partial(np.unsqueeze, axis=-1),
     # partial(np.unsqueeze, axis=0),
     np.abs,
+    np.absolute,
     np.angle,
     np.arccos,
     np.arccosh,
@@ -106,9 +157,9 @@ UNARY_FUNCTIONS = (
     partial(np.cumsum, axis=0, dtype=float),
     partial(np.cumsum, axis=0, dtype=int),
     partial(np.cumsum, axis=1),
-)
+]
 
-PAIRWISE_FUNCTIONS = (
+PAIRWISE_FUNCTIONS = [
     np.add,
     np.divide,
     # np.divmod,
@@ -139,9 +190,9 @@ PAIRWISE_FUNCTIONS = (
     np.remainder,
     np.subtract,
     np.true_divide,
-)
+]
 
-UNARY_TO_NDARRAY_FUNCTIONS = (
+IN1_TO_NDARRAY_FUNCTIONS = [
     np.argmax,
     np.argmin,
     np.max,
@@ -150,27 +201,42 @@ UNARY_TO_NDARRAY_FUNCTIONS = (
     np.min,
     partial(np.argmax, axis=0),
     partial(np.argmax, axis=1),
+    partial(np.argmax, axis=None),
     partial(np.argmin, axis=0),
     partial(np.argmin, axis=1),
+    partial(np.argmin, axis=None),
+    partial(np.cumprod, axis=None),
+    partial(np.cumsum, axis=None),
     partial(np.max, axis=0),
     partial(np.max, axis=1),
+    partial(np.max, axis=None),
     partial(np.mean, axis=0),
     partial(np.mean, axis=1),
+    partial(np.mean, axis=None),
     partial(np.median, axis=0),
     partial(np.median, axis=1),
+    partial(np.median, axis=None),
     partial(np.min, axis=0),
     partial(np.min, axis=1),
-)
+    partial(np.min, axis=None),
+    partial(np.nancumprod, axis=None),
+    partial(np.nancumsum, axis=None),
+    # partial(np.argsort, axis=None),
+    # partial(np.sort, axis=None),
+]
+
+IN1_FUNCTIONS = UNARY_FUNCTIONS
+IN2_FUNCTIONS = PAIRWISE_FUNCTIONS
 
 
-@mark.parametrize("func", UNARY_FUNCTIONS)
+@mark.parametrize("func", IN1_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_unary(func: Callable, cls: type[np.ndarray]) -> None:
     array = np.random.rand(2, 3) * 2.0
-    assert func(cls(array)).allclose(cls(func(array)), equal_nan=True)
+    assert objects_are_allclose(func(cls(array)), cls(func(array)), equal_nan=True)
 
 
-@mark.parametrize("func", UNARY_TO_NDARRAY_FUNCTIONS)
+@mark.parametrize("func", IN1_TO_NDARRAY_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_unary_to_ndarray(func: Callable, cls: type[np.ndarray]) -> None:
     array = np.random.rand(2, 3) * 2.0
@@ -180,25 +246,31 @@ def test_unary_to_ndarray(func: Callable, cls: type[np.ndarray]) -> None:
 @mark.parametrize("func", UNARY_FUNCTIONS)
 def test_unary_batched_array_custom_axis(func: Callable) -> None:
     array = np.random.rand(2, 3, 4) * 2.0
-    assert func(BatchedArray(array, batch_axis=1)).allclose(
-        BatchedArray(func(array), batch_axis=1), equal_nan=True
+    assert objects_are_allclose(
+        func(BatchedArray(array, batch_axis=1)),
+        BatchedArray(func(array), batch_axis=1),
+        equal_nan=True,
     )
 
 
-@mark.parametrize("func", PAIRWISE_FUNCTIONS)
+@mark.parametrize("func", IN2_FUNCTIONS)
 @mark.parametrize("cls", BATCH_CLASSES)
 def test_pairwise(func: Callable, cls: type[np.ndarray]) -> None:
     array1 = np.random.rand(2, 3, 4)
     array2 = np.random.rand(2, 3, 4) + 1.0
-    assert func(cls(array1), cls(array2)).allclose(cls(func(array1, array2)), equal_nan=True)
+    assert objects_are_allclose(
+        func(cls(array1), cls(array2)), cls(func(array1, array2)), equal_nan=True
+    )
 
 
-@mark.parametrize("func", PAIRWISE_FUNCTIONS)
+@mark.parametrize("func", IN2_FUNCTIONS)
 def test_pairwise_batched_array_custom_axis(func: Callable) -> None:
     array1 = np.random.rand(2, 3)
     array2 = np.random.rand(2, 3) + 1.0
-    assert func(BatchedArray(array1, batch_axis=1), BatchedArray(array2, batch_axis=1)).allclose(
-        BatchedArray(func(array1, array2), batch_axis=1), equal_nan=True
+    assert objects_are_allclose(
+        func(BatchedArray(array1, batch_axis=1), BatchedArray(array2, batch_axis=1)),
+        BatchedArray(func(array1, array2), batch_axis=1),
+        equal_nan=True,
     )
 
 
