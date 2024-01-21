@@ -210,10 +210,12 @@ def test_batched_array(func_check: FunctionCheck, cls: type[np.ndarray]) -> None
 def test_in2_batched_array_with_array(func_check: FunctionCheck, cls: type[np.ndarray]) -> None:
     func = func_check.function
     arrays = func_check.get_arrays()
-    outputs = func(cls(arrays[0]), arrays[1])
+    outputs1 = func(cls(arrays[0]), arrays[1])
+    outputs2 = func(arrays[0], cls(arrays[1]))
     outs = func(*arrays)
     expected_outputs = tuple([cls(out) for out in outs]) if func_check.nout > 1 else cls(outs)
-    assert objects_are_allclose(outputs, expected_outputs)
+    assert objects_are_allclose(outputs1, expected_outputs)
+    assert objects_are_allclose(outputs2, expected_outputs)
 
 
 @mark.parametrize("func_check", IN2_FUNCTIONS)
