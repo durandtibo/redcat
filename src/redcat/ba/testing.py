@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["FunctionCheck", "make_rand_arrays", "make_randn_arrays"]
+__all__ = ["FunctionCheck", "normal_arrays", "uniform_arrays"]
 
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
@@ -11,66 +11,92 @@ import numpy as np
 SHAPE = (4, 10)
 
 
-def make_rand_arrays(shape: int | Sequence[int], n: int) -> tuple[np.ndarray, ...]:
+def normal_arrays(
+    shape: int | Sequence[int],
+    n: int,
+    loc: float = 0.0,
+    scale: float = 1.0,
+    rng: np.random.Generator | None = None,
+) -> tuple[np.ndarray, ...]:
     r"""Make a tuple of arrays filled with random values sampled from a
-    uniform distribution U(0,1).
+    Normal distribution.
 
     Args:
         shape: The dimensions of the returned arrays, must be
             non-negative.
         n: The number of arrays.
-
-    Returns:
-        A tuple of arrays filled with random values sampled from a
-            uniform distribution U(0,1).
-
-    Example usage:
-
-    ```pycon
-    >>> from redcat.ba.testing import make_rand_arrays
-    >>> arrays = make_rand_arrays(shape=(2, 3), n=1)
-    >>> arrays
-    (array([[...]]),)
-    >>> arrays = make_rand_arrays(shape=(2, 3), n=2)
-    >>> arrays
-    (array([[...]]), array([[...]]))
-
-    ```
-    """
-    if isinstance(shape, int):
-        shape = (shape,)
-    return tuple(np.random.rand(*shape) for _ in range(n))
-
-
-def make_randn_arrays(shape: int | Sequence[int], n: int) -> tuple[np.ndarray, ...]:
-    r"""Make a tuple of arrays filled with random values sampled from a
-    Normal distribution N(0,1).
-
-    Args:
-        shape: The dimensions of the returned arrays, must be
-            non-negative.
-        n: The number of arrays.
+        loc: Mean (“centre”) of the distribution.
+        scale: Standard deviation (spread or “width”) of the
+            distribution. Must be non-negative.
+        rng: A pseudo-random number generator.
 
     Returns:
         A tuple of arrays filled with random values sampled from
-            a Normal distribution N(0,1).
+            a Normal distribution.
 
     Example usage:
 
     ```pycon
-    >>> from redcat.ba.testing import make_randn_arrays
-    >>> arrays = make_randn_arrays(shape=(2, 3), n=1)
+    >>> from redcat.ba.testing import normal_arrays
+    >>> arrays = normal_arrays(shape=(2, 3), n=1)
     >>> arrays
     (array([[...]]),)
-    >>> arrays = make_randn_arrays(shape=(2, 3), n=2)
+    >>> arrays = normal_arrays(shape=(2, 3), n=2)
     >>> arrays
     (array([[...]]), array([[...]]))
 
     ```
     """
-    if isinstance(shape, int):
-        shape = (shape,)
-    return tuple(np.random.randn(*shape) for _ in range(n))
+    if rng is None:
+        rng = np.random.default_rng()
+    return tuple(rng.normal(loc=loc, scale=scale, size=shape) for _ in range(n))
+
+
+def uniform_arrays(
+    shape: int | Sequence[int],
+    n: int,
+    low: float = 0.0,
+    high: float = 1.0,
+    rng: np.random.Generator | None = None,
+) -> tuple[np.ndarray, ...]:
+    r"""Make a tuple of arrays filled with random values sampled from a
+    uniform distribution.
+
+    Args:
+        shape: The dimensions of the returned arrays, must be
+            non-negative.
+        n: The number of arrays.
+        low: Lower boundary of the output interval. All values
+            generated will be greater than or equal to low.
+            The default value is 0.0.
+        high: Upper boundary of the output interval. All values
+            generated will be less than high. The high limit may be
+            included in the returned array of floats due to
+            floating-point rounding in the equation
+            ``low + (high-low) * random_sample()``. ``high - low``
+            must be non-negative. The default value is 1.0.
+        rng: A pseudo-random number generator.
+
+    Returns:
+        A tuple of arrays filled with random values sampled from a
+            uniform distribution.
+
+    Example usage:
+
+    ```pycon
+    >>> from redcat.ba.testing import uniform_arrays
+    >>> arrays = uniform_arrays(shape=(2, 3), n=1)
+    >>> arrays
+    (array([[...]]),)
+    >>> arrays = uniform_arrays(shape=(2, 3), n=2)
+    >>> arrays
+    (array([[...]]), array([[...]]))
+
+    ```
+    """
+    if rng is None:
+        rng = np.random.default_rng()
+    return tuple(rng.uniform(low=low, high=high, size=shape) for _ in range(n))
 
 
 @dataclass
@@ -99,7 +125,7 @@ class FunctionCheck:
         ```
         """
         if self.arrays is None:
-            return make_rand_arrays(shape=SHAPE, n=self.nin)
+            return uniform_arrays(shape=SHAPE, n=self.nin)
         return self.arrays
 
     @classmethod
