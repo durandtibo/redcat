@@ -81,30 +81,134 @@ def test_batched_array_init_incorrect_data_axis() -> None:
         BatchedArray(np.array(2))
 
 
+#########################
+#     Memory layout     #
+#########################
+
+
 @pytest.mark.parametrize("batch_size", (1, 2))
 def test_batched_array_batch_size(batch_size: int) -> None:
     assert BatchedArray(np.arange(batch_size)).batch_size == batch_size
 
 
-def test_batched_array_dtype() -> None:
-    assert ba.ones(shape=(2, 3)).dtype == float
-
-
-def test_batched_array_ndim() -> None:
-    assert ba.ones(shape=(2, 3)).ndim == 2
+def test_batched_array_flags() -> None:
+    flags = ba.ones(shape=(2, 3)).flags
+    assert flags["C_CONTIGUOUS"]
+    assert not flags["F_CONTIGUOUS"]
+    assert not flags["OWNDATA"]
+    assert flags["WRITEABLE"]
+    assert flags["ALIGNED"]
 
 
 def test_batched_array_shape() -> None:
     assert ba.ones(shape=(2, 3)).shape == (2, 3)
 
 
+def test_batched_array_strides_float32() -> None:
+    assert ba.ones(shape=(2, 3), dtype=np.float32).strides == (12, 4)
+
+
+def test_batched_array_strides_float64() -> None:
+    assert ba.ones(shape=(2, 3), dtype=np.float64).strides == (24, 8)
+
+
+def test_batched_array_ndim() -> None:
+    assert ba.ones(shape=(2, 3)).ndim == 2
+
+
+def test_batched_array_data() -> None:
+    assert isinstance(ba.ones(shape=(2, 3)).data, memoryview)
+
+
 def test_batched_array_size() -> None:
     assert ba.ones(shape=(2, 3)).size == 6
 
 
-#################################
-#     Conversion operations     #
-#################################
+def test_batched_array_itemsize() -> None:
+    assert ba.ones(shape=(2, 3)).itemsize == 8
+
+
+def test_batched_array_nbytes() -> None:
+    assert ba.ones(shape=(2, 3)).nbytes == 48
+
+
+def test_batched_array_base() -> None:
+    data = np.arange(6, dtype=np.float64).reshape(2, 3)
+    array = ba.array(data)
+    assert objects_are_equal(array.base, data)
+
+
+#####################
+#     Data type     #
+#####################
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_batched_array_dtype(dtype: np.dtype) -> None:
+    assert ba.ones(shape=(2, 3), dtype=dtype).dtype == dtype
+
+
+############################
+#     Other attributes     #
+############################
+
+
+def test_batched_array_real() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.arange(6, dtype=np.float64).reshape(2, 3)
+            + np.arange(start=1, stop=7, dtype=np.float64).reshape(2, 3) * 1j
+        ).real,
+        BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3)),
+    )
+
+
+def test_batched_array_imag() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.arange(6, dtype=np.float64).reshape(2, 3)
+            + np.arange(start=1, stop=7, dtype=np.float64).reshape(2, 3) * 1j
+        ).imag,
+        BatchedArray(np.arange(start=1, stop=7, dtype=np.float64).reshape(2, 3)),
+    )
+
+
+def test_batched_array_flat() -> None:
+    array = BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3))
+    assert objects_are_equal(np.array(array.flat), np.arange(6, dtype=np.float64))
+
+
+############################
+#     Array conversion     #
+############################
+
+
+@pytest.mark.parametrize(
+    "array", [BatchedArray(np.ones(shape=1)), BatchedArray(np.ones(shape=(1, 1)), batch_axis=1)]
+)
+def test_batched_array_item(array: BatchedArray) -> None:
+    assert objects_are_equal(array.item(), 1.0)
+
+
+@pytest.mark.parametrize(
+    "array",
+    [
+        BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3)),
+        BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3), batch_axis=1),
+    ],
+)
+def test_batched_array_tolist(array: BatchedArray) -> None:
+    assert objects_are_equal(array.tolist(), [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0]])
+
+
+def test_batched_array_itemset() -> None:
+    array = BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3))
+    array.itemset((1, 1), 9)
+    assert objects_are_equal(array, BatchedArray(np.array([[0.0, 1.0, 2.0], [3.0, 9.0, 5.0]])))
+
+
+def test_batched_array_tostring() -> None:
+    assert isinstance(BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3)).tobytes(), bytes)
 
 
 def test_batched_array_astype() -> None:
@@ -121,9 +225,13 @@ def test_batched_array_astype_custom_axes() -> None:
     )
 
 
-###############################
-#     Creation operations     #
-###############################
+def test_batched_array_byteswap() -> None:
+    array = BatchedArray(np.arange(6, dtype=np.int32))
+    assert objects_are_equal(list(map(hex, array)), ["0x0", "0x1", "0x2", "0x3", "0x4", "0x5"])
+    assert objects_are_equal(
+        list(map(hex, array.byteswap())),
+        ["0x0", "0x1000000", "0x2000000", "0x3000000", "0x4000000", "0x5000000"],
+    )
 
 
 def test_batched_array_copy() -> None:
@@ -137,6 +245,43 @@ def test_batched_array_copy() -> None:
 
 def test_batched_array_copy_custom_axes() -> None:
     assert ba.ones(shape=(2, 3), batch_axis=1).copy().allequal(ba.ones(shape=(2, 3), batch_axis=1))
+
+
+def test_batched_array_view_ndarray() -> None:
+    assert objects_are_equal(ba.ones(shape=(2, 3)).view(np.ndarray), np.ones(shape=(2, 3)))
+
+
+def test_batched_array_getfield() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.arange(6, dtype=np.float64).reshape(2, 3) + np.ones((2, 3)) * 1.0j
+        ).getfield(np.float64),
+        BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3)),
+    )
+
+
+def test_batched_array_setflags() -> None:
+    array = ba.ones(shape=(2, 3))
+    assert array.flags["WRITEABLE"]
+    array.setflags(write=False)
+    assert not array.flags["WRITEABLE"]
+
+
+def test_batched_array_fill() -> None:
+    array = ba.empty((2, 3))
+    array.fill(1.0)
+    assert objects_are_equal(array, BatchedArray(np.ones((2, 3))))
+
+
+def test_batched_array_fill_custom_axes() -> None:
+    array = ba.empty((2, 3), batch_axis=1)
+    array.fill(1.0)
+    assert objects_are_equal(array, BatchedArray(np.ones((2, 3)), batch_axis=1))
+
+
+###############################
+#     Creation operations     #
+###############################
 
 
 @pytest.mark.parametrize("dtype", DTYPES)
