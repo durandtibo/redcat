@@ -70,8 +70,13 @@ MATH_UFUNCS = [
     FunctionCheck.create_ufunc(np.logaddexp2),
     FunctionCheck.create_ufunc(np.negative),
     FunctionCheck.create_ufunc(np.positive),
-    # FunctionCheck.create_ufunc(np.power),
-    # FunctionCheck.create_ufunc(np.float_power),
+    FunctionCheck.create_ufunc(
+        np.power, arrays=(np.random.rand(*SHAPE), np.random.randint(low=1, high=5, size=SHAPE))
+    ),
+    FunctionCheck.create_ufunc(
+        np.float_power,
+        arrays=(np.random.rand(*SHAPE), np.random.randint(low=1, high=5, size=SHAPE)),
+    ),
     FunctionCheck.create_ufunc(np.abs),
     FunctionCheck.create_ufunc(np.absolute),
     FunctionCheck.create_ufunc(np.fabs),
@@ -123,7 +128,14 @@ TRIGONOMETRIC_UFUNCS = [
     FunctionCheck.create_ufunc(np.tanh),
 ]
 
-BIT_UFUNCS = []
+BIT_UFUNCS = [
+    FunctionCheck.create_ufunc(np.bitwise_and, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.bitwise_or, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.bitwise_xor, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.invert, arrays=uniform_int_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.left_shift, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.right_shift, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+]
 
 COMPARISON_UFUNCS = [
     FunctionCheck.create_ufunc(np.equal),
