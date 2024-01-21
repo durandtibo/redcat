@@ -12,7 +12,7 @@ from __future__ import annotations
 __all__ = ["BatchedArray"]
 
 from collections.abc import Sequence
-from typing import Any, Literal, SupportsIndex, TypeVar
+from typing import Any, Literal, SupportsIndex, TypeVar, Union
 
 import numpy as np
 from coola import objects_are_allclose
@@ -27,6 +27,8 @@ from redcat.utils.random import randperm
 # https://peps.python.org/pep-0673/
 TBatchedArray = TypeVar("TBatchedArray", np.ndarray, "BatchedArray")
 
+OrderACF = Literal[None, "A", "C", "F"]
+ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 SortKind = Literal["quicksort", "mergesort", "heapsort", "stable"]
 
 
@@ -53,6 +55,13 @@ class BatchedArray(np.ndarray):
     @property
     def batch_size(self) -> int:
         return self.shape[self.batch_axis]
+
+    ##############################
+    #     Shape manipulation     #
+    ##############################
+
+    def reshape(self, *args, **kwargs) -> np.ndarray:
+        return super().reshape(*args, **kwargs).view(np.ndarray)
 
     ###############################
     #     Creation operations     #
@@ -480,7 +489,6 @@ class BatchedArray(np.ndarray):
         Example usage:
 
         ```pycon
-        >>> import numpy as np
         >>> from redcat.ba import BatchedArray
         >>> batch1 = BatchedArray(np.array([[1.0, 0.0, 2.0], [0.0, -2.0, -1.0]]))
         >>> batch2 = BatchedArray(np.array([[1.001, 0.5, 2.0], [0.0, -2.5, -0.5]]))
