@@ -2,13 +2,13 @@ from __future__ import annotations
 
 __all__ = ["BatchedArray"]
 
-from typing import Any, TypeVar
+from typing import Any, Literal, TypeVar
 
 import numpy as np
 from coola import objects_are_allclose, objects_are_equal
-from numpy.typing import ArrayLike
+from numpy.typing import ArrayLike, DTypeLike
 
-from redcat.ba import check_data_and_axis
+from redcat.ba import check_data_and_axis, check_same_batch_axis
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -56,8 +56,29 @@ class BatchedArray:  # (BaseBatch[np.ndarray]):
     #     Additional functionalities     #
     ######################################
 
-    # def __array__(self, dtype: DTypeLike = None, /) -> np.ndarray:
-    #     return self._data.__array__(dtype)
+    def __array__(self, dtype: DTypeLike = None, /) -> np.ndarray:
+        return self._data.__array__(dtype)
+
+    def __array_ufunc__(
+        self,
+        ufunc: np.ufunc,
+        method: Literal["__call__", "reduce", "reduceat", "accumulate", "outer", "inner"],
+        *inputs: Any,
+        **kwargs: Any,
+    ) -> TBatchedArray | tuple[TBatchedArray, ...]:
+        args = []
+        batch_axes = set()
+        for inp in inputs:
+            if isinstance(inp, self.__class__):
+                batch_axes.add(inp.batch_axis)
+                inp = inp.data
+            args.append(inp)
+        check_same_batch_axis(batch_axes)
+
+        results = self._data.__array_ufunc__(ufunc, method, *args, **kwargs)
+        if ufunc.nout == 1:
+            return self._create_new_batch(results)
+        return tuple(self._create_new_batch(res) for res in results)
 
     def __repr__(self) -> str:
         return repr(self._data)[:-1] + f", batch_axis={self._batch_axis})"
@@ -87,3 +108,9 @@ class BatchedArray:  # (BaseBatch[np.ndarray]):
     def dtype(self) -> np.dtype:
         r"""Data-type of the array’s elements."""
         return self._data.dtype
+
+    def _create_new_batch(self, data: np.ndarray) -> TBatchedArray:
+        return self.__class__(data, **self._get_kwargs())
+
+    def _get_kwargs(self) -> dict:
+        return {"batch_axis": self._batch_axis}
