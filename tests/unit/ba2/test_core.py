@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from coola import objects_are_equal
 
 from redcat import ba2 as ba
 from redcat.ba2 import BatchedArray
@@ -126,6 +127,10 @@ def test_batched_array_allequal_equal_nan_true() -> None:
 ######################################
 #     Additional functionalities     #
 ######################################
+
+
+def test_batched_array_asarray() -> None:
+    assert objects_are_equal(np.asarray(BatchedArray(np.ones((2, 3)))), np.ones((2, 3)))
 
 
 def test_batched_array_repr() -> None:
