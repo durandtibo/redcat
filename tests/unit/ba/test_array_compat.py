@@ -8,7 +8,7 @@ from coola import objects_are_allclose
 from pytest import mark
 
 from redcat.ba import BatchedArray
-from redcat.ba.testing import FunctionCheck, uniform_arrays
+from redcat.ba.testing import FunctionCheck, uniform_arrays, uniform_int_arrays
 
 BATCH_CLASSES = (BatchedArray, partial(BatchedArray, batch_axis=1))
 DTYPES = (int, float)
@@ -83,16 +83,16 @@ MATH_UFUNCS = [
     FunctionCheck.create_ufunc(np.exp),
     FunctionCheck.create_ufunc(np.exp2),
     FunctionCheck.create_ufunc(np.expm1),
-    FunctionCheck.create_ufunc(np.log),
-    FunctionCheck.create_ufunc(np.log10),
-    FunctionCheck.create_ufunc(np.log1p),
-    FunctionCheck.create_ufunc(np.log2),
-    FunctionCheck.create_ufunc(np.sqrt),
+    FunctionCheck.create_ufunc(np.log, arrays=uniform_arrays(shape=SHAPE, n=1, low=1e-8)),
+    FunctionCheck.create_ufunc(np.log10, arrays=uniform_arrays(shape=SHAPE, n=1, low=1e-8)),
+    FunctionCheck.create_ufunc(np.log1p, arrays=uniform_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.log2, arrays=uniform_arrays(shape=SHAPE, n=1, low=1e-8)),
+    FunctionCheck.create_ufunc(np.sqrt, arrays=uniform_arrays(shape=SHAPE, n=1)),
     FunctionCheck.create_ufunc(np.square),
     FunctionCheck.create_ufunc(np.cbrt),
     FunctionCheck.create_ufunc(np.reciprocal),
-    FunctionCheck.create_ufunc(np.gcd),
-    FunctionCheck.create_ufunc(np.lcm),
+    FunctionCheck.create_ufunc(np.gcd, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.lcm, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
 ]
 
 TRIGONOMETRIC_UFUNCS = [

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["FunctionCheck", "normal_arrays", "uniform_arrays"]
+__all__ = ["FunctionCheck", "normal_arrays", "uniform_arrays", "uniform_int_arrays"]
 
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
@@ -97,6 +97,54 @@ def uniform_arrays(
     if rng is None:
         rng = np.random.default_rng()
     return tuple(rng.uniform(low=low, high=high, size=shape) for _ in range(n))
+
+
+def uniform_int_arrays(
+    shape: int | Sequence[int],
+    n: int,
+    low: int = 0,
+    high: int = 100,
+    rng: np.random.Generator | None = None,
+) -> tuple[np.ndarray, ...]:
+    r"""Make a tuple of arrays filled with random values sampled from a
+    discrete uniform distribution.
+
+    Args:
+        shape: The dimensions of the returned arrays, must be
+            non-negative.
+        n: The number of arrays.
+        low: Lower boundary of the output interval. All values
+            generated will be greater than or equal to low.
+        high: Upper boundary of the output interval. All values
+            generated will be less than high. The high limit may be
+            included in the returned array of floats due to
+            floating-point rounding in the equation
+            ``low + (high-low) * random_sample()``. ``high - low``
+            must be non-negative.
+        rng: A pseudo-random number generator.
+
+    Returns:
+        A tuple of arrays filled with random values sampled from a
+            uniform distribution.
+
+    Example usage:
+
+    ```pycon
+    >>> from redcat.ba.testing import uniform_arrays
+    >>> arrays = uniform_int_arrays(shape=(2, 3), n=1)
+    >>> arrays
+    (array([[...]]),)
+    >>> arrays = uniform_int_arrays(shape=(2, 3), n=2)
+    >>> arrays
+    (array([[...]]), array([[...]]))
+
+    ```
+    """
+    if rng is None:
+        rng = np.random.default_rng()
+    return tuple(
+        np.floor(rng.uniform(low=low, high=high, size=shape)).astype(int) for _ in range(n)
+    )
 
 
 @dataclass
