@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from redcat.ba.testing import FunctionCheck, make_rand_arrays, make_randn_arrays
+from redcat.ba.testing import FunctionCheck, normal_arrays, uniform_arrays
 
 
 @dataclass
@@ -31,21 +31,48 @@ ARRAY_SEQ_SHAPES = [
     pytest.param(ArraySeqShape(in_shape=[6], out_shape=(6,), n=1), id="list shape"),
 ]
 
+FUCTION_ARRAYS = [normal_arrays, uniform_arrays]
+
 
 @pytest.mark.parametrize("array_seq_shape", ARRAY_SEQ_SHAPES)
-def test_make_rand_arrays(array_seq_shape: ArraySeqShape) -> None:
-    arrays = make_rand_arrays(shape=array_seq_shape.in_shape, n=array_seq_shape.n)
+def test_make_randn_arrays(array_seq_shape: ArraySeqShape) -> None:
+    arrays = normal_arrays(shape=array_seq_shape.in_shape, n=array_seq_shape.n)
+    assert len(arrays) == array_seq_shape.n
+    assert all([arr.shape == array_seq_shape.out_shape for arr in arrays])
+
+
+@pytest.mark.parametrize("array_seq_shape", ARRAY_SEQ_SHAPES)
+def test_uniform_arrays(array_seq_shape: ArraySeqShape) -> None:
+    arrays = uniform_arrays(shape=array_seq_shape.in_shape, n=array_seq_shape.n)
     assert len(arrays) == array_seq_shape.n
     assert all([arr.shape == array_seq_shape.out_shape for arr in arrays])
     assert all([arr.min() >= 0.0 for arr in arrays])
     assert all([arr.max() < 1.0 for arr in arrays])
 
 
-@pytest.mark.parametrize("array_seq_shape", ARRAY_SEQ_SHAPES)
-def test_make_randn_arrays(array_seq_shape: ArraySeqShape) -> None:
-    arrays = make_randn_arrays(shape=array_seq_shape.in_shape, n=array_seq_shape.n)
-    assert len(arrays) == array_seq_shape.n
-    assert all([arr.shape == array_seq_shape.out_shape for arr in arrays])
+@pytest.mark.parametrize(("low", "high"), [(-1.0, 1.0), (2.0, 5.0), (1.0, 100)])
+def test_uniform_arrays_low_high(low: float, high: float) -> None:
+    arrays = uniform_arrays(shape=(4, 10), n=2, low=low, high=high)
+    assert len(arrays) == 2
+    assert all([arr.shape == (4, 10) for arr in arrays])
+    assert all([arr.min() >= low for arr in arrays])
+    assert all([arr.max() < high for arr in arrays])
+
+
+@pytest.mark.parametrize("function", FUCTION_ARRAYS)
+def test_uniform_arrays_same_random_seed(function: Callable) -> None:
+    assert objects_are_equal(
+        function(shape=(4, 10), n=2, rng=np.random.default_rng(1)),
+        function(shape=(4, 10), n=2, rng=np.random.default_rng(1)),
+    )
+
+
+@pytest.mark.parametrize("function", FUCTION_ARRAYS)
+def test_uniform_arrays_different_random_seeds(function: Callable) -> None:
+    assert not objects_are_equal(
+        function(shape=(4, 10), n=2, rng=np.random.default_rng(1)),
+        function(shape=(4, 10), n=2, rng=np.random.default_rng(2)),
+    )
 
 
 #########################
