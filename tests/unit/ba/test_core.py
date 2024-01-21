@@ -279,6 +279,22 @@ def test_batched_array_fill_custom_axes() -> None:
     assert objects_are_equal(array, BatchedArray(np.ones((2, 3)), batch_axis=1))
 
 
+##############################
+#     Shape manipulation     #
+##############################
+
+
+@pytest.mark.parametrize(
+    "array",
+    [
+        BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3)),
+        BatchedArray(np.arange(6, dtype=np.float64).reshape(2, 3), batch_axis=1),
+    ],
+)
+def test_batched_array_reshape(array: BatchedArray) -> None:
+    assert objects_are_equal(array.reshape(3, 2), np.asarray([[0.0, 1.0], [2.0, 3.0], [4.0, 5.0]]))
+
+
 ###############################
 #     Creation operations     #
 ###############################
