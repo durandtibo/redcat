@@ -8,7 +8,7 @@ from coola import objects_are_allclose
 from pytest import mark
 
 from redcat.ba import BatchedArray
-from redcat.ba.testing import FunctionCheck, normal_arrays, uniform_arrays
+from redcat.ba.testing import FunctionCheck, uniform_arrays, uniform_int_arrays
 
 BATCH_CLASSES = (BatchedArray, partial(BatchedArray, batch_axis=1))
 DTYPES = (int, float)
@@ -45,39 +45,113 @@ def test_array_size(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
     assert cls(array).size == array.size
 
 
-TRIGONOMETRIC_FUNCTIONS = [
-    FunctionCheck.create_ufunc(np.cos, arrays=normal_arrays(shape=SHAPE, n=1)),
+MATH_UFUNCS = [
+    FunctionCheck.create_ufunc(np.add),
+    FunctionCheck.create_ufunc(np.subtract),
+    FunctionCheck.create_ufunc(np.multiply),
+    FunctionCheck.create_ufunc(
+        np.divide, arrays=uniform_arrays(shape=SHAPE, n=2, low=1.0, high=5.0)
+    ),
+    FunctionCheck.create_ufunc(
+        np.true_divide, arrays=uniform_arrays(shape=SHAPE, n=2, low=1.0, high=5.0)
+    ),
+    FunctionCheck.create_ufunc(
+        np.floor_divide, arrays=uniform_arrays(shape=SHAPE, n=2, low=1.0, high=5.0)
+    ),
+    FunctionCheck.create_ufunc(
+        np.remainder, arrays=uniform_arrays(shape=SHAPE, n=2, low=1.0, high=5.0)
+    ),
+    FunctionCheck.create_ufunc(np.mod, arrays=uniform_arrays(shape=SHAPE, n=2, low=1.0, high=5.0)),
+    FunctionCheck.create_ufunc(np.fmod, arrays=uniform_arrays(shape=SHAPE, n=2, low=1.0, high=5.0)),
+    FunctionCheck.create_ufunc(
+        np.divmod, arrays=uniform_arrays(shape=SHAPE, n=2, low=1.0, high=5.0)
+    ),
+    FunctionCheck.create_ufunc(np.logaddexp),
+    FunctionCheck.create_ufunc(np.logaddexp2),
+    FunctionCheck.create_ufunc(np.negative),
+    FunctionCheck.create_ufunc(np.positive),
+    # FunctionCheck.create_ufunc(np.power),
+    # FunctionCheck.create_ufunc(np.float_power),
+    FunctionCheck.create_ufunc(np.abs),
+    FunctionCheck.create_ufunc(np.absolute),
+    FunctionCheck.create_ufunc(np.fabs),
+    FunctionCheck.create_ufunc(np.rint),
+    FunctionCheck.create_ufunc(np.sign),
+    FunctionCheck.create_ufunc(np.heaviside),
+    FunctionCheck.create_ufunc(np.conj),
+    FunctionCheck.create_ufunc(np.conjugate),
+    FunctionCheck.create_ufunc(np.exp),
+    FunctionCheck.create_ufunc(np.exp2),
+    FunctionCheck.create_ufunc(np.expm1),
+    FunctionCheck.create_ufunc(np.log, arrays=uniform_arrays(shape=SHAPE, n=1, low=1e-8)),
+    FunctionCheck.create_ufunc(np.log10, arrays=uniform_arrays(shape=SHAPE, n=1, low=1e-8)),
+    FunctionCheck.create_ufunc(np.log1p, arrays=uniform_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.log2, arrays=uniform_arrays(shape=SHAPE, n=1, low=1e-8)),
+    FunctionCheck.create_ufunc(np.sqrt, arrays=uniform_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.square),
+    FunctionCheck.create_ufunc(np.cbrt),
+    FunctionCheck.create_ufunc(np.reciprocal),
+    FunctionCheck.create_ufunc(np.gcd, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+    FunctionCheck.create_ufunc(np.lcm, arrays=uniform_int_arrays(shape=SHAPE, n=2)),
+]
+
+TRIGONOMETRIC_UFUNCS = [
     FunctionCheck.create_ufunc(
         np.arccos, arrays=uniform_arrays(shape=SHAPE, n=1, low=-1.0, high=1.0)
     ),
-    FunctionCheck.create_ufunc(np.cosh, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck.create_ufunc(
         np.arccosh, arrays=uniform_arrays(shape=SHAPE, n=1, low=1.0, high=100.0)
     ),
-    FunctionCheck.create_ufunc(np.sin, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck.create_ufunc(
         np.arcsin, arrays=uniform_arrays(shape=SHAPE, n=1, low=-1.0, high=1.0)
     ),
-    FunctionCheck.create_ufunc(np.sinh, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.arcsinh, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.tan, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.arctan, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.tanh, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.arcsinh),
+    FunctionCheck.create_ufunc(np.arctan),
     FunctionCheck.create_ufunc(
         np.arctanh, arrays=uniform_arrays(shape=SHAPE, n=1, low=-0.999, high=0.999)
     ),
+    FunctionCheck.create_ufunc(np.cos),
+    FunctionCheck.create_ufunc(np.cosh),
+    FunctionCheck.create_ufunc(np.deg2rad),
+    FunctionCheck.create_ufunc(np.degrees),
+    FunctionCheck.create_ufunc(np.hypot),
+    FunctionCheck.create_ufunc(np.rad2deg),
+    FunctionCheck.create_ufunc(np.radians),
+    FunctionCheck.create_ufunc(np.sin),
+    FunctionCheck.create_ufunc(np.sinh),
+    FunctionCheck.create_ufunc(np.tan),
+    FunctionCheck.create_ufunc(np.tanh),
 ]
 
-FLOATING_FUNCTIONS = [
-    FunctionCheck.create_ufunc(np.ceil, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.copysign, arrays=normal_arrays(shape=SHAPE, n=2)),
-    FunctionCheck.create_ufunc(np.fabs, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.floor, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.fmod, arrays=normal_arrays(shape=SHAPE, n=2)),
-    FunctionCheck.create_ufunc(np.frexp, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.isfinite, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.isinf, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.isnan, arrays=normal_arrays(shape=SHAPE, n=1)),
+BIT_UFUNCS = []
+
+COMPARISON_UFUNCS = [
+    FunctionCheck.create_ufunc(np.equal),
+    FunctionCheck.create_ufunc(np.fmax),
+    FunctionCheck.create_ufunc(np.fmin),
+    FunctionCheck.create_ufunc(np.greater),
+    FunctionCheck.create_ufunc(np.greater_equal),
+    FunctionCheck.create_ufunc(np.less),
+    FunctionCheck.create_ufunc(np.less_equal),
+    FunctionCheck.create_ufunc(np.logical_and),
+    FunctionCheck.create_ufunc(np.logical_not),
+    FunctionCheck.create_ufunc(np.logical_or),
+    FunctionCheck.create_ufunc(np.logical_xor),
+    FunctionCheck.create_ufunc(np.maximum),
+    FunctionCheck.create_ufunc(np.minimum),
+    FunctionCheck.create_ufunc(np.not_equal),
+]
+
+FLOATING_UFUNCS = [
+    FunctionCheck.create_ufunc(np.ceil),
+    FunctionCheck.create_ufunc(np.copysign),
+    FunctionCheck.create_ufunc(np.fabs),
+    FunctionCheck.create_ufunc(np.floor),
+    FunctionCheck.create_ufunc(np.fmod),
+    FunctionCheck.create_ufunc(np.frexp),
+    FunctionCheck.create_ufunc(np.isfinite),
+    FunctionCheck.create_ufunc(np.isinf),
+    FunctionCheck.create_ufunc(np.isnan),
     FunctionCheck.create_ufunc(
         np.isnat,
         arrays=(
@@ -94,14 +168,14 @@ FLOATING_FUNCTIONS = [
     FunctionCheck.create_ufunc(
         np.ldexp, arrays=(np.random.rand(*SHAPE), np.random.randint(0, 10, size=SHAPE))
     ),
-    FunctionCheck.create_ufunc(np.modf, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.nextafter, arrays=normal_arrays(shape=SHAPE, n=2)),
-    FunctionCheck.create_ufunc(np.signbit, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.spacing, arrays=normal_arrays(shape=SHAPE, n=1)),
-    FunctionCheck.create_ufunc(np.trunc, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck.create_ufunc(np.modf),
+    FunctionCheck.create_ufunc(np.nextafter),
+    FunctionCheck.create_ufunc(np.signbit),
+    FunctionCheck.create_ufunc(np.spacing),
+    FunctionCheck.create_ufunc(np.trunc),
 ]
 
-FUNCTIONS = TRIGONOMETRIC_FUNCTIONS + FLOATING_FUNCTIONS
+FUNCTIONS = MATH_UFUNCS + TRIGONOMETRIC_UFUNCS + BIT_UFUNCS + COMPARISON_UFUNCS + FLOATING_UFUNCS
 
 
 @mark.parametrize("func_check", FUNCTIONS)
