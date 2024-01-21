@@ -599,6 +599,62 @@ def test_batched_array_add__different_axes() -> None:
         2.0,
     ],
 )
+def test_batched_array_floordiv(other: np.ndarray | int | float) -> None:
+    assert ba.ones((2, 3)).floordiv(other).allequal(ba.zeros(shape=(2, 3)))
+
+
+def test_batched_array_floordiv_custom_axes() -> None:
+    assert (
+        ba.ones(shape=(2, 3), batch_axis=1)
+        .floordiv(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
+        .allequal(ba.zeros(shape=(2, 3), batch_axis=1))
+    )
+
+
+def test_batched_array_floordiv_incorrect_batch_axis() -> None:
+    batch = ba.ones((2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.floordiv(ba.ones(shape=(2, 2), batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ],
+)
+def test_batched_array_floordiv_(other: np.ndarray | int | float) -> None:
+    batch = ba.ones((2, 3))
+    batch.floordiv_(other)
+    assert batch.allequal(ba.zeros(shape=(2, 3)))
+
+
+def test_batched_array_floordiv__custom_axes() -> None:
+    batch = ba.ones(shape=(2, 3), batch_axis=1)
+    batch.floordiv_(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
+    assert batch.allequal(ba.zeros(shape=(2, 3), batch_axis=1))
+
+
+def test_batched_array_floordiv__different_axes() -> None:
+    batch = ba.ones(shape=(2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.floordiv_(ba.ones(shape=(2, 2), batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ],
+)
 def test_batched_array_fmod(other: np.ndarray | int | float) -> None:
     assert ba.ones((2, 3)).fmod(other).allequal(ba.ones(shape=(2, 3)))
 
@@ -779,3 +835,59 @@ def test_batched_array_sub__different_axes() -> None:
     batch = ba.ones(shape=(2, 2))
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         batch.sub_(ba.ones(shape=(2, 2), batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ],
+)
+def test_batched_array_truediv(other: np.ndarray | int | float) -> None:
+    assert ba.ones((2, 3)).truediv(other).allequal(ba.full(shape=(2, 3), fill_value=0.5))
+
+
+def test_batched_array_truediv_custom_axes() -> None:
+    assert (
+        ba.ones(shape=(2, 3), batch_axis=1)
+        .truediv(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
+        .allequal(ba.full(shape=(2, 3), fill_value=0.5, batch_axis=1))
+    )
+
+
+def test_batched_array_truediv_incorrect_batch_axis() -> None:
+    batch = ba.ones((2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.truediv(ba.ones(shape=(2, 2), batch_axis=1))
+
+
+@pytest.mark.parametrize(
+    "other",
+    [
+        ba.full(shape=(2, 3), fill_value=2.0),
+        np.full(shape=(2, 3), fill_value=2.0),
+        ba.full(shape=(2, 1), fill_value=2.0),
+        2,
+        2.0,
+    ],
+)
+def test_batched_array_truediv_(other: np.ndarray | int | float) -> None:
+    batch = ba.ones((2, 3))
+    batch.truediv_(other)
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=0.5))
+
+
+def test_batched_array_truediv__custom_axes() -> None:
+    batch = ba.ones(shape=(2, 3), batch_axis=1)
+    batch.truediv_(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
+    assert batch.allequal(ba.full(shape=(2, 3), fill_value=0.5, batch_axis=1))
+
+
+def test_batched_array_truediv__different_axes() -> None:
+    batch = ba.ones(shape=(2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.truediv_(ba.ones(shape=(2, 2), batch_axis=1))

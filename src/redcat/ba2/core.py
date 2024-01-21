@@ -206,12 +206,62 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         ```
         """
-        return self.__iadd__(other * alpha)
+        self.__iadd__(other * alpha)
 
-    def fmod(
-        self,
-        divisor: BatchedArray | np.ndarray | float,
-    ) -> TBatchedArray:
+    def floordiv(self, divisor: BatchedArray | np.ndarray | float) -> TBatchedArray:
+        r"""Return the largest integer smaller or equal to the division
+        of the inputs.
+
+        The current batch is the dividend/numerator.
+
+        Args:
+            divisor: Specifies the divisor/denominator.
+
+        Returns:
+            The largest integer smaller or equal to the division of
+                the inputs.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> out = batch.floordiv(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> out
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+
+        ```
+        """
+        return self.__floordiv__(divisor)
+
+    def floordiv_(self, divisor: BatchedArray | np.ndarray | float) -> None:
+        r"""Return the largest integer smaller or equal to the division
+        of the inputs.
+
+        The current batch is the dividend/numerator.
+
+        Args:
+            divisor: Specifies the divisor/denominator.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> batch.floordiv_(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+
+        ```
+        """
+        self.__ifloordiv__(divisor)
+
+    def fmod(self, divisor: BatchedArray | np.ndarray | float) -> TBatchedArray:
         r"""Computes the element-wise remainder of division.
 
         The current batch is the dividend.
@@ -260,7 +310,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         ```
         """
-        return self.__imod__(divisor)
+        self.__imod__(divisor)
 
     def mul(self, other: BatchedArray | np.ndarray | float) -> TBatchedArray:
         r"""Multiplies the ``self`` batch by the input ``other`.
@@ -315,7 +365,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         ```
         """
-        return self.__imul__(other)
+        self.__imul__(other)
 
     def neg(self) -> TBatchedArray:
         r"""Returns a new batch with the negative of the elements.
@@ -400,7 +450,57 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         ```
         """
-        return self.__isub__(other * alpha)
+        self.__isub__(other * alpha)
+
+    def truediv(self, divisor: BatchedArray | np.ndarray | float) -> TBatchedArray:
+        r"""Return the division of the inputs.
+
+        The current batch is the dividend/numerator.
+
+        Args:
+            divisor: Specifies the divisor/denominator.
+
+        Returns:
+            The division of the inputs.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> out = batch.truediv(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> out
+        array([[0.5, 0.5, 0.5],
+               [0.5, 0.5, 0.5]], batch_axis=0)
+
+        ```
+        """
+        return self.__truediv__(divisor)
+
+    def truediv_(self, divisor: BatchedArray | np.ndarray | float) -> None:
+        r"""Return the division of the inputs.
+
+        The current batch is the dividend/numerator.
+
+        Args:
+            divisor: Specifies the divisor/denominator.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> batch.truediv_(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[0.5, 0.5, 0.5],
+               [0.5, 0.5, 0.5]], batch_axis=0)
+
+        ```
+        """
+        self.__itruediv__(divisor)
 
     #################
     #     Other     #
