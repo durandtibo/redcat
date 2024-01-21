@@ -124,6 +124,11 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         self._data.__ifloordiv__(self._get_data(other))
         return self
 
+    def __imod__(self, other: Any) -> TBatchedArray:
+        self._check_valid_axes((self, other))
+        self._data.__imod__(self._get_data(other))
+        return self
+
     def __imul__(self, other: Any) -> TBatchedArray:
         self._check_valid_axes((self, other))
         self._data.__imul__(self._get_data(other))
@@ -202,6 +207,200 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         ```
         """
         return self.__iadd__(other * alpha)
+
+    def fmod(
+        self,
+        divisor: BatchedArray | np.ndarray | float,
+    ) -> TBatchedArray:
+        r"""Computes the element-wise remainder of division.
+
+        The current batch is the dividend.
+
+        Args:
+            divisor: Specifies the divisor.
+
+        Returns:
+            A new batch containing the element-wise remainder of
+                division.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> out = batch.fmod(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> out
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+
+        ```
+        """
+        return self.__mod__(divisor)
+
+    def fmod_(self, divisor: BatchedArray | np.ndarray | float) -> None:
+        r"""Computes the element-wise remainder of division.
+
+        The current batch is the dividend.
+
+        Args:
+            divisor: Specifies the divisor.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> batch.fmod_(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+
+        ```
+        """
+        return self.__imod__(divisor)
+
+    def mul(self, other: BatchedArray | np.ndarray | float) -> TBatchedArray:
+        r"""Multiplies the ``self`` batch by the input ``other`.
+
+        Similar to ``out = self * other``
+
+        Args:
+            other: Specifies the value to multiply.
+
+        Returns:
+            A new batch containing the multiplication of the two
+                batches.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> out = batch.mul(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> out
+        array([[2., 2., 2.],
+               [2., 2., 2.]], batch_axis=0)
+
+        ```
+        """
+        return self.__mul__(other)
+
+    def mul_(self, other: BatchedArray | np.ndarray | float) -> None:
+        r"""Multiplies the ``self`` batch by the input ``other`.
+
+        Similar to ``self *= other`` (in-place)
+
+        Args:
+            other: Specifies the value to multiply.
+
+        Returns:
+            A new batch containing the multiplication of the two
+                batches.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> batch.mul_(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[2., 2., 2.],
+               [2., 2., 2.]], batch_axis=0)
+
+        ```
+        """
+        return self.__imul__(other)
+
+    def neg(self) -> TBatchedArray:
+        r"""Returns a new batch with the negative of the elements.
+
+        Returns:
+            A new batch with the negative of the elements.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> out = batch.neg()
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> out
+        array([[-1., -1., -1.],
+               [-1., -1., -1.]], batch_axis=0)
+
+        ```
+        """
+        return self.__neg__()
+
+    def sub(
+        self,
+        other: BatchedArray | np.ndarray | float,
+        alpha: float = 1,
+    ) -> TBatchedArray:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
+
+        Similar to ``out = self - alpha * other``
+
+        Args:
+            other: Specifies the value to subtract.
+            alpha: Specifies the scale of the batch to substract.
+
+        Returns:
+            A new batch containing the diffence of the two batches.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> out = batch.sub(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> out
+        array([[-1., -1., -1.],
+               [-1., -1., -1.]], batch_axis=0)
+
+        ```
+        """
+        return self.__sub__(other * alpha)
+
+    def sub_(
+        self,
+        other: BatchedArray | np.ndarray | float,
+        alpha: float = 1.0,
+    ) -> None:
+        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        ``self`` batch.
+
+        Similar to ``self -= alpha * other`` (in-place)
+
+        Args:
+            other: Specifies the value to subtract.
+            alpha: Specifies the scale of the batch to substract.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.ones((2, 3))
+        >>> batch.sub_(ba2.full((2, 3), 2.0))
+        >>> batch
+        array([[-1., -1., -1.],
+               [-1., -1., -1.]], batch_axis=0)
+
+        ```
+        """
+        return self.__isub__(other * alpha)
 
     #################
     #     Other     #

@@ -1682,7 +1682,7 @@ def test_batched_array_sub_alpha_2(dtype: DTypeLike) -> None:
     )
 
 
-def test_batched_array_sub_custom_axess() -> None:
+def test_batched_array_sub_custom_axes() -> None:
     assert (
         ba.ones(shape=(2, 3), batch_axis=1)
         .sub(ba.full(shape=(2, 3), fill_value=2.0, batch_axis=1))
