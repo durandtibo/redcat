@@ -125,7 +125,7 @@ class FunctionCheck:
         ```
         """
         if self.arrays is None:
-            return uniform_arrays(shape=SHAPE, n=self.nin)
+            return normal_arrays(shape=SHAPE, n=self.nin)
         return self.arrays
 
     @classmethod
