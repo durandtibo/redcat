@@ -265,6 +265,83 @@ def test_batched_array_extend_different_axes() -> None:
 #     )
 
 
+def test_batched_array_slice_along_batch() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_batch()
+        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_batch_start_2() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_batch(start=2)
+        .allequal(ba.array([[4, 5], [6, 7], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_batch_stop_3() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_batch(stop=3)
+        .allequal(ba.array([[0, 1], [2, 3], [4, 5]]))
+    )
+
+
+def test_batched_array_slice_along_batch_stop_100() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_batch(stop=100)
+        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_batch_step_2() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_batch(step=2)
+        .allequal(ba.array([[0, 1], [4, 5], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_batch_start_1_stop_4_step_2() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_batch(start=1, stop=4, step=2)
+        .allequal(ba.array([[2, 3], [6, 7]]))
+    )
+
+
+def test_batched_array_slice_along_batch_custom_dim() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .slice_along_batch(start=2)
+        .allequal(ba.array([[2, 3, 4], [7, 8, 9]], batch_axis=1))
+    )
+
+
+def test_batched_array_slice_along_batch_batch_axis_1() -> None:
+    assert (
+        BatchedArray(np.arange(20).reshape(2, 5, 2), batch_axis=1)
+        .slice_along_batch(start=2)
+        .allequal(
+            ba.array(
+                [[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]],
+                batch_axis=1,
+            )
+        )
+    )
+
+
+def test_batched_array_slice_along_batch_batch_axis_2() -> None:
+    assert (
+        BatchedArray(np.arange(20).reshape(2, 2, 5), batch_axis=2)
+        .slice_along_batch(start=2)
+        .allequal(ba.array([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]], batch_axis=2))
+    )
+
+
 def test_batched_array_split_along_batch_split_size_1() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).split_along_batch(1),
@@ -1351,6 +1428,78 @@ def test_batched_array_chunk_custom_dims() -> None:
 def test_batched_array_chunk_incorrect_chunks() -> None:
     with pytest.raises(RuntimeError, match="chunk expects `chunks` to be greater than 0, got: 0"):
         BatchedArray(np.arange(10).reshape(5, 2)).chunk(0)
+
+
+def test_batched_array_slice_along_axis() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_axis()
+        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_axis_start_2() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_axis(start=2)
+        .allequal(ba.array([[4, 5], [6, 7], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_axis_stop_3() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_axis(stop=3)
+        .allequal(ba.array([[0, 1], [2, 3], [4, 5]]))
+    )
+
+
+def test_batched_array_slice_along_axis_stop_100() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_axis(stop=100)
+        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_axis_step_2() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_axis(step=2)
+        .allequal(ba.array([[0, 1], [4, 5], [8, 9]]))
+    )
+
+
+def test_batched_array_slice_along_axis_start_1_stop_4_step_2() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .slice_along_axis(start=1, stop=4, step=2)
+        .allequal(ba.array([[2, 3], [6, 7]]))
+    )
+
+
+def test_batched_array_slice_along_axis_custom_axes() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)
+        .slice_along_axis(start=2)
+        .allequal(ba.array([[4, 5], [6, 7], [8, 9]], batch_axis=1))
+    )
+
+
+def test_batched_array_slice_along_axis_batch_axis_1() -> None:
+    assert (
+        BatchedArray(np.arange(20).reshape(2, 5, 2))
+        .slice_along_axis(axis=1, start=2)
+        .allequal(ba.array([[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]]))
+    )
+
+
+def test_batched_array_slice_along_axis_batch_axis_2() -> None:
+    assert (
+        BatchedArray(np.arange(20).reshape(2, 2, 5))
+        .slice_along_axis(axis=2, start=2)
+        .allequal(ba.array([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]]))
+    )
 
 
 def test_batched_array_split_along_axis_split_size_1() -> None:
