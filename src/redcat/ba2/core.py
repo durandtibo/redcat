@@ -56,11 +56,18 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
     def append(self, other: TBatchedArray | np.ndarray) -> None:
         self.concatenate_along_batch_([other])
 
+    def chunk_along_batch(self, chunks: int) -> tuple[TBatchedArray, ...]:
+        return self.chunk(chunks, self._batch_axis)
+
     def clone(self) -> TBatchedArray:
         return self._create_new_batch(self._data.copy())
 
     def extend(self, other: Iterable[TBatchedArray | np.ndarray]) -> None:
         self.concatenate_along_batch_(other)
+
+    def summary(self) -> str:
+        dims = ", ".join([f"{key}={value}" for key, value in self._get_kwargs().items()])
+        return f"{self.__class__.__qualname__}(dtype={self.dtype}, shape={self.shape}, " f"{dims})"
 
     def to_data(self) -> np.ndarray:
         return self._data
@@ -699,6 +706,45 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         ```
         """
         self.concatenate_(arrays, axis=self._batch_axis)
+
+    ##########################################################
+    #     Array manipulation routines | Splitting arrays     #
+    ##########################################################
+
+    def chunk(self, chunks: int, axis: int = 0) -> tuple[TBatchedArray, ...]:
+        r"""Split an array into the specified number of chunks. Each
+        chunk is a view of the input array.
+
+        Args:
+            chunks: Specifies the number of chunks.
+            axis: Specifies the axis along which
+                to split the array.
+
+        Returns:
+            The array split into chunks along the given axis.
+
+        Raises:
+            RuntimeError: if the number of chunks is incorrect
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.chunk(chunks=3)
+        (array([[0, 1], [2, 3]], batch_axis=0),
+         array([[4, 5], [6, 7]], batch_axis=0),
+         array([[8, 9]], batch_axis=0))
+
+        ```
+        """
+        if chunks == 0:
+            raise RuntimeError("chunk expects `chunks` to be greater than 0, got: 0")
+        return tuple(
+            self._create_new_batch(chunk)
+            for chunk in np.array_split(self._data, indices_or_sections=chunks, axis=axis)
+        )
 
     #################
     #     Other     #

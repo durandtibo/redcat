@@ -156,6 +156,46 @@ def test_batched_array_append_different_axes() -> None:
         batch.append(ba.zeros((2, 2), batch_axis=1))
 
 
+def test_batched_array_chunk_along_batch_5() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).chunk_along_batch(5),
+        (
+            ba.array([[0, 1]]),
+            ba.array([[2, 3]]),
+            ba.array([[4, 5]]),
+            ba.array([[6, 7]]),
+            ba.array([[8, 9]]),
+        ),
+    )
+
+
+def test_batched_array_chunk_along_batch_3() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).chunk_along_batch(3),
+        (
+            ba.array([[0, 1], [2, 3]]),
+            ba.array([[4, 5], [6, 7]]),
+            ba.array([[8, 9]]),
+        ),
+    )
+
+
+def test_batched_array_chunk_along_batch_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk_along_batch(3),
+        (
+            ba.array([[0, 1], [5, 6]], batch_axis=1),
+            ba.array([[2, 3], [7, 8]], batch_axis=1),
+            ba.array([[4], [9]], batch_axis=1),
+        ),
+    )
+
+
+def test_batched_array_chunk_along_batch_incorrect_chunks() -> None:
+    with pytest.raises(RuntimeError, match="chunk expects `chunks` to be greater than 0, got: 0"):
+        BatchedArray(np.arange(10).reshape(5, 2)).chunk_along_batch(0)
+
+
 def test_batched_array_clone() -> None:
     batch = ba.ones(shape=(2, 3))
     batch_cloned = batch.clone()
@@ -205,6 +245,31 @@ def test_batched_array_extend_different_axes() -> None:
     batch = ba.ones((2, 2))
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         batch.extend([ba.zeros((2, 2), batch_axis=1)])
+
+
+# TODO: uncomment
+# @pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+# def test_batched_array_get_num_minibatches_drop_last_false(
+#     batch_size: int, num_minibatches: int
+# ) -> None:
+#     assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size) == num_minibatches
+#
+#
+# @pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+# def test_batched_array_get_num_minibatches_drop_last_true(
+#     batch_size: int, num_minibatches: int
+# ) -> None:
+#     assert (
+#         ba.ones(shape=(10, 2)).get_num_minibatches(batch_size, drop_last=True)
+#         == num_minibatches
+#     )
+
+
+def test_batched_array_summary() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5)).summary()
+        == "BatchedArray(dtype=int64, shape=(2, 5), batch_axis=0)"
+    )
 
 
 def test_batched_array_to_data() -> None:
@@ -1195,3 +1260,48 @@ def test_batched_array_concatenate_along_batch__different_axes() -> None:
     batch = ba.ones((2, 2))
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         batch.concatenate_along_batch_([ba.zeros((2, 2), batch_axis=1)])
+
+
+##########################################################
+#     Array manipulation routines | Splitting arrays     #
+##########################################################
+
+
+def test_batched_array_chunk_3() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).chunk(3),
+        (
+            ba.array([[0, 1], [2, 3]]),
+            ba.array([[4, 5], [6, 7]]),
+            ba.array([[8, 9]]),
+        ),
+    )
+
+
+def test_batched_array_chunk_5() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).chunk(5),
+        (
+            ba.array([[0, 1]]),
+            ba.array([[2, 3]]),
+            ba.array([[4, 5]]),
+            ba.array([[6, 7]]),
+            ba.array([[8, 9]]),
+        ),
+    )
+
+
+def test_batched_array_chunk_custom_dims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk(3, axis=1),
+        (
+            ba.array([[0, 1], [5, 6]], batch_axis=1),
+            ba.array([[2, 3], [7, 8]], batch_axis=1),
+            ba.array([[4], [9]], batch_axis=1),
+        ),
+    )
+
+
+def test_batched_array_chunk_incorrect_chunks() -> None:
+    with pytest.raises(RuntimeError, match="chunk expects `chunks` to be greater than 0, got: 0"):
+        BatchedArray(np.arange(10).reshape(5, 2)).chunk(0)
