@@ -1353,9 +1353,9 @@ def test_batched_array_chunk_incorrect_chunks() -> None:
         BatchedArray(np.arange(10).reshape(5, 2)).chunk(0)
 
 
-def test_batched_array_split_split_size_1() -> None:
+def test_batched_array_split_along_axis_split_size_1() -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(5, 2)).split(1),
+        BatchedArray(np.arange(10).reshape(5, 2)).split_along_axis(1),
         (
             ba.array([[0, 1]]),
             ba.array([[2, 3]]),
@@ -1366,9 +1366,9 @@ def test_batched_array_split_split_size_1() -> None:
     )
 
 
-def test_batched_array_split_split_size_2() -> None:
+def test_batched_array_split_along_axis_split_size_2() -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(5, 2)).split(2),
+        BatchedArray(np.arange(10).reshape(5, 2)).split_along_axis(2),
         (
             ba.array([[0, 1], [2, 3]]),
             ba.array([[4, 5], [6, 7]]),
@@ -1377,9 +1377,9 @@ def test_batched_array_split_split_size_2() -> None:
     )
 
 
-def test_batched_array_split_custom_dims() -> None:
+def test_batched_array_split_along_axis_custom_dims() -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split(2, axis=1),
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split_along_axis(2, axis=1),
         (
             ba.array([[0, 1], [5, 6]], batch_axis=1),
             ba.array([[2, 3], [7, 8]], batch_axis=1),
@@ -1388,10 +1388,9 @@ def test_batched_array_split_custom_dims() -> None:
     )
 
 
-def test_batched_array_split_split_list() -> None:
-    print(BatchedArray(np.arange(10).reshape(5, 2)).split([2, 2, 1]))
+def test_batched_array_split_along_axis_split_list() -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(5, 2)).split([2, 2, 1]),
+        BatchedArray(np.arange(10).reshape(5, 2)).split_along_axis([2, 2, 1]),
         (
             ba.array([[0, 1], [2, 3]]),
             ba.array([[4, 5], [6, 7]]),

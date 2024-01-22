@@ -68,7 +68,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
     ) -> tuple[TBatchedArray, ...]:
-        return self.split(split_size_or_sections, axis=self._batch_axis)
+        return self.split_along_axis(split_size_or_sections, axis=self._batch_axis)
 
     def summary(self) -> str:
         dims = ", ".join([f"{key}={value}" for key, value in self._get_kwargs().items()])
@@ -750,7 +750,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             for chunk in np.array_split(self._data, indices_or_sections=chunks, axis=axis)
         )
 
-    def split(
+    def split_along_axis(
         self, split_size_or_sections: int | Sequence[int], axis: int = 0
     ) -> tuple[TBatchedArray, ...]:
         r"""Splits the batch into chunks along a given axis.
