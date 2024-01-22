@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 
 import numpy as np
 import pytest
@@ -263,6 +263,23 @@ def test_batched_array_extend_different_axes() -> None:
 #         ba.ones(shape=(10, 2)).get_num_minibatches(batch_size, drop_last=True)
 #         == num_minibatches
 #     )
+
+
+@pytest.mark.parametrize("index", [np.array([2, 0]), [2, 0], (2, 0)])
+def test_batched_tensor_index_select_along_batch(index: np.ndarray | Sequence[int]) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .index_select_along_batch(index)
+        .allequal(ba.array([[4, 5], [0, 1]]))
+    )
+
+
+def test_batched_tensor_index_select_along_batch_custom_axes() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .index_select_along_batch((2, 0))
+        .allequal(ba.array([[2, 0], [7, 5]], batch_axis=1))
+    )
 
 
 def test_batched_array_slice_along_batch() -> None:
@@ -1428,6 +1445,34 @@ def test_batched_array_chunk_custom_dims() -> None:
 def test_batched_array_chunk_incorrect_chunks() -> None:
     with pytest.raises(RuntimeError, match="chunk expects `chunks` to be greater than 0, got: 0"):
         BatchedArray(np.arange(10).reshape(5, 2)).chunk(0)
+
+
+@pytest.mark.parametrize("indices", [np.array([2, 0]), [2, 0], (2, 0)])
+def test_batched_tensor_take(indices: np.ndarray | Sequence[int]) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).take(indices=indices, axis=0),
+        ba.array([[4, 5], [0, 1]]),
+    )
+
+
+def test_batched_tensor_take_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).take(indices=(2, 0), axis=1),
+        ba.array([[2, 0], [7, 5]]),
+    )
+
+
+def test_batched_tensor_take_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).take(indices=[2, 0], axis=None), np.array([2, 0])
+    )
+
+
+def test_batched_tensor_take_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).take(indices=(2, 0), axis=0),
+        ba.array([[4, 5], [0, 1]], batch_axis=1),
+    )
 
 
 def test_batched_array_slice_along_axis() -> None:

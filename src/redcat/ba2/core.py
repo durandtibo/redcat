@@ -10,6 +10,7 @@ from coola import objects_are_allclose, objects_are_equal
 from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.utils.array import to_array
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -64,6 +65,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
     def extend(self, other: Iterable[TBatchedArray | np.ndarray]) -> None:
         self.concatenate_along_batch_(other)
+
+    def index_select_along_batch(self, index: np.ndarray | Sequence[int]) -> TBatchedArray:
+        return self.take(indices=index, axis=self._batch_axis)
 
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
@@ -844,6 +848,50 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             self._create_new_batch(chunk)
             for chunk in np.array_split(self._data, split_size_or_sections, axis=axis)
         )
+
+    @overload
+    def take(self, indices: np.ndarray | Sequence[int], axis: None = ...) -> np.ndarray:
+        ...  # pragma: no cover
+
+    @overload
+    def take(self, indices: np.ndarray | Sequence[int], axis: int = ...) -> TBatchedArray:
+        ...  # pragma: no cover
+
+    def take(
+        self, indices: np.ndarray | Sequence[int], axis: int | None = None
+    ) -> TBatchedArray | np.ndarray:
+        r"""Take elements from an array along an axis.
+
+        Args:
+            indices: The indices of the values to extract.
+            axis: The axis over which to select values. By default,
+                the flattened input array is used.
+
+        Returns:
+            An array with the selected items.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.take([2, 4], axis=0)
+        array([[4, 5],
+               [8, 9]], batch_axis=0)
+        >>> batch.take(np.array([4, 3, 2, 1, 0]), axis=0)
+        array([[8, 9],
+               [6, 7],
+               [4, 5],
+               [2, 3],
+               [0, 1]], batch_axis=0)
+
+        ```
+        """
+        data = np.take(self._data, indices=to_array(indices), axis=axis)
+        if axis is None:
+            return data
+        return self._create_new_batch(data)
 
     #################
     #     Other     #
