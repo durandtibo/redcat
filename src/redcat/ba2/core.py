@@ -65,6 +65,11 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
     def extend(self, other: Iterable[TBatchedArray | np.ndarray]) -> None:
         self.concatenate_along_batch_(other)
 
+    def split_along_batch(
+        self, split_size_or_sections: int | Sequence[int]
+    ) -> tuple[TBatchedArray, ...]:
+        return self.split(split_size_or_sections, axis=self._batch_axis)
+
     def summary(self) -> str:
         dims = ", ".join([f"{key}={value}" for key, value in self._get_kwargs().items()])
         return f"{self.__class__.__qualname__}(dtype={self.dtype}, shape={self.shape}, " f"{dims})"
@@ -717,8 +722,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         Args:
             chunks: Specifies the number of chunks.
-            axis: Specifies the axis along which
-                to split the array.
+            axis: Specifies the axis along which to split the array.
 
         Returns:
             The array split into chunks along the given axis.
@@ -744,6 +748,47 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         return tuple(
             self._create_new_batch(chunk)
             for chunk in np.array_split(self._data, indices_or_sections=chunks, axis=axis)
+        )
+
+    def split(
+        self, split_size_or_sections: int | Sequence[int], axis: int = 0
+    ) -> tuple[TBatchedArray, ...]:
+        r"""Splits the batch into chunks along a given axis.
+
+        Notes:
+            This function has a slightly different behavior as
+                ``numpy.split``.
+
+        Args:
+            split_size_or_sections: Specifies the size of a single
+                chunk or list of sizes for each chunk.
+            axis: Specifies the axis along which to split the array.
+
+        Returns:
+            The batch split into chunks along the given axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.split(2, axis=0)
+        (array([[0, 1], [2, 3]], batch_axis=0),
+         array([[4, 5], [6, 7]], batch_axis=0),
+         array([[8, 9]], batch_axis=0))
+
+        ```
+        """
+        if isinstance(split_size_or_sections, int):
+            split_size_or_sections = tuple(
+                range(split_size_or_sections, self.batch_size, split_size_or_sections)
+            )
+        else:
+            split_size_or_sections = np.cumsum(split_size_or_sections)[:-1]
+        return tuple(
+            self._create_new_batch(chunk)
+            for chunk in np.array_split(self._data, split_size_or_sections, axis=axis)
         )
 
     #################
