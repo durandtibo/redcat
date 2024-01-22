@@ -127,6 +127,35 @@ def test_batched_array_allequal_equal_nan_true() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    "other", (ba.array([[10, 11, 12], [13, 14, 15]]), np.array([[10, 11, 12], [13, 14, 15]]))
+)
+def test_batched_array_append(
+    other: BatchedArray | np.ndarray,
+) -> None:
+    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array.append(other)
+    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+
+
+def test_batched_array_append_custom_axes() -> None:
+    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.append(ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1))
+    assert objects_are_equal(
+        array,
+        ba.array(
+            [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array_append_different_axes() -> None:
+    batch = ba.ones((2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.append(ba.zeros((2, 2), batch_axis=1))
+
+
 def test_batched_array_clone() -> None:
     batch = ba.ones(shape=(2, 3))
     batch_cloned = batch.clone()
@@ -134,6 +163,48 @@ def test_batched_array_clone() -> None:
     assert batch.data is not batch_cloned.data
     assert batch.allequal(ba.full(shape=(2, 3), fill_value=2.0))
     assert batch_cloned.allequal(ba.ones(shape=(2, 3)))
+
+
+@pytest.mark.parametrize(
+    "arrays",
+    (
+        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [np.array([[10, 11, 12], [13, 14, 15]])],
+        (ba.array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
+        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+    ),
+)
+def test_batched_array_extend(
+    arrays: Iterable[BatchedArray | np.ndarray],
+) -> None:
+    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array.extend(arrays)
+    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+
+
+def test_batched_array_extend_custom_axes() -> None:
+    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.extend([ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)])
+    assert objects_are_equal(
+        array,
+        ba.array(
+            [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array_extend_empty() -> None:
+    array = ba.ones((2, 3))
+    array.extend([])
+    assert objects_are_equal(array, ba.ones((2, 3)))
+
+
+def test_batched_array_extend_different_axes() -> None:
+    batch = ba.ones((2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.extend([ba.zeros((2, 2), batch_axis=1)])
 
 
 def test_batched_array_to_data() -> None:
@@ -993,6 +1064,66 @@ def test_batched_array_concatenate_different_axes() -> None:
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
+def test_batched_array_concatenate__dim_0(
+    arrays: Iterable[BatchedArray | np.ndarray],
+) -> None:
+    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array.concatenate_(arrays, axis=0)
+    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+
+
+@pytest.mark.parametrize(
+    "arrays",
+    (
+        [ba.array([[10, 11], [12, 13]])],
+        [np.array([[10, 11], [12, 13]])],
+        (ba.array([[10, 11], [12, 13]]),),
+        [ba.array([[10], [12]]), ba.array([[11], [13]])],
+        [ba.array([[10], [12]]), np.array([[11], [13]])],
+    ),
+)
+def test_batched_array_concatenate__axis_1(
+    arrays: Iterable[BatchedArray | np.ndarray],
+) -> None:
+    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array.concatenate_(arrays, axis=1)
+    assert objects_are_equal(array, ba.array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]]))
+
+
+def test_batched_array_concatenate__custom_axes() -> None:
+    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.concatenate_([ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)], axis=1)
+    assert objects_are_equal(
+        array,
+        ba.array(
+            [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array_concatenate__empty() -> None:
+    array = ba.ones((2, 3))
+    array.concatenate_([])
+    assert objects_are_equal(array, ba.ones((2, 3)))
+
+
+def test_batched_array_concatenate__different_axes() -> None:
+    batch = ba.ones((2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.concatenate_([ba.zeros(shape=(2, 2), batch_axis=1)])
+
+
+@pytest.mark.parametrize(
+    "arrays",
+    (
+        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [np.array([[10, 11, 12], [13, 14, 15]])],
+        (ba.array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
+        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+    ),
+)
 def test_batched_array_concatenate_along_batch(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
@@ -1022,3 +1153,45 @@ def test_batched_array_concatenate_along_batch_different_axes() -> None:
     batch = ba.ones((2, 2))
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         batch.concatenate_along_batch([ba.zeros((2, 2), batch_axis=1)])
+
+
+@pytest.mark.parametrize(
+    "arrays",
+    (
+        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [np.array([[10, 11, 12], [13, 14, 15]])],
+        (ba.array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
+        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+    ),
+)
+def test_batched_array_concatenate_along_batch_(
+    arrays: Iterable[BatchedArray | np.ndarray],
+) -> None:
+    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array.concatenate_along_batch_(arrays)
+    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+
+
+def test_batched_array_concatenate_along_batch__custom_axes() -> None:
+    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.concatenate_along_batch_([ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)])
+    assert objects_are_equal(
+        array,
+        ba.array(
+            [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array_concatenate_along_batch__empty() -> None:
+    array = ba.ones((2, 3))
+    array.concatenate_along_batch_([])
+    assert objects_are_equal(array, ba.ones((2, 3)))
+
+
+def test_batched_array_concatenate_along_batch__different_axes() -> None:
+    batch = ba.ones((2, 2))
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        batch.concatenate_along_batch_([ba.zeros((2, 2), batch_axis=1)])

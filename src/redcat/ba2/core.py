@@ -53,8 +53,14 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             return False
         return objects_are_equal(self.data, other.data, equal_nan=equal_nan)
 
+    def append(self, other: TBatchedArray | np.ndarray) -> None:
+        self.concatenate_along_batch_([other])
+
     def clone(self) -> TBatchedArray:
         return self._create_new_batch(self._data.copy())
+
+    def extend(self, other: Iterable[TBatchedArray | np.ndarray]) -> None:
+        self.concatenate_along_batch_(other)
 
     def to_data(self) -> np.ndarray:
         return self._data
@@ -168,6 +174,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         Returns:
             A new batch containing the addition of the two batches.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -200,6 +209,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
                 batch.
             alpha: Specifies the scale of the batch to add.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -227,6 +239,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             The largest integer smaller or equal to the division of
                 the inputs.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -252,6 +267,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         Args:
             divisor: Specifies the divisor/denominator.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
 
         Example usage:
 
@@ -279,6 +297,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             A new batch containing the element-wise remainder of
                 division.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -303,6 +324,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         Args:
             divisor: Specifies the divisor.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
 
         Example usage:
 
@@ -329,6 +353,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         Returns:
             A new batch containing the multiplication of the two
                 batches.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
 
         Example usage:
 
@@ -358,6 +385,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         Returns:
             A new batch containing the multiplication of the two
                 batches.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
 
         Example usage:
 
@@ -413,6 +443,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         Returns:
             A new batch containing the diffence of the two batches.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -444,6 +477,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             other: Specifies the value to subtract.
             alpha: Specifies the scale of the batch to substract.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -469,6 +505,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         Returns:
             The division of the inputs.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -493,6 +532,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         Args:
             divisor: Specifies the divisor/denominator.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
 
         Example usage:
 
@@ -538,6 +580,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         Returns:
             The concatenated array.
 
+        Raises:
+            RuntimeError: if the batch axes are different.
+
         Example usage:
 
         ```pycon
@@ -568,6 +613,33 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             return out
         return self._create_new_batch(out)
 
+    def concatenate_(self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int = 0) -> None:
+        r"""Join a sequence of arrays along an existing axis in-place.
+
+        Args:
+            arrays: The arrays must have the same shape, except in the
+                dimension corresponding to axis.
+            axis: The axis along which the arrays will be joined.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> batch.concatenate_([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch
+        array([[ 0,  1,  2],
+               [ 4,  5,  6],
+               [10, 11, 12],
+               [13, 14, 15]], batch_axis=0)
+
+        ```
+        """
+        self._data = self.concatenate(arrays, axis).data
+
     def concatenate_along_batch(
         self, arrays: Iterable[TBatchedArray | np.ndarray]
     ) -> TBatchedArray:
@@ -579,6 +651,9 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
         Returns:
             The concatenated array.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
 
         Example usage:
 
@@ -598,6 +673,32 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         ```
         """
         return self.concatenate(arrays, axis=self._batch_axis)
+
+    def concatenate_along_batch_(self, arrays: Iterable[TBatchedArray | np.ndarray]) -> None:
+        r"""Join a sequence of arrays along the batch axis in-place.
+
+        Args:
+            arrays: The arrays must have the same shape, except in the
+                dimension corresponding to axis.
+
+        Raises:
+            RuntimeError: if the batch axes are different.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> batch.concatenate_along_batch_([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch
+        array([[ 0,  1,  2],
+               [ 4,  5,  6],
+               [10, 11, 12],
+               [13, 14, 15]], batch_axis=0)
+
+        ```
+        """
+        self.concatenate_(arrays, axis=self._batch_axis)
 
     #################
     #     Other     #
