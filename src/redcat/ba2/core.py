@@ -65,6 +65,11 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
     def extend(self, other: Iterable[TBatchedArray | np.ndarray]) -> None:
         self.concatenate_along_batch_(other)
 
+    def slice_along_batch(
+        self, start: int = 0, stop: int | None = None, step: int = 1
+    ) -> TBatchedArray:
+        return self.slice_along_axis(self._batch_axis, start, stop, step)
+
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
     ) -> tuple[TBatchedArray, ...]:
@@ -749,6 +754,55 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             self._create_new_batch(chunk)
             for chunk in np.array_split(self._data, indices_or_sections=chunks, axis=axis)
         )
+
+    def slice_along_axis(
+        self,
+        axis: int = 0,
+        start: int = 0,
+        stop: int | None = None,
+        step: int = 1,
+    ) -> TBatchedArray:
+        r"""Slice the batch in a given axis.
+
+        Args:
+            axis: Specifies the axis along which to slice the array.
+            start: Specifies the index where the slicing starts.
+            stop: Specifies the index where the slicing stops.
+                ``None`` means last.
+            step: Specifies the increment between each index for
+                slicing.
+
+        Returns:
+            A slice of the current batch along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.slice_along_axis(start=2)
+        array([[4, 5],
+               [6, 7],
+               [8, 9]], batch_axis=0)
+        >>> batch.slice_along_axis(stop=3)
+        array([[0, 1],
+               [2, 3],
+               [4, 5]], batch_axis=0)
+        >>> batch.slice_along_axis(step=2)
+        array([[0, 1],
+               [4, 5],
+               [8, 9]], batch_axis=0)
+
+        ```
+        """
+        if axis == 0:
+            data = self._data[start:stop:step]
+        elif axis == 1:
+            data = self._data[:, start:stop:step]
+        else:
+            data = self._data.swapaxes(0, axis)[start:stop:step].swapaxes(0, axis)
+        return self._create_new_batch(data)
 
     def split_along_axis(
         self, split_size_or_sections: int | Sequence[int], axis: int = 0
