@@ -773,7 +773,7 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         >>> import numpy as np
         >>> from redcat.ba2 import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
-        >>> batch.split(2, axis=0)
+        >>> batch.split_along_axis(2, axis=0)
         (array([[0, 1], [2, 3]], batch_axis=0),
          array([[4, 5], [6, 7]], batch_axis=0),
          array([[8, 9]], batch_axis=0))
