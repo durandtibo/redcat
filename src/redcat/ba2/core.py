@@ -2,8 +2,8 @@ from __future__ import annotations
 
 __all__ = ["BatchedArray"]
 
-from collections.abc import Sequence
-from typing import Any, Literal, TypeVar
+from collections.abc import Iterable, Sequence
+from typing import Any, Literal, TypeVar, overload
 
 import numpy as np
 from coola import objects_are_allclose, objects_are_equal
@@ -52,6 +52,12 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         if not isinstance(other, self.__class__) or self.batch_axis != other.batch_axis:
             return False
         return objects_are_equal(self.data, other.data, equal_nan=equal_nan)
+
+    def clone(self) -> TBatchedArray:
+        return self._create_new_batch(self._data.copy())
+
+    def to_data(self) -> np.ndarray:
+        return self._data
 
     ######################################
     #     Additional functionalities     #
@@ -501,6 +507,97 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         ```
         """
         self.__itruediv__(divisor)
+
+    ########################################################
+    #     Array manipulation routines | Joining arrays     #
+    ########################################################
+
+    @overload
+    def concatenate(
+        self, arrays: Iterable[TBatchedArray | np.ndarray], axis: None = ...
+    ) -> np.ndarray:
+        ...  # pragma: no cover
+
+    @overload
+    def concatenate(
+        self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int = ...
+    ) -> TBatchedArray:
+        ...  # pragma: no cover
+
+    def concatenate(
+        self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int | None = 0
+    ) -> TBatchedArray | np.ndarray:
+        r"""Join a sequence of arrays along an existing axis.
+
+        Args:
+            arrays: The arrays must have the same shape, except in the
+                dimension corresponding to axis.
+            axis: The axis along which the arrays will be joined.
+                If axis is None, arrays are flattened before use.
+
+        Returns:
+            The concatenated array.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> out = batch.concatenate([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch
+        array([[0, 1, 2],
+               [4, 5, 6]], batch_axis=0)
+        >>> out
+        array([[ 0,  1,  2],
+               [ 4,  5,  6],
+               [10, 11, 12],
+               [13, 14, 15]], batch_axis=0)
+
+        ```
+        """
+        arr = [self._data]
+        batch_axes = {self.batch_axis}
+        for a in arrays:
+            if isinstance(a, self.__class__):
+                batch_axes.add(a.batch_axis)
+                a = a.data
+            arr.append(a)
+        check_same_batch_axis(batch_axes)
+        out = np.concatenate(arr, axis=axis)
+        if axis is None:
+            return out
+        return self._create_new_batch(out)
+
+    def concatenate_along_batch(
+        self, arrays: Iterable[TBatchedArray | np.ndarray]
+    ) -> TBatchedArray:
+        r"""Join a sequence of arrays along the batch axis.
+
+        Args:
+            arrays: The arrays must have the same shape, except in the
+                dimension corresponding to axis.
+
+        Returns:
+            The concatenated array.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> out = batch.concatenate_along_batch([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch
+        array([[0, 1, 2],
+               [4, 5, 6]], batch_axis=0)
+        >>> out
+        array([[ 0,  1,  2],
+               [ 4,  5,  6],
+               [10, 11, 12],
+               [13, 14, 15]], batch_axis=0)
+
+        ```
+        """
+        return self.concatenate(arrays, axis=self._batch_axis)
 
     #################
     #     Other     #

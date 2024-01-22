@@ -36,7 +36,7 @@ ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
 
 def array(
-    data: ArrayLike, dtype: DTypeLike = None, *, batch_axis: int = 0, **kwargs: Any
+    data: ArrayLike | Sequence, dtype: DTypeLike = None, *, batch_axis: int = 0, **kwargs: Any
 ) -> BatchedArray:
     r"""Create an array.
 
