@@ -36,7 +36,6 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
     Example usage:
 
     ```pycon
-    >>> import numpy as np
     >>> from redcat.utils.random import get_random_rng
     >>> get_random_rng(42)
     <random.Random object at 0x...>
