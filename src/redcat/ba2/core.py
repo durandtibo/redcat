@@ -10,6 +10,7 @@ from coola import objects_are_allclose, objects_are_equal
 from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.base import BaseBatch
 from redcat.utils.array import to_array
 
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -17,7 +18,7 @@ from redcat.utils.array import to_array
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
-class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarray]):
+class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     r"""Implement a wrapper around a NumPy array to track the batch
     axis."""
 

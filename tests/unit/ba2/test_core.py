@@ -255,22 +255,18 @@ def test_batched_array_extend_different_axes() -> None:
         batch.extend([ba.zeros((2, 2), batch_axis=1)])
 
 
-# TODO: uncomment
-# @pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
-# def test_batched_array_get_num_minibatches_drop_last_false(
-#     batch_size: int, num_minibatches: int
-# ) -> None:
-#     assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size) == num_minibatches
-#
-#
-# @pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
-# def test_batched_array_get_num_minibatches_drop_last_true(
-#     batch_size: int, num_minibatches: int
-# ) -> None:
-#     assert (
-#         ba.ones(shape=(10, 2)).get_num_minibatches(batch_size, drop_last=True)
-#         == num_minibatches
-#     )
+@pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+def test_batched_array_get_num_minibatches_drop_last_false(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size) == num_minibatches
+
+
+@pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+def test_batched_array_get_num_minibatches_drop_last_true(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size, drop_last=True) == num_minibatches
 
 
 @pytest.mark.parametrize("index", [np.array([2, 0]), [2, 0], (2, 0)])
@@ -527,6 +523,108 @@ def test_batched_array_summary() -> None:
 
 def test_batched_array_to_data() -> None:
     assert objects_are_equal(ba.ones(shape=(2, 3)).to_data(), np.ones(shape=(2, 3)))
+
+
+def test_batched_array_to_minibatches_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=2)),
+        [
+            ba.array([[0, 1], [2, 3]]),
+            ba.array([[4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15]]),
+            ba.array([[16, 17], [18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=3)),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5]]),
+            ba.array([[6, 7], [8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15], [16, 17]]),
+            ba.array([[18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=4)),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11], [12, 13], [14, 15]]),
+            ba.array([[16, 17], [18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_drop_last_true_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=2, drop_last=True)
+        ),
+        [
+            ba.array([[0, 1], [2, 3]]),
+            ba.array([[4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15]]),
+            ba.array([[16, 17], [18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_drop_last_true_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=3, drop_last=True)
+        ),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5]]),
+            ba.array([[6, 7], [8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15], [16, 17]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_drop_last_true_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=4, drop_last=True)
+        ),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11], [12, 13], [14, 15]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_custom_dims() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(2, 10), batch_axis=1).to_minibatches(batch_size=3)),
+        [
+            ba.array([[0, 1, 2], [10, 11, 12]], batch_axis=1),
+            ba.array([[3, 4, 5], [13, 14, 15]], batch_axis=1),
+            ba.array([[6, 7, 8], [16, 17, 18]], batch_axis=1),
+            ba.array([[9], [19]], batch_axis=1),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_deepcopy_true() -> None:
+    batch = ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    for item in batch.to_minibatches(batch_size=2, deepcopy=True):
+        item.data[0, 0] = 42
+    assert batch.allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+
+
+def test_batched_array_to_minibatches_deepcopy_false() -> None:
+    batch = ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    for item in batch.to_minibatches(batch_size=2):
+        item.data[0, 0] = 42
+    assert batch.allequal(ba.array([[42, 1], [2, 3], [42, 5], [6, 7], [42, 9]]))
 
 
 ######################################
