@@ -282,6 +282,36 @@ def test_batched_array_index_select_along_batch_custom_axes() -> None:
     )
 
 
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_tensor_permute_along_batch(permutation: Sequence[int] | np.ndarray) -> None:
+    assert (
+        ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        .permute_along_batch(permutation)
+        .allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    )
+
+
+def test_batched_tensor_permute_along_batch_custom_axes() -> None:
+    assert (
+        ba.array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
+        .permute_along_batch(np.array([2, 1, 3, 0]))
+        .allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_tensor_permute_along_batch_(permutation: Sequence[int] | np.ndarray) -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch.permute_along_batch_(permutation)
+    assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+
+
+def test_batched_tensor_permute_along_batch__custom_axes() -> None:
+    batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
+    batch.permute_along_batch_(np.array([2, 1, 3, 0]))
+    assert batch.allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
+
+
 def test_batched_array_select_along_batch() -> None:
     assert objects_are_equal(
         ba.array([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]).select_along_batch(2), np.array([2, 7])
@@ -1633,3 +1663,58 @@ def test_batched_array_split_along_axis_split_list() -> None:
             ba.array([[8, 9]]),
         ),
     )
+
+
+##############################################################
+#     Array manipulation routines | Rearranging elements     #
+##############################################################
+
+
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_tensor_permute_along_axis_0(permutation: Sequence[int] | np.ndarray) -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        .permute_along_axis(permutation, axis=0)
+        .allequal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+    )
+
+
+@pytest.mark.parametrize(
+    "permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+)
+def test_batched_tensor_permute_along_axis_1(permutation: Sequence[int] | np.ndarray) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .permute_along_axis(permutation, axis=1)
+        .allequal(BatchedArray(np.array([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+    )
+
+
+def test_batched_tensor_permute_along_axis_custom_axes() -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_axis=1)
+        .permute_along_axis(np.array([2, 1, 3, 0]), axis=1)
+        .allequal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_tensor_permute_along_axis__0(permutation: Sequence[int] | np.ndarray) -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch.permute_along_axis_(permutation, axis=0)
+    assert batch.allequal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+
+
+@pytest.mark.parametrize(
+    "permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+)
+def test_batched_tensor_permute_along_axis__1(permutation: Sequence[int] | np.ndarray) -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.permute_along_axis_(permutation, axis=1)
+    assert batch.allequal(BatchedArray(np.array([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+
+
+def test_batched_tensor_permute_along_axis__custom_axes() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_axis=1)
+    batch.permute_along_axis_(np.array([2, 1, 3, 0]), axis=1)
+    assert batch.allequal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_axis=1))
