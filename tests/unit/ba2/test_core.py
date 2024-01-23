@@ -654,8 +654,16 @@ def test_batched_array_batch_axis(batch_axis: int) -> None:
 #########################
 
 
+def test_batched_array_ndim() -> None:
+    assert ba.ones(shape=(2, 3)).ndim == 2
+
+
 def test_batched_array_shape() -> None:
     assert ba.ones(shape=(2, 3)).shape == (2, 3)
+
+
+def test_batched_array_size() -> None:
+    assert ba.ones(shape=(2, 3)).size == 6
 
 
 #####################
@@ -668,9 +676,272 @@ def test_batched_array_dtype(dtype: np.dtype) -> None:
     assert ba.ones(shape=(2, 3), dtype=dtype).dtype == dtype
 
 
-###################################
-#     Arithmetical operations     #
-###################################
+################################
+#     Comparison operators     #
+################################
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__eq__(other: np.ndarray | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) == other,
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__eq__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        == ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__eq__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__eq__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__ge__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) >= other,
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__ge__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >= ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__ge__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__ge__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__gt__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) > other,
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__gt__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        > ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__gt__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__gt__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__le__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) <= other,
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__le__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        <= ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__le__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__le__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__lt__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) < other,
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, False, False, False, False]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__lt__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        < ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, False, False, False, False]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__lt__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__lt__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__ne__(other: np.ndarray | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) != other,
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__ne__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        != ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__ne__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__ne__(x2)
+
+
+##################################
+#     Arithmetical operators     #
+##################################
 
 
 @pytest.mark.parametrize(

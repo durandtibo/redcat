@@ -146,9 +146,19 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     #########################
 
     @property
+    def ndim(self) -> int:
+        r"""Number of array dimensions."""
+        return self._data.ndim
+
+    @property
     def shape(self) -> tuple[int, ...]:
         r"""Tuple of array dimensions."""
         return self._data.shape
+
+    @property
+    def size(self) -> int:
+        r"""Number of elements in the array."""
+        return self._data.size
 
     #####################
     #     Data type     #
@@ -159,9 +169,13 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         r"""Data-type of the array’s elements."""
         return self._data.dtype
 
-    ###################################
-    #     Arithmetical operations     #
-    ###################################
+    ################################
+    #     Comparison operators     #
+    ################################
+
+    ##################################
+    #     Arithmetical operators     #
+    ##################################
 
     def __iadd__(self, other: Any) -> TBatchedArray:
         self._check_valid_axes((self, other))
