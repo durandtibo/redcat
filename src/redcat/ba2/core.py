@@ -67,7 +67,10 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         self.concatenate_along_batch_(other)
 
     def index_select_along_batch(self, index: np.ndarray | Sequence[int]) -> TBatchedArray:
-        return self.take(indices=index, axis=self._batch_axis)
+        return self.index_select(index=index, axis=self._batch_axis)
+
+    def select_along_batch(self, index: int) -> np.ndarray:
+        return self.select(index=index, axis=self._batch_axis)
 
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
@@ -759,6 +762,75 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             for chunk in np.array_split(self._data, indices_or_sections=chunks, axis=axis)
         )
 
+    @overload
+    def index_select(self, index: np.ndarray | Sequence[int], axis: None = ...) -> np.ndarray:
+        ...  # pragma: no cover
+
+    @overload
+    def index_select(self, index: np.ndarray | Sequence[int], axis: int = ...) -> TBatchedArray:
+        ...  # pragma: no cover
+
+    def index_select(
+        self, index: np.ndarray | Sequence[int], axis: int | None = None
+    ) -> TBatchedArray | np.ndarray:
+        r"""Returns a new array which indexes the input array along the
+        given axis using the entries in ``index``.
+
+        Args:
+            index: The 1-D array containing the indices to index.
+            axis: The axis over which to select values. By default,
+                the flattened input array is used.
+
+        Returns:
+            A new array which indexes the input array along the
+                given axis using the entries in ``index``.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.index_select([2, 4], axis=0)
+        array([[4, 5],
+               [8, 9]], batch_axis=0)
+        >>> batch.index_select(np.array([4, 3, 2, 1, 0]), axis=0)
+        array([[8, 9],
+               [6, 7],
+               [4, 5],
+               [2, 3],
+               [0, 1]], batch_axis=0)
+
+        ```
+        """
+        data = np.take(self._data, indices=to_array(index), axis=axis)
+        if axis is None:
+            return data
+        return self._create_new_batch(data)
+
+    def select(self, index: int, axis: int) -> np.ndarray:
+        r"""Select the data along the given axis at the given index.
+
+        Args:
+            index: Specifies the index to select.
+            axis: Specifies the index axis.
+
+        Returns:
+            The batch sliced along the given axis at the given index.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.select(index=2, axis=0)
+        array([4, 5])
+
+        ```
+        """
+        return np.take(self._data, indices=index, axis=axis)
+
     def slice_along_axis(
         self,
         axis: int = 0,
@@ -848,50 +920,6 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             self._create_new_batch(chunk)
             for chunk in np.array_split(self._data, split_size_or_sections, axis=axis)
         )
-
-    @overload
-    def take(self, indices: np.ndarray | Sequence[int], axis: None = ...) -> np.ndarray:
-        ...  # pragma: no cover
-
-    @overload
-    def take(self, indices: np.ndarray | Sequence[int], axis: int = ...) -> TBatchedArray:
-        ...  # pragma: no cover
-
-    def take(
-        self, indices: np.ndarray | Sequence[int], axis: int | None = None
-    ) -> TBatchedArray | np.ndarray:
-        r"""Take elements from an array along an axis.
-
-        Args:
-            indices: The indices of the values to extract.
-            axis: The axis over which to select values. By default,
-                the flattened input array is used.
-
-        Returns:
-            An array with the selected items.
-
-        Example usage:
-
-        ```pycon
-        >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
-        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
-        >>> batch.take([2, 4], axis=0)
-        array([[4, 5],
-               [8, 9]], batch_axis=0)
-        >>> batch.take(np.array([4, 3, 2, 1, 0]), axis=0)
-        array([[8, 9],
-               [6, 7],
-               [4, 5],
-               [2, 3],
-               [0, 1]], batch_axis=0)
-
-        ```
-        """
-        data = np.take(self._data, indices=to_array(indices), axis=axis)
-        if axis is None:
-            return data
-        return self._create_new_batch(data)
 
     #################
     #     Other     #

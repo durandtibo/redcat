@@ -180,7 +180,7 @@ def test_batched_array_chunk_along_batch_3() -> None:
     )
 
 
-def test_batched_array_chunk_along_batch_custom_dims() -> None:
+def test_batched_array_chunk_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk_along_batch(3),
         (
@@ -266,7 +266,7 @@ def test_batched_array_extend_different_axes() -> None:
 
 
 @pytest.mark.parametrize("index", [np.array([2, 0]), [2, 0], (2, 0)])
-def test_batched_tensor_index_select_along_batch(index: np.ndarray | Sequence[int]) -> None:
+def test_batched_array_index_select_along_batch(index: np.ndarray | Sequence[int]) -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .index_select_along_batch(index)
@@ -274,11 +274,24 @@ def test_batched_tensor_index_select_along_batch(index: np.ndarray | Sequence[in
     )
 
 
-def test_batched_tensor_index_select_along_batch_custom_axes() -> None:
+def test_batched_array_index_select_along_batch_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .index_select_along_batch((2, 0))
         .allequal(ba.array([[2, 0], [7, 5]], batch_axis=1))
+    )
+
+
+def test_batched_array_select_along_batch() -> None:
+    assert objects_are_equal(
+        ba.array([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]).select_along_batch(2), np.array([2, 7])
+    )
+
+
+def test_batched_array_select_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).select_along_batch(2),
+        np.array([2, 7]),
     )
 
 
@@ -330,7 +343,7 @@ def test_batched_array_slice_along_batch_start_1_stop_4_step_2() -> None:
     )
 
 
-def test_batched_array_slice_along_batch_custom_dim() -> None:
+def test_batched_array_slice_along_batch_custom_axis() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .slice_along_batch(start=2)
@@ -383,7 +396,7 @@ def test_batched_array_split_along_batch_split_size_2() -> None:
     )
 
 
-def test_batched_array_split_along_batch_custom_dims() -> None:
+def test_batched_array_split_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split_along_batch(2),
         (
@@ -1199,7 +1212,7 @@ def test_batched_array_truediv__different_axes() -> None:
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
-def test_batched_array_concatenate_dim_0(
+def test_batched_array_concatenate_axis_0(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
     assert objects_are_equal(
@@ -1269,7 +1282,7 @@ def test_batched_array_concatenate_different_axes() -> None:
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
-def test_batched_array_concatenate__dim_0(
+def test_batched_array_concatenate__axis_0(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
     array = ba.array([[0, 1, 2], [4, 5, 6]])
@@ -1431,7 +1444,7 @@ def test_batched_array_chunk_5() -> None:
     )
 
 
-def test_batched_array_chunk_custom_dims() -> None:
+def test_batched_array_chunk_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk(3, axis=1),
         (
@@ -1447,31 +1460,60 @@ def test_batched_array_chunk_incorrect_chunks() -> None:
         BatchedArray(np.arange(10).reshape(5, 2)).chunk(0)
 
 
-@pytest.mark.parametrize("indices", [np.array([2, 0]), [2, 0], (2, 0)])
-def test_batched_tensor_take(indices: np.ndarray | Sequence[int]) -> None:
+@pytest.mark.parametrize("index", [np.array([2, 0]), [2, 0], (2, 0)])
+def test_batched_array_index_select(index: np.ndarray | Sequence[int]) -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(5, 2)).take(indices=indices, axis=0),
+        BatchedArray(np.arange(10).reshape(5, 2)).index_select(index=index, axis=0),
         ba.array([[4, 5], [0, 1]]),
     )
 
 
-def test_batched_tensor_take_axis_1() -> None:
+def test_batched_array_index_select_axis_1() -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(2, 5)).take(indices=(2, 0), axis=1),
+        BatchedArray(np.arange(10).reshape(2, 5)).index_select(index=(2, 0), axis=1),
         ba.array([[2, 0], [7, 5]]),
     )
 
 
-def test_batched_tensor_take_axis_none() -> None:
+def test_batched_array_index_select_axis_none() -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(5, 2)).take(indices=[2, 0], axis=None), np.array([2, 0])
+        BatchedArray(np.arange(10).reshape(5, 2)).index_select(index=[2, 0], axis=None),
+        np.array([2, 0]),
     )
 
 
-def test_batched_tensor_take_custom_axes() -> None:
+def test_batched_array_index_select_custom_axes() -> None:
     assert objects_are_equal(
-        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).take(indices=(2, 0), axis=0),
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).index_select(index=(2, 0), axis=0),
         ba.array([[4, 5], [0, 1]], batch_axis=1),
+    )
+
+
+def test_batched_array_select_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3)).select(index=2, axis=0),
+        np.array([[12, 13, 14], [15, 16, 17]]),
+    )
+
+
+def test_batched_array_select_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3)).select(index=0, axis=1),
+        np.array([[0, 1, 2], [6, 7, 8], [12, 13, 14], [18, 19, 20], [24, 25, 26]]),
+    )
+
+
+def test_batched_array_select_axis_2() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3)).select(index=1, axis=2),
+        np.array([[1, 4], [7, 10], [13, 16], [19, 22], [25, 28]]),
+    )
+
+
+def test_batched_array_select_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3), batch_axis=1).select(index=2, axis=0),
+        np.array([[12, 13, 14], [15, 16, 17]]),
     )
 
 
@@ -1571,7 +1613,7 @@ def test_batched_array_split_along_axis_split_size_2() -> None:
     )
 
 
-def test_batched_array_split_along_axis_custom_dims() -> None:
+def test_batched_array_split_along_axis_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split_along_axis(2, axis=1),
         (
