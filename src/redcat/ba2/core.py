@@ -69,6 +69,12 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
     def index_select_along_batch(self, index: np.ndarray | Sequence[int]) -> TBatchedArray:
         return self.index_select(index=index, axis=self._batch_axis)
 
+    def permute_along_batch(self, permutation: np.ndarray | Sequence[int]) -> TBatchedArray:
+        return self.permute_along_axis(permutation, axis=self._batch_axis)
+
+    def permute_along_batch_(self, permutation: np.ndarray | Sequence[int]) -> None:
+        self.permute_along_axis_(permutation, axis=self._batch_axis)
+
     def select_along_batch(self, index: int) -> np.ndarray:
         return self.select(index=index, axis=self._batch_axis)
 
@@ -920,6 +926,66 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             self._create_new_batch(chunk)
             for chunk in np.array_split(self._data, split_size_or_sections, axis=axis)
         )
+
+    ##############################################################
+    #     Array manipulation routines | Rearranging elements     #
+    ##############################################################
+
+    def permute_along_axis(
+        self, permutation: np.ndarray | Sequence[int], axis: int
+    ) -> TBatchedArray:
+        r"""Permute the data/batch along a given axis.
+
+        Args:
+            permutation: Specifies the permutation to use on the data.
+                The dimension of the permutation input should be
+                compatible with the shape of the data.
+            axis: Specifies the axis where the permutation is computed.
+
+        Returns:
+            A new batch with permuted data.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.permute_along_axis([2, 1, 3, 0, 4], axis=0)
+        array([[4, 5],
+               [2, 3],
+               [6, 7],
+               [0, 1],
+               [8, 9]], batch_axis=0)
+
+        ```
+        """
+        return self.index_select(index=permutation, axis=axis)
+
+    def permute_along_axis_(self, permutation: np.ndarray | Sequence[int], axis: int) -> None:
+        r"""Permutes the data/batch along a given dimension.
+
+        Args:
+            permutation: Specifies the permutation to use on the data.
+                The dimension of the permutation input should be
+                compatible with the shape of the data.
+            axis: Specifies the axis where the permutation is computed.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.permute_along_axis_([2, 1, 3, 0, 4], axis=0)
+        >>> batch
+        array([[4, 5],
+               [2, 3],
+               [6, 7],
+               [0, 1],
+               [8, 9]], batch_axis=0)
+        """
+        self._data = np.take(self._data, indices=to_array(permutation), axis=axis)
 
     #################
     #     Other     #
