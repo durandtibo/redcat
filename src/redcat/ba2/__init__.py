@@ -3,6 +3,8 @@ from __future__ import annotations
 __all__ = [
     "BatchedArray",
     "batched_array",
+    "concatenate",
+    "concatenate_along_batch",
     "empty",
     "empty_like",
     "full",
@@ -25,3 +27,4 @@ from redcat.ba2.creation import (
     zeros,
     zeros_like,
 )
+from redcat.ba2.joining import concatenate, concatenate_along_batch

@@ -1873,7 +1873,6 @@ def test_batched_array_concatenate_axis_none() -> None:
             [ba.batched_array([[10, 11, 12], [13, 14, 15]])], axis=None
         ),
         np.array([0, 1, 2, 4, 5, 6, 10, 11, 12, 13, 14, 15]),
-        show_difference=True,
     )
 
 

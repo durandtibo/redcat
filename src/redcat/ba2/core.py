@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-__all__ = ["BatchedArray"]
+__all__ = ["BatchedArray", "implements"]
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from typing import Any, Literal, SupportsIndex, TypeVar, Union, overload
 
 import numpy as np
@@ -19,6 +19,9 @@ TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 OrderACFK = Literal["A", "C", "F", "K"]
 ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
+
+
+HANDLED_FUNCTIONS = {}
 
 
 class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
@@ -132,6 +135,17 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         if ufunc.nout == 1:
             return self._create_new_batch(results)
         return tuple(self._create_new_batch(res) for res in results)
+
+    def __array_function__(
+        self,
+        func: Callable,
+        types: tuple,
+        args: Sequence[Any] = (),
+        kwargs: Mapping[str, Any] | None = None,
+    ) -> TBatchedArray | tuple[TBatchedArray, ...]:
+        if not all(issubclass(t, self.__class__) for t in types):
+            return NotImplemented
+        return HANDLED_FUNCTIONS[func](*args, **kwargs)
 
     def __repr__(self) -> str:
         return repr(self._data)[:-1] + f", batch_axis={self._batch_axis})"
@@ -1303,6 +1317,17 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         if isinstance(data, self.__class__):
             data = data.data
         return data
+
+
+def implements(numpy_function: Callable) -> Callable:
+    """Register an __array_function__ implementation for BatchedArray
+    objects."""
+
+    def decorator(func: Callable) -> Callable:
+        HANDLED_FUNCTIONS[numpy_function] = func
+        return func
+
+    return decorator
 
 
 def setup_rng(rng: np.random.Generator | None) -> np.random.Generator:
