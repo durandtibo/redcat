@@ -2,7 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "BatchedArray",
-    "array",
+    "batched_array",
     "empty",
     "empty_like",
     "full",
@@ -15,7 +15,7 @@ __all__ = [
 
 from redcat.ba2.core import BatchedArray
 from redcat.ba2.creation import (
-    array,
+    batched_array,
     empty,
     empty_like,
     full,

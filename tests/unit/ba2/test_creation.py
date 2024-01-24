@@ -14,32 +14,32 @@ DTYPES = (bool, int, float)
 ###########################
 
 
-def test_array() -> None:
+def test_batched_array() -> None:
     x = np.arange(10).reshape(2, 5)
-    y = ba.array(x)
+    y = ba.batched_array(x)
     assert y.data is not x
     assert objects_are_equal(y, BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])))
 
 
 @pytest.mark.parametrize("dtype", DTYPES)
-def test_array_dtype(dtype: DTypeLike) -> None:
+def test_batched_array_dtype(dtype: DTypeLike) -> None:
     assert objects_are_equal(
-        ba.array(np.arange(10).reshape(2, 5), dtype=dtype),
+        ba.batched_array(np.arange(10).reshape(2, 5), dtype=dtype),
         BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]], dtype=dtype)),
     )
 
 
 @pytest.mark.parametrize("batch_axis", [0, 1])
-def test_array_batch_axis(batch_axis: int) -> None:
+def test_batched_array_batch_axis(batch_axis: int) -> None:
     assert objects_are_equal(
-        ba.array(np.arange(10).reshape(2, 5), batch_axis=batch_axis),
+        ba.batched_array(np.arange(10).reshape(2, 5), batch_axis=batch_axis),
         BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]), batch_axis=batch_axis),
     )
 
 
-def test_array_copy_false() -> None:
+def test_batched_array_copy_false() -> None:
     x = np.arange(10).reshape(2, 5)
-    y = ba.array(x, copy=False)
+    y = ba.batched_array(x, copy=False)
     assert y.data is x
     assert objects_are_equal(y, BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]])))
 

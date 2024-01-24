@@ -136,22 +136,25 @@ def test_batched_array_allequal_equal_nan_true() -> None:
 
 
 @pytest.mark.parametrize(
-    "other", (ba.array([[10, 11, 12], [13, 14, 15]]), np.array([[10, 11, 12], [13, 14, 15]]))
+    "other",
+    (ba.batched_array([[10, 11, 12], [13, 14, 15]]), np.array([[10, 11, 12], [13, 14, 15]])),
 )
 def test_batched_array_append(
     other: BatchedArray | np.ndarray,
 ) -> None:
-    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array = ba.batched_array([[0, 1, 2], [4, 5, 6]])
     array.append(other)
-    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+    assert objects_are_equal(
+        array, ba.batched_array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])
+    )
 
 
 def test_batched_array_append_custom_axes() -> None:
-    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
-    array.append(ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1))
+    array = ba.batched_array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.append(ba.batched_array([[10, 12], [11, 13], [14, 15]], batch_axis=1))
     assert objects_are_equal(
         array,
-        ba.array(
+        ba.batched_array(
             [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
             batch_axis=1,
         ),
@@ -168,11 +171,11 @@ def test_batched_array_chunk_along_batch_5() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).chunk_along_batch(5),
         (
-            ba.array([[0, 1]]),
-            ba.array([[2, 3]]),
-            ba.array([[4, 5]]),
-            ba.array([[6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1]]),
+            ba.batched_array([[2, 3]]),
+            ba.batched_array([[4, 5]]),
+            ba.batched_array([[6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -181,9 +184,9 @@ def test_batched_array_chunk_along_batch_3() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).chunk_along_batch(3),
         (
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -192,9 +195,9 @@ def test_batched_array_chunk_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk_along_batch(3),
         (
-            ba.array([[0, 1], [5, 6]], batch_axis=1),
-            ba.array([[2, 3], [7, 8]], batch_axis=1),
-            ba.array([[4], [9]], batch_axis=1),
+            ba.batched_array([[0, 1], [5, 6]], batch_axis=1),
+            ba.batched_array([[2, 3], [7, 8]], batch_axis=1),
+            ba.batched_array([[4], [9]], batch_axis=1),
         ),
     )
 
@@ -216,27 +219,29 @@ def test_batched_array_clone() -> None:
 @pytest.mark.parametrize(
     "arrays",
     (
-        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
-        (ba.array([[10, 11, 12], [13, 14, 15]]),),
-        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
-        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+        (ba.batched_array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.batched_array([[10, 11, 12]]), ba.batched_array([[13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
 def test_batched_array_extend(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
-    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array = ba.batched_array([[0, 1, 2], [4, 5, 6]])
     array.extend(arrays)
-    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+    assert objects_are_equal(
+        array, ba.batched_array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])
+    )
 
 
 def test_batched_array_extend_custom_axes() -> None:
-    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
-    array.extend([ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)])
+    array = ba.batched_array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.extend([ba.batched_array([[10, 12], [11, 13], [14, 15]], batch_axis=1)])
     assert objects_are_equal(
         array,
-        ba.array(
+        ba.batched_array(
             [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
             batch_axis=1,
         ),
@@ -274,7 +279,7 @@ def test_batched_array_index_select_along_batch(index: np.ndarray | Sequence[int
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .index_select_along_batch(index)
-        .allequal(ba.array([[4, 5], [0, 1]]))
+        .allequal(ba.batched_array([[4, 5], [0, 1]]))
     )
 
 
@@ -282,43 +287,44 @@ def test_batched_array_index_select_along_batch_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .index_select_along_batch((2, 0))
-        .allequal(ba.array([[2, 0], [7, 5]], batch_axis=1))
+        .allequal(ba.batched_array([[2, 0], [7, 5]], batch_axis=1))
     )
 
 
 @pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
 def test_batched_array_permute_along_batch(permutation: Sequence[int] | np.ndarray) -> None:
     assert (
-        ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
         .permute_along_batch(permutation)
-        .allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+        .allequal(ba.batched_array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
     )
 
 
 def test_batched_array_permute_along_batch_custom_axes() -> None:
     assert (
-        ba.array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
+        ba.batched_array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
         .permute_along_batch(np.array([2, 1, 3, 0]))
-        .allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
+        .allequal(ba.batched_array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
     )
 
 
 @pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
 def test_batched_array_permute_along_batch_(permutation: Sequence[int] | np.ndarray) -> None:
-    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch.permute_along_batch_(permutation)
-    assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    assert batch.allequal(ba.batched_array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
 
 
 def test_batched_array_permute_along_batch__custom_axes() -> None:
-    batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
+    batch = ba.batched_array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
     batch.permute_along_batch_(np.array([2, 1, 3, 0]))
-    assert batch.allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
+    assert batch.allequal(ba.batched_array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
 
 
 def test_batched_array_select_along_batch() -> None:
     assert objects_are_equal(
-        ba.array([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]).select_along_batch(2), np.array([2, 7])
+        ba.batched_array([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]).select_along_batch(2),
+        np.array([2, 7]),
     )
 
 
@@ -332,30 +338,30 @@ def test_batched_array_select_along_batch_custom_axes() -> None:
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch() -> None:
     assert (
-        ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
         .shuffle_along_batch()
-        .allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+        .allequal(ba.batched_array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
     )
 
 
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch_custom_axes() -> None:
     assert (
-        ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+        ba.batched_array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
         .shuffle_along_batch()
-        .allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+        .allequal(ba.batched_array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
     )
 
 
 def test_batched_array_shuffle_along_batch_same_random_seed() -> None:
-    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     assert batch.shuffle_along_batch(rng=np.random.default_rng(1)).allequal(
         batch.shuffle_along_batch(rng=np.random.default_rng(1))
     )
 
 
 def test_batched_array_shuffle_along_batch_different_random_seeds() -> None:
-    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     assert not batch.shuffle_along_batch(rng=np.random.default_rng(1)).allequal(
         batch.shuffle_along_batch(rng=np.random.default_rng(2))
     )
@@ -363,30 +369,32 @@ def test_batched_array_shuffle_along_batch_different_random_seeds() -> None:
 
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch_() -> None:
-    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch.shuffle_along_batch_()
-    assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    assert batch.allequal(ba.batched_array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
 
 
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch__custom_axes() -> None:
-    batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+    batch = ba.batched_array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
     batch.shuffle_along_batch_()
-    assert batch.allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+    assert batch.allequal(
+        ba.batched_array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1)
+    )
 
 
 def test_batched_array_shuffle_along_batch__same_random_seed() -> None:
-    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch1.shuffle_along_batch_(rng=np.random.default_rng(1))
-    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch2.shuffle_along_batch_(rng=np.random.default_rng(1))
     assert batch1.allequal(batch2)
 
 
 def test_batched_array_shuffle_along_batch__different_random_seeds() -> None:
-    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch1.shuffle_along_batch_(rng=np.random.default_rng(1))
-    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch2.shuffle_along_batch_(rng=np.random.default_rng(2))
     assert not batch1.allequal(batch2)
 
@@ -395,7 +403,7 @@ def test_batched_array_slice_along_batch() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_batch()
-        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+        .allequal(ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
     )
 
 
@@ -403,7 +411,7 @@ def test_batched_array_slice_along_batch_start_2() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_batch(start=2)
-        .allequal(ba.array([[4, 5], [6, 7], [8, 9]]))
+        .allequal(ba.batched_array([[4, 5], [6, 7], [8, 9]]))
     )
 
 
@@ -411,7 +419,7 @@ def test_batched_array_slice_along_batch_stop_3() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_batch(stop=3)
-        .allequal(ba.array([[0, 1], [2, 3], [4, 5]]))
+        .allequal(ba.batched_array([[0, 1], [2, 3], [4, 5]]))
     )
 
 
@@ -419,7 +427,7 @@ def test_batched_array_slice_along_batch_stop_100() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_batch(stop=100)
-        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+        .allequal(ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
     )
 
 
@@ -427,7 +435,7 @@ def test_batched_array_slice_along_batch_step_2() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_batch(step=2)
-        .allequal(ba.array([[0, 1], [4, 5], [8, 9]]))
+        .allequal(ba.batched_array([[0, 1], [4, 5], [8, 9]]))
     )
 
 
@@ -435,7 +443,7 @@ def test_batched_array_slice_along_batch_start_1_stop_4_step_2() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_batch(start=1, stop=4, step=2)
-        .allequal(ba.array([[2, 3], [6, 7]]))
+        .allequal(ba.batched_array([[2, 3], [6, 7]]))
     )
 
 
@@ -443,7 +451,7 @@ def test_batched_array_slice_along_batch_custom_axis() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .slice_along_batch(start=2)
-        .allequal(ba.array([[2, 3, 4], [7, 8, 9]], batch_axis=1))
+        .allequal(ba.batched_array([[2, 3, 4], [7, 8, 9]], batch_axis=1))
     )
 
 
@@ -452,7 +460,7 @@ def test_batched_array_slice_along_batch_batch_axis_1() -> None:
         BatchedArray(np.arange(20).reshape(2, 5, 2), batch_axis=1)
         .slice_along_batch(start=2)
         .allequal(
-            ba.array(
+            ba.batched_array(
                 [[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]],
                 batch_axis=1,
             )
@@ -464,7 +472,9 @@ def test_batched_array_slice_along_batch_batch_axis_2() -> None:
     assert (
         BatchedArray(np.arange(20).reshape(2, 2, 5), batch_axis=2)
         .slice_along_batch(start=2)
-        .allequal(ba.array([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]], batch_axis=2))
+        .allequal(
+            ba.batched_array([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]], batch_axis=2)
+        )
     )
 
 
@@ -472,11 +482,11 @@ def test_batched_array_split_along_batch_split_size_1() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).split_along_batch(1),
         (
-            ba.array([[0, 1]]),
-            ba.array([[2, 3]]),
-            ba.array([[4, 5]]),
-            ba.array([[6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1]]),
+            ba.batched_array([[2, 3]]),
+            ba.batched_array([[4, 5]]),
+            ba.batched_array([[6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -485,9 +495,9 @@ def test_batched_array_split_along_batch_split_size_2() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).split_along_batch(2),
         (
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -496,9 +506,9 @@ def test_batched_array_split_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split_along_batch(2),
         (
-            ba.array([[0, 1], [5, 6]], batch_axis=1),
-            ba.array([[2, 3], [7, 8]], batch_axis=1),
-            ba.array([[4], [9]], batch_axis=1),
+            ba.batched_array([[0, 1], [5, 6]], batch_axis=1),
+            ba.batched_array([[2, 3], [7, 8]], batch_axis=1),
+            ba.batched_array([[4], [9]], batch_axis=1),
         ),
     )
 
@@ -507,9 +517,9 @@ def test_batched_array_split_along_batch_split_list() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).split_along_batch([2, 2, 1]),
         (
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -529,11 +539,11 @@ def test_batched_array_to_minibatches_10_batch_size_2() -> None:
     assert objects_are_equal(
         list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=2)),
         [
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9], [10, 11]]),
-            ba.array([[12, 13], [14, 15]]),
-            ba.array([[16, 17], [18, 19]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9], [10, 11]]),
+            ba.batched_array([[12, 13], [14, 15]]),
+            ba.batched_array([[16, 17], [18, 19]]),
         ],
     )
 
@@ -542,10 +552,10 @@ def test_batched_array_to_minibatches_10_batch_size_3() -> None:
     assert objects_are_equal(
         list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=3)),
         [
-            ba.array([[0, 1], [2, 3], [4, 5]]),
-            ba.array([[6, 7], [8, 9], [10, 11]]),
-            ba.array([[12, 13], [14, 15], [16, 17]]),
-            ba.array([[18, 19]]),
+            ba.batched_array([[0, 1], [2, 3], [4, 5]]),
+            ba.batched_array([[6, 7], [8, 9], [10, 11]]),
+            ba.batched_array([[12, 13], [14, 15], [16, 17]]),
+            ba.batched_array([[18, 19]]),
         ],
     )
 
@@ -554,9 +564,9 @@ def test_batched_array_to_minibatches_10_batch_size_4() -> None:
     assert objects_are_equal(
         list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=4)),
         [
-            ba.array([[0, 1], [2, 3], [4, 5], [6, 7]]),
-            ba.array([[8, 9], [10, 11], [12, 13], [14, 15]]),
-            ba.array([[16, 17], [18, 19]]),
+            ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7]]),
+            ba.batched_array([[8, 9], [10, 11], [12, 13], [14, 15]]),
+            ba.batched_array([[16, 17], [18, 19]]),
         ],
     )
 
@@ -567,11 +577,11 @@ def test_batched_array_to_minibatches_drop_last_true_10_batch_size_2() -> None:
             BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=2, drop_last=True)
         ),
         [
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9], [10, 11]]),
-            ba.array([[12, 13], [14, 15]]),
-            ba.array([[16, 17], [18, 19]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9], [10, 11]]),
+            ba.batched_array([[12, 13], [14, 15]]),
+            ba.batched_array([[16, 17], [18, 19]]),
         ],
     )
 
@@ -582,9 +592,9 @@ def test_batched_array_to_minibatches_drop_last_true_10_batch_size_3() -> None:
             BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=3, drop_last=True)
         ),
         [
-            ba.array([[0, 1], [2, 3], [4, 5]]),
-            ba.array([[6, 7], [8, 9], [10, 11]]),
-            ba.array([[12, 13], [14, 15], [16, 17]]),
+            ba.batched_array([[0, 1], [2, 3], [4, 5]]),
+            ba.batched_array([[6, 7], [8, 9], [10, 11]]),
+            ba.batched_array([[12, 13], [14, 15], [16, 17]]),
         ],
     )
 
@@ -595,8 +605,8 @@ def test_batched_array_to_minibatches_drop_last_true_10_batch_size_4() -> None:
             BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=4, drop_last=True)
         ),
         [
-            ba.array([[0, 1], [2, 3], [4, 5], [6, 7]]),
-            ba.array([[8, 9], [10, 11], [12, 13], [14, 15]]),
+            ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7]]),
+            ba.batched_array([[8, 9], [10, 11], [12, 13], [14, 15]]),
         ],
     )
 
@@ -605,26 +615,26 @@ def test_batched_array_to_minibatches_custom_dims() -> None:
     assert objects_are_equal(
         list(BatchedArray(np.arange(20).reshape(2, 10), batch_axis=1).to_minibatches(batch_size=3)),
         [
-            ba.array([[0, 1, 2], [10, 11, 12]], batch_axis=1),
-            ba.array([[3, 4, 5], [13, 14, 15]], batch_axis=1),
-            ba.array([[6, 7, 8], [16, 17, 18]], batch_axis=1),
-            ba.array([[9], [19]], batch_axis=1),
+            ba.batched_array([[0, 1, 2], [10, 11, 12]], batch_axis=1),
+            ba.batched_array([[3, 4, 5], [13, 14, 15]], batch_axis=1),
+            ba.batched_array([[6, 7, 8], [16, 17, 18]], batch_axis=1),
+            ba.batched_array([[9], [19]], batch_axis=1),
         ],
     )
 
 
 def test_batched_array_to_minibatches_deepcopy_true() -> None:
-    batch = ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    batch = ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
     for item in batch.to_minibatches(batch_size=2, deepcopy=True):
         item.data[0, 0] = 42
-    assert batch.allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+    assert batch.allequal(ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
 
 
 def test_batched_array_to_minibatches_deepcopy_false() -> None:
-    batch = ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    batch = ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
     for item in batch.to_minibatches(batch_size=2):
         item.data[0, 0] = 42
-    assert batch.allequal(ba.array([[42, 1], [2, 3], [42, 5], [6, 7], [42, 9]]))
+    assert batch.allequal(ba.batched_array([[42, 1], [2, 3], [42, 5], [6, 7], [42, 9]]))
 
 
 ######################################
@@ -1894,45 +1904,45 @@ def test_batched_array_truediv__different_axes() -> None:
 @pytest.mark.parametrize(
     "arrays",
     (
-        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
-        (ba.array([[10, 11, 12], [13, 14, 15]]),),
-        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
-        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+        (ba.batched_array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.batched_array([[10, 11, 12]]), ba.batched_array([[13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
 def test_batched_array_concatenate_axis_0(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
     assert objects_are_equal(
-        ba.array([[0, 1, 2], [4, 5, 6]]).concatenate(arrays, axis=0),
-        ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]),
+        ba.batched_array([[0, 1, 2], [4, 5, 6]]).concatenate(arrays, axis=0),
+        ba.batched_array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]),
     )
 
 
 @pytest.mark.parametrize(
     "arrays",
     (
-        [ba.array([[10, 11], [12, 13]])],
+        [ba.batched_array([[10, 11], [12, 13]])],
         [np.array([[10, 11], [12, 13]])],
-        (ba.array([[10, 11], [12, 13]]),),
-        [ba.array([[10], [12]]), ba.array([[11], [13]])],
-        [ba.array([[10], [12]]), np.array([[11], [13]])],
+        (ba.batched_array([[10, 11], [12, 13]]),),
+        [ba.batched_array([[10], [12]]), ba.batched_array([[11], [13]])],
+        [ba.batched_array([[10], [12]]), np.array([[11], [13]])],
     ),
 )
 def test_batched_array_concatenate_axis_1(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
     assert objects_are_equal(
-        ba.array([[0, 1, 2], [4, 5, 6]]).concatenate(arrays, axis=1),
-        ba.array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]]),
+        ba.batched_array([[0, 1, 2], [4, 5, 6]]).concatenate(arrays, axis=1),
+        ba.batched_array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]]),
     )
 
 
 def test_batched_array_concatenate_axis_none() -> None:
     assert objects_are_equal(
-        ba.array([[0, 1, 2], [4, 5, 6]]).concatenate(
-            [ba.array([[10, 11, 12], [13, 14, 15]])], axis=None
+        ba.batched_array([[0, 1, 2], [4, 5, 6]]).concatenate(
+            [ba.batched_array([[10, 11, 12], [13, 14, 15]])], axis=None
         ),
         np.array([0, 1, 2, 4, 5, 6, 10, 11, 12, 13, 14, 15]),
         show_difference=True,
@@ -1941,10 +1951,10 @@ def test_batched_array_concatenate_axis_none() -> None:
 
 def test_batched_array_concatenate_custom_axes() -> None:
     assert objects_are_equal(
-        ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1).concatenate(
-            [ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)], axis=1
+        ba.batched_array([[0, 4], [1, 5], [2, 6]], batch_axis=1).concatenate(
+            [ba.batched_array([[10, 12], [11, 13], [14, 15]], batch_axis=1)], axis=1
         ),
-        ba.array(
+        ba.batched_array(
             [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
             batch_axis=1,
         ),
@@ -1964,45 +1974,47 @@ def test_batched_array_concatenate_different_axes() -> None:
 @pytest.mark.parametrize(
     "arrays",
     (
-        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
-        (ba.array([[10, 11, 12], [13, 14, 15]]),),
-        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
-        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+        (ba.batched_array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.batched_array([[10, 11, 12]]), ba.batched_array([[13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
 def test_batched_array_concatenate__axis_0(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
-    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array = ba.batched_array([[0, 1, 2], [4, 5, 6]])
     array.concatenate_(arrays, axis=0)
-    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+    assert objects_are_equal(
+        array, ba.batched_array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])
+    )
 
 
 @pytest.mark.parametrize(
     "arrays",
     (
-        [ba.array([[10, 11], [12, 13]])],
+        [ba.batched_array([[10, 11], [12, 13]])],
         [np.array([[10, 11], [12, 13]])],
-        (ba.array([[10, 11], [12, 13]]),),
-        [ba.array([[10], [12]]), ba.array([[11], [13]])],
-        [ba.array([[10], [12]]), np.array([[11], [13]])],
+        (ba.batched_array([[10, 11], [12, 13]]),),
+        [ba.batched_array([[10], [12]]), ba.batched_array([[11], [13]])],
+        [ba.batched_array([[10], [12]]), np.array([[11], [13]])],
     ),
 )
 def test_batched_array_concatenate__axis_1(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
-    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array = ba.batched_array([[0, 1, 2], [4, 5, 6]])
     array.concatenate_(arrays, axis=1)
-    assert objects_are_equal(array, ba.array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]]))
+    assert objects_are_equal(array, ba.batched_array([[0, 1, 2, 10, 11], [4, 5, 6, 12, 13]]))
 
 
 def test_batched_array_concatenate__custom_axes() -> None:
-    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
-    array.concatenate_([ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)], axis=1)
+    array = ba.batched_array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.concatenate_([ba.batched_array([[10, 12], [11, 13], [14, 15]], batch_axis=1)], axis=1)
     assert objects_are_equal(
         array,
-        ba.array(
+        ba.batched_array(
             [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
             batch_axis=1,
         ),
@@ -2024,28 +2036,28 @@ def test_batched_array_concatenate__different_axes() -> None:
 @pytest.mark.parametrize(
     "arrays",
     (
-        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
-        (ba.array([[10, 11, 12], [13, 14, 15]]),),
-        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
-        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+        (ba.batched_array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.batched_array([[10, 11, 12]]), ba.batched_array([[13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
 def test_batched_array_concatenate_along_batch(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
     assert objects_are_equal(
-        ba.array([[0, 1, 2], [4, 5, 6]]).concatenate_along_batch(arrays),
-        ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]),
+        ba.batched_array([[0, 1, 2], [4, 5, 6]]).concatenate_along_batch(arrays),
+        ba.batched_array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]),
     )
 
 
 def test_batched_array_concatenate_along_batch_custom_axes() -> None:
     assert objects_are_equal(
-        ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1).concatenate_along_batch(
-            [ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)]
+        ba.batched_array([[0, 4], [1, 5], [2, 6]], batch_axis=1).concatenate_along_batch(
+            [ba.batched_array([[10, 12], [11, 13], [14, 15]], batch_axis=1)]
         ),
-        ba.array(
+        ba.batched_array(
             [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
             batch_axis=1,
         ),
@@ -2065,27 +2077,29 @@ def test_batched_array_concatenate_along_batch_different_axes() -> None:
 @pytest.mark.parametrize(
     "arrays",
     (
-        [ba.array([[10, 11, 12], [13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
-        (ba.array([[10, 11, 12], [13, 14, 15]]),),
-        [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
-        [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
+        (ba.batched_array([[10, 11, 12], [13, 14, 15]]),),
+        [ba.batched_array([[10, 11, 12]]), ba.batched_array([[13, 14, 15]])],
+        [ba.batched_array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
 def test_batched_array_concatenate_along_batch_(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
-    array = ba.array([[0, 1, 2], [4, 5, 6]])
+    array = ba.batched_array([[0, 1, 2], [4, 5, 6]])
     array.concatenate_along_batch_(arrays)
-    assert objects_are_equal(array, ba.array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]]))
+    assert objects_are_equal(
+        array, ba.batched_array([[0, 1, 2], [4, 5, 6], [10, 11, 12], [13, 14, 15]])
+    )
 
 
 def test_batched_array_concatenate_along_batch__custom_axes() -> None:
-    array = ba.array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
-    array.concatenate_along_batch_([ba.array([[10, 12], [11, 13], [14, 15]], batch_axis=1)])
+    array = ba.batched_array([[0, 4], [1, 5], [2, 6]], batch_axis=1)
+    array.concatenate_along_batch_([ba.batched_array([[10, 12], [11, 13], [14, 15]], batch_axis=1)])
     assert objects_are_equal(
         array,
-        ba.array(
+        ba.batched_array(
             [[0, 4, 10, 12], [1, 5, 11, 13], [2, 6, 14, 15]],
             batch_axis=1,
         ),
@@ -2113,9 +2127,9 @@ def test_batched_array_chunk_3() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).chunk(3),
         (
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -2124,11 +2138,11 @@ def test_batched_array_chunk_5() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).chunk(5),
         (
-            ba.array([[0, 1]]),
-            ba.array([[2, 3]]),
-            ba.array([[4, 5]]),
-            ba.array([[6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1]]),
+            ba.batched_array([[2, 3]]),
+            ba.batched_array([[4, 5]]),
+            ba.batched_array([[6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -2137,9 +2151,9 @@ def test_batched_array_chunk_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk(3, axis=1),
         (
-            ba.array([[0, 1], [5, 6]], batch_axis=1),
-            ba.array([[2, 3], [7, 8]], batch_axis=1),
-            ba.array([[4], [9]], batch_axis=1),
+            ba.batched_array([[0, 1], [5, 6]], batch_axis=1),
+            ba.batched_array([[2, 3], [7, 8]], batch_axis=1),
+            ba.batched_array([[4], [9]], batch_axis=1),
         ),
     )
 
@@ -2153,14 +2167,14 @@ def test_batched_array_chunk_incorrect_chunks() -> None:
 def test_batched_array_index_select(index: np.ndarray | Sequence[int]) -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).index_select(index=index, axis=0),
-        ba.array([[4, 5], [0, 1]]),
+        ba.batched_array([[4, 5], [0, 1]]),
     )
 
 
 def test_batched_array_index_select_axis_1() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5)).index_select(index=(2, 0), axis=1),
-        ba.array([[2, 0], [7, 5]]),
+        ba.batched_array([[2, 0], [7, 5]]),
     )
 
 
@@ -2174,7 +2188,7 @@ def test_batched_array_index_select_axis_none() -> None:
 def test_batched_array_index_select_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).index_select(index=(2, 0), axis=0),
-        ba.array([[4, 5], [0, 1]], batch_axis=1),
+        ba.batched_array([[4, 5], [0, 1]], batch_axis=1),
     )
 
 
@@ -2210,7 +2224,7 @@ def test_batched_array_slice_along_axis() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_axis()
-        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+        .allequal(ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
     )
 
 
@@ -2218,7 +2232,7 @@ def test_batched_array_slice_along_axis_start_2() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_axis(start=2)
-        .allequal(ba.array([[4, 5], [6, 7], [8, 9]]))
+        .allequal(ba.batched_array([[4, 5], [6, 7], [8, 9]]))
     )
 
 
@@ -2226,7 +2240,7 @@ def test_batched_array_slice_along_axis_stop_3() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_axis(stop=3)
-        .allequal(ba.array([[0, 1], [2, 3], [4, 5]]))
+        .allequal(ba.batched_array([[0, 1], [2, 3], [4, 5]]))
     )
 
 
@@ -2234,7 +2248,7 @@ def test_batched_array_slice_along_axis_stop_100() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_axis(stop=100)
-        .allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+        .allequal(ba.batched_array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
     )
 
 
@@ -2242,7 +2256,7 @@ def test_batched_array_slice_along_axis_step_2() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_axis(step=2)
-        .allequal(ba.array([[0, 1], [4, 5], [8, 9]]))
+        .allequal(ba.batched_array([[0, 1], [4, 5], [8, 9]]))
     )
 
 
@@ -2250,7 +2264,7 @@ def test_batched_array_slice_along_axis_start_1_stop_4_step_2() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2))
         .slice_along_axis(start=1, stop=4, step=2)
-        .allequal(ba.array([[2, 3], [6, 7]]))
+        .allequal(ba.batched_array([[2, 3], [6, 7]]))
     )
 
 
@@ -2258,7 +2272,7 @@ def test_batched_array_slice_along_axis_custom_axes() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)
         .slice_along_axis(start=2)
-        .allequal(ba.array([[4, 5], [6, 7], [8, 9]], batch_axis=1))
+        .allequal(ba.batched_array([[4, 5], [6, 7], [8, 9]], batch_axis=1))
     )
 
 
@@ -2266,7 +2280,7 @@ def test_batched_array_slice_along_axis_batch_axis_1() -> None:
     assert (
         BatchedArray(np.arange(20).reshape(2, 5, 2))
         .slice_along_axis(axis=1, start=2)
-        .allequal(ba.array([[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]]))
+        .allequal(ba.batched_array([[[4, 5], [6, 7], [8, 9]], [[14, 15], [16, 17], [18, 19]]]))
     )
 
 
@@ -2274,7 +2288,7 @@ def test_batched_array_slice_along_axis_batch_axis_2() -> None:
     assert (
         BatchedArray(np.arange(20).reshape(2, 2, 5))
         .slice_along_axis(axis=2, start=2)
-        .allequal(ba.array([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]]))
+        .allequal(ba.batched_array([[[2, 3, 4], [7, 8, 9]], [[12, 13, 14], [17, 18, 19]]]))
     )
 
 
@@ -2282,11 +2296,11 @@ def test_batched_array_split_along_axis_split_size_1() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).split_along_axis(1),
         (
-            ba.array([[0, 1]]),
-            ba.array([[2, 3]]),
-            ba.array([[4, 5]]),
-            ba.array([[6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1]]),
+            ba.batched_array([[2, 3]]),
+            ba.batched_array([[4, 5]]),
+            ba.batched_array([[6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -2295,9 +2309,9 @@ def test_batched_array_split_along_axis_split_size_2() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).split_along_axis(2),
         (
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -2306,9 +2320,9 @@ def test_batched_array_split_along_axis_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split_along_axis(2, axis=1),
         (
-            ba.array([[0, 1], [5, 6]], batch_axis=1),
-            ba.array([[2, 3], [7, 8]], batch_axis=1),
-            ba.array([[4], [9]], batch_axis=1),
+            ba.batched_array([[0, 1], [5, 6]], batch_axis=1),
+            ba.batched_array([[2, 3], [7, 8]], batch_axis=1),
+            ba.batched_array([[4], [9]], batch_axis=1),
         ),
     )
 
@@ -2317,9 +2331,9 @@ def test_batched_array_split_along_axis_split_list() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(5, 2)).split_along_axis([2, 2, 1]),
         (
-            ba.array([[0, 1], [2, 3]]),
-            ba.array([[4, 5], [6, 7]]),
-            ba.array([[8, 9]]),
+            ba.batched_array([[0, 1], [2, 3]]),
+            ba.batched_array([[4, 5], [6, 7]]),
+            ba.batched_array([[8, 9]]),
         ),
     )
 
@@ -2382,30 +2396,30 @@ def test_batched_array_permute_along_axis__custom_axes() -> None:
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis() -> None:
     assert (
-        ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
         .shuffle_along_axis(axis=0)
-        .allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+        .allequal(ba.batched_array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
     )
 
 
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis_custom_axes() -> None:
     assert (
-        ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+        ba.batched_array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
         .shuffle_along_axis(axis=1)
-        .allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+        .allequal(ba.batched_array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
     )
 
 
 def test_batched_array_shuffle_along_axis_same_random_seed() -> None:
-    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     assert batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(1)).allequal(
         batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(1))
     )
 
 
 def test_batched_array_shuffle_along_axis_different_random_seeds() -> None:
-    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     assert not batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(1)).allequal(
         batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(2))
     )
@@ -2413,30 +2427,32 @@ def test_batched_array_shuffle_along_axis_different_random_seeds() -> None:
 
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis_() -> None:
-    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch.shuffle_along_axis_(axis=0)
-    assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    assert batch.allequal(ba.batched_array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
 
 
 @patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis__custom_axes() -> None:
-    batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+    batch = ba.batched_array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
     batch.shuffle_along_axis_(axis=1)
-    assert batch.allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+    assert batch.allequal(
+        ba.batched_array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1)
+    )
 
 
 def test_batched_array_shuffle_along_axis__same_random_seed() -> None:
-    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch1.shuffle_along_axis_(axis=0, rng=np.random.default_rng(1))
-    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch2.shuffle_along_axis_(axis=0, rng=np.random.default_rng(1))
     assert batch1.allequal(batch2)
 
 
 def test_batched_array_shuffle_along_axis__different_random_seeds() -> None:
-    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch1.shuffle_along_axis_(axis=0, rng=np.random.default_rng(1))
-    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2 = ba.batched_array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch2.shuffle_along_axis_(axis=0, rng=np.random.default_rng(2))
     assert not batch1.allequal(batch2)
 

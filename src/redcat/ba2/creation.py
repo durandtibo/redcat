@@ -10,7 +10,7 @@ Notes and links:
 from __future__ import annotations
 
 __all__ = [
-    "array",
+    "batched_array",
     "empty",
     "empty_like",
     "full",
@@ -33,7 +33,7 @@ from redcat.ba2.core import OrderACFK, ShapeLike
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
-def array(
+def batched_array(
     data: ArrayLike | Sequence, dtype: DTypeLike = None, *, batch_axis: int = 0, **kwargs: Any
 ) -> BatchedArray:
     r"""Create an array.
@@ -58,8 +58,8 @@ def array(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba
-    >>> batch = ba.array(np.arange(10).reshape(2, 5))
+    >>> from redcat import ba2
+    >>> batch = ba2.batched_array(np.arange(10).reshape(2, 5))
     >>> batch
     array([[0, 1, 2, 3, 4],
            [5, 6, 7, 8, 9]], batch_axis=0)
@@ -96,8 +96,8 @@ def empty(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba
-    >>> batch = ba.empty((2, 3))
+    >>> from redcat import ba2
+    >>> batch = ba2.empty((2, 3))
     >>> batch
     array([...], batch_axis=0)
 
@@ -179,8 +179,8 @@ def full(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba
-    >>> batch = ba.full((2, 3), fill_value=42)
+    >>> from redcat import ba2
+    >>> batch = ba2.full((2, 3), fill_value=42)
     >>> batch
     array([[42, 42, 42],
            [42, 42, 42]], batch_axis=0)
@@ -265,8 +265,8 @@ def ones(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba
-    >>> batch = ba.ones((2, 3))
+    >>> from redcat import ba2
+    >>> batch = ba2.ones((2, 3))
     >>> batch
     array([[1., 1., 1.],
            [1., 1., 1.]], batch_axis=0)
@@ -347,8 +347,8 @@ def zeros(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba
-    >>> batch = ba.zeros((2, 3))
+    >>> from redcat import ba2
+    >>> batch = ba2.zeros((2, 3))
     >>> batch
     array([[0., 0., 0.],
            [0., 0., 0.]], batch_axis=0)
