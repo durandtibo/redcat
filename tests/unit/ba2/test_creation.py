@@ -9,9 +9,9 @@ from redcat.ba2 import BatchedArray
 DTYPES = (bool, int, float)
 
 
-###########################
-#     Tests for array     #
-###########################
+###################################
+#     Tests for batched_array     #
+###################################
 
 
 def test_batched_array() -> None:
