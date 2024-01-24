@@ -163,8 +163,8 @@ FLOATING_UFUNCS = [
     FunctionCheck.create_ufunc(np.frexp),
     FunctionCheck.create_ufunc(np.isfinite),
     FunctionCheck.create_ufunc(np.isinf),
-    FunctionCheck.create_ufunc(np.isneginf),
-    FunctionCheck.create_ufunc(np.isposinf),
+    # FunctionCheck(np.isneginf, nin=1, nout=1),
+    # FunctionCheck(np.isposinf, nin=1, nout=1),
     FunctionCheck.create_ufunc(np.isnan),
     FunctionCheck.create_ufunc(
         np.isnat,

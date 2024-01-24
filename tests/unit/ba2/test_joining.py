@@ -76,7 +76,7 @@ def test_concatenate_mix_array() -> None:
         )
 
 
-def testconcatenate_axis_none() -> None:
+def test_concatenate_axis_none() -> None:
     assert objects_are_equal(
         np.concatenate(
             [
