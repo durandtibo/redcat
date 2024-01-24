@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["BatchedArray"]
 
 from collections.abc import Iterable, Sequence
-from typing import Any, Literal, TypeVar, overload
+from typing import Any, Literal, SupportsIndex, TypeVar, Union, overload
 
 import numpy as np
 from coola import objects_are_allclose, objects_are_equal
@@ -16,6 +16,9 @@ from redcat.utils.array import to_array
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
+
+OrderACFK = Literal["A", "C", "F", "K"]
+ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
 
 class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
@@ -169,6 +172,338 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         r"""Data-type of the array’s elements."""
         return self._data.dtype
 
+    ###############################
+    #     Creation operations     #
+    ###############################
+
+    def empty_like(
+        self,
+        dtype: DTypeLike = None,
+        order: OrderACFK = "K",
+        subok: bool = True,
+        shape: ShapeLike = None,
+    ) -> TBatchedArray:
+        r"""Return an array without initializing entries, with the same
+        shape as the current array.
+
+        Args:
+            dtype: Overrides the data type of the result.
+            order: Overrides the memory layout of the result. ‘C’ means
+                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
+                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+                the layout of ``self`` as closely as possible.
+            subok: If True, then the newly created array will use the
+                sub-class type of ``self``, otherwise it will be a
+                base-class array.
+            shape: Overrides the shape of the result. If order=’K’ and
+                thenumber of dimensions is unchanged, will try to keep
+                order, otherwise, order=’C’ is implied.
+
+        Returns:
+            Array of zeros with the same shape and type as ``self``.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import ba2
+        >>> array = ba2.ones((2, 3)).empty_like()
+        >>> array
+        array([[...]], batch_axis=0)
+
+        ```
+        """
+        return self._create_new_batch(
+            np.empty_like(self._data, dtype=dtype, order=order, subok=subok, shape=shape)
+        )
+
+    def full_like(
+        self,
+        fill_value: float | ArrayLike,
+        dtype: DTypeLike = None,
+        order: OrderACFK = "K",
+        subok: bool = True,
+        shape: ShapeLike = None,
+    ) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``1``, with the
+        same shape as the current array.
+
+        Args:
+            fill_value: Specifies the fill value.
+            dtype: Overrides the data type of the result.
+            order: Overrides the memory layout of the result. ‘C’ means
+                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
+                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+                the layout of ``self`` as closely as possible.
+            subok: If True, then the newly created array will use the
+                sub-class type of ``self``, otherwise it will be a
+                base-class array.
+            shape: Overrides the shape of the result. If order=’K’ and
+                thenumber of dimensions is unchanged, will try to keep
+                order, otherwise, order=’C’ is implied.
+
+        Returns:
+            An array filled with the scalar value ``1``, with the same
+                shape as the current array.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> array = ba2.zeros((2, 3)).full_like(42.0)
+        >>> array
+        array([[42., 42., 42.],
+               [42., 42., 42.]], batch_axis=0)
+
+        ```
+        """
+        return self._create_new_batch(
+            np.full_like(
+                self._data,
+                fill_value=fill_value,
+                dtype=dtype,
+                order=order,
+                subok=subok,
+                shape=shape,
+            )
+        )
+
+    def new_full(
+        self,
+        fill_value: float | ArrayLike,
+        batch_size: int | None = None,
+        dtype: DTypeLike = None,
+        order: OrderACFK = "K",
+        subok: bool = True,
+        shape: ShapeLike = None,
+    ) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``fill_value``,
+        with the same shape as the current array.
+
+        By default, the array in the returned array has the same
+        shape, ``numpy.dtype``  as the current array.
+
+        Args:
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
+            **kwargs: See the documentation of
+                ``numpy.new_full``.
+
+        Returns:
+            A batch filled with the scalar value ``fill_value``.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> array = ba2.ones((2, 3))
+        >>> array.new_full(42.0)
+        array([[42., 42., 42.],
+               [42., 42., 42.]], batch_axis=0)
+        >>> array.new_full(fill_value=42.0, batch_size=5)
+        array([[42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.],
+               [42., 42., 42.]], batch_axis=0)
+
+        ```
+        """
+        shape = list(shape or self.shape)
+        if batch_size is not None:
+            shape[self.batch_axis] = batch_size
+        return self.full_like(
+            fill_value=fill_value,
+            dtype=dtype,
+            order=order,
+            subok=subok,
+            shape=shape,
+        )
+
+    def new_ones(
+        self,
+        batch_size: int | None = None,
+        dtype: DTypeLike = None,
+        order: OrderACFK = "K",
+        subok: bool = True,
+        shape: ShapeLike = None,
+    ) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``1``, with the
+        same shape as the current array.
+
+        By default, the array in the returned array has the same
+        shape, ``numpy.dtype``  as the current array.
+
+        Args:
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
+            **kwargs: See the documentation of
+                ``numpy.new_ones``.
+
+        Returns:
+            A batch filled with the scalar value ``1``.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> array = ba2.zeros((2, 3))
+        >>> array.new_ones()
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> array.new_ones(batch_size=5)
+        array([[1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+
+        ```
+        """
+        shape = list(shape or self.shape)
+        if batch_size is not None:
+            shape[self.batch_axis] = batch_size
+        return self.ones_like(
+            dtype=dtype,
+            order=order,
+            subok=subok,
+            shape=shape,
+        )
+
+    def new_zeros(
+        self,
+        batch_size: int | None = None,
+        dtype: DTypeLike = None,
+        order: OrderACFK = "K",
+        subok: bool = True,
+        shape: ShapeLike = None,
+    ) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``0``, with the
+        same shape as the current array.
+
+        By default, the array in the returned array has the same
+        shape, ``numpy.dtype``  as the current array.
+
+        Args:
+            batch_size: Specifies the batch size. If ``None``,
+                the batch size of the current batch is used.
+            **kwargs: See the documentation of
+                ``numpy.new_zeros``.
+
+        Returns:
+            A batch filled with the scalar value ``0``.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> array = ba2.ones((2, 3))
+        >>> array.new_zeros()
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+        >>> array.new_zeros(batch_size=5)
+        array([[0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+
+        ```
+        """
+        shape = list(shape or self.shape)
+        if batch_size is not None:
+            shape[self.batch_axis] = batch_size
+        return self.zeros_like(
+            dtype=dtype,
+            order=order,
+            subok=subok,
+            shape=shape,
+        )
+
+    def ones_like(
+        self,
+        dtype: DTypeLike = None,
+        order: OrderACFK = "K",
+        subok: bool = True,
+        shape: ShapeLike = None,
+    ) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``1``, with the
+        same shape as the current array.
+
+        Args:
+            dtype: Overrides the data type of the result.
+            order: Overrides the memory layout of the result. ‘C’ means
+                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
+                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+                the layout of ``self`` as closely as possible.
+            subok: If True, then the newly created array will use the
+                sub-class type of ``self``, otherwise it will be a
+                base-class array.
+            shape: Overrides the shape of the result. If order=’K’ and
+                thenumber of dimensions is unchanged, will try to keep
+                order, otherwise, order=’C’ is implied.
+
+        Returns:
+            An array filled with the scalar value ``1``, with the same
+                shape as the current array.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> array = ba2.zeros((2, 3)).ones_like()
+        >>> array
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+
+        ```
+        """
+        return self._create_new_batch(
+            np.ones_like(self._data, dtype=dtype, order=order, subok=subok, shape=shape)
+        )
+
+    def zeros_like(
+        self,
+        dtype: DTypeLike = None,
+        order: OrderACFK = "K",
+        subok: bool = True,
+        shape: ShapeLike = None,
+    ) -> TBatchedArray:
+        r"""Return an array filled with the scalar value ``0``, with the
+        same shape as the current array.
+
+        Args:
+            dtype: Overrides the data type of the result.
+            order: Overrides the memory layout of the result. ‘C’ means
+                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
+                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+                the layout of ``self`` as closely as possible.
+            subok: If True, then the newly created array will use the
+                sub-class type of ``self``, otherwise it will be a
+                base-class array.
+            shape: Overrides the shape of the result. If order=’K’ and
+                thenumber of dimensions is unchanged, will try to keep
+                order, otherwise, order=’C’ is implied.
+
+        Returns:
+            An array filled with the scalar value ``0``, with the same
+                shape as the current array.
+
+        Example usage:
+
+        ```pycon
+        >>> from redcat import ba2
+        >>> array = ba2.ones((2, 3)).zeros_like()
+        >>> array
+        array([[0., 0., 0.],
+               [0., 0., 0.]], batch_axis=0)
+
+        ```
+        """
+        return self._create_new_batch(
+            np.zeros_like(self._data, dtype=dtype, order=order, subok=subok, shape=shape)
+        )
+
     ################################
     #     Comparison operators     #
     ################################
@@ -207,11 +542,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self._data.__itruediv__(self._get_data(other))
         return self
 
-    def add(
-        self,
-        other: BatchedArray | np.ndarray | float,
-        alpha: float = 1.0,
-    ) -> TBatchedArray:
+    def add(self, other: BatchedArray | np.ndarray | float, alpha: float = 1.0) -> TBatchedArray:
         r"""Adds the input ``other``, scaled by ``alpha``, to the
         ``self`` batch.
 
@@ -1071,7 +1402,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         check_same_batch_axis(get_batch_axes(arrays))
 
     def _create_new_batch(self, data: np.ndarray) -> TBatchedArray:
-        return self.__class__(data, **self._get_kwargs())
+        return self.__class__(data, **self._get_kwargs(), check=False)
 
     def _get_kwargs(self) -> dict:
         return {"batch_axis": self._batch_axis}

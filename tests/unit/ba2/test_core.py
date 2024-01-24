@@ -676,6 +676,226 @@ def test_batched_array_dtype(dtype: np.dtype) -> None:
     assert ba.ones(shape=(2, 3), dtype=dtype).dtype == dtype
 
 
+###############################
+#     Creation operations     #
+###############################
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_empty_like(dtype: np.dtype) -> None:
+    array = ba.zeros(shape=(2, 3), dtype=dtype).empty_like()
+    assert isinstance(array, BatchedArray)
+    assert array.data.shape == (2, 3)
+    assert array.dtype == dtype
+    assert array.batch_axis == 0
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_empty_like_target_dtype(dtype: np.dtype) -> None:
+    array = ba.zeros(shape=(2, 3)).empty_like(dtype=dtype)
+    assert isinstance(array, BatchedArray)
+    assert array.data.shape == (2, 3)
+    assert array.dtype == dtype
+    assert array.batch_axis == 0
+
+
+def test_batched_array_empty_like_custom_axes() -> None:
+    array = ba.zeros(shape=(3, 2), batch_axis=1).empty_like()
+    assert isinstance(array, BatchedArray)
+    assert array.data.shape == (3, 2)
+    assert array.dtype == float
+    assert array.batch_axis == 1
+
+
+@pytest.mark.parametrize("fill_value", (1.5, 2.0, -1.0))
+def test_batched_array_full_like(fill_value: float) -> None:
+    assert (
+        ba.zeros(shape=(2, 3))
+        .full_like(fill_value)
+        .allequal(ba.full(shape=(2, 3), fill_value=fill_value))
+    )
+
+
+def test_batched_array_full_like_custom_axes() -> None:
+    assert (
+        ba.zeros(shape=(3, 2), batch_axis=1)
+        .full_like(fill_value=2.0)
+        .allequal(ba.full(shape=(3, 2), fill_value=2.0, batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_full_like_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.zeros(shape=(2, 3), dtype=dtype)
+        .full_like(fill_value=2.0)
+        .allequal(ba.full(shape=(2, 3), fill_value=2.0, dtype=dtype))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_full_like_target_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.zeros(shape=(2, 3))
+        .full_like(fill_value=2.0, dtype=dtype)
+        .allequal(ba.full(shape=(2, 3), fill_value=2.0, dtype=dtype))
+    )
+
+
+@pytest.mark.parametrize("fill_value", (1, 2.0, True))
+def test_batched_array_new_full_fill_value(fill_value: float | int | bool) -> None:
+    assert (
+        ba.zeros((2, 3))
+        .new_full(fill_value)
+        .allequal(ba.full(shape=(2, 3), fill_value=fill_value, dtype=float))
+    )
+
+
+def test_batched_array_new_full_custom_axes() -> None:
+    assert (
+        ba.zeros(shape=(3, 2), batch_axis=1)
+        .new_full(2.0)
+        .allequal(ba.full(shape=(3, 2), fill_value=2.0, batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_full_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.zeros(shape=(2, 3), dtype=dtype)
+        .new_full(2.0)
+        .allequal(ba.full(shape=(2, 3), fill_value=2.0, dtype=dtype))
+    )
+
+
+@pytest.mark.parametrize("batch_size", (1, 2))
+def test_batched_array_new_full_custom_batch_size(batch_size: int) -> None:
+    assert (
+        ba.zeros(shape=(2, 3))
+        .new_full(2.0, batch_size=batch_size)
+        .allequal(ba.full(shape=(batch_size, 3), fill_value=2.0))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_full_custom_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.zeros(shape=(2, 3))
+        .new_full(2.0, dtype=dtype)
+        .allequal(ba.full(shape=(2, 3), fill_value=2.0, dtype=dtype))
+    )
+
+
+def test_batched_array_new_ones() -> None:
+    assert ba.zeros(shape=(2, 3)).new_ones().allequal(ba.ones(shape=(2, 3)))
+
+
+def test_batched_array_new_ones_custom_axes() -> None:
+    assert (
+        ba.zeros(shape=(3, 2), batch_axis=1)
+        .new_ones()
+        .allequal(ba.ones(shape=(3, 2), batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_ones_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.zeros(shape=(2, 3), dtype=dtype).new_ones().allequal(ba.ones(shape=(2, 3), dtype=dtype))
+    )
+
+
+@pytest.mark.parametrize("batch_size", (1, 2))
+def test_batched_array_new_ones_custom_batch_size(batch_size: int) -> None:
+    assert ba.zeros((2, 3)).new_ones(batch_size=batch_size).allequal(ba.ones((batch_size, 3)))
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_ones_custom_dtype(dtype: np.dtype) -> None:
+    assert ba.zeros((2, 3)).new_ones(dtype=dtype).allequal(ba.ones(shape=(2, 3), dtype=dtype))
+
+
+def test_batched_array_new_zeros() -> None:
+    assert ba.ones(shape=(2, 3)).new_zeros().allequal(ba.zeros(shape=(2, 3)))
+
+
+def test_batched_array_new_zeros_custom_axes() -> None:
+    assert ba.ones(shape=(3, 2), batch_axis=1).new_zeros().allequal(ba.zeros((3, 2), batch_axis=1))
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_zeros_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.ones(shape=(2, 3), dtype=dtype).new_zeros().allequal(ba.zeros(shape=(2, 3), dtype=dtype))
+    )
+
+
+@pytest.mark.parametrize("batch_size", (1, 2))
+def test_batched_array_new_zeros_custom_batch_size(batch_size: int) -> None:
+    assert (
+        ba.ones(shape=(2, 3)).new_zeros(batch_size=batch_size).allequal(ba.zeros((batch_size, 3)))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_new_zeros_custom_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.ones(shape=(2, 3)).new_zeros(dtype=dtype).allequal(ba.zeros(shape=(2, 3), dtype=dtype))
+    )
+
+
+def test_batched_array_ones_like() -> None:
+    assert ba.zeros(shape=(2, 3)).ones_like().allequal(ba.ones(shape=(2, 3)))
+
+
+def test_batched_array_ones_like_custom_axes() -> None:
+    assert (
+        ba.zeros(shape=(3, 2), batch_axis=1)
+        .ones_like()
+        .allequal(ba.ones(shape=(3, 2), batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_ones_like_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.zeros(shape=(2, 3), dtype=dtype).ones_like().allequal(ba.ones(shape=(2, 3), dtype=dtype))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_ones_like_target_dtype(dtype: np.dtype) -> None:
+    assert ba.zeros((2, 3)).ones_like(dtype=dtype).allequal(ba.ones(shape=(2, 3), dtype=dtype))
+
+
+def test_batched_array_zeros_like() -> None:
+    assert ba.ones(shape=(2, 3)).zeros_like().allequal(ba.zeros(shape=(2, 3)))
+
+
+def test_batched_array_zeros_like_custom_axes() -> None:
+    assert (
+        ba.ones(shape=(3, 2), batch_axis=1)
+        .zeros_like()
+        .allequal(ba.zeros(shape=(3, 2), batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_zeros_like_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.ones(shape=(2, 3), dtype=dtype)
+        .zeros_like()
+        .allequal(ba.zeros(shape=(2, 3), dtype=dtype))
+    )
+
+
+@pytest.mark.parametrize("dtype", DTYPES)
+def test_batched_array_zeros_like_target_dtype(dtype: np.dtype) -> None:
+    assert (
+        ba.ones(shape=(2, 3)).zeros_like(dtype=dtype).allequal(ba.zeros(shape=(2, 3), dtype=dtype))
+    )
+
+
 ################################
 #     Comparison operators     #
 ################################

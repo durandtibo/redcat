@@ -22,17 +22,15 @@ __all__ = [
 ]
 
 from collections.abc import Sequence
-from typing import Any, Literal, SupportsIndex, TypeVar, Union
+from typing import Any, TypeVar
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba2 import BatchedArray
+from redcat.ba2.core import OrderACFK, ShapeLike
 
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
-
-OrderACFK = Literal["A", "C", "F", "K"]
-ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
 
 def array(
@@ -132,7 +130,7 @@ def empty_like(
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
-            array. Defaults to True.
+            array.
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
