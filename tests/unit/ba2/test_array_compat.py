@@ -17,32 +17,32 @@ SHAPES = ((2, 3), (2, 3, 4), (2, 3, 4, 5))
 SHAPE = (4, 10)
 
 
-# @mark.parametrize("cls", BATCH_CLASSES)
-# @mark.parametrize("dtype", DTYPES)
-# def test_array_dtype(cls: type[np.ndarray], dtype: np.dtype) -> None:
-#     array = np.ones((2, 3), dtype=dtype)
-#     assert cls(array).dtype == array.dtype
-#
-#
-# @mark.parametrize("cls", BATCH_CLASSES)
-# @mark.parametrize("shape", SHAPES)
-# def test_array_ndim(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
-#     array = np.ones(shape)
-#     assert cls(array).ndim == array.ndim
-#
-#
-# @mark.parametrize("cls", BATCH_CLASSES)
-# @mark.parametrize("shape", SHAPES)
-# def test_array_shape(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
-#     array = np.ones(shape)
-#     assert cls(array).shape == array.shape
-#
-#
-# @mark.parametrize("cls", BATCH_CLASSES)
-# @mark.parametrize("shape", SHAPES)
-# def test_array_size(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
-#     array = np.ones(shape)
-#     assert cls(array).size == array.size
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("dtype", DTYPES)
+def test_array_dtype(cls: type[np.ndarray], dtype: np.dtype) -> None:
+    array = np.ones((2, 3), dtype=dtype)
+    assert cls(array).dtype == array.dtype
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_array_ndim(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
+    array = np.ones(shape)
+    assert cls(array).ndim == array.ndim
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_array_shape(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
+    array = np.ones(shape)
+    assert cls(array).shape == array.shape
+
+
+@mark.parametrize("cls", BATCH_CLASSES)
+@mark.parametrize("shape", SHAPES)
+def test_array_size(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
+    array = np.ones(shape)
+    assert cls(array).size == array.size
 
 
 MATH_UFUNCS = [
@@ -163,6 +163,8 @@ FLOATING_UFUNCS = [
     FunctionCheck.create_ufunc(np.frexp),
     FunctionCheck.create_ufunc(np.isfinite),
     FunctionCheck.create_ufunc(np.isinf),
+    FunctionCheck.create_ufunc(np.isneginf),
+    FunctionCheck.create_ufunc(np.isposinf),
     FunctionCheck.create_ufunc(np.isnan),
     FunctionCheck.create_ufunc(
         np.isnat,
