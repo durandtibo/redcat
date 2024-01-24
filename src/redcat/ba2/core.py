@@ -10,13 +10,15 @@ from coola import objects_are_allclose, objects_are_equal
 from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.base import BaseBatch
+from redcat.utils.array import to_array
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
-class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarray]):
+class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     r"""Implement a wrapper around a NumPy array to track the batch
     axis."""
 
@@ -64,6 +66,24 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
 
     def extend(self, other: Iterable[TBatchedArray | np.ndarray]) -> None:
         self.concatenate_along_batch_(other)
+
+    def index_select_along_batch(self, index: np.ndarray | Sequence[int]) -> TBatchedArray:
+        return self.index_select(index=index, axis=self._batch_axis)
+
+    def permute_along_batch(self, permutation: np.ndarray | Sequence[int]) -> TBatchedArray:
+        return self.permute_along_axis(permutation, axis=self._batch_axis)
+
+    def permute_along_batch_(self, permutation: np.ndarray | Sequence[int]) -> None:
+        self.permute_along_axis_(permutation, axis=self._batch_axis)
+
+    def select_along_batch(self, index: int) -> np.ndarray:
+        return self.select(index=index, axis=self._batch_axis)
+
+    def shuffle_along_batch(self, rng: np.random.Generator | None = None) -> TBatchedArray:
+        return self.shuffle_along_axis(axis=self._batch_axis, rng=rng)
+
+    def shuffle_along_batch_(self, rng: np.random.Generator | None = None) -> None:
+        self.shuffle_along_axis_(axis=self._batch_axis, rng=rng)
 
     def slice_along_batch(
         self, start: int = 0, stop: int | None = None, step: int = 1
@@ -126,9 +146,19 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
     #########################
 
     @property
+    def ndim(self) -> int:
+        r"""Number of array dimensions."""
+        return self._data.ndim
+
+    @property
     def shape(self) -> tuple[int, ...]:
         r"""Tuple of array dimensions."""
         return self._data.shape
+
+    @property
+    def size(self) -> int:
+        r"""Number of elements in the array."""
+        return self._data.size
 
     #####################
     #     Data type     #
@@ -139,9 +169,13 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         r"""Data-type of the array’s elements."""
         return self._data.dtype
 
-    ###################################
-    #     Arithmetical operations     #
-    ###################################
+    ################################
+    #     Comparison operators     #
+    ################################
+
+    ##################################
+    #     Arithmetical operators     #
+    ##################################
 
     def __iadd__(self, other: Any) -> TBatchedArray:
         self._check_valid_axes((self, other))
@@ -755,6 +789,75 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             for chunk in np.array_split(self._data, indices_or_sections=chunks, axis=axis)
         )
 
+    @overload
+    def index_select(self, index: np.ndarray | Sequence[int], axis: None = ...) -> np.ndarray:
+        ...  # pragma: no cover
+
+    @overload
+    def index_select(self, index: np.ndarray | Sequence[int], axis: int = ...) -> TBatchedArray:
+        ...  # pragma: no cover
+
+    def index_select(
+        self, index: np.ndarray | Sequence[int], axis: int | None = None
+    ) -> TBatchedArray | np.ndarray:
+        r"""Returns a new array which indexes the input array along the
+        given axis using the entries in ``index``.
+
+        Args:
+            index: The 1-D array containing the indices to index.
+            axis: The axis over which to select values. By default,
+                the flattened input array is used.
+
+        Returns:
+            A new array which indexes the input array along the
+                given axis using the entries in ``index``.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.index_select([2, 4], axis=0)
+        array([[4, 5],
+               [8, 9]], batch_axis=0)
+        >>> batch.index_select(np.array([4, 3, 2, 1, 0]), axis=0)
+        array([[8, 9],
+               [6, 7],
+               [4, 5],
+               [2, 3],
+               [0, 1]], batch_axis=0)
+
+        ```
+        """
+        data = np.take(self._data, indices=to_array(index), axis=axis)
+        if axis is None:
+            return data
+        return self._create_new_batch(data)
+
+    def select(self, index: int, axis: int) -> np.ndarray:
+        r"""Select the data along the given axis at the given index.
+
+        Args:
+            index: Specifies the index to select.
+            axis: Specifies the index axis.
+
+        Returns:
+            The batch sliced along the given axis at the given index.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.select(index=2, axis=0)
+        array([4, 5])
+
+        ```
+        """
+        return np.take(self._data, indices=index, axis=axis)
+
     def slice_along_axis(
         self,
         axis: int = 0,
@@ -845,6 +948,116 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
             for chunk in np.array_split(self._data, split_size_or_sections, axis=axis)
         )
 
+    ##############################################################
+    #     Array manipulation routines | Rearranging elements     #
+    ##############################################################
+
+    def permute_along_axis(
+        self, permutation: np.ndarray | Sequence[int], axis: int
+    ) -> TBatchedArray:
+        r"""Permute the data/batch along a given axis.
+
+        Args:
+            permutation: Specifies the permutation to use on the data.
+                The dimension of the permutation input should be
+                compatible with the shape of the data.
+            axis: Specifies the axis where the permutation is computed.
+
+        Returns:
+            A new batch with permuted data.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.permute_along_axis([2, 1, 3, 0, 4], axis=0)
+        array([[4, 5],
+               [2, 3],
+               [6, 7],
+               [0, 1],
+               [8, 9]], batch_axis=0)
+
+        ```
+        """
+        return self.index_select(index=permutation, axis=axis)
+
+    def permute_along_axis_(self, permutation: np.ndarray | Sequence[int], axis: int) -> None:
+        r"""Permutes the data/batch along a given dimension.
+
+        Args:
+            permutation: Specifies the permutation to use on the data.
+                The dimension of the permutation input should be
+                compatible with the shape of the data.
+            axis: Specifies the axis where the permutation is computed.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.permute_along_axis_([2, 1, 3, 0, 4], axis=0)
+        >>> batch
+        array([[4, 5],
+               [2, 3],
+               [6, 7],
+               [0, 1],
+               [8, 9]], batch_axis=0)
+        """
+        self._data = np.take(self._data, indices=to_array(permutation), axis=axis)
+
+    def shuffle_along_axis(
+        self, axis: int, rng: np.random.Generator | None = None
+    ) -> TBatchedArray:
+        r"""Shuffle the data/batch along a given axis.
+
+        Args:
+            axis: Specifies the shuffle axis.
+            rng: Specifies the pseudorandom number generator.
+
+        Returns:
+            A new batch with shuffled data along a given axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.shuffle_along_axis(axis=0)
+        array([[...]], batch_axis=0)
+
+        ```
+        """
+        rng = setup_rng(rng)
+        return self.index_select(axis=axis, index=rng.permutation(self._data.shape[axis]))
+
+    def shuffle_along_axis_(self, axis: int, rng: np.random.Generator | None = None) -> None:
+        r"""Shuffle the data/batch along a given axis.
+
+        Args:
+            axis: Specifies the shuffle axis.
+            rng: Specifies the pseudorandom number generator.
+
+        Returns:
+            A new batch with shuffled data along a given axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.shuffle_along_axis_(axis=0)
+        >>> batch
+        array([[...]], batch_axis=0)
+
+        ```
+        """
+        self._data = self.shuffle_along_axis(axis=axis, rng=rng).data
+
     #################
     #     Other     #
     #################
@@ -867,3 +1080,29 @@ class BatchedArray(np.lib.mixins.NDArrayOperatorsMixin):  # (BaseBatch[np.ndarra
         if isinstance(data, self.__class__):
             data = data.data
         return data
+
+
+def setup_rng(rng: np.random.Generator | None) -> np.random.Generator:
+    r"""Set up a random number generator.
+
+    Args:
+        rng: A random number generator. If ``None``, a random number
+            generator is instantiated.
+
+    Returns:
+        A random number generator.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.ba2.core import setup_rng
+    >>> rng = setup_rng(None)
+    >>> rng.permutation(4)
+    array([...])
+
+    ```
+    """
+    if rng is None:
+        return np.random.default_rng()
+    return rng

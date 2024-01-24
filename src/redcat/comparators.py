@@ -17,7 +17,6 @@ from coola.equality.handlers import (
 )
 from coola.equality.testers import EqualityTester
 
-from redcat.ba2 import BatchedArray
 from redcat.base import BaseBatch
 
 logger = logging.getLogger(__name__)
@@ -108,5 +107,3 @@ def batch_equal(batch1: BaseBatch, batch2: BaseBatch, config: EqualityConfig) ->
 
 if not EqualityTester.has_comparator(BaseBatch):  # pragma: no cover
     EqualityTester.add_comparator(BaseBatch, BatchEqualityComparator())
-if not EqualityTester.has_comparator(BatchedArray):  # pragma: no cover
-    EqualityTester.add_comparator(BatchedArray, BatchEqualityComparator())

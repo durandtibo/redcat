@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
@@ -9,9 +10,16 @@ from numpy.typing import DTypeLike
 
 from redcat import ba2 as ba
 from redcat.ba2 import BatchedArray
+from redcat.ba2.core import setup_rng
 
 DTYPES = (bool, int, float)
 NUMERIC_DTYPES = [np.float64, np.int64]
+
+MOCK_PERMUTATION4 = Mock(
+    return_value=Mock(
+        spec=np.random.Generator, permutation=Mock(return_value=np.array([2, 1, 3, 0]))
+    )
+)
 
 
 #######################
@@ -180,7 +188,7 @@ def test_batched_array_chunk_along_batch_3() -> None:
     )
 
 
-def test_batched_array_chunk_along_batch_custom_dims() -> None:
+def test_batched_array_chunk_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk_along_batch(3),
         (
@@ -247,22 +255,140 @@ def test_batched_array_extend_different_axes() -> None:
         batch.extend([ba.zeros((2, 2), batch_axis=1)])
 
 
-# TODO: uncomment
-# @pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
-# def test_batched_array_get_num_minibatches_drop_last_false(
-#     batch_size: int, num_minibatches: int
-# ) -> None:
-#     assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size) == num_minibatches
-#
-#
-# @pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
-# def test_batched_array_get_num_minibatches_drop_last_true(
-#     batch_size: int, num_minibatches: int
-# ) -> None:
-#     assert (
-#         ba.ones(shape=(10, 2)).get_num_minibatches(batch_size, drop_last=True)
-#         == num_minibatches
-#     )
+@pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+def test_batched_array_get_num_minibatches_drop_last_false(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size) == num_minibatches
+
+
+@pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+def test_batched_array_get_num_minibatches_drop_last_true(
+    batch_size: int, num_minibatches: int
+) -> None:
+    assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size, drop_last=True) == num_minibatches
+
+
+@pytest.mark.parametrize("index", [np.array([2, 0]), [2, 0], (2, 0)])
+def test_batched_array_index_select_along_batch(index: np.ndarray | Sequence[int]) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(5, 2))
+        .index_select_along_batch(index)
+        .allequal(ba.array([[4, 5], [0, 1]]))
+    )
+
+
+def test_batched_array_index_select_along_batch_custom_axes() -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        .index_select_along_batch((2, 0))
+        .allequal(ba.array([[2, 0], [7, 5]], batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_batch(permutation: Sequence[int] | np.ndarray) -> None:
+    assert (
+        ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        .permute_along_batch(permutation)
+        .allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    )
+
+
+def test_batched_array_permute_along_batch_custom_axes() -> None:
+    assert (
+        ba.array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
+        .permute_along_batch(np.array([2, 1, 3, 0]))
+        .allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_batch_(permutation: Sequence[int] | np.ndarray) -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch.permute_along_batch_(permutation)
+    assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+
+
+def test_batched_array_permute_along_batch__custom_axes() -> None:
+    batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7]], batch_axis=1)
+    batch.permute_along_batch_(np.array([2, 1, 3, 0]))
+    assert batch.allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4]], batch_axis=1))
+
+
+def test_batched_array_select_along_batch() -> None:
+    assert objects_are_equal(
+        ba.array([[0, 9], [1, 8], [2, 7], [3, 6], [4, 5]]).select_along_batch(2), np.array([2, 7])
+    )
+
+
+def test_batched_array_select_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).select_along_batch(2),
+        np.array([2, 7]),
+    )
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_batch() -> None:
+    assert (
+        ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        .shuffle_along_batch()
+        .allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    )
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_batch_custom_axes() -> None:
+    assert (
+        ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+        .shuffle_along_batch()
+        .allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+    )
+
+
+def test_batched_array_shuffle_along_batch_same_random_seed() -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    assert batch.shuffle_along_batch(rng=np.random.default_rng(1)).allequal(
+        batch.shuffle_along_batch(rng=np.random.default_rng(1))
+    )
+
+
+def test_batched_array_shuffle_along_batch_different_random_seeds() -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    assert not batch.shuffle_along_batch(rng=np.random.default_rng(1)).allequal(
+        batch.shuffle_along_batch(rng=np.random.default_rng(2))
+    )
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_batch_() -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch.shuffle_along_batch_()
+    assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_batch__custom_axes() -> None:
+    batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+    batch.shuffle_along_batch_()
+    assert batch.allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+
+
+def test_batched_array_shuffle_along_batch__same_random_seed() -> None:
+    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1.shuffle_along_batch_(rng=np.random.default_rng(1))
+    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2.shuffle_along_batch_(rng=np.random.default_rng(1))
+    assert batch1.allequal(batch2)
+
+
+def test_batched_array_shuffle_along_batch__different_random_seeds() -> None:
+    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1.shuffle_along_batch_(rng=np.random.default_rng(1))
+    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2.shuffle_along_batch_(rng=np.random.default_rng(2))
+    assert not batch1.allequal(batch2)
 
 
 def test_batched_array_slice_along_batch() -> None:
@@ -313,7 +439,7 @@ def test_batched_array_slice_along_batch_start_1_stop_4_step_2() -> None:
     )
 
 
-def test_batched_array_slice_along_batch_custom_dim() -> None:
+def test_batched_array_slice_along_batch_custom_axis() -> None:
     assert (
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
         .slice_along_batch(start=2)
@@ -366,7 +492,7 @@ def test_batched_array_split_along_batch_split_size_2() -> None:
     )
 
 
-def test_batched_array_split_along_batch_custom_dims() -> None:
+def test_batched_array_split_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split_along_batch(2),
         (
@@ -399,6 +525,108 @@ def test_batched_array_to_data() -> None:
     assert objects_are_equal(ba.ones(shape=(2, 3)).to_data(), np.ones(shape=(2, 3)))
 
 
+def test_batched_array_to_minibatches_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=2)),
+        [
+            ba.array([[0, 1], [2, 3]]),
+            ba.array([[4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15]]),
+            ba.array([[16, 17], [18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=3)),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5]]),
+            ba.array([[6, 7], [8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15], [16, 17]]),
+            ba.array([[18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=4)),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11], [12, 13], [14, 15]]),
+            ba.array([[16, 17], [18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_drop_last_true_10_batch_size_2() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=2, drop_last=True)
+        ),
+        [
+            ba.array([[0, 1], [2, 3]]),
+            ba.array([[4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15]]),
+            ba.array([[16, 17], [18, 19]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_drop_last_true_10_batch_size_3() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=3, drop_last=True)
+        ),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5]]),
+            ba.array([[6, 7], [8, 9], [10, 11]]),
+            ba.array([[12, 13], [14, 15], [16, 17]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_drop_last_true_10_batch_size_4() -> None:
+    assert objects_are_equal(
+        list(
+            BatchedArray(np.arange(20).reshape(10, 2)).to_minibatches(batch_size=4, drop_last=True)
+        ),
+        [
+            ba.array([[0, 1], [2, 3], [4, 5], [6, 7]]),
+            ba.array([[8, 9], [10, 11], [12, 13], [14, 15]]),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_custom_dims() -> None:
+    assert objects_are_equal(
+        list(BatchedArray(np.arange(20).reshape(2, 10), batch_axis=1).to_minibatches(batch_size=3)),
+        [
+            ba.array([[0, 1, 2], [10, 11, 12]], batch_axis=1),
+            ba.array([[3, 4, 5], [13, 14, 15]], batch_axis=1),
+            ba.array([[6, 7, 8], [16, 17, 18]], batch_axis=1),
+            ba.array([[9], [19]], batch_axis=1),
+        ],
+    )
+
+
+def test_batched_array_to_minibatches_deepcopy_true() -> None:
+    batch = ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    for item in batch.to_minibatches(batch_size=2, deepcopy=True):
+        item.data[0, 0] = 42
+    assert batch.allequal(ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
+
+
+def test_batched_array_to_minibatches_deepcopy_false() -> None:
+    batch = ba.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])
+    for item in batch.to_minibatches(batch_size=2):
+        item.data[0, 0] = 42
+    assert batch.allequal(ba.array([[42, 1], [2, 3], [42, 5], [6, 7], [42, 9]]))
+
+
 ######################################
 #     Additional functionalities     #
 ######################################
@@ -426,8 +654,16 @@ def test_batched_array_batch_axis(batch_axis: int) -> None:
 #########################
 
 
+def test_batched_array_ndim() -> None:
+    assert ba.ones(shape=(2, 3)).ndim == 2
+
+
 def test_batched_array_shape() -> None:
     assert ba.ones(shape=(2, 3)).shape == (2, 3)
+
+
+def test_batched_array_size() -> None:
+    assert ba.ones(shape=(2, 3)).size == 6
 
 
 #####################
@@ -440,9 +676,272 @@ def test_batched_array_dtype(dtype: np.dtype) -> None:
     assert ba.ones(shape=(2, 3), dtype=dtype).dtype == dtype
 
 
-###################################
-#     Arithmetical operations     #
-###################################
+################################
+#     Comparison operators     #
+################################
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__eq__(other: np.ndarray | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) == other,
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__eq__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        == ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__eq__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__eq__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__ge__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) >= other,
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__ge__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >= ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [True, True, True, True, True]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__ge__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__ge__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__gt__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) > other,
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__gt__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        > ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[False, False, False, False, False], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__gt__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__gt__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__le__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) <= other,
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__le__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        <= ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [True, False, False, False, False]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__le__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__le__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__lt__(other: np.ndarray | int | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) < other,
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, False, False, False, False]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__lt__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        < ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, False, False, False, False]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__lt__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__lt__(x2)
+
+
+@pytest.mark.parametrize(
+    "other",
+    (
+        ba.full(shape=(2, 5), fill_value=5.0),
+        np.full(shape=(2, 5), fill_value=5.0),
+        ba.full(shape=(2, 1), fill_value=5),
+        5,
+        5.0,
+    ),
+)
+def test_batched_array__ne__(other: np.ndarray | float) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)) != other,
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+        ),
+    )
+
+
+def test_batched_array__ne__custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        != ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1),
+        BatchedArray(
+            np.array(
+                [[True, True, True, True, True], [False, True, True, True, True]],
+                dtype=bool,
+            ),
+            batch_axis=1,
+        ),
+    )
+
+
+def test_batched_array__ne__different_axes() -> None:
+    x1 = BatchedArray(np.arange(10).reshape(2, 5))
+    x2 = ba.full(shape=(2, 5), fill_value=5.0, batch_axis=1)
+    with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
+        x1.__ne__(x2)
+
+
+##################################
+#     Arithmetical operators     #
+##################################
 
 
 @pytest.mark.parametrize(
@@ -1182,7 +1681,7 @@ def test_batched_array_truediv__different_axes() -> None:
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
-def test_batched_array_concatenate_dim_0(
+def test_batched_array_concatenate_axis_0(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
     assert objects_are_equal(
@@ -1252,7 +1751,7 @@ def test_batched_array_concatenate_different_axes() -> None:
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
     ),
 )
-def test_batched_array_concatenate__dim_0(
+def test_batched_array_concatenate__axis_0(
     arrays: Iterable[BatchedArray | np.ndarray],
 ) -> None:
     array = ba.array([[0, 1, 2], [4, 5, 6]])
@@ -1414,7 +1913,7 @@ def test_batched_array_chunk_5() -> None:
     )
 
 
-def test_batched_array_chunk_custom_dims() -> None:
+def test_batched_array_chunk_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).chunk(3, axis=1),
         (
@@ -1428,6 +1927,63 @@ def test_batched_array_chunk_custom_dims() -> None:
 def test_batched_array_chunk_incorrect_chunks() -> None:
     with pytest.raises(RuntimeError, match="chunk expects `chunks` to be greater than 0, got: 0"):
         BatchedArray(np.arange(10).reshape(5, 2)).chunk(0)
+
+
+@pytest.mark.parametrize("index", [np.array([2, 0]), [2, 0], (2, 0)])
+def test_batched_array_index_select(index: np.ndarray | Sequence[int]) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).index_select(index=index, axis=0),
+        ba.array([[4, 5], [0, 1]]),
+    )
+
+
+def test_batched_array_index_select_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).index_select(index=(2, 0), axis=1),
+        ba.array([[2, 0], [7, 5]]),
+    )
+
+
+def test_batched_array_index_select_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2)).index_select(index=[2, 0], axis=None),
+        np.array([2, 0]),
+    )
+
+
+def test_batched_array_index_select_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).index_select(index=(2, 0), axis=0),
+        ba.array([[4, 5], [0, 1]], batch_axis=1),
+    )
+
+
+def test_batched_array_select_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3)).select(index=2, axis=0),
+        np.array([[12, 13, 14], [15, 16, 17]]),
+    )
+
+
+def test_batched_array_select_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3)).select(index=0, axis=1),
+        np.array([[0, 1, 2], [6, 7, 8], [12, 13, 14], [18, 19, 20], [24, 25, 26]]),
+    )
+
+
+def test_batched_array_select_axis_2() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3)).select(index=1, axis=2),
+        np.array([[1, 4], [7, 10], [13, 16], [19, 22], [25, 28]]),
+    )
+
+
+def test_batched_array_select_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(30).reshape(5, 2, 3), batch_axis=1).select(index=2, axis=0),
+        np.array([[12, 13, 14], [15, 16, 17]]),
+    )
 
 
 def test_batched_array_slice_along_axis() -> None:
@@ -1526,7 +2082,7 @@ def test_batched_array_split_along_axis_split_size_2() -> None:
     )
 
 
-def test_batched_array_split_along_axis_custom_dims() -> None:
+def test_batched_array_split_along_axis_custom_axes() -> None:
     assert objects_are_equal(
         BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1).split_along_axis(2, axis=1),
         (
@@ -1546,3 +2102,134 @@ def test_batched_array_split_along_axis_split_list() -> None:
             ba.array([[8, 9]]),
         ),
     )
+
+
+##############################################################
+#     Array manipulation routines | Rearranging elements     #
+##############################################################
+
+
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_axis_0(permutation: Sequence[int] | np.ndarray) -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+        .permute_along_axis(permutation, axis=0)
+        .allequal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+    )
+
+
+@pytest.mark.parametrize(
+    "permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+)
+def test_batched_array_permute_along_axis_1(permutation: Sequence[int] | np.ndarray) -> None:
+    assert (
+        BatchedArray(np.arange(10).reshape(2, 5))
+        .permute_along_axis(permutation, axis=1)
+        .allequal(BatchedArray(np.array([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+    )
+
+
+def test_batched_array_permute_along_axis_custom_axes() -> None:
+    assert (
+        BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_axis=1)
+        .permute_along_axis(np.array([2, 1, 3, 0]), axis=1)
+        .allequal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_axis=1))
+    )
+
+
+@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+def test_batched_array_permute_along_axis__0(permutation: Sequence[int] | np.ndarray) -> None:
+    batch = BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
+    batch.permute_along_axis_(permutation, axis=0)
+    assert batch.allequal(BatchedArray(np.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
+
+
+@pytest.mark.parametrize(
+    "permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+)
+def test_batched_array_permute_along_axis__1(permutation: Sequence[int] | np.ndarray) -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch.permute_along_axis_(permutation, axis=1)
+    assert batch.allequal(BatchedArray(np.array([[2, 4, 1, 3, 0], [7, 9, 6, 8, 5]])))
+
+
+def test_batched_array_permute_along_axis__custom_axes() -> None:
+    batch = BatchedArray(np.array([[0, 1, 2, 3], [4, 5, 6, 7]]), batch_axis=1)
+    batch.permute_along_axis_(np.array([2, 1, 3, 0]), axis=1)
+    assert batch.allequal(BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_axis=1))
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_axis() -> None:
+    assert (
+        ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+        .shuffle_along_axis(axis=0)
+        .allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+    )
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_axis_custom_axes() -> None:
+    assert (
+        ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+        .shuffle_along_axis(axis=1)
+        .allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+    )
+
+
+def test_batched_array_shuffle_along_axis_same_random_seed() -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    assert batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(1)).allequal(
+        batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(1))
+    )
+
+
+def test_batched_array_shuffle_along_axis_different_random_seeds() -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    assert not batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(1)).allequal(
+        batch.shuffle_along_axis(axis=0, rng=np.random.default_rng(2))
+    )
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_axis_() -> None:
+    batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch.shuffle_along_axis_(axis=0)
+    assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
+
+
+@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+def test_batched_array_shuffle_along_axis__custom_axes() -> None:
+    batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
+    batch.shuffle_along_axis_(axis=1)
+    assert batch.allequal(ba.array([[2, 1, 3, 0], [6, 5, 7, 4], [10, 9, 11, 8]], batch_axis=1))
+
+
+def test_batched_array_shuffle_along_axis__same_random_seed() -> None:
+    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1.shuffle_along_axis_(axis=0, rng=np.random.default_rng(1))
+    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2.shuffle_along_axis_(axis=0, rng=np.random.default_rng(1))
+    assert batch1.allequal(batch2)
+
+
+def test_batched_array_shuffle_along_axis__different_random_seeds() -> None:
+    batch1 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch1.shuffle_along_axis_(axis=0, rng=np.random.default_rng(1))
+    batch2 = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    batch2.shuffle_along_axis_(axis=0, rng=np.random.default_rng(2))
+    assert not batch1.allequal(batch2)
+
+
+#################
+#     Other     #
+#################
+
+
+def test_setup_rng() -> None:
+    rng = np.random.default_rng()
+    assert setup_rng(rng) is rng
+
+
+def test_setup_rng_none() -> None:
+    assert isinstance(setup_rng(None), np.random.Generator)
