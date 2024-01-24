@@ -19,6 +19,8 @@ theme:
 nav:
   - Home: index.md
   - get_started.md
+  - Supported operations:
+      - ops/batchedarray.md
   - Reference:
       - refs/base.md
       - refs/batchdict.md

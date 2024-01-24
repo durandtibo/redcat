@@ -103,7 +103,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
     def summary(self) -> str:
         dims = ", ".join([f"{key}={value}" for key, value in self._get_kwargs().items()])
-        return f"{self.__class__.__qualname__}(dtype={self.dtype}, shape={self.shape}, " f"{dims})"
+        return f"{self.__class__.__qualname__}(dtype={self.dtype}, shape={self.shape}, {dims})"
 
     def to_data(self) -> np.ndarray:
         return self._data
@@ -1308,7 +1308,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         check_same_batch_axis(get_batch_axes(arrays))
 
     def _create_new_batch(self, data: np.ndarray) -> TBatchedArray:
-        return self.__class__(data, **self._get_kwargs(), check=False)
+        return self.__class__(data, **self._get_kwargs())
 
     def _get_kwargs(self) -> dict:
         return {"batch_axis": self._batch_axis}
