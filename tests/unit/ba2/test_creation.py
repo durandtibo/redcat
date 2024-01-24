@@ -131,6 +131,15 @@ def test_empty_like_batch_axis(batch_axis: int) -> None:
     assert array.batch_axis == batch_axis
 
 
+@pytest.mark.parametrize("batch_size", [1, 2])
+def test_empty_like_batch_size(batch_size: int) -> None:
+    array = ba.empty_like(ba.ones(shape=(2, 3)), batch_size=batch_size)
+    assert isinstance(array, BatchedArray)
+    assert array.shape == (batch_size, 3)
+    assert array.dtype == float
+    assert array.batch_axis == 0
+
+
 ##########################
 #     Tests for full     #
 ##########################
@@ -206,6 +215,14 @@ def test_full_like_batch_axis(batch_axis: int) -> None:
     )
 
 
+@pytest.mark.parametrize("batch_size", [1, 2])
+def test_full_like_batch_size(batch_size: int) -> None:
+    assert objects_are_equal(
+        ba.full_like(ba.zeros(shape=(2, 3)), fill_value=42.0, batch_size=batch_size),
+        ba.full(shape=(batch_size, 3), fill_value=42.0),
+    )
+
+
 ##########################
 #     Tests for ones     #
 ##########################
@@ -272,6 +289,14 @@ def test_ones_like_batch_axis(batch_axis: int) -> None:
     )
 
 
+@pytest.mark.parametrize("batch_size", [1, 2])
+def test_ones_like_batch_size(batch_size: int) -> None:
+    assert objects_are_equal(
+        ba.ones_like(ba.zeros(shape=(2, 3)), batch_size=batch_size),
+        ba.ones(shape=(batch_size, 3)),
+    )
+
+
 ###########################
 #     Tests for zeros     #
 ###########################
@@ -335,4 +360,12 @@ def test_zeros_like_batch_axis(batch_axis: int) -> None:
     assert objects_are_equal(
         ba.zeros_like(ba.ones(shape=(2, 3), batch_axis=batch_axis)),
         ba.zeros(shape=(2, 3), batch_axis=batch_axis),
+    )
+
+
+@pytest.mark.parametrize("batch_size", [1, 2])
+def test_zeros_like_batch_size(batch_size: int) -> None:
+    assert objects_are_equal(
+        ba.zeros_like(ba.ones(shape=(2, 3)), batch_size=batch_size),
+        ba.zeros(shape=(batch_size, 3)),
     )

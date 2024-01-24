@@ -112,6 +112,7 @@ def empty_like(
     order: OrderACFK = "K",
     subok: bool = True,
     shape: ShapeLike = None,
+    batch_size: int | None = None,
 ) -> TBatchedArray:
     r"""Return an array of zeros with the same shape and type as a given
     array.
@@ -132,6 +133,8 @@ def empty_like(
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
+        batch_size: Overrides the batch size. If ``None``,
+            the batch size of the current batch is used.
 
     Returns:
         Array of zeros with the same shape and type as ``a``.
@@ -141,13 +144,15 @@ def empty_like(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.empty_like(ba2.ones((2, 5)))
-    >>> batch
-    array([[...]], batch_axis=0)
+    >>> array = ba2.ones((2, 3))
+    >>> ba2.empty_like(array).shape
+    (2, 3)
+    >>> ba2.empty_like(array, batch_size=5).shape
+    (5, 3)
 
     ```
     """
-    return a.empty_like(dtype=dtype, order=order, subok=subok, shape=shape)
+    return a.empty_like(dtype=dtype, order=order, subok=subok, shape=shape, batch_size=batch_size)
 
 
 def full(
@@ -200,6 +205,7 @@ def full_like(
     order: OrderACFK = "K",
     subok: bool = True,
     shape: ShapeLike = None,
+    batch_size: int | None = None,
 ) -> TBatchedArray:
     r"""Return an array of ones with the same shape and type as a given
     array.
@@ -220,6 +226,8 @@ def full_like(
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
+        batch_size: Overrides the batch size. If ``None``,
+            the batch size of the current batch is used.
 
     Returns:
         Array of ones with the same shape and type as ``a``.
@@ -229,14 +237,27 @@ def full_like(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.full_like(ba2.zeros((2, 5)), fill_value=2)
-    >>> batch
+    >>> array = ba2.zeros((2, 5))
+    >>> ba2.full_like(array, fill_value=2)
     array([[2., 2., 2., 2., 2.],
            [2., 2., 2., 2., 2.]], batch_axis=0)
+    >>> ba2.full_like(array, fill_value=42, batch_size=5)
+    array([[42., 42., 42., 42., 42.],
+           [42., 42., 42., 42., 42.],
+           [42., 42., 42., 42., 42.],
+           [42., 42., 42., 42., 42.],
+           [42., 42., 42., 42., 42.]], batch_axis=0)
 
     ```
     """
-    return a.full_like(fill_value=fill_value, dtype=dtype, order=order, subok=subok, shape=shape)
+    return a.full_like(
+        fill_value=fill_value,
+        dtype=dtype,
+        order=order,
+        subok=subok,
+        shape=shape,
+        batch_size=batch_size,
+    )
 
 
 def ones(
@@ -282,6 +303,7 @@ def ones_like(
     order: OrderACFK = "K",
     subok: bool = True,
     shape: ShapeLike = None,
+    batch_size: int | None = None,
 ) -> TBatchedArray:
     r"""Return an array of ones with the same shape and type as a given
     array.
@@ -302,6 +324,8 @@ def ones_like(
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
+        batch_size: Overrides the batch size. If ``None``,
+            the batch size of the current batch is used.
 
     Returns:
         Array of ones with the same shape and type as ``a``.
@@ -311,14 +335,20 @@ def ones_like(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.ones_like(ba2.zeros((2, 5)))
-    >>> batch
+    >>> array = ba2.zeros((2, 5))
+    >>> ba2.ones_like(array)
     array([[1., 1., 1., 1., 1.],
+           [1., 1., 1., 1., 1.]], batch_axis=0)
+    >>> ba2.ones_like(array, batch_size=5)
+    array([[1., 1., 1., 1., 1.],
+           [1., 1., 1., 1., 1.],
+           [1., 1., 1., 1., 1.],
+           [1., 1., 1., 1., 1.],
            [1., 1., 1., 1., 1.]], batch_axis=0)
 
     ```
     """
-    return a.ones_like(dtype=dtype, order=order, subok=subok, shape=shape)
+    return a.ones_like(dtype=dtype, order=order, subok=subok, shape=shape, batch_size=batch_size)
 
 
 def zeros(
@@ -364,6 +394,7 @@ def zeros_like(
     order: OrderACFK = "K",
     subok: bool = True,
     shape: ShapeLike = None,
+    batch_size: int | None = None,
 ) -> TBatchedArray:
     r"""Return an array of zeros with the same shape and type as a given
     array.
@@ -384,6 +415,8 @@ def zeros_like(
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
+        batch_size: Overrides the batch size. If ``None``,
+            the batch size of the current batch is used.
 
     Returns:
         Array of zeros with the same shape and type as ``a``.
@@ -393,11 +426,17 @@ def zeros_like(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.zeros_like(ba2.ones((2, 5)))
-    >>> batch
+    >>> array = ba2.ones((2, 5))
+    >>> ba2.zeros_like(array)
     array([[0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.]], batch_axis=0)
+    >>> ba2.zeros_like(array, batch_size=5)
+    array([[0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.],
            [0., 0., 0., 0., 0.]], batch_axis=0)
 
     ```
     """
-    return a.zeros_like(dtype=dtype, order=order, subok=subok, shape=shape)
+    return a.zeros_like(dtype=dtype, order=order, subok=subok, shape=shape, batch_size=batch_size)
