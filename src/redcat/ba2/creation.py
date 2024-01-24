@@ -85,10 +85,8 @@ def empty(
     Args:
         shape: Shape of the new array, e.g., ``(2, 3)`` or ``2``.
         dtype: The desired data-type for the array.
-            Default is ``numpy.float64``.
         order: Whether to store multi-dimensional data in row-major
             (C-style) or column-major (Fortran-style) order in memory.
-            Default is ``C``.
         batch_axis: Specifies the batch axis in the array object.
         **kwargs: See the documentation of ``numpy.empty``
 
@@ -149,10 +147,7 @@ def empty_like(
 
     ```
     """
-    return BatchedArray(
-        np.empty_like(a.data, dtype=dtype, order=order, subok=subok, shape=shape),
-        batch_axis=a.batch_axis,
-    )
+    return a.empty_like(dtype=dtype, order=order, subok=subok, shape=shape)
 
 
 def full(
@@ -173,10 +168,8 @@ def full(
         shape: Shape of the new array, e.g., ``(2, 3)`` or ``2``.
         fill_value: Specifies the fill value.
         dtype: The desired data-type for the array.
-            Default is ``numpy.float64``.
         order: Whether to store multi-dimensional data in row-major
             (C-style) or column-major (Fortran-style) order in memory.
-            Default is ``C``.
         batch_axis: Specifies the batch axis in the array object.
         **kwargs: See the documentation of ``numpy.full``
 
@@ -223,7 +216,7 @@ def full_like(
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
-            array. Defaults to True.
+            array.
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
@@ -243,12 +236,7 @@ def full_like(
 
     ```
     """
-    return BatchedArray(
-        np.full_like(
-            a.data, fill_value=fill_value, dtype=dtype, order=order, subok=subok, shape=shape
-        ),
-        batch_axis=a.batch_axis,
-    )
+    return a.full_like(fill_value=fill_value, dtype=dtype, order=order, subok=subok, shape=shape)
 
 
 def ones(
@@ -266,10 +254,8 @@ def ones(
     Args:
         shape: Shape of the new array, e.g., ``(2, 3)`` or ``2``.
         dtype: The desired data-type for the array.
-            Default is ``numpy.float64``.
         order: Whether to store multi-dimensional data in row-major
             (C-style) or column-major (Fortran-style) order in memory.
-            Default is ``C``.
         batch_axis: Specifies the batch axis in the array object.
         **kwargs: See the documentation of ``numpy.ones``
 
@@ -312,7 +298,7 @@ def ones_like(
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
-            array. Defaults to True.
+            array.
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
@@ -332,10 +318,7 @@ def ones_like(
 
     ```
     """
-    return BatchedArray(
-        np.ones_like(a.data, dtype=dtype, order=order, subok=subok, shape=shape),
-        batch_axis=a.batch_axis,
-    )
+    return a.ones_like(dtype=dtype, order=order, subok=subok, shape=shape)
 
 
 def zeros(
@@ -353,10 +336,8 @@ def zeros(
     Args:
         shape: Shape of the new array, e.g., ``(2, 3)`` or ``2``.
         dtype: The desired data-type for the array.
-            Default is ``numpy.float64``.
         order: Whether to store multi-dimensional data in row-major
             (C-style) or column-major (Fortran-style) order in memory.
-            Default is ``C``.
         batch_axis: Specifies the batch axis in the array object.
         **kwargs: See the documentation of ``numpy.zeros``
 
@@ -399,7 +380,7 @@ def zeros_like(
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
-            array. Defaults to True.
+            array.
         shape: Overrides the shape of the result. If order=’K’ and the
             number of dimensions is unchanged, will try to keep order,
             otherwise, order=’C’ is implied.
@@ -419,7 +400,4 @@ def zeros_like(
 
     ```
     """
-    return BatchedArray(
-        np.zeros_like(a.data, dtype=dtype, order=order, subok=subok, shape=shape),
-        batch_axis=a.batch_axis,
-    )
+    return a.zeros_like(dtype=dtype, order=order, subok=subok, shape=shape)
