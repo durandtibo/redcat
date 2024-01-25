@@ -17,6 +17,7 @@ from redcat.utils.array import to_array
 # https://peps.python.org/pep-0673/
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
+IndexType = Union[int, slice, list[int], np.ndarray, None]
 OrderACFK = Literal["A", "C", "F", "K"]
 ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
@@ -1188,6 +1189,20 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     ##############################################################
     #     Array manipulation routines | Rearranging elements     #
     ##############################################################
+
+    def __getitem__(self, index: IndexType) -> np.ndarray:
+        if isinstance(index, BatchedArray):
+            index = index.data
+        return self._data[index]
+
+    def __setitem__(
+        self, index: IndexType, value: bool | float | np.ndarray | BatchedArray
+    ) -> None:
+        if isinstance(index, BatchedArray):
+            index = index.data
+        if isinstance(value, BatchedArray):
+            value = value.data
+        self._data[index] = value
 
     def permute_along_axis(
         self, permutation: np.ndarray | Sequence[int], axis: int
