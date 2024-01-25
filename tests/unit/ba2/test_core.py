@@ -10,7 +10,7 @@ from numpy.typing import DTypeLike
 
 from redcat import ba2 as ba
 from redcat.ba2 import BatchedArray
-from redcat.ba2.core import setup_rng
+from redcat.ba2.core import IndexType, setup_rng
 
 DTYPES = (bool, int, float)
 NUMERIC_DTYPES = [np.float64, np.int64]
@@ -1822,6 +1822,71 @@ def test_batched_array_truediv__different_axes() -> None:
     batch = ba.ones(shape=(2, 2))
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         batch.truediv_(ba.ones(shape=(2, 2), batch_axis=1))
+
+
+#######################################
+#     Array manipulation routines     #
+#######################################
+
+
+def test_batched_array__getitem___none() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    assert objects_are_equal(batch[None], np.array([[[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]]))
+
+
+def test_batched_array__getitem___int() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    assert objects_are_equal(batch[0], np.array([0, 1, 2, 3, 4]))
+
+
+def test_batched_array__range___slice() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    assert objects_are_equal(batch[0:2, 2:4], np.array([[2, 3], [7, 8]]))
+
+
+@pytest.mark.parametrize(
+    "index",
+    [[2, 0], np.array([2, 0]), ba.batched_array([2, 0])],
+)
+def test_batched_array__getitem___list_like(index: IndexType) -> None:
+    batch = BatchedArray(np.arange(10).reshape(5, 2))
+    assert objects_are_equal(batch[index], np.array([[4, 5], [0, 1]]))
+
+
+def test_batched_array__setitem___int() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch[0] = 7
+    assert objects_are_equal(batch, ba.batched_array([[7, 7, 7, 7, 7], [5, 6, 7, 8, 9]]))
+
+
+def test_batched_array__setitem___slice() -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch[0:1, 2:4] = 7
+    assert objects_are_equal(batch, ba.batched_array([[0, 1, 7, 7, 4], [5, 6, 7, 8, 9]]))
+
+
+@pytest.mark.parametrize(
+    "index",
+    [
+        [0, 2],
+        np.array([0, 2]),
+        ba.batched_array([0, 2]),
+    ],
+)
+def test_batched_array__setitem___list_like_index(index: IndexType) -> None:
+    batch = BatchedArray(np.arange(10).reshape(5, 2))
+    batch[index] = 7
+    assert objects_are_equal(batch, ba.batched_array([[7, 7], [2, 3], [7, 7], [6, 7], [8, 9]]))
+
+
+@pytest.mark.parametrize(
+    "value",
+    [np.array([[0, -4]]), ba.batched_array([[0, -4]])],
+)
+def test_batched_array__setitem___array_value(value: np.ndarray | BatchedArray) -> None:
+    batch = BatchedArray(np.arange(10).reshape(2, 5))
+    batch[1:2, 2:4] = value
+    assert objects_are_equal(batch, ba.batched_array([[0, 1, 2, 3, 4], [5, 6, 0, -4, 9]]))
 
 
 ########################################################
