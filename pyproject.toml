@@ -43,7 +43,7 @@ mkdocs-material = "^9.5"
 mkdocstrings = { extras = ["python"], version = "^0.24" }
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.12"
+black = ">=23.12,<25.0"
 coverage = { extras = ["toml"], version = "^7.3" }
 docformatter = { extras = ["tomli"], version = "^1.7" }
 feu = ">=0.0.2,<0.1"
