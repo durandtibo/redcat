@@ -2510,6 +2510,62 @@ def test_batched_array_cumprod_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_cumsum() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5) + 1).cumsum(),
+        np.array([1, 3, 6, 10, 15, 21, 28, 36, 45, 55]),
+    )
+
+
+def test_batched_array_cumsum_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumsum(axis=0),
+        BatchedArray(np.asarray([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])),
+    )
+
+
+def test_batched_array_cumsum_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumsum(axis=1),
+        BatchedArray(np.array([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]])),
+    )
+
+
+def test_batched_array_cumsum_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumsum(axis=0),
+        BatchedArray(np.array([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]), batch_axis=1),
+    )
+
+
+def test_batched_array_cumsum_out() -> None:
+    out = np.zeros((5, 2), dtype=np.int64)
+    assert BatchedArray(np.arange(10).reshape(5, 2)).cumsum(axis=0, out=out) is out
+    assert objects_are_equal(out, np.asarray([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]))
+
+
+def test_batched_array_cumsum_out_array() -> None:
+    out = np.zeros(10)
+    assert BatchedArray(np.arange(10).reshape(2, 5) + 1).cumsum(out=out) is out
+    assert objects_are_equal(
+        out, np.asarray([1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0, 45.0, 55.0])
+    )
+
+
+def test_batched_array_cumsum_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumsum_along_batch(),
+        BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])),
+    )
+
+
+def test_batched_array_cumsum_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumsum_along_batch(),
+        BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
+    )
+
+
 #################
 #     Other     #
 #################
