@@ -1439,7 +1439,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             axis: Axis along which the cumulative sum is computed.
                 By default, the input is flattened.
             dtype: Type of the returned array and of the accumulator
-                in which the elements are multiplied. If dtype is not
+                in which the elements are summed. If dtype is not
                 specified, it defaults to the dtype of ``self``,
                 unless a has an integer dtype with a precision less
                 than that of  the default platform integer.
@@ -1482,7 +1482,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         Args:
             dtype: Type of the returned array and of the accumulator
-                in which the elements are multiplied. If dtype is not
+                in which the elements are summed. If dtype is not
                 specified, it defaults to the dtype of ``self``,
                 unless a has an integer dtype with a precision less
                 than that of  the default platform integer.
