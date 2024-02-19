@@ -5,6 +5,10 @@ __all__ = [
     "batched_array",
     "concatenate",
     "concatenate_along_batch",
+    "cumprod",
+    "cumprod_along_batch",
+    "cumsum",
+    "cumsum_along_batch",
     "empty",
     "empty_like",
     "full",
@@ -28,3 +32,4 @@ from redcat.ba2.creation import (
     zeros_like,
 )
 from redcat.ba2.joining import concatenate, concatenate_along_batch
+from redcat.ba2.math import cumprod, cumprod_along_batch, cumsum, cumsum_along_batch
