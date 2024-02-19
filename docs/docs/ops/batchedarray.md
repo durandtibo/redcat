@@ -143,8 +143,12 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `truediv`                       | :white_check_mark: |             | :white_check_mark: |                   |
 | `truediv_`                      | :x:                | :x:         | :white_check_mark: |                   |
 | **Sums, products, differences** |                    |             |                    |                   |
-| `cumprod`                       |                    |             |                    |                   |
-| `cumsum`                        |                    |             |                    |                   |
+| `cumprod`                       |                    |             | :white_check_mark: |                   |
+| `cumprod_along_batch`           |                    |             | :white_check_mark: |                   |
+| `cumprod_along_seq`             |                    |             | :x:                |                   |
+| `cumsum`                        |                    |             | :white_check_mark: |                   |
+| `cumsum_along_batch`            |                    |             | :white_check_mark: |                   |
+| `cumsum_along_seq`              |                    |             | :x:                |                   |
 | `diff`                          |                    |             |                    |                   |
 | `ediff1d`                       |                    |             |                    |                   |
 | `nancumprod`                    |                    |             |                    |                   |
