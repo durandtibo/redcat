@@ -2566,6 +2566,114 @@ def test_batched_array_cumsum_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_nancumprod() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumprod(),
+        np.array([1.0, 1.0, 2.0, 6.0, 24.0, 120.0]),
+    )
+
+
+def test_batched_array_nancumprod_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumprod(axis=0),
+        BatchedArray(np.asarray([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]])),
+    )
+
+
+def test_batched_array_nancumprod_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumprod(axis=1),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]])),
+    )
+
+
+def test_batched_array_nancumprod_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumprod(axis=0),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_nancumprod_out_1d() -> None:
+    out = np.zeros(6)
+    assert BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumprod(out=out) is out
+    assert objects_are_equal(out, np.asarray([1.0, 1.0, 2.0, 6.0, 24.0, 120.0]))
+
+
+def test_batched_array_nancumprod_out_2d() -> None:
+    out = np.zeros((2, 3))
+    assert BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumprod(axis=0, out=out) is out
+    assert objects_are_equal(out, np.asarray([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]))
+
+
+def test_batched_array_nancumprod_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumprod_along_batch(),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]])),
+    )
+
+
+def test_batched_array_nancumprod_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumprod_along_batch(),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_nancumsum() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(),
+        np.array([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]),
+    )
+
+
+def test_batched_array_nancumsum_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=0),
+        BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+    )
+
+
+def test_batched_array_nancumsum_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=1),
+        BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]])),
+    )
+
+
+def test_batched_array_nancumsum_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumsum(axis=0),
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_nancumsum_out_1d() -> None:
+    out = np.zeros(6)
+    assert BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(out=out) is out
+    assert objects_are_equal(out, np.asarray([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]))
+
+
+def test_batched_array_nancumsum_out_2d() -> None:
+    out = np.zeros((2, 3))
+    assert BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum(axis=0, out=out) is out
+    assert objects_are_equal(out, np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]))
+
+
+def test_batched_array_nancumsum_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])).nancumsum_along_batch(),
+        BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+    )
+
+
+def test_batched_array_nancumsum_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1).nancumsum_along_batch(),
+        BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]]), batch_axis=1),
+    )
+
+
 #################
 #     Other     #
 #################

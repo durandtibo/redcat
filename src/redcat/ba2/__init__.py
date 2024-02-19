@@ -13,6 +13,10 @@ __all__ = [
     "empty_like",
     "full",
     "full_like",
+    "nancumprod",
+    "nancumprod_along_batch",
+    "nancumsum",
+    "nancumsum_along_batch",
     "ones",
     "ones_like",
     "zeros",
@@ -32,4 +36,13 @@ from redcat.ba2.creation import (
     zeros_like,
 )
 from redcat.ba2.joining import concatenate, concatenate_along_batch
-from redcat.ba2.math import cumprod, cumprod_along_batch, cumsum, cumsum_along_batch
+from redcat.ba2.math import (
+    cumprod,
+    cumprod_along_batch,
+    cumsum,
+    cumsum_along_batch,
+    nancumprod,
+    nancumprod_along_batch,
+    nancumsum,
+    nancumsum_along_batch,
+)
