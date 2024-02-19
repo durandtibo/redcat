@@ -4339,9 +4339,9 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.__class__(
             self._data.unsqueeze(dim=dim),
-            batch_dim=self._batch_dim + 1
-            if self._batch_dim >= dim and dim >= 0
-            else self._batch_dim,
+            batch_dim=(
+                self._batch_dim + 1 if self._batch_dim >= dim and dim >= 0 else self._batch_dim
+            ),
         )
 
     def view(self, *shape: tuple[int, ...]) -> Tensor:
