@@ -8,7 +8,12 @@ from coola import objects_are_allclose
 from pytest import mark
 
 from redcat.ba2 import BatchedArray
-from redcat.ba.testing import FunctionCheck, uniform_arrays, uniform_int_arrays
+from redcat.ba.testing import (
+    FunctionCheck,
+    normal_arrays,
+    uniform_arrays,
+    uniform_int_arrays,
+)
 
 BATCH_CLASSES = (BatchedArray, partial(BatchedArray, batch_axis=1))
 DTYPES = (int, float)
@@ -44,6 +49,21 @@ def test_array_size(cls: type[np.ndarray], shape: tuple[int, ...]) -> None:
     array = np.ones(shape)
     assert cls(array).size == array.size
 
+
+MATH_FUNCS = [
+    FunctionCheck(
+        partial(np.cumprod, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
+    FunctionCheck(
+        partial(np.cumsum, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
+    FunctionCheck(
+        partial(np.nancumprod, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
+    FunctionCheck(
+        partial(np.nancumsum, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
+]
 
 MATH_UFUNCS = [
     FunctionCheck.create_ufunc(np.add),
@@ -189,11 +209,19 @@ FLOATING_UFUNCS = [
     FunctionCheck.create_ufunc(np.trunc),
 ]
 
+FUNCS = MATH_FUNCS
 UFUNCS = MATH_UFUNCS + TRIGONOMETRIC_UFUNCS + BIT_UFUNCS + COMPARISON_UFUNCS + FLOATING_UFUNCS
-FUNCTIONS = UFUNCS
+FUNCTIONS = FUNCS + UFUNCS
 
 IN1_FUNCTIONS = [fc for fc in FUNCTIONS if fc.nin == 1]
 IN2_FUNCTIONS = [fc for fc in FUNCTIONS if fc.nin == 2]
+
+BATCH_TO_ARRAY_FUNCS = [
+    FunctionCheck(np.cumprod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(np.cumsum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(np.nancumprod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(np.nancumsum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+]
 
 
 @mark.parametrize("func_check", FUNCTIONS)
@@ -226,3 +254,12 @@ def test_in2_batched_array_incorrect_axes(func_check: FunctionCheck) -> None:
     arrays = func_check.get_arrays()
     with pytest.raises(RuntimeError, match=r"The batch axes do not match."):
         func(BatchedArray(arrays[0]), BatchedArray(arrays[1], batch_axis=1))
+
+
+@mark.parametrize("func_check", BATCH_TO_ARRAY_FUNCS)
+@mark.parametrize("cls", BATCH_CLASSES)
+def test_batched_array_to_array(func_check: FunctionCheck, cls: type[np.ndarray]) -> None:
+    func = func_check.function
+    arrays = func_check.get_arrays()
+    outputs = func(*[cls(arr) for arr in arrays])
+    assert objects_are_allclose(outputs, func(*arrays))
