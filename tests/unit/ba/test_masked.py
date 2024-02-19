@@ -4,6 +4,7 @@ r"""Test the interoperability of ``BatchedArray`` with
 We want to check that ``BatchedArray`` is compatible with
 ``numpy.ma.MaskedArray`` so it is possible to combine both.
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable

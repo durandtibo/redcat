@@ -1348,9 +1348,9 @@ class BatchedTensorSeq(BatchedTensor):
     def unsqueeze(self, dim: int) -> BatchedTensorSeq:
         return self.__class__(
             self._data.unsqueeze(dim=dim),
-            batch_dim=self._batch_dim + 1
-            if self._batch_dim >= dim and dim >= 0
-            else self._batch_dim,
+            batch_dim=(
+                self._batch_dim + 1 if self._batch_dim >= dim and dim >= 0 else self._batch_dim
+            ),
             seq_dim=self._seq_dim + 1 if self._seq_dim >= dim and dim >= 0 else self._seq_dim,
         )
 

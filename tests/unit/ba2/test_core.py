@@ -2449,6 +2449,67 @@ def test_batched_array_shuffle_along_axis__different_random_seeds() -> None:
     assert not batch1.allequal(batch2)
 
 
+##############################################
+#     Math | Sums, products, differences     #
+##############################################
+
+
+def test_batched_array_cumprod() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5) + 1).cumprod(),
+        np.array([1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800]),
+    )
+
+
+def test_batched_array_cumprod_axis_0() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod(axis=0),
+        BatchedArray(np.asarray([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+    )
+
+
+def test_batched_array_cumprod_axis_1() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod(axis=1),
+        BatchedArray(np.array([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])),
+    )
+
+
+def test_batched_array_cumprod_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumprod(axis=0),
+        BatchedArray(np.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]), batch_axis=1),
+    )
+
+
+def test_batched_array_cumprod_out() -> None:
+    out = np.zeros((5, 2), dtype=np.int64)
+    assert BatchedArray(np.arange(10).reshape(5, 2)).cumprod(axis=0, out=out) is out
+    assert objects_are_equal(out, np.asarray([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]))
+
+
+def test_batched_array_cumprod_out_array() -> None:
+    out = np.zeros(10)
+    assert BatchedArray(np.arange(10).reshape(2, 5) + 1).cumprod(out=out) is out
+    assert objects_are_equal(
+        out, np.asarray([1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0])
+    )
+
+
+def test_batched_array_cumprod_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(2, 5)).cumprod_along_batch(),
+        BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+    )
+
+
+def test_batched_array_cumprod_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1).cumprod_along_batch(),
+        BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_axis=1),
+    )
+
+
 #################
 #     Other     #
 #################

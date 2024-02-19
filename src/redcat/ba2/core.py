@@ -21,7 +21,6 @@ IndexType = Union[int, slice, list[int], np.ndarray, None]
 OrderACFK = Literal["A", "C", "F", "K"]
 ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
 
-
 HANDLED_FUNCTIONS = {}
 
 
@@ -846,14 +845,12 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     @overload
     def concatenate(
         self, arrays: Iterable[TBatchedArray | np.ndarray], axis: None = ...
-    ) -> np.ndarray:
-        ...  # pragma: no cover
+    ) -> np.ndarray: ...  # pragma: no cover
 
     @overload
     def concatenate(
         self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int = ...
-    ) -> TBatchedArray:
-        ...  # pragma: no cover
+    ) -> TBatchedArray: ...  # pragma: no cover
 
     def concatenate(
         self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int | None = 0
@@ -1028,12 +1025,14 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         )
 
     @overload
-    def index_select(self, index: np.ndarray | Sequence[int], axis: None = ...) -> np.ndarray:
-        ...  # pragma: no cover
+    def index_select(
+        self, index: np.ndarray | Sequence[int], axis: None = ...
+    ) -> np.ndarray: ...  # pragma: no cover
 
     @overload
-    def index_select(self, index: np.ndarray | Sequence[int], axis: int = ...) -> TBatchedArray:
-        ...  # pragma: no cover
+    def index_select(
+        self, index: np.ndarray | Sequence[int], axis: int = ...
+    ) -> TBatchedArray: ...  # pragma: no cover
 
     def index_select(
         self, index: np.ndarray | Sequence[int], axis: int | None = None
@@ -1309,6 +1308,108 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         ```
         """
         self._data = self.shuffle_along_axis(axis=axis, rng=rng).data
+
+    ##############################################
+    #     Math | Sums, products, differences     #
+    ##############################################
+
+    @overload
+    def cumprod(
+        self,
+        axis: None = ...,
+        dtype: DTypeLike = ...,
+        out: np.ndarray | None = ...,
+    ) -> np.ndarray: ...  # pragma: no cover
+
+    @overload
+    def cumprod(
+        self,
+        axis: SupportsIndex = ...,
+        dtype: DTypeLike = ...,
+        out: np.ndarray | None = ...,
+    ) -> TBatchedArray: ...  # pragma: no cover
+
+    def cumprod(
+        self,
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+    ) -> TBatchedArray | np.ndarray:
+        r"""Return the cumulative product of elements along a given axis.
+
+        Args:
+            axis: Axis along which the cumulative product is computed.
+                By default, the input is flattened.
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+
+        Returns:
+            The cumulative product of elements along a given axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.cumprod(axis=0)
+        array([[  0,   1],
+               [  0,   3],
+               [  0,  15],
+               [  0, 105],
+               [  0, 945]], batch_axis=0)
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.cumprod(axis=1)
+        array([[    0,     0,     0,     0,     0],
+               [    5,    30,   210,  1680, 15120]], batch_axis=1)
+
+        ```
+        """
+        x = self._data.cumprod(axis=axis, dtype=dtype, out=out)
+        if out is not None:
+            return out
+        if axis is not None:
+            x = self._create_new_batch(x)
+        return x
+
+    def cumprod_along_batch(self, dtype: DTypeLike = None) -> TBatchedArray:
+        r"""Return the cumulative product of elements along the batch
+        axis.
+
+        Args:
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+
+        Returns:
+            The cumulative product of elements along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.cumprod_along_batch()
+        array([[  0,   1],
+               [  0,   3],
+               [  0,  15],
+               [  0, 105],
+               [  0, 945]], batch_axis=0)
+
+        ```
+        """
+        return self.cumprod(axis=self._batch_axis, dtype=dtype)
 
     #################
     #     Other     #

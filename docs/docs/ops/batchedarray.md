@@ -83,6 +83,8 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 
 | name                       | `redcat.np`        | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
 |----------------------------|--------------------|--------------------|--------------------|-------------------|
+| `__getitem__`              |                    |                    | :white_check_mark: |                   |
+| `__setitem__`              |                    |                    | :white_check_mark: |                   |
 | **Joining arrays**         |                    |                    |                    |                   |
 | `concatenate`              | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `concatenate_`             | :x:                | :x:                | :white_check_mark: |                   |
@@ -95,12 +97,18 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `index_select`             | :x:                |                    | :white_check_mark: |                   |
 | `select`                   | :x:                |                    | :white_check_mark: |                   |
 | `slice_along_axis`         | :x:                |                    | :white_check_mark: |                   |
+| `slice_along_seq`          | :x:                |                    |                    |                   |
 | `split_along_axis`         | :x:                |                    | :white_check_mark: |                   |
+| `split_along_seq`          | :x:                |                    |                    |                   |
 | **Rearranging elements**   |                    |                    |                    |                   |
 | `permute_along_axis`       | :x:                |                    | :white_check_mark: |                   |
 | `permute_along_axis_`      | :x:                |                    | :white_check_mark: |                   |
+| `permute_along_seq`        | :x:                |                    |                    |                   |
+| `permute_along_seq_`       | :x:                |                    |                    |                   |
 | `shuffle_along_axis`       | :x:                |                    | :white_check_mark: |                   |
 | `shuffle_along_axis_`      | :x:                |                    | :white_check_mark: |                   |
+| `shuffle_along_seq`        | :x:                |                    |                    |                   |
+| `shuffle_along_seq_`       | :x:                |                    |                    |                   |
 
 ## Math
 
