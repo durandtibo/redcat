@@ -114,65 +114,73 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 
 [doc](https://numpy.org/doc/stable/reference/routines.math.html)
 
-| name                            | `np`               | `redcat.ba` | `BatchedArray`     | `BatchedArraySeq` |
-|---------------------------------|--------------------|-------------|--------------------|-------------------|
-| **Arithmetic**                  |                    |             |                    |                   |
-| `__add__`                       | :x:                | :x:         | :white_check_mark: |                   |
-| `__iadd__`                      | :x:                | :x:         | :white_check_mark: |                   |
-| `__floordiv__`                  | :x:                | :x:         | :white_check_mark: |                   |
-| `__ifloordiv__`                 | :x:                | :x:         | :white_check_mark: |                   |
-| `__mul__`                       | :x:                | :x:         | :white_check_mark: |                   |
-| `__imul__`                      | :x:                | :x:         | :white_check_mark: |                   |
-| `__neg__`                       | :x:                | :x:         | :white_check_mark: |                   |
-| `__sub__`                       | :x:                | :x:         | :white_check_mark: |                   |
-| `__isub__`                      | :x:                | :x:         | :white_check_mark: |                   |
-| `__truediv__`                   | :x:                | :x:         | :white_check_mark: |                   |
-| `__itruediv__`                  | :x:                | :x:         | :white_check_mark: |                   |
-| `add`                           | :white_check_mark: |             | :white_check_mark: |                   |
-| `add_`                          | :x:                | :x:         | :white_check_mark: |                   |
-| `divmod`                        | :white_check_mark: |             | :white_check_mark: |                   |
-| `divmod_`                       | :x:                | :x:         | :white_check_mark: |                   |
-| `floordiv`                      | :white_check_mark: |             | :white_check_mark: |                   |
-| `floordiv_`                     | :x:                | :x:         | :white_check_mark: |                   |
-| `fmod`                          | :white_check_mark: |             | :white_check_mark: |                   |
-| `fmod_`                         | :x:                | :x:         | :white_check_mark: |                   |
-| `mul`                           | :white_check_mark: |             | :white_check_mark: |                   |
-| `mul_`                          | :x:                | :x:         | :white_check_mark: |                   |
-| `sub`                           | :white_check_mark: |             | :white_check_mark: |                   |
-| `sub_`                          | :x:                | :x:         | :white_check_mark: |                   |
-| `truediv`                       | :white_check_mark: |             | :white_check_mark: |                   |
-| `truediv_`                      | :x:                | :x:         | :white_check_mark: |                   |
-| **Sums, products, differences** |                    |             |                    |                   |
-| `cumprod`                       |                    |             |                    |                   |
-| `cumsum`                        |                    |             |                    |                   |
-| `diff`                          |                    |             |                    |                   |
-| `ediff1d`                       |                    |             |                    |                   |
-| `nancumprod`                    |                    |             |                    |                   |
-| `nancumsum`                     |                    |             |                    |                   |
-| `nanprod`                       |                    |             |                    |                   |
-| `nansum`                        |                    |             |                    |                   |
-| `prod`                          |                    |             |                    |                   |
-| `sum`                           |                    |             |                    |                   |
-| `trapz`                         |                    |             |                    |                   |
-| **Trigonometric functions**     |                    |             |                    |                   |
-| **Hyperbolic functions**        |                    |             |                    |                   |
-| **Exponents and logarithms**    |                    |             |                    |                   |
-| **Rounding**                    |                    |             |                    |                   |
-| **Floating point routines**     |                    |             |                    |                   |
-| **Rational routines**           |                    |             |                    |                   |
-| **Extrema Finding**             |                    |             |                    |                   |
-| `fmax`                          | :white_check_mark: |             |                    |                   |
-| `fmin`                          | :white_check_mark: |             |                    |                   |
-| `max_along_batch`               | :x:                |             |                    |                   |
-| `max`                           | :white_check_mark: |             |                    |                   |
-| `maximum`                       | :white_check_mark: |             |                    |                   |
-| `min_along_batch`               | :x:                |             |                    |                   |
-| `min`                           | :white_check_mark: |             |                    |                   |
-| `minimum`                       | :white_check_mark: |             |                    |                   |
-| `nanmax_along_batch`            | :x:                |             |                    |                   |
-| `nanmax`                        | :white_check_mark: |             |                    |                   |
-| `nanmin_along_batch`            | :x:                |             |                    |                   |
-| `nanmin`                        | :white_check_mark: |             |                    |                   |
+| name                            | `np`               | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
+|---------------------------------|--------------------|--------------------|--------------------|-------------------|
+| **Arithmetic**                  |                    |                    |                    |                   |
+| `__add__`                       | :x:                | :x:                | :white_check_mark: |                   |
+| `__iadd__`                      | :x:                | :x:                | :white_check_mark: |                   |
+| `__floordiv__`                  | :x:                | :x:                | :white_check_mark: |                   |
+| `__ifloordiv__`                 | :x:                | :x:                | :white_check_mark: |                   |
+| `__mul__`                       | :x:                | :x:                | :white_check_mark: |                   |
+| `__imul__`                      | :x:                | :x:                | :white_check_mark: |                   |
+| `__neg__`                       | :x:                | :x:                | :white_check_mark: |                   |
+| `__sub__`                       | :x:                | :x:                | :white_check_mark: |                   |
+| `__isub__`                      | :x:                | :x:                | :white_check_mark: |                   |
+| `__truediv__`                   | :x:                | :x:                | :white_check_mark: |                   |
+| `__itruediv__`                  | :x:                | :x:                | :white_check_mark: |                   |
+| `add`                           | :white_check_mark: |                    | :white_check_mark: |                   |
+| `add_`                          | :x:                | :x:                | :white_check_mark: |                   |
+| `divmod`                        | :white_check_mark: |                    | :white_check_mark: |                   |
+| `divmod_`                       | :x:                | :x:                | :white_check_mark: |                   |
+| `floordiv`                      | :white_check_mark: |                    | :white_check_mark: |                   |
+| `floordiv_`                     | :x:                | :x:                | :white_check_mark: |                   |
+| `fmod`                          | :white_check_mark: |                    | :white_check_mark: |                   |
+| `fmod_`                         | :x:                | :x:                | :white_check_mark: |                   |
+| `mul`                           | :white_check_mark: |                    | :white_check_mark: |                   |
+| `mul_`                          | :x:                | :x:                | :white_check_mark: |                   |
+| `sub`                           | :white_check_mark: |                    | :white_check_mark: |                   |
+| `sub_`                          | :x:                | :x:                | :white_check_mark: |                   |
+| `truediv`                       | :white_check_mark: |                    | :white_check_mark: |                   |
+| `truediv_`                      | :x:                | :x:                | :white_check_mark: |                   |
+| **Sums, products, differences** |                    |                    |                    |                   |
+| `cumprod`                       |                    | :white_check_mark: | :white_check_mark: |                   |
+| `cumprod_along_batch`           |                    | :white_check_mark: | :white_check_mark: |                   |
+| `cumprod_along_seq`             |                    |                    | :x:                |                   |
+| `cumsum`                        |                    | :white_check_mark: | :white_check_mark: |                   |
+| `cumsum_along_batch`            |                    | :white_check_mark: | :white_check_mark: |                   |
+| `cumsum_along_seq`              |                    |                    | :x:                |                   |
+| `diff`                          |                    |                    |                    |                   |
+| `ediff1d`                       |                    |                    |                    |                   |
+| `nancumprod`                    |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nancumprod_along_batch`        |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nancumprod_along_seq`          |                    |                    | :x:                |                   |
+| `nancumsum`                     |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nancumsum_along_batch`         |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nancumsum_along_seq`           |                    |                    | :x:                |                   |
+| `nanprod`                       |                    |                    |                    |                   |
+| `nansum`                        |                    |                    |                    |                   |
+| `prod`                          |                    |                    |                    |                   |
+| `sum`                           |                    |                    |                    |                   |
+| `trapz`                         |                    |                    |                    |                   |
+| **Trigonometric functions**     |                    |                    |                    |                   |
+| **Hyperbolic functions**        |                    |                    |                    |                   |
+| **Exponents and logarithms**    |                    |                    |                    |                   |
+| **Rounding**                    |                    |                    |                    |                   |
+| **Floating point routines**     |                    |                    |                    |                   |
+| **Rational routines**           |                    |                    |                    |                   |
+| **Extrema Finding**             |                    |                    |                    |                   |
+| `fmax`                          | :white_check_mark: |                    |                    |                   |
+| `fmin`                          | :white_check_mark: |                    |                    |                   |
+| `max_along_batch`               | :x:                |                    |                    |                   |
+| `max`                           | :white_check_mark: |                    |                    |                   |
+| `maximum`                       | :white_check_mark: |                    |                    |                   |
+| `min_along_batch`               | :x:                |                    |                    |                   |
+| `min`                           | :white_check_mark: |                    |                    |                   |
+| `minimum`                       | :white_check_mark: |                    |                    |                   |
+| `nanmax_along_batch`            | :x:                |                    |                    |                   |
+| `nanmax`                        | :white_check_mark: |                    |                    |                   |
+| `nanmin_along_batch`            | :x:                |                    |                    |                   |
+| `nanmin`                        | :white_check_mark: |                    |                    |                   |
 
 ## Sort
 

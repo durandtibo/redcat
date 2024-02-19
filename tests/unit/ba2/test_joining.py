@@ -101,6 +101,11 @@ def test_concatenate_incorrect_batch_axis() -> None:
         np.concatenate([ba2.ones((2, 2)), ba2.zeros((2, 2), batch_axis=1)])
 
 
+#############################################
+#     Tests for concatenate_along_batch     #
+#############################################
+
+
 @pytest.mark.parametrize(
     "arrays",
     [
