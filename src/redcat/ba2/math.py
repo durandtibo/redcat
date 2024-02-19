@@ -232,12 +232,12 @@ def nanprod(
     >>> import numpy as np
     >>> from redcat import ba2
     >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanprod(axis=0)
+    >>> ba2.nanprod(batch, axis=0)
     array([ 3., 4., 10.])
-    >>> ba2.nanprod(axis=0, keepdims=True)
+    >>> ba2.nanprod(batch, axis=0, keepdims=True)
     array([[ 3., 4., 10.]])
     >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.nanprod(axis=1)
+    >>> ba2.nanprod(batch, axis=1)
     array([ 2., 60.])
 
     ```
@@ -273,9 +273,8 @@ def nanprod_along_batch(
     >>> import numpy as np
     >>> from redcat import ba2
     >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanprod_along_batch()
-    array([[ 1.,  1.,  2.],
-           [ 3.,  4., 10.]], batch_axis=0)
+    >>> ba2.nanprod_along_batch(batch)
+    array([ 3., 4., 10.])
 
     ```
     """

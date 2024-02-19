@@ -1777,8 +1777,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         >>> from redcat.ba2 import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanprod_along_batch()
-        array([[ 1.,  1.,  2.],
-               [ 3.,  4., 10.]], batch_axis=0)
+        array([ 3., 4., 10.])
 
         ```
         """
