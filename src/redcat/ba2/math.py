@@ -9,6 +9,8 @@ __all__ = [
     "nancumprod_along_batch",
     "nancumsum",
     "nancumsum_along_batch",
+    "nanprod",
+    "nanprod_along_batch",
 ]
 
 from typing import SupportsIndex, TypeVar
@@ -191,3 +193,89 @@ def nancumsum_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatched
     ```
     """
     return a.nancumsum_along_batch(dtype=dtype)
+
+
+def nanprod(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
+    keepdims: bool = False,
+) -> TBatchedArray | np.ndarray:
+    r"""Return the product of elements along a given axis treating Not a
+    Numbers (NaNs) as one.
+
+    Args:
+        axis: Axis along which the cumulative product is computed.
+            By default, the input is flattened.
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are multiplied. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The product of elements along a given axis treating Not a
+            Numbers (NaNs) as one.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba2.nanprod(batch, axis=0)
+    array([ 3., 4., 10.])
+    >>> ba2.nanprod(batch, axis=0, keepdims=True)
+    array([[ 3., 4., 10.]])
+    >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba2.nanprod(batch, axis=1)
+    array([ 2., 60.])
+
+    ```
+    """
+    return a.nanprod(axis=axis, dtype=dtype, out=out, keepdims=keepdims)
+
+
+def nanprod_along_batch(
+    a: TBatchedArray, dtype: DTypeLike = None, keepdims: bool = False
+) -> TBatchedArray:
+    r"""Return the product of elements along the batch axis treating Not
+    a Numbers (NaNs) as one.
+
+    Args:
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are multiplied. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The product of elements along the batch axis treating Not a
+            Numbers (NaNs) as one.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba2.nanprod_along_batch(batch)
+    array([ 3., 4., 10.])
+
+    ```
+    """
+    return a.nanprod_along_batch(dtype=dtype, keepdims=keepdims)

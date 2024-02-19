@@ -143,22 +143,26 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `truediv`                       | :white_check_mark: |                    | :white_check_mark: |                   |
 | `truediv_`                      | :x:                | :x:                | :white_check_mark: |                   |
 | **Sums, products, differences** |                    |                    |                    |                   |
-| `cumprod`                       |                    | :white_check_mark: | :white_check_mark: |                   |
-| `cumprod_along_batch`           |                    | :white_check_mark: | :white_check_mark: |                   |
-| `cumprod_along_seq`             |                    |                    | :x:                |                   |
-| `cumsum`                        |                    | :white_check_mark: | :white_check_mark: |                   |
-| `cumsum_along_batch`            |                    | :white_check_mark: | :white_check_mark: |                   |
-| `cumsum_along_seq`              |                    |                    | :x:                |                   |
+| `cumprod`                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `cumprod_along_batch`           | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `cumprod_along_seq`             | :x:                |                    | :x:                |                   |
+| `cumsum`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `cumsum_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `cumsum_along_seq`              | :x:                |                    | :x:                |                   |
 | `diff`                          |                    |                    |                    |                   |
 | `ediff1d`                       |                    |                    |                    |                   |
-| `nancumprod`                    |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nancumprod_along_batch`        |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nancumprod_along_seq`          |                    |                    | :x:                |                   |
-| `nancumsum`                     |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nancumsum_along_batch`         |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nancumsum_along_seq`           |                    |                    | :x:                |                   |
-| `nanprod`                       |                    |                    |                    |                   |
+| `nancumprod`                    | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nancumprod_along_batch`        | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nancumprod_along_seq`          | :x:                |                    | :x:                |                   |
+| `nancumsum`                     | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nancumsum_along_batch`         | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nancumsum_along_seq`           | :x:                |                    | :x:                |                   |
+| `nanprod`                       |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nanprod_along_batch`           |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nanprod_along_seq`             |                    |                    | :x:                |                   |
 | `nansum`                        |                    |                    |                    |                   |
+| `nansum_along_batch`            |                    |                    |                    |                   |
+| `nansum_along_seq`              |                    |                    | :x:                |                   |
 | `prod`                          |                    |                    |                    |                   |
 | `sum`                           |                    |                    |                    |                   |
 | `trapz`                         |                    |                    |                    |                   |
