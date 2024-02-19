@@ -7,6 +7,8 @@ __all__ = [
     "cumsum_along_batch",
     "nancumprod",
     "nancumprod_along_batch",
+    "nancumsum",
+    "nancumsum_along_batch",
 ]
 
 from typing import SupportsIndex, TypeVar
@@ -148,3 +150,44 @@ def nancumprod_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatche
     ```
     """
     return a.nancumprod_along_batch(dtype=dtype)
+
+
+@implements(np.nancumsum)
+def nancumsum(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    dtype: DTypeLike = None,
+    out: np.ndarray | None = None,
+) -> TBatchedArray | np.ndarray:
+    r"""See ``numpy.nancumsum`` documentation."""
+    return a.nancumsum(axis=axis, dtype=dtype, out=out)
+
+
+def nancumsum_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatchedArray:
+    r"""Return the cumulative sum of elements along the batch axis.
+
+    Args:
+        a: The input array.
+        dtype: Type of the returned array and of the accumulator
+            in which the elements are summed. If dtype is not
+            specified, it defaults to the dtype of ``self``,
+            unless a has an integer dtype with a precision less
+            than that of  the default platform integer.
+            In that case, the default platform integer is used.
+
+    Returns:
+        The cumulative sum of elements along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba2.nancumsum_along_batch(batch)
+    array([[1., 0., 2.],
+           [4., 4., 7.]], batch_axis=0)
+
+    ```
+    """
+    return a.nancumsum_along_batch(dtype=dtype)
