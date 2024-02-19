@@ -154,8 +154,8 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nancumprod`                    |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nancumprod_along_batch`        |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nancumprod_along_seq`          |                    |                    | :x:                |                   |
-| `nancumsum`                     |                    |                    |                    |                   |
-| `nancumsum_along_batch`         |                    |                    |                    |                   |
+| `nancumsum`                     |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nancumsum_along_batch`         |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nancumsum_along_seq`           |                    |                    | :x:                |                   |
 | `nanprod`                       |                    |                    |                    |                   |
 | `nansum`                        |                    |                    |                    |                   |
