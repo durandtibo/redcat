@@ -136,3 +136,71 @@ def test_batched_array_cumsum_along_batch_custom_axes() -> None:
         ba2.cumsum_along_batch(BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)),
         BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
     )
+
+
+###############################
+#    Tests for nancumprod     #
+###############################
+
+
+def test_batched_array_nancumprod() -> None:
+    assert objects_are_equal(
+        ba2.nancumprod(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
+        np.array([1.0, 1.0, 2.0, 6.0, 24.0, 120.0]),
+    )
+
+
+def test_batched_array_nancumprod_axis_0() -> None:
+    assert objects_are_equal(
+        ba2.nancumprod(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0),
+        BatchedArray(np.asarray([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]])),
+    )
+
+
+def test_batched_array_nancumprod_axis_1() -> None:
+    assert objects_are_equal(
+        ba2.nancumprod(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=1),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]])),
+    )
+
+
+def test_batched_array_nancumprod_custom_axes() -> None:
+    assert objects_are_equal(
+        ba2.nancumprod(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1), axis=0),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_nancumprod_out_1d() -> None:
+    out = np.zeros(6)
+    assert ba2.nancumprod(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out) is out
+    assert objects_are_equal(out, np.asarray([1.0, 1.0, 2.0, 6.0, 24.0, 120.0]))
+
+
+def test_batched_array_nancumprod_out_2d() -> None:
+    out = np.zeros((2, 3))
+    assert (
+        ba2.nancumprod(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0, out=out) is out
+    )
+    assert objects_are_equal(out, np.asarray([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]))
+
+
+###########################################
+#    Tests for nancumprod_along_batch     #
+###########################################
+
+
+def test_batched_array_nancumprod_along_batch() -> None:
+    assert objects_are_equal(
+        ba2.nancumprod_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]])),
+    )
+
+
+def test_batched_array_nancumprod_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba2.nancumprod_along_batch(
+            BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        ),
+        BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]]), batch_axis=1),
+    )
