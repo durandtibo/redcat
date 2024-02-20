@@ -25,6 +25,8 @@ __all__ = [
     "ones_like",
     "prod",
     "prod_along_batch",
+    "sum",
+    "sum_along_batch",
     "zeros",
     "zeros_like",
 ]
@@ -57,4 +59,6 @@ from redcat.ba2.math import (
     nansum_along_batch,
     prod,
     prod_along_batch,
+    sum,
+    sum_along_batch,
 )

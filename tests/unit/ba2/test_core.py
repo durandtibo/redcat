@@ -2864,6 +2864,74 @@ def test_batched_array_prod_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_sum_1d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([1, 6, 2])).sum(axis=0),
+        np.int64(9),
+    )
+
+
+def test_batched_array_sum_2d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).sum(axis=0),
+        np.asarray([4, 10, 7]),
+    )
+
+
+def test_batched_array_sum_float() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1.0, 6.0, 2.0], [3.0, 4.0, 5.0]])).sum(axis=0),
+        np.asarray([4.0, 10.0, 7.0]),
+    )
+
+
+def test_batched_array_sum_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).sum(axis=None),
+        np.int64(21),
+    )
+
+
+def test_batched_array_sum_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1).sum(axis=1),
+        np.asarray([9, 12]),
+    )
+
+
+def test_batched_array_sum_out() -> None:
+    out = np.array(0)
+    assert BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).sum(out=out) is out
+    assert objects_are_equal(out, np.array(21))
+
+
+def test_batched_array_sum_out_axis() -> None:
+    out = np.zeros(2)
+    assert BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).sum(axis=1, out=out) is out
+    assert objects_are_equal(out, np.asarray([9.0, 12.0]))
+
+
+def test_batched_array_sum_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).sum_along_batch(),
+        np.asarray([4, 10, 7]),
+    )
+
+
+def test_batched_array_sum_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).sum_along_batch(keepdims=True),
+        np.asarray([[4, 10, 7]]),
+    )
+
+
+def test_batched_array_sum_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1).sum_along_batch(),
+        np.asarray([9, 12]),
+    )
+
+
 #################
 #     Other     #
 #################
