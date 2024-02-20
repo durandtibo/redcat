@@ -20,6 +20,7 @@ TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 IndexType = Union[int, slice, list[int], np.ndarray, None]
 OrderACFK = Literal["A", "C", "F", "K"]
 ShapeLike = Union[SupportsIndex, Sequence[SupportsIndex]]
+SortKind = Literal["quicksort", "mergesort", "heapsort", "stable"]
 
 HANDLED_FUNCTIONS = {}
 
@@ -183,12 +184,44 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
     @property
     def dtype(self) -> np.dtype:
-        r"""Data-type of the array’s elements."""
+        r"""Data-type of the array`s elements."""
         return self._data.dtype
 
     ###############################
     #     Creation operations     #
     ###############################
+
+    def copy(self, order: OrderACFK = "C") -> TBatchedArray:
+        r"""Return a copy of the array.
+
+        Args:
+            order: Controls the memory layout of the copy.
+                `C` means C-order, `F` means F-order, `A` means `F`
+                if the current array is Fortran contiguous, `C`
+                otherwise. `K` means  match the layout of current
+                array as closely as possible.
+
+        Returns:
+            A copy of the array.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat import ba2
+        >>> array = ba2.ones((2, 3))
+        >>> x = array.copy()
+        >>> x += 1
+        >>> array
+        array([[1., 1., 1.],
+               [1., 1., 1.]], batch_axis=0)
+        >>> x
+        array([[2., 2., 2.],
+               [2., 2., 2.]], batch_axis=0)
+
+        ```
+        """
+        return self._create_new_batch(self._data.copy(order=order))
 
     def empty_like(
         self,
@@ -203,16 +236,16 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         Args:
             dtype: Overrides the data type of the result.
-            order: Overrides the memory layout of the result. ‘C’ means
-                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
-                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+            order: Overrides the memory layout of the result. `C` means
+                C-order, `F` means F-order, `A` means `F` if ``self``
+                is Fortran contiguous, `C` otherwise. `K` means match
                 the layout of ``self`` as closely as possible.
             subok: If True, then the newly created array will use the
                 sub-class type of ``self``, otherwise it will be a
                 base-class array.
-            shape: Overrides the shape of the result. If order=’K’ and
+            shape: Overrides the shape of the result. If order=`K` and
                 thenumber of dimensions is unchanged, will try to keep
-                order, otherwise, order=’C’ is implied.
+                order, otherwise, order=`C` is implied.
             batch_size: Overrides the batch size. If ``None``,
                 the batch size of the current batch is used.
 
@@ -254,16 +287,16 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Args:
             fill_value: Specifies the fill value.
             dtype: Overrides the data type of the result.
-            order: Overrides the memory layout of the result. ‘C’ means
-                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
-                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+            order: Overrides the memory layout of the result. `C` means
+                C-order, `F` means F-order, `A` means `F` if ``self``
+                is Fortran contiguous, `C` otherwise. `K` means match
                 the layout of ``self`` as closely as possible.
             subok: If True, then the newly created array will use the
                 sub-class type of ``self``, otherwise it will be a
                 base-class array.
-            shape: Overrides the shape of the result. If order=’K’ and
+            shape: Overrides the shape of the result. If order=`K` and
                 thenumber of dimensions is unchanged, will try to keep
-                order, otherwise, order=’C’ is implied.
+                order, otherwise, order=`C` is implied.
             batch_size: Overrides the batch size. If ``None``,
                 the batch size of the current batch is used.
 
@@ -315,16 +348,16 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         Args:
             dtype: Overrides the data type of the result.
-            order: Overrides the memory layout of the result. ‘C’ means
-                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
-                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+            order: Overrides the memory layout of the result. `C` means
+                C-order, `F` means F-order, `A` means `F` if ``self``
+                is Fortran contiguous, `C` otherwise. `K` means match
                 the layout of ``self`` as closely as possible.
             subok: If True, then the newly created array will use the
                 sub-class type of ``self``, otherwise it will be a
                 base-class array.
-            shape: Overrides the shape of the result. If order=’K’ and
+            shape: Overrides the shape of the result. If order=`K` and
                 thenumber of dimensions is unchanged, will try to keep
-                order, otherwise, order=’C’ is implied.
+                order, otherwise, order=`C` is implied.
             batch_size: Overrides the batch size. If ``None``,
                 the batch size of the current batch is used.
 
@@ -369,16 +402,16 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         Args:
             dtype: Overrides the data type of the result.
-            order: Overrides the memory layout of the result. ‘C’ means
-                C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``self``
-                is Fortran contiguous, ‘C’ otherwise. ‘K’ means match
+            order: Overrides the memory layout of the result. `C` means
+                C-order, `F` means F-order, `A` means `F` if ``self``
+                is Fortran contiguous, `C` otherwise. `K` means match
                 the layout of ``self`` as closely as possible.
             subok: If True, then the newly created array will use the
                 sub-class type of ``self``, otherwise it will be a
                 base-class array.
-            shape: Overrides the shape of the result. If order=’K’ and
+            shape: Overrides the shape of the result. If order=`K` and
                 thenumber of dimensions is unchanged, will try to keep
-                order, otherwise, order=’C’ is implied.
+                order, otherwise, order=`C` is implied.
             batch_size: Overrides the batch size. If ``None``,
                 the batch size of the current batch is used.
 
@@ -2029,6 +2062,63 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         ```
         """
         return self.sum(axis=self._batch_axis, dtype=dtype, keepdims=keepdims)
+
+    ################
+    #     Sort     #
+    ################
+
+    def sort(self, axis: SupportsIndex | None = -1, kind: SortKind | None = None) -> None:
+        r"""Sort an array in-place.
+
+        Args:
+            axis: Axis along which to sort.
+            kind: Sorting algorithm. The default is `quicksort`.
+                Note that both `stable` and `mergesort` use timsort
+                under the covers and, in general, the actual
+                implementation will vary with datatype.
+                The `mergesort` option is retained for backwards
+                compatibility.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.sort()
+        >>> batch
+        array([[1, 2, 6],
+               [3, 4, 5]], batch_axis=0)
+
+        ```
+        """
+        self._data.sort(axis=axis, kind=kind)
+
+    def sort_along_batch(self, kind: str | None = None) -> None:
+        r"""Sort an array in-place along the batch dimension.
+
+        Args:
+            kind: Sorting algorithm. The default is `quicksort`.
+                Note that both `stable` and `mergesort` use timsort
+                under the covers and, in general, the actual
+                implementation will vary with datatype.
+                The `mergesort` option is retained for backwards
+                compatibility.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.sort_along_batch()
+        >>> batch
+        array([[1, 4, 2],
+               [3, 6, 5]], batch_axis=0)
+
+        ```
+        """
+        self.sort(axis=self._batch_axis, kind=kind)
 
     #################
     #     Other     #

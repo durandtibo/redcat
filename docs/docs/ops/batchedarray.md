@@ -201,17 +201,22 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 
 ## Sort
 
-| name                                 | `np` | `redcat.ba` | `BatchedArray` | `BatchedArraySeq` |
-|--------------------------------------|------|-------------|----------------|-------------------|
-| **Sorting, searching, and counting** |      |             |                |                   |
-| `sort`                               |      |             |                |                   |
-| `sort_along_batch`                   | :x:  |             |                |                   |
-| **Searching**                        |      |             |                |                   |
-| `argmax`                             |      |             |                |                   |
-| `argmax_along_batch`                 | :x:  |             |                |                   |
-| `argmin`                             |      |             |                |                   |
-| `argmin_along_batch`                 | :x:  |             |                |                   |
-| `nanargmax`                          |      |             |                |                   |
-| `nanargmax_along_batch`              | :x:  |             |                |                   |
-| `nanargmin`                          |      |             |                |                   |
-| `nanargmin_along_batch`              | :x:  |             |                |                   |
+| name                                 | `np`               | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
+|--------------------------------------|--------------------|--------------------|--------------------|-------------------|
+| **Sorting, searching, and counting** |                    |                    |                    |                   |
+| `sort`                               | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `sort_along_batch`                   | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `sort_along_seq`                     | :x:                |                    |                    |                   |
+| **Searching**                        |                    |                    |                    |                   |
+| `argmax`                             |                    |                    |                    |                   |
+| `argmax_along_batch`                 | :x:                |                    |                    |                   |
+| `argmax_along_seq`                   | :x:                |                    |                    |                   |
+| `argmin`                             |                    |                    |                    |                   |
+| `argmin_along_batch`                 | :x:                |                    |                    |                   |
+| `argmin_along_seq`                   | :x:                |                    |                    |                   |
+| `nanargmax`                          |                    |                    |                    |                   |
+| `nanargmax_along_batch`              | :x:                |                    |                    |                   |
+| `nanargmax_along_seq`                | :x:                |                    |                    |                   |
+| `nanargmin`                          |                    |                    |                    |                   |
+| `nanargmin_along_batch`              | :x:                |                    |                    |                   |
+| `nanargmin_along_seq`                | :x:                |                    |                    |                   |
