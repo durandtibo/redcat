@@ -29,6 +29,8 @@ __all__ = [
     "ones_like",
     "prod",
     "prod_along_batch",
+    "sort",
+    "sort_along_batch",
     "subtract",
     "sum",
     "sum_along_batch",
@@ -74,3 +76,4 @@ from redcat.ba2.math import (
     sum_along_batch,
     true_divide,
 )
+from redcat.ba2.sort import sort, sort_along_batch
