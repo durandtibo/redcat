@@ -343,3 +343,74 @@ def test_batched_array_nanprod_along_batch_custom_axes() -> None:
         ba2.nanprod_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)),
         np.asarray([2.0, 60.0]),
     )
+
+
+###########################
+#    Tests for nansum     #
+###########################
+
+
+def test_batched_array_nansum_1d() -> None:
+    assert objects_are_equal(
+        ba2.nansum(BatchedArray(np.array([1, np.nan, 2])), axis=0),
+        np.float64(3.0),
+    )
+
+
+def test_batched_array_nansum_2d() -> None:
+    assert objects_are_equal(
+        ba2.nansum(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0),
+        np.asarray([4.0, 4.0, 7.0]),
+    )
+
+
+def test_batched_array_nansum_axis_none() -> None:
+    assert objects_are_equal(
+        ba2.nansum(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=None),
+        np.float64(15.0),
+    )
+
+
+def test_batched_array_nansum_custom_axes() -> None:
+    assert objects_are_equal(
+        ba2.nansum(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1), axis=1),
+        np.asarray([3.0, 12]),
+    )
+
+
+def test_batched_array_nansum_out() -> None:
+    out = np.array(0.0)
+    assert ba2.nansum(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out) is out
+    assert objects_are_equal(out, np.array(15.0))
+
+
+def test_batched_array_nansum_out_axis() -> None:
+    out = np.zeros(2)
+    assert ba2.nansum(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=1, out=out) is out
+    assert objects_are_equal(out, np.asarray([3.0, 12.0]))
+
+
+#######################################
+#    Tests for nansum_along_batch     #
+#######################################
+
+
+def test_batched_array_nansum_along_batch() -> None:
+    assert objects_are_equal(
+        ba2.nansum_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
+        np.asarray([4.0, 4.0, 7.0]),
+    )
+
+
+def test_batched_array_nansum_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        ba2.nansum_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), keepdims=True),
+        np.asarray([[4.0, 4.0, 7.0]]),
+    )
+
+
+def test_batched_array_nansum_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba2.nansum_along_batch(BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)),
+        np.asarray([3.0, 12]),
+    )

@@ -1783,6 +1783,91 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.nanprod(axis=self._batch_axis, dtype=dtype, keepdims=keepdims)
 
+    def nansum(
+        self,
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> TBatchedArray | np.ndarray:
+        r"""Return the sum of elements along a given axis treating Not a
+        Numbers (NaNs) as zero.
+
+        Args:
+            axis: Axis along which the cumulative product is computed.
+                By default, the input is flattened.
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are summed. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The sum of elements along a given axis treating Not a
+                Numbers (NaNs) as zero.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nansum(axis=0)
+        array([4., 4., 7.])
+        >>> batch.nansum(axis=0, keepdims=True)
+        array([[4., 4., 7.]])
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.nansum(axis=1)
+        array([ 3., 12.])
+
+        ```
+        """
+        x = np.nansum(self._data, axis=axis, dtype=dtype, out=out, keepdims=keepdims)
+        if out is not None:
+            return out
+        return x
+
+    def nansum_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> TBatchedArray:
+        r"""Return the sum of elements along the batch axis treating Not
+        a Numbers (NaNs) as zero.
+
+        Args:
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are summed. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The sum of elements along the batch axis treating Not a
+                Numbers (NaNs) as zero.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nansum_along_batch()
+        array([4., 4., 7.])
+
+        ```
+        """
+        return self.nansum(axis=self._batch_axis, dtype=dtype, keepdims=keepdims)
+
     #################
     #     Other     #
     #################
