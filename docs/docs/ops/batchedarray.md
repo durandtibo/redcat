@@ -158,17 +158,17 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nancumsum_along_batch`         | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nancumsum_along_seq`           | :x:                |                    | :x:                |                   |
 | `nanprod`                       |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nanprod_along_batch`           |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nanprod_along_seq`             |                    |                    | :x:                |                   |
+| `nanprod_along_batch`           | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nanprod_along_seq`             | :x:                |                    | :x:                |                   |
 | `nansum`                        |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nansum_along_batch`            |                    | :white_check_mark: | :white_check_mark: |                   |
-| `nansum_along_seq`              |                    |                    | :x:                |                   |
+| `nansum_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nansum_along_seq`              | :x:                |                    | :x:                |                   |
 | `prod`                          |                    | :white_check_mark: | :white_check_mark: |                   |
-| `prod_along_batch`              |                    | :white_check_mark: | :white_check_mark: |                   |
-| `prod_along_seq`                |                    |                    | :x:                |                   |
+| `prod_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `prod_along_seq`                | :x:                |                    | :x:                |                   |
 | `sum`                           |                    |                    |                    |                   |
-| `sum_along_batch`               |                    |                    |                    |                   |
-| `sum_along_seq`                 |                    |                    | :x:                |                   |
+| `sum_along_batch`               | :x:                |                    |                    |                   |
+| `sum_along_seq`                 | :x:                |                    | :x:                |                   |
 | `trapz`                         |                    |                    |                    |                   |
 | **Trigonometric functions**     |                    |                    |                    |                   |
 | **Hyperbolic functions**        |                    |                    |                    |                   |
