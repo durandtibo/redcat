@@ -157,13 +157,13 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nancumsum`                     | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `nancumsum_along_batch`         | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nancumsum_along_seq`           | :x:                |                    | :x:                |                   |
-| `nanprod`                       |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nanprod`                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `nanprod_along_batch`           | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nanprod_along_seq`             | :x:                |                    | :x:                |                   |
-| `nansum`                        |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nansum`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `nansum_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nansum_along_seq`              | :x:                |                    | :x:                |                   |
-| `prod`                          |                    | :white_check_mark: | :white_check_mark: |                   |
+| `prod`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `prod_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `prod_along_seq`                | :x:                |                    | :x:                |                   |
 | `sum`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |

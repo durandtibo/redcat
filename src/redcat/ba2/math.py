@@ -201,6 +201,7 @@ def nancumsum_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatched
     return a.nancumsum_along_batch(dtype=dtype)
 
 
+@implements(np.nanprod)
 def nanprod(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -287,6 +288,7 @@ def nanprod_along_batch(
     return a.nanprod_along_batch(dtype=dtype, keepdims=keepdims)
 
 
+@implements(np.nansum)
 def nansum(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -373,6 +375,7 @@ def nansum_along_batch(
     return a.nansum_along_batch(dtype=dtype, keepdims=keepdims)
 
 
+@implements(np.prod)
 def prod(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -455,6 +458,7 @@ def prod_along_batch(
     return a.prod_along_batch(dtype=dtype, keepdims=keepdims)
 
 
+@implements(np.sum)
 def sum(  # noqa: A001
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
