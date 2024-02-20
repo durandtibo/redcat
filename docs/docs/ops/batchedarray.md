@@ -166,8 +166,8 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `prod`                          |                    | :white_check_mark: | :white_check_mark: |                   |
 | `prod_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `prod_along_seq`                | :x:                |                    | :x:                |                   |
-| `sum`                           |                    |                    |                    |                   |
-| `sum_along_batch`               | :x:                |                    |                    |                   |
+| `sum`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `sum_along_batch`               | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `sum_along_seq`                 | :x:                |                    | :x:                |                   |
 | `trapz`                         |                    |                    |                    |                   |
 | **Trigonometric functions**     |                    |                    |                    |                   |
