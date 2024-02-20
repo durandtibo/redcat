@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "BatchedArray",
+    "add",
     "batched_array",
     "concatenate",
     "concatenate_along_batch",
@@ -9,10 +10,13 @@ __all__ = [
     "cumprod_along_batch",
     "cumsum",
     "cumsum_along_batch",
+    "divide",
     "empty",
     "empty_like",
+    "floor_divide",
     "full",
     "full_like",
+    "multiply",
     "nancumprod",
     "nancumprod_along_batch",
     "nancumsum",
@@ -25,8 +29,10 @@ __all__ = [
     "ones_like",
     "prod",
     "prod_along_batch",
+    "subtract",
     "sum",
     "sum_along_batch",
+    "true_divide",
     "zeros",
     "zeros_like",
 ]
@@ -45,10 +51,14 @@ from redcat.ba2.creation import (
 )
 from redcat.ba2.joining import concatenate, concatenate_along_batch
 from redcat.ba2.math import (
+    add,
     cumprod,
     cumprod_along_batch,
     cumsum,
     cumsum_along_batch,
+    divide,
+    floor_divide,
+    multiply,
     nancumprod,
     nancumprod_along_batch,
     nancumsum,
@@ -59,6 +69,8 @@ from redcat.ba2.math import (
     nansum_along_batch,
     prod,
     prod_along_batch,
+    subtract,
     sum,
     sum_along_batch,
+    true_divide,
 )

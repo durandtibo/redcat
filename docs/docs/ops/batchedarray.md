@@ -128,20 +128,25 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `__isub__`                      | :x:                | :x:                | :white_check_mark: |                   |
 | `__truediv__`                   | :x:                | :x:                | :white_check_mark: |                   |
 | `__itruediv__`                  | :x:                | :x:                | :white_check_mark: |                   |
-| `add`                           | :white_check_mark: |                    | :white_check_mark: |                   |
+| `add`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `add_`                          | :x:                | :x:                | :white_check_mark: |                   |
+| `divide`                        | :white_check_mark: | :white_check_mark: |                    |                   |
 | `divmod`                        | :white_check_mark: |                    | :white_check_mark: |                   |
 | `divmod_`                       | :x:                | :x:                | :white_check_mark: |                   |
-| `floordiv`                      | :white_check_mark: |                    | :white_check_mark: |                   |
+| `floordiv`                      | :x:                |                    | :white_check_mark: |                   |
 | `floordiv_`                     | :x:                | :x:                | :white_check_mark: |                   |
+| `floor_divide`                  | :white_check_mark: | :white_check_mark: |                    |                   |
 | `fmod`                          | :white_check_mark: |                    | :white_check_mark: |                   |
 | `fmod_`                         | :x:                | :x:                | :white_check_mark: |                   |
 | `mul`                           | :white_check_mark: |                    | :white_check_mark: |                   |
 | `mul_`                          | :x:                | :x:                | :white_check_mark: |                   |
+| `multiply`                      | :white_check_mark: | :white_check_mark: |                    |                   |
 | `sub`                           | :white_check_mark: |                    | :white_check_mark: |                   |
 | `sub_`                          | :x:                | :x:                | :white_check_mark: |                   |
+| `substract`                     | :white_check_mark: | :white_check_mark: |                    |                   |
 | `truediv`                       | :white_check_mark: |                    | :white_check_mark: |                   |
 | `truediv_`                      | :x:                | :x:                | :white_check_mark: |                   |
+| `true_divide`                   | :white_check_mark: | :white_check_mark: |                    |                   |
 | **Sums, products, differences** |                    |                    |                    |                   |
 | `cumprod`                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `cumprod_along_batch`           | :x:                | :white_check_mark: | :white_check_mark: |                   |
@@ -180,14 +185,18 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `fmax`                          | :white_check_mark: |                    |                    |                   |
 | `fmin`                          | :white_check_mark: |                    |                    |                   |
 | `max_along_batch`               | :x:                |                    |                    |                   |
+| `max_along_seq`                 | :x:                |                    |                    |                   |
 | `max`                           | :white_check_mark: |                    |                    |                   |
 | `maximum`                       | :white_check_mark: |                    |                    |                   |
 | `min_along_batch`               | :x:                |                    |                    |                   |
+| `min_along_seq`                 | :x:                |                    |                    |                   |
 | `min`                           | :white_check_mark: |                    |                    |                   |
 | `minimum`                       | :white_check_mark: |                    |                    |                   |
 | `nanmax_along_batch`            | :x:                |                    |                    |                   |
+| `nanmax_along_seq`              | :x:                |                    |                    |                   |
 | `nanmax`                        | :white_check_mark: |                    |                    |                   |
 | `nanmin_along_batch`            | :x:                |                    |                    |                   |
+| `nanmin_along_seq`              | :x:                |                    |                    |                   |
 | `nanmin`                        | :white_check_mark: |                    |                    |                   |
 
 ## Sort
