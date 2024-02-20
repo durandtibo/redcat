@@ -163,8 +163,8 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nansum`                        |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nansum_along_batch`            |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nansum_along_seq`              |                    |                    | :x:                |                   |
-| `prod`                          |                    |                    |                    |                   |
-| `prod_along_batch`              |                    |                    |                    |                   |
+| `prod`                          |                    | :white_check_mark: | :white_check_mark: |                   |
+| `prod_along_batch`              |                    | :white_check_mark: | :white_check_mark: |                   |
 | `prod_along_seq`                |                    |                    | :x:                |                   |
 | `sum`                           |                    |                    |                    |                   |
 | `sum_along_batch`               |                    |                    |                    |                   |
