@@ -221,6 +221,18 @@ BATCH_TO_ARRAY_FUNCS = [
     FunctionCheck(np.cumsum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck(np.nancumprod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck(np.nancumsum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(np.nanprod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(
+        partial(np.nanprod, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
+    FunctionCheck(np.nansum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(
+        partial(np.nansum, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
+    FunctionCheck(np.prod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(partial(np.prod, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(np.sum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(partial(np.sum, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
 ]
 
 
