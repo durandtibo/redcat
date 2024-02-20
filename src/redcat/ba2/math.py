@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 __all__ = [
+    "add",
     "cumprod",
     "cumprod_along_batch",
     "cumsum",
     "cumsum_along_batch",
+    "divide",
+    "floor_divide",
+    "multiply",
     "nancumprod",
     "nancumprod_along_batch",
     "nancumsum",
@@ -15,8 +19,10 @@ __all__ = [
     "nansum_along_batch",
     "prod",
     "prod_along_batch",
+    "subtract",
     "sum",
     "sum_along_batch",
+    "true_divide",
 ]
 
 from typing import SupportsIndex, TypeVar
@@ -29,6 +35,13 @@ from redcat.ba2.core import BatchedArray, implements
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
+
+add = np.add
+divide = np.divide
+floor_divide = np.floor_divide
+multiply = np.multiply
+subtract = np.subtract
+true_divide = np.true_divide
 
 
 @implements(np.cumprod)
