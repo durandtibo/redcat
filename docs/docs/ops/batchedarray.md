@@ -160,11 +160,15 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nanprod`                       |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nanprod_along_batch`           |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nanprod_along_seq`             |                    |                    | :x:                |                   |
-| `nansum`                        |                    |                    |                    |                   |
-| `nansum_along_batch`            |                    |                    |                    |                   |
+| `nansum`                        |                    | :white_check_mark: | :white_check_mark: |                   |
+| `nansum_along_batch`            |                    | :white_check_mark: | :white_check_mark: |                   |
 | `nansum_along_seq`              |                    |                    | :x:                |                   |
 | `prod`                          |                    |                    |                    |                   |
+| `prod_along_batch`              |                    |                    |                    |                   |
+| `prod_along_seq`                |                    |                    | :x:                |                   |
 | `sum`                           |                    |                    |                    |                   |
+| `sum_along_batch`               |                    |                    |                    |                   |
+| `sum_along_seq`                 |                    |                    | :x:                |                   |
 | `trapz`                         |                    |                    |                    |                   |
 | **Trigonometric functions**     |                    |                    |                    |                   |
 | **Hyperbolic functions**        |                    |                    |                    |                   |
