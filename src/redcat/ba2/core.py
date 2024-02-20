@@ -1868,6 +1868,87 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.nansum(axis=self._batch_axis, dtype=dtype, keepdims=keepdims)
 
+    def prod(
+        self,
+        axis: SupportsIndex | None = None,
+        dtype: DTypeLike = None,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> TBatchedArray | np.ndarray:
+        r"""Return the product of elements along a given axis.
+
+        Args:
+            axis: Axis along which the cumulative product is computed.
+                By default, the input is flattened.
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The product of elements along a given axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.prod(axis=0)
+        array([ 3, 24, 10])
+        >>> batch.prod(axis=0, keepdims=True)
+        array([[ 3, 24, 10]])
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.prod(axis=1)
+        array([12, 60])
+
+        ```
+        """
+        x = self._data.prod(axis=axis, dtype=dtype, out=out, keepdims=keepdims)
+        if out is not None:
+            return out
+        return x
+
+    def prod_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> TBatchedArray:
+        r"""Return the product of elements along the batch axis.
+
+        Args:
+            dtype: Type of the returned array and of the accumulator
+                in which the elements are multiplied. If dtype is not
+                specified, it defaults to the dtype of ``self``,
+                unless a has an integer dtype with a precision less
+                than that of  the default platform integer.
+                In that case, the default platform integer is used.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The product of elements along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.prod_along_batch()
+        array([ 3, 24, 10])
+
+        ```
+        """
+        return self.prod(axis=self._batch_axis, dtype=dtype, keepdims=keepdims)
+
     #################
     #     Other     #
     #################

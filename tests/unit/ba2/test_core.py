@@ -2796,6 +2796,74 @@ def test_batched_array_nansum_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_prod_1d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([1, 6, 2])).prod(axis=0),
+        np.int64(12),
+    )
+
+
+def test_batched_array_prod_2d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).prod(axis=0),
+        np.asarray([3, 24, 10]),
+    )
+
+
+def test_batched_array_prod_float() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1.0, 6.0, 2.0], [3.0, 4.0, 5.0]])).prod(axis=0),
+        np.asarray([3.0, 24.0, 10.0]),
+    )
+
+
+def test_batched_array_prod_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).prod(axis=None),
+        np.int64(720),
+    )
+
+
+def test_batched_array_prod_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1).prod(axis=1),
+        np.asarray([12, 60]),
+    )
+
+
+def test_batched_array_prod_out() -> None:
+    out = np.array(0)
+    assert BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).prod(out=out) is out
+    assert objects_are_equal(out, np.array(720))
+
+
+def test_batched_array_prod_out_axis() -> None:
+    out = np.zeros(2)
+    assert BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).prod(axis=1, out=out) is out
+    assert objects_are_equal(out, np.asarray([12.0, 60.0]))
+
+
+def test_batched_array_prod_along_batch() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).prod_along_batch(),
+        np.asarray([3, 24, 10]),
+    )
+
+
+def test_batched_array_prod_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])).prod_along_batch(keepdims=True),
+        np.asarray([[3, 24, 10]]),
+    )
+
+
+def test_batched_array_prod_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1).prod_along_batch(),
+        np.asarray([12, 60]),
+    )
+
+
 #################
 #     Other     #
 #################
