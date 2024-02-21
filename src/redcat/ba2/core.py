@@ -906,8 +906,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> from redcat import ba2
-        >>> batch = ba2.batched_array([[0, 1, 2], [4, 5, 6]])
-        >>> out = batch.concatenate([ba2.batched_array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> out = batch.concatenate([ba2.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[0, 1, 2],
                [4, 5, 6]], batch_axis=0)
@@ -947,8 +947,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> from redcat import ba2
-        >>> batch = ba2.batched_array([[0, 1, 2], [4, 5, 6]])
-        >>> batch.concatenate_([ba2.batched_array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> batch.concatenate_([ba2.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[ 0,  1,  2],
                [ 4,  5,  6],
@@ -978,8 +978,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> from redcat import ba2
-        >>> batch = ba2.batched_array([[0, 1, 2], [4, 5, 6]])
-        >>> out = batch.concatenate_along_batch([ba2.batched_array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> out = batch.concatenate_along_batch([ba2.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[0, 1, 2],
                [4, 5, 6]], batch_axis=0)
@@ -1007,8 +1007,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> from redcat import ba2
-        >>> batch = ba2.batched_array([[0, 1, 2], [4, 5, 6]])
-        >>> batch.concatenate_along_batch_([ba2.batched_array([[10, 11, 12], [13, 14, 15]])])
+        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
+        >>> batch.concatenate_along_batch_([ba2.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[ 0,  1,  2],
                [ 4,  5,  6],

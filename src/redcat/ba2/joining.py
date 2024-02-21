@@ -40,8 +40,8 @@ def concatenate_along_batch(arrays: Sequence[TBatchedArray]) -> TBatchedArray | 
     ```pycon
     >>> from redcat import ba2
     >>> arrays = [
-    ...     ba2.batched_array([[0, 1, 2], [4, 5, 6]]),
-    ...     ba2.batched_array([[10, 11, 12], [13, 14, 15]]),
+    ...     ba2.array([[0, 1, 2], [4, 5, 6]]),
+    ...     ba2.array([[10, 11, 12], [13, 14, 15]]),
     ... ]
     >>> out = ba2.concatenate_along_batch(arrays)
     >>> out

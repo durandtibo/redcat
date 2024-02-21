@@ -29,17 +29,18 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 
 ## Array creation
 
-| name            | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
-|-----------------|--------------------|--------------------|-------------------|
-| `batched_array` | :white_check_mark: |                    |                   |
-| `empty`         | :white_check_mark: |                    |                   |
-| `empty_like`    | :white_check_mark: | :white_check_mark: |                   |
-| `full`          | :white_check_mark: |                    |                   |
-| `full_like`     | :white_check_mark: | :white_check_mark: |                   |
-| `ones`          | :white_check_mark: |                    |                   |
-| `ones_like`     | :white_check_mark: | :white_check_mark: |                   |
-| `zeros`         | :white_check_mark: |                    |                   |
-| `zeros_like`    | :white_check_mark: | :white_check_mark: |                   |
+| name         | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
+|--------------|--------------------|--------------------|-------------------|
+| `array`      | :white_check_mark: |                    |                   |
+| `copy`       |                    | :white_check_mark: |                   |
+| `empty`      | :white_check_mark: |                    |                   |
+| `empty_like` | :white_check_mark: | :white_check_mark: |                   |
+| `full`       | :white_check_mark: |                    |                   |
+| `full_like`  | :white_check_mark: | :white_check_mark: |                   |
+| `ones`       | :white_check_mark: |                    |                   |
+| `ones_like`  | :white_check_mark: | :white_check_mark: |                   |
+| `zeros`      | :white_check_mark: |                    |                   |
+| `zeros_like` | :white_check_mark: | :white_check_mark: |                   |
 
 ## Logic functions
 
