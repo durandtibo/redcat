@@ -2947,6 +2947,81 @@ def test_batched_array_sum_along_batch_custom_axes() -> None:
 ################
 
 
+def test_batched_array_argsort() -> None:
+    batch = BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]))
+    assert objects_are_equal(
+        batch.argsort(), BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]))
+    )
+
+
+@pytest.mark.parametrize("kind", SORT_KINDS)
+def test_batched_array_argsort_kind(kind: SortKind) -> None:
+    batch = BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]))
+    assert objects_are_equal(
+        batch.argsort(kind=kind), BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]))
+    )
+
+
+def test_batched_array_argsort_axis_0() -> None:
+    batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))
+    assert objects_are_equal(
+        batch.argsort(axis=0),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+    )
+
+
+def test_batched_array_argsort_axis_1() -> None:
+    batch = BatchedArray(
+        np.asarray(
+            [
+                [[0, 1], [-2, 3], [-4, 5], [-6, 7], [-8, 9]],
+                [[10, -11], [12, -13], [14, -15], [16, -17], [18, -19]],
+            ]
+        )
+    )
+    assert objects_are_equal(
+        batch.argsort(axis=1),
+        BatchedArray(
+            np.asarray(
+                [[[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]], [[0, 4], [1, 3], [2, 2], [3, 1], [4, 0]]]
+            )
+        ),
+    )
+
+
+def test_batched_array_argsort_custom_axes() -> None:
+    batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), batch_axis=1)
+    assert objects_are_equal(
+        batch.argsort(axis=0),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]]), batch_axis=1),
+    )
+
+
+def test_batched_array_argsort_along_batch() -> None:
+    batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))
+    assert objects_are_equal(
+        batch.argsort_along_batch(),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+    )
+
+
+@pytest.mark.parametrize("kind", SORT_KINDS)
+def test_batched_array_argsort_along_batch_kind(kind: SortKind) -> None:
+    batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))
+    assert objects_are_equal(
+        batch.argsort_along_batch(kind=kind),
+        BatchedArray(np.asarray([[1, 2], [2, 3], [4, 1], [0, 4], [3, 0]])),
+    )
+
+
+def test_batched_array_argsort_along_batch_custom_axes() -> None:
+    batch = BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1)
+    assert objects_are_equal(
+        batch.argsort_along_batch(),
+        BatchedArray(np.asarray([[1, 2, 4, 0, 3], [2, 3, 1, 4, 0]]), batch_axis=1),
+    )
+
+
 def test_batched_array_sort() -> None:
     batch = BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]))
     batch.sort()
@@ -3009,7 +3084,7 @@ def test_batched_array_sort_along_batch() -> None:
 
 
 @pytest.mark.parametrize("kind", SORT_KINDS)
-def test_batched_array_sort_along_batch_kind(kind: str) -> None:
+def test_batched_array_sort_along_batch_kind(kind: SortKind) -> None:
     batch = BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]))
     batch.sort_along_batch(kind=kind)
     assert objects_are_equal(

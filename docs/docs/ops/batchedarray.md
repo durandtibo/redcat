@@ -199,27 +199,27 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nanmin_along_seq`              | :x:                |                    | :x:                |                   |
 | `nanmin`                        | :white_check_mark: |                    |                    |                   |
 
-## Sort
+## Sorting, searching, and counting
 
-| name                                 | `np`               | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
-|--------------------------------------|--------------------|--------------------|--------------------|-------------------|
-| **Sorting, searching, and counting** |                    |                    |                    |                   |
-| `sort_along_batch`                   | :x:                | :white_check_mark: | :white_check_mark: |                   |
-| `sort_along_seq`                     | :x:                |                    | :x:                |                   |
-| `sort`                               | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| **Searching**                        |                    |                    |                    |                   |
-| `argmax_along_batch`                 | :x:                | :white_check_mark: | :white_check_mark: |                   |
-| `argmax_along_seq`                   | :x:                |                    | :x:                |                   |
-| `argmax`                             | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `argmin_along_batch`                 | :x:                | :white_check_mark: | :white_check_mark: |                   |
-| `argmin_along_seq`                   | :x:                |                    | :x:                |                   |
-| `argmin`                             | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `argsort_along_batch`                | :x:                |                    |                    |                   |
-| `argsort_along_seq`                  | :x:                |                    | :x:                |                   |
-| `argsort`                            |                    |                    |                    |                   |
-| `nanargmax_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
-| `nanargmax_along_seq`                | :x:                |                    | :x:                |                   |
-| `nanargmax`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `nanargmin_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
-| `nanargmin_along_seq`                | :x:                |                    | :x:                |                   |
-| `nanargmin`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| name                    | `np`               | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
+|-------------------------|--------------------|--------------------|--------------------|-------------------|
+| **Sorting**             |                    |                    |                    |                   |
+| `argsort_along_batch`   | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `argsort_along_seq`     | :x:                |                    | :x:                |                   |
+| `argsort`               | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `sort_along_batch`      | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `sort_along_seq`        | :x:                |                    | :x:                |                   |
+| `sort`                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| **Searching**           |                    |                    |                    |                   |
+| `argmax_along_batch`    | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `argmax_along_seq`      | :x:                |                    | :x:                |                   |
+| `argmax`                | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `argmin_along_batch`    | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `argmin_along_seq`      | :x:                |                    | :x:                |                   |
+| `argmin`                | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nanargmax_along_batch` | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nanargmax_along_seq`   | :x:                |                    | :x:                |                   |
+| `nanargmax`             | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nanargmin_along_batch` | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nanargmin_along_seq`   | :x:                |                    | :x:                |                   |
+| `nanargmin`             | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |

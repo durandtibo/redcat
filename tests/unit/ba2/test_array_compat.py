@@ -65,6 +65,10 @@ MATH_FUNCS = [
     ),
     FunctionCheck(np.sort, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck(partial(np.sort, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(np.argsort, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(
+        partial(np.argsort, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
 ]
 
 MATH_UFUNCS = [
