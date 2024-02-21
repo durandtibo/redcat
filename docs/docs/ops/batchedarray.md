@@ -97,18 +97,18 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `index_select`             | :x:                |                    | :white_check_mark: |                   |
 | `select`                   | :x:                |                    | :white_check_mark: |                   |
 | `slice_along_axis`         | :x:                |                    | :white_check_mark: |                   |
-| `slice_along_seq`          | :x:                |                    |                    |                   |
+| `slice_along_seq`          | :x:                |                    | :x:                |                   |
 | `split_along_axis`         | :x:                |                    | :white_check_mark: |                   |
-| `split_along_seq`          | :x:                |                    |                    |                   |
+| `split_along_seq`          | :x:                |                    | :x:                |                   |
 | **Rearranging elements**   |                    |                    |                    |                   |
 | `permute_along_axis`       | :x:                |                    | :white_check_mark: |                   |
 | `permute_along_axis_`      | :x:                |                    | :white_check_mark: |                   |
-| `permute_along_seq`        | :x:                |                    |                    |                   |
-| `permute_along_seq_`       | :x:                |                    |                    |                   |
+| `permute_along_seq`        | :x:                |                    | :x:                |                   |
+| `permute_along_seq_`       | :x:                |                    | :x:                |                   |
 | `shuffle_along_axis`       | :x:                |                    | :white_check_mark: |                   |
 | `shuffle_along_axis_`      | :x:                |                    | :white_check_mark: |                   |
-| `shuffle_along_seq`        | :x:                |                    |                    |                   |
-| `shuffle_along_seq_`       | :x:                |                    |                    |                   |
+| `shuffle_along_seq`        | :x:                |                    | :x:                |                   |
+| `shuffle_along_seq_`       | :x:                |                    | :x:                |                   |
 
 ## Math
 
@@ -148,32 +148,32 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `truediv_`                      | :x:                | :x:                | :white_check_mark: |                   |
 | `true_divide`                   | :white_check_mark: | :white_check_mark: |                    |                   |
 | **Sums, products, differences** |                    |                    |                    |                   |
-| `cumprod`                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `cumprod_along_batch`           | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `cumprod_along_seq`             | :x:                |                    | :x:                |                   |
-| `cumsum`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `cumprod`                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `cumsum_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `cumsum_along_seq`              | :x:                |                    | :x:                |                   |
+| `cumsum`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `diff`                          |                    |                    |                    |                   |
 | `ediff1d`                       |                    |                    |                    |                   |
-| `nancumprod`                    | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `nancumprod_along_batch`        | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nancumprod_along_seq`          | :x:                |                    | :x:                |                   |
-| `nancumsum`                     | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nancumprod`                    | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `nancumsum_along_batch`         | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nancumsum_along_seq`           | :x:                |                    | :x:                |                   |
-| `nanprod`                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nancumsum`                     | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `nanprod_along_batch`           | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nanprod_along_seq`             | :x:                |                    | :x:                |                   |
-| `nansum`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nanprod`                       | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `nansum_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nansum_along_seq`              | :x:                |                    | :x:                |                   |
-| `prod`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nansum`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `prod_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `prod_along_seq`                | :x:                |                    | :x:                |                   |
-| `sum`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `prod`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `sum_along_batch`               | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `sum_along_seq`                 | :x:                |                    | :x:                |                   |
+| `sum`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `trapz`                         |                    |                    |                    |                   |
 | **Trigonometric functions**     |                    |                    |                    |                   |
 | **Hyperbolic functions**        |                    |                    |                    |                   |
@@ -185,18 +185,18 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `fmax`                          | :white_check_mark: |                    |                    |                   |
 | `fmin`                          | :white_check_mark: |                    |                    |                   |
 | `max_along_batch`               | :x:                |                    |                    |                   |
-| `max_along_seq`                 | :x:                |                    |                    |                   |
+| `max_along_seq`                 | :x:                |                    | :x:                |                   |
 | `max`                           | :white_check_mark: |                    |                    |                   |
 | `maximum`                       | :white_check_mark: |                    |                    |                   |
 | `min_along_batch`               | :x:                |                    |                    |                   |
-| `min_along_seq`                 | :x:                |                    |                    |                   |
+| `min_along_seq`                 | :x:                |                    | :x:                |                   |
 | `min`                           | :white_check_mark: |                    |                    |                   |
 | `minimum`                       | :white_check_mark: |                    |                    |                   |
 | `nanmax_along_batch`            | :x:                |                    |                    |                   |
-| `nanmax_along_seq`              | :x:                |                    |                    |                   |
+| `nanmax_along_seq`              | :x:                |                    | :x:                |                   |
 | `nanmax`                        | :white_check_mark: |                    |                    |                   |
 | `nanmin_along_batch`            | :x:                |                    |                    |                   |
-| `nanmin_along_seq`              | :x:                |                    |                    |                   |
+| `nanmin_along_seq`              | :x:                |                    | :x:                |                   |
 | `nanmin`                        | :white_check_mark: |                    |                    |                   |
 
 ## Sort
@@ -204,19 +204,22 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | name                                 | `np`               | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
 |--------------------------------------|--------------------|--------------------|--------------------|-------------------|
 | **Sorting, searching, and counting** |                    |                    |                    |                   |
-| `sort`                               | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `sort_along_batch`                   | :x:                | :white_check_mark: | :white_check_mark: |                   |
-| `sort_along_seq`                     | :x:                |                    |                    |                   |
+| `sort_along_seq`                     | :x:                |                    | :x:                |                   |
+| `sort`                               | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | **Searching**                        |                    |                    |                    |                   |
-| `argmax`                             |                    |                    |                    |                   |
-| `argmax_along_batch`                 | :x:                |                    |                    |                   |
-| `argmax_along_seq`                   | :x:                |                    |                    |                   |
-| `argmin`                             |                    |                    |                    |                   |
+| `argmax_along_batch`                 | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `argmax_along_seq`                   | :x:                |                    | :x:                |                   |
+| `argmax`                             | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `argmin_along_batch`                 | :x:                |                    |                    |                   |
-| `argmin_along_seq`                   | :x:                |                    |                    |                   |
-| `nanargmax`                          |                    |                    |                    |                   |
+| `argmin_along_seq`                   | :x:                |                    | :x:                |                   |
+| `argmin`                             |                    |                    |                    |                   |
+| `argsort_along_batch`                | :x:                |                    |                    |                   |
+| `argsort_along_seq`                  | :x:                |                    | :x:                |                   |
+| `argsort`                            |                    |                    |                    |                   |
 | `nanargmax_along_batch`              | :x:                |                    |                    |                   |
-| `nanargmax_along_seq`                | :x:                |                    |                    |                   |
-| `nanargmin`                          |                    |                    |                    |                   |
+| `nanargmax_along_seq`                | :x:                |                    | :x:                |                   |
+| `nanargmax`                          |                    |                    |                    |                   |
 | `nanargmin_along_batch`              | :x:                |                    |                    |                   |
-| `nanargmin_along_seq`                | :x:                |                    |                    |                   |
+| `nanargmin_along_seq`                | :x:                |                    | :x:                |                   |
+| `nanargmin`                          |                    |                    |                    |                   |

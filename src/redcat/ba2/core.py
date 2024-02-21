@@ -2120,6 +2120,80 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self.sort(axis=self._batch_axis, kind=kind)
 
+    def argmax(
+        self,
+        axis: SupportsIndex | None = None,
+        out: np.ndarray | None = None,
+        *,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the indices of the maximum values along an axis.
+
+        Args:
+            axis: By default, the index is into the flattened array,
+                otherwise along the specified axis.
+            out: If provided, the result will be inserted into this
+                array. It should be of the appropriate shape and dtype.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The indices of the maximum values along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.argmax()
+        1
+        >>> batch.argmax(keepdims=True)
+        array([[1]])
+
+        ```
+        """
+        return self._data.argmax(axis=axis, out=out, keepdims=keepdims)
+
+    def argmax_along_batch(
+        self,
+        out: np.ndarray | None = None,
+        *,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the indices of the maximum values along the batch
+        axis.
+
+        Args:
+            axis: By default, the index is into the flattened array,
+                otherwise along the specified axis.
+            out: If provided, the result will be inserted into this
+                array. It should be of the appropriate shape and dtype.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The indices of the maximum values along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.argmax_along_batch()
+        array([1, 0, 1])
+        >>> batch.argmax_along_batch(keepdims=True)
+        array([[1, 0, 1]])
+
+        ```
+        """
+        return self.argmax(axis=self._batch_axis, out=out, keepdims=keepdims)
+
     #################
     #     Other     #
     #################

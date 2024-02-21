@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 __all__ = [
+    "argmax",
+    "argmax_along_batch",
     "sort",
     "sort_along_batch",
 ]
@@ -51,3 +53,51 @@ def sort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatched
     ```
     """
     return sort(a, axis=a.batch_axis, kind=kind)
+
+
+@implements(np.argmax)
+def argmax(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    out: np.ndarray | None = None,
+    *,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""See ``numpy.argmax`` documentation."""
+    return a.argmax(axis=axis, out=out, keepdims=keepdims)
+
+
+def argmax_along_batch(
+    a: TBatchedArray,
+    out: np.ndarray | None = None,
+    *,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the indices of the maximum values along the batch axis.
+
+    Args:
+        a: The input array.
+        out: If provided, the result will be inserted into this
+            array. It should be of the appropriate shape and dtype.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the array.
+
+    Returns:
+        The indices of the maximum values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba2.argmax_along_batch(batch)
+    array([1, 0, 1])
+    >>> ba2.argmax_along_batch(batch, keepdims=True)
+    array([[1, 0, 1]])
+
+    ```
+    """
+    return a.argmax_along_batch(out=out, keepdims=keepdims)
