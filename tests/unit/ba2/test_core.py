@@ -3118,6 +3118,99 @@ def test_batched_array_argmax_along_batch_out() -> None:
     assert objects_are_equal(out, np.array([3, 0], dtype=int))
 
 
+def test_batched_array_argmin_1d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([4, 1, 2, 5, 3])).argmin(axis=0),
+        np.int64(1),
+    )
+
+
+def test_batched_array_argmin_2d() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin(axis=0),
+        np.asarray([1, 2]),
+    )
+
+
+@pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
+def test_batched_array_argmin_dtype(dtype: np.dtype) -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)).argmin(
+            axis=0
+        ),
+        np.asarray([1, 2]),
+    )
+
+
+def test_batched_array_argmin_axis_none() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin(axis=None),
+        np.int64(2),
+    )
+
+
+def test_batched_array_argmin_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1).argmin(axis=1),
+        np.asarray([1, 2]),
+    )
+
+
+def test_batched_array_argmin_out_axis_none() -> None:
+    out = np.array(0, dtype=int)
+    assert (
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin(axis=None, out=out)
+        is out
+    )
+    assert objects_are_equal(out, np.array(2, dtype=int))
+
+
+def test_batched_array_argmin_out_axis_0() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert (
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin(axis=0, out=out)
+        is out
+    )
+    assert objects_are_equal(out, np.array([1, 2], dtype=int))
+
+
+@pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
+def test_batched_array_argmin_along_batch(dtype: np.dtype) -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)
+        ).argmin_along_batch(),
+        np.asarray([1, 2]),
+    )
+
+
+def test_batched_array_argmin_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        BatchedArray(np.asarray([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin_along_batch(
+            keepdims=True
+        ),
+        np.asarray([[1, 2]]),
+    )
+
+
+def test_batched_array_argmin_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        BatchedArray(
+            np.asarray([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1
+        ).argmin_along_batch(),
+        np.asarray([1, 2]),
+    )
+
+
+def test_batched_array_argmin_along_batch_out() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert (
+        BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).argmin_along_batch(out=out)
+        is out
+    )
+    assert objects_are_equal(out, np.array([1, 2], dtype=int))
+
+
 #################
 #     Other     #
 #################

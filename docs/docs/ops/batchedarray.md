@@ -211,9 +211,9 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `argmax_along_batch`                 | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `argmax_along_seq`                   | :x:                |                    | :x:                |                   |
 | `argmax`                             | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `argmin_along_batch`                 | :x:                |                    |                    |                   |
+| `argmin_along_batch`                 | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `argmin_along_seq`                   | :x:                |                    | :x:                |                   |
-| `argmin`                             |                    |                    |                    |                   |
+| `argmin`                             | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `argsort_along_batch`                | :x:                |                    |                    |                   |
 | `argsort_along_seq`                  | :x:                |                    | :x:                |                   |
 | `argsort`                            |                    |                    |                    |                   |

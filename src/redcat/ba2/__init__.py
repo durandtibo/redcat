@@ -5,6 +5,8 @@ __all__ = [
     "add",
     "argmax",
     "argmax_along_batch",
+    "argmin",
+    "argmin_along_batch",
     "batched_array",
     "concatenate",
     "concatenate_along_batch",
@@ -78,4 +80,11 @@ from redcat.ba2.math import (
     sum_along_batch,
     true_divide,
 )
-from redcat.ba2.sort import argmax, argmax_along_batch, sort, sort_along_batch
+from redcat.ba2.sort import (
+    argmax,
+    argmax_along_batch,
+    argmin,
+    argmin_along_batch,
+    sort,
+    sort_along_batch,
+)
