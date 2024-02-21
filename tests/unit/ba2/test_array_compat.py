@@ -247,6 +247,10 @@ BATCH_TO_ARRAY_FUNCS = [
     FunctionCheck(
         partial(np.nanargmax, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
     ),
+    FunctionCheck(np.nanargmin, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(
+        partial(np.nanargmin, axis=0), nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)
+    ),
 ]
 
 

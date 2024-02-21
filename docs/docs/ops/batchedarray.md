@@ -220,6 +220,6 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nanargmax_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nanargmax_along_seq`                | :x:                |                    | :x:                |                   |
 | `nanargmax`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `nanargmin_along_batch`              | :x:                |                    |                    |                   |
+| `nanargmin_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nanargmin_along_seq`                | :x:                |                    | :x:                |                   |
-| `nanargmin`                          |                    |                    |                    |                   |
+| `nanargmin`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |

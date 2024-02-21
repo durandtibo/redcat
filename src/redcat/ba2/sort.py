@@ -5,10 +5,12 @@ __all__ = [
     "argmax_along_batch",
     "argmin",
     "argmin_along_batch",
-    "sort",
-    "sort_along_batch",
     "nanargmax",
     "nanargmax_along_batch",
+    "nanargmin",
+    "nanargmin_along_batch",
+    "sort",
+    "sort_along_batch",
 ]
 
 from typing import SupportsIndex, TypeVar
@@ -203,3 +205,53 @@ def nanargmax_along_batch(
     ```
     """
     return a.nanargmax_along_batch(out=out, keepdims=keepdims)
+
+
+@implements(np.nanargmin)
+def nanargmin(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    out: np.ndarray | None = None,
+    *,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""See ``numpy.nanargmin`` documentation."""
+    return a.nanargmin(axis=axis, out=out, keepdims=keepdims)
+
+
+def nanargmin_along_batch(
+    a: TBatchedArray,
+    out: np.ndarray | None = None,
+    *,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the indices of the minimum values along the batch axis
+    ignoring NaNs.
+
+    Args:
+        a: The input array.
+        out: If provided, the result will be inserted into this
+            array. It should be of the appropriate shape and dtype.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the array.
+
+    Returns:
+        The indices of the minimum values along the batch axis
+            ignoring NaNs.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba2.nanargmin_along_batch(batch)
+    array([0, 1, 0])
+    >>> ba2.nanargmin_along_batch(batch, keepdims=True)
+    array([[0, 1, 0]])
+
+    ```
+    """
+    return a.nanargmin_along_batch(out=out, keepdims=keepdims)

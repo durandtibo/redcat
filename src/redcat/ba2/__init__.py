@@ -21,6 +21,10 @@ __all__ = [
     "full",
     "full_like",
     "multiply",
+    "nanargmax",
+    "nanargmax_along_batch",
+    "nanargmin",
+    "nanargmin_along_batch",
     "nancumprod",
     "nancumprod_along_batch",
     "nancumsum",
@@ -41,8 +45,6 @@ __all__ = [
     "true_divide",
     "zeros",
     "zeros_like",
-    "nanargmax",
-    "nanargmax_along_batch",
 ]
 
 from redcat.ba2.core import BatchedArray
@@ -89,6 +91,8 @@ from redcat.ba2.sort import (
     argmin_along_batch,
     nanargmax,
     nanargmax_along_batch,
+    nanargmin,
+    nanargmin_along_batch,
     sort,
     sort_along_batch,
 )
