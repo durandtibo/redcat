@@ -2067,6 +2067,63 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     #     Sort     #
     ################
 
+    def argsort(self, axis: SupportsIndex | None = -1, kind: SortKind | None = None) -> None:
+        r"""Return the indices that would sort an array.
+
+        Args:
+            axis: Axis along which to sort.
+            kind: Sorting algorithm. The default is `quicksort`.
+                Note that both `stable` and `mergesort` use timsort
+                under the covers and, in general, the actual
+                implementation will vary with datatype.
+                The `mergesort` option is retained for backwards
+                compatibility.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> array = batch.argsort()
+        >>> array
+        array([[0, 2, 1],
+               [0, 1, 2]], batch_axis=0)
+
+        ```
+        """
+        return self._create_new_batch(np.argsort(self._data, axis=axis, kind=kind))
+
+    def argsort_along_batch(self, kind: str | None = None) -> None:
+        r"""Return the indices that would sort an array along the batch
+        axis.
+
+        Args:
+            kind: Sorting algorithm. The default is `quicksort`.
+                Note that both `stable` and `mergesort` use timsort
+                under the covers and, in general, the actual
+                implementation will vary with datatype.
+                The `mergesort` option is retained for backwards
+                compatibility.
+
+        Returns:
+            The indices that would sort an array along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> array = batch.argsort_along_batch()
+        >>> array
+        array([[0, 1, 0],
+               [1, 0, 1]], batch_axis=0)
+
+        ```
+        """
+        return self.argsort(axis=self._batch_axis, kind=kind)
+
     def sort(self, axis: SupportsIndex | None = -1, kind: SortKind | None = None) -> None:
         r"""Sort an array in-place.
 

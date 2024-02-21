@@ -5,6 +5,8 @@ __all__ = [
     "argmax_along_batch",
     "argmin",
     "argmin_along_batch",
+    "argsort",
+    "argsort_along_batch",
     "nanargmax",
     "nanargmax_along_batch",
     "nanargmin",
@@ -24,6 +26,44 @@ from redcat.ba2.core import BatchedArray, SortKind, implements
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
+@implements(np.argsort)
+def argsort(
+    a: TBatchedArray, axis: SupportsIndex | None = -1, kind: SortKind | None = None
+) -> TBatchedArray:
+    r"""See ``numpy.argsort`` documentation."""
+    return a.argsort(axis=axis, kind=kind)
+
+
+def argsort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatchedArray:
+    r"""Return the indices that would sort an array.
+
+    Args:
+        a: The input array.
+        kind: Sorting algorithm. The default is ‘quicksort’.
+            Note that both ‘stable’ and ‘mergesort’ use timsort
+            under the covers and, in general, the actual
+            implementation will vary with datatype.
+            The ‘mergesort’ option is retained for backwards
+            compatibility.
+
+    Returns:
+        The indices that would sort an array.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba2.argsort_along_batch(batch)
+    array([[0, 1, 0],
+           [1, 0, 1]], batch_axis=0)
+
+    ```
+    """
+    return a.argsort_along_batch(kind=kind)
+
+
 @implements(np.sort)
 def sort(
     a: TBatchedArray, axis: SupportsIndex | None = -1, kind: SortKind | None = None
@@ -35,7 +75,7 @@ def sort(
 
 
 def sort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatchedArray:
-    r"""Sort an array in-place along the batch dimension.
+    r"""Sort an array along the batch dimension.
 
     Args:
         a: The input array.
@@ -45,6 +85,9 @@ def sort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatched
             implementation will vary with datatype.
             The ‘mergesort’ option is retained for backwards
             compatibility.
+
+    Returns:
+        A sorted copy of an array.
 
     Example usage:
 
