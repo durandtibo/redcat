@@ -3,6 +3,8 @@ from __future__ import annotations
 __all__ = [
     "argmax",
     "argmax_along_batch",
+    "argmin",
+    "argmin_along_batch",
     "sort",
     "sort_along_batch",
 ]
@@ -101,3 +103,51 @@ def argmax_along_batch(
     ```
     """
     return a.argmax_along_batch(out=out, keepdims=keepdims)
+
+
+@implements(np.argmin)
+def argmin(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    out: np.ndarray | None = None,
+    *,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""See ``numpy.argmin`` documentation."""
+    return a.argmin(axis=axis, out=out, keepdims=keepdims)
+
+
+def argmin_along_batch(
+    a: TBatchedArray,
+    out: np.ndarray | None = None,
+    *,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the indices of the minimum values along the batch axis.
+
+    Args:
+        a: The input array.
+        out: If provided, the result will be inserted into this
+            array. It should be of the appropriate shape and dtype.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the array.
+
+    Returns:
+        The indices of the minimum values along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba2.argmin_along_batch(batch)
+    array([0, 1, 0])
+    >>> ba2.argmin_along_batch(batch, keepdims=True)
+    array([[0, 1, 0]])
+
+    ```
+    """
+    return a.argmin_along_batch(out=out, keepdims=keepdims)
