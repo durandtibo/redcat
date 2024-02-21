@@ -209,35 +209,35 @@ def test_batched_array_cumprod() -> None:
 def test_batched_array_cumprod_axis_0() -> None:
     assert objects_are_equal(
         ba.cumprod(ba.BatchedArray(np.arange(10).reshape(2, 5)), axis=0),
-        ba.BatchedArray(np.asarray([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+        ba.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]]),
     )
 
 
 def test_batched_array_cumprod_axis_1() -> None:
     assert objects_are_equal(
         ba.cumprod(ba.BatchedArray(np.arange(10).reshape(2, 5)), axis=1),
-        ba.BatchedArray(np.array([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]])),
+        ba.array([[0, 0, 0, 0, 0], [5, 30, 210, 1680, 15120]]),
     )
 
 
 def test_batched_array_cumprod_custom_axes() -> None:
     assert objects_are_equal(
         ba.cumprod(ba.BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1), axis=0),
-        ba.BatchedArray(np.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]), batch_axis=1),
+        ba.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]], batch_axis=1),
     )
 
 
 def test_batched_array_cumprod_out() -> None:
     out = np.zeros((5, 2), dtype=np.int64)
     assert ba.cumprod(ba.BatchedArray(np.arange(10).reshape(5, 2)), axis=0, out=out) is out
-    assert objects_are_equal(out, np.asarray([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]))
+    assert objects_are_equal(out, np.array([[0, 1], [0, 3], [0, 15], [0, 105], [0, 945]]))
 
 
 def test_batched_array_cumprod_out_array() -> None:
     out = np.zeros(10)
     assert ba.cumprod(ba.BatchedArray(np.arange(10).reshape(2, 5) + 1), out=out) is out
     assert objects_are_equal(
-        out, np.asarray([1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0])
+        out, np.array([1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0])
     )
 
 
@@ -249,14 +249,14 @@ def test_batched_array_cumprod_out_array() -> None:
 def test_batched_array_cumprod_along_batch() -> None:
     assert objects_are_equal(
         ba.cumprod_along_batch(ba.BatchedArray(np.arange(10).reshape(2, 5))),
-        ba.BatchedArray(np.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]])),
+        ba.array([[0, 1, 2, 3, 4], [0, 6, 14, 24, 36]]),
     )
 
 
 def test_batched_array_cumprod_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.cumprod_along_batch(ba.BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)),
-        ba.BatchedArray(np.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]]), batch_axis=1),
+        ba.array([[0, 0], [2, 6], [4, 20], [6, 42], [8, 72]], batch_axis=1),
     )
 
 
@@ -275,35 +275,35 @@ def test_batched_array_cumsum() -> None:
 def test_batched_array_cumsum_axis_0() -> None:
     assert objects_are_equal(
         ba.cumsum(ba.BatchedArray(np.arange(10).reshape(2, 5)), axis=0),
-        ba.BatchedArray(np.asarray([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])),
+        ba.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]]),
     )
 
 
 def test_batched_array_cumsum_axis_1() -> None:
     assert objects_are_equal(
         ba.cumsum(ba.BatchedArray(np.arange(10).reshape(2, 5)), axis=1),
-        ba.BatchedArray(np.array([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]])),
+        ba.array([[0, 1, 3, 6, 10], [5, 11, 18, 26, 35]]),
     )
 
 
 def test_batched_array_cumsum_custom_axes() -> None:
     assert objects_are_equal(
         ba.cumsum(ba.BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1), axis=0),
-        ba.BatchedArray(np.array([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]), batch_axis=1),
+        ba.array([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]], batch_axis=1),
     )
 
 
 def test_batched_array_cumsum_out() -> None:
     out = np.zeros((5, 2), dtype=np.int64)
     assert ba.cumsum(ba.BatchedArray(np.arange(10).reshape(5, 2)), axis=0, out=out) is out
-    assert objects_are_equal(out, np.asarray([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]))
+    assert objects_are_equal(out, np.array([[0, 1], [2, 4], [6, 9], [12, 16], [20, 25]]))
 
 
 def test_batched_array_cumsum_out_array() -> None:
     out = np.zeros(10)
     assert ba.cumsum(ba.BatchedArray(np.arange(10).reshape(2, 5) + 1), out=out) is out
     assert objects_are_equal(
-        out, np.asarray([1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0, 45.0, 55.0])
+        out, np.array([1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0, 45.0, 55.0])
     )
 
 
@@ -315,14 +315,14 @@ def test_batched_array_cumsum_out_array() -> None:
 def test_batched_array_cumsum_along_batch() -> None:
     assert objects_are_equal(
         ba.cumsum_along_batch(ba.BatchedArray(np.arange(10).reshape(2, 5))),
-        ba.BatchedArray(np.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]])),
+        ba.array([[0, 1, 2, 3, 4], [5, 7, 9, 11, 13]]),
     )
 
 
 def test_batched_array_cumsum_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.cumsum_along_batch(ba.BatchedArray(np.arange(10).reshape(5, 2), batch_axis=1)),
-        ba.BatchedArray(np.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]]), batch_axis=1),
+        ba.array([[0, 1], [2, 5], [4, 9], [6, 13], [8, 17]], batch_axis=1),
     )
 
 
@@ -333,45 +333,42 @@ def test_batched_array_cumsum_along_batch_custom_axes() -> None:
 
 def test_batched_array_nancumprod() -> None:
     assert objects_are_equal(
-        ba.nancumprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
+        ba.nancumprod(ba.array([[1, np.nan, 2], [3, 4, 5]])),
         np.array([1.0, 1.0, 2.0, 6.0, 24.0, 120.0]),
     )
 
 
 def test_batched_array_nancumprod_axis_0() -> None:
     assert objects_are_equal(
-        ba.nancumprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0),
-        ba.BatchedArray(np.asarray([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]])),
+        ba.nancumprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=0),
+        ba.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]),
     )
 
 
 def test_batched_array_nancumprod_axis_1() -> None:
     assert objects_are_equal(
-        ba.nancumprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=1),
-        ba.BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]])),
+        ba.nancumprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=1),
+        ba.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]]),
     )
 
 
 def test_batched_array_nancumprod_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nancumprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1), axis=0),
-        ba.BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]), batch_axis=1),
+        ba.nancumprod(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1), axis=0),
+        ba.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]], batch_axis=1),
     )
 
 
 def test_batched_array_nancumprod_out_1d() -> None:
     out = np.zeros(6)
-    assert ba.nancumprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out) is out
-    assert objects_are_equal(out, np.asarray([1.0, 1.0, 2.0, 6.0, 24.0, 120.0]))
+    assert ba.nancumprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), out=out) is out
+    assert objects_are_equal(out, np.array([1.0, 1.0, 2.0, 6.0, 24.0, 120.0]))
 
 
 def test_batched_array_nancumprod_out_2d() -> None:
     out = np.zeros((2, 3))
-    assert (
-        ba.nancumprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0, out=out)
-        is out
-    )
-    assert objects_are_equal(out, np.asarray([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]))
+    assert ba.nancumprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=0, out=out) is out
+    assert objects_are_equal(out, np.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]))
 
 
 ###########################################
@@ -381,17 +378,15 @@ def test_batched_array_nancumprod_out_2d() -> None:
 
 def test_batched_array_nancumprod_along_batch() -> None:
     assert objects_are_equal(
-        ba.nancumprod_along_batch(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
-        ba.BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]])),
+        ba.nancumprod_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]])),
+        ba.array([[1.0, 1.0, 2.0], [3.0, 4.0, 10.0]]),
     )
 
 
 def test_batched_array_nancumprod_along_batch_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nancumprod_along_batch(
-            ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-        ),
-        ba.BatchedArray(np.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]]), batch_axis=1),
+        ba.nancumprod_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1)),
+        ba.array([[1.0, 1.0, 2.0], [3.0, 12.0, 60.0]], batch_axis=1),
     )
 
 
@@ -402,44 +397,42 @@ def test_batched_array_nancumprod_along_batch_custom_axes() -> None:
 
 def test_batched_array_nancumsum() -> None:
     assert objects_are_equal(
-        ba.nancumsum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
+        ba.nancumsum(ba.array([[1, np.nan, 2], [3, 4, 5]])),
         np.array([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]),
     )
 
 
 def test_batched_array_nancumsum_axis_0() -> None:
     assert objects_are_equal(
-        ba.nancumsum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0),
-        ba.BatchedArray(np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+        ba.nancumsum(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=0),
+        ba.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]),
     )
 
 
 def test_batched_array_nancumsum_axis_1() -> None:
     assert objects_are_equal(
-        ba.nancumsum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=1),
-        ba.BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]])),
+        ba.nancumsum(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=1),
+        ba.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]]),
     )
 
 
 def test_batched_array_nancumsum_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nancumsum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1), axis=0),
-        ba.BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]), batch_axis=1),
+        ba.nancumsum(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1), axis=0),
+        ba.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]], batch_axis=1),
     )
 
 
 def test_batched_array_nancumsum_out_1d() -> None:
     out = np.zeros(6)
-    assert ba.nancumsum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out) is out
-    assert objects_are_equal(out, np.asarray([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]))
+    assert ba.nancumsum(ba.array([[1, np.nan, 2], [3, 4, 5]]), out=out) is out
+    assert objects_are_equal(out, np.array([1.0, 1.0, 3.0, 6.0, 10.0, 15.0]))
 
 
 def test_batched_array_nancumsum_out_2d() -> None:
     out = np.zeros((2, 3))
-    assert (
-        ba.nancumsum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0, out=out) is out
-    )
-    assert objects_are_equal(out, np.asarray([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]))
+    assert ba.nancumsum(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=0, out=out) is out
+    assert objects_are_equal(out, np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]))
 
 
 ##########################################
@@ -449,17 +442,15 @@ def test_batched_array_nancumsum_out_2d() -> None:
 
 def test_batched_array_nancumsum_along_batch() -> None:
     assert objects_are_equal(
-        ba.nancumsum_along_batch(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
-        ba.BatchedArray(np.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]])),
+        ba.nancumsum_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]])),
+        ba.array([[1.0, 0.0, 2.0], [4.0, 4.0, 7.0]]),
     )
 
 
 def test_batched_array_nancumsum_along_batch_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nancumsum_along_batch(
-            ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-        ),
-        ba.BatchedArray(np.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]]), batch_axis=1),
+        ba.nancumsum_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1)),
+        ba.array([[1.0, 1.0, 3.0], [3.0, 7.0, 12.0]], batch_axis=1),
     )
 
 
@@ -470,44 +461,42 @@ def test_batched_array_nancumsum_along_batch_custom_axes() -> None:
 
 def test_batched_array_nanprod_1d() -> None:
     assert objects_are_equal(
-        ba.nanprod(ba.BatchedArray(np.array([1, np.nan, 2])), axis=0),
+        ba.nanprod(ba.array([1, np.nan, 2]), axis=0),
         np.float64(2.0),
     )
 
 
 def test_batched_array_nanprod_2d() -> None:
     assert objects_are_equal(
-        ba.nanprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0),
-        np.asarray([3.0, 4.0, 10.0]),
+        ba.nanprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=0),
+        np.array([3.0, 4.0, 10.0]),
     )
 
 
 def test_batched_array_nanprod_axis_none() -> None:
     assert objects_are_equal(
-        ba.nanprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=None),
+        ba.nanprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=None),
         np.float64(120.0),
     )
 
 
 def test_batched_array_nanprod_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nanprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1), axis=1),
-        np.asarray([2.0, 60.0]),
+        ba.nanprod(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1), axis=1),
+        np.array([2.0, 60.0]),
     )
 
 
 def test_batched_array_nanprod_out() -> None:
     out = np.array(0.0)
-    assert ba.nanprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out) is out
+    assert ba.nanprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), out=out) is out
     assert objects_are_equal(out, np.array(120.0))
 
 
 def test_batched_array_nanprod_out_axis() -> None:
     out = np.zeros(2)
-    assert (
-        ba.nanprod(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=1, out=out) is out
-    )
-    assert objects_are_equal(out, np.asarray([2.0, 60.0]))
+    assert ba.nanprod(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=1, out=out) is out
+    assert objects_are_equal(out, np.array([2.0, 60.0]))
 
 
 ########################################
@@ -517,26 +506,22 @@ def test_batched_array_nanprod_out_axis() -> None:
 
 def test_batched_array_nanprod_along_batch() -> None:
     assert objects_are_equal(
-        ba.nanprod_along_batch(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
-        np.asarray([3.0, 4.0, 10.0]),
+        ba.nanprod_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]])),
+        np.array([3.0, 4.0, 10.0]),
     )
 
 
 def test_batched_array_nanprod_along_batch_keepdims() -> None:
     assert objects_are_equal(
-        ba.nanprod_along_batch(
-            ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), keepdims=True
-        ),
-        np.asarray([[3.0, 4.0, 10.0]]),
+        ba.nanprod_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]]), keepdims=True),
+        np.array([[3.0, 4.0, 10.0]]),
     )
 
 
 def test_batched_array_nanprod_along_batch_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nanprod_along_batch(
-            ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-        ),
-        np.asarray([2.0, 60.0]),
+        ba.nanprod_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1)),
+        np.array([2.0, 60.0]),
     )
 
 
@@ -547,42 +532,42 @@ def test_batched_array_nanprod_along_batch_custom_axes() -> None:
 
 def test_batched_array_nansum_1d() -> None:
     assert objects_are_equal(
-        ba.nansum(ba.BatchedArray(np.array([1, np.nan, 2])), axis=0),
+        ba.nansum(ba.array([1, np.nan, 2]), axis=0),
         np.float64(3.0),
     )
 
 
 def test_batched_array_nansum_2d() -> None:
     assert objects_are_equal(
-        ba.nansum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=0),
-        np.asarray([4.0, 4.0, 7.0]),
+        ba.nansum(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=0),
+        np.array([4.0, 4.0, 7.0]),
     )
 
 
 def test_batched_array_nansum_axis_none() -> None:
     assert objects_are_equal(
-        ba.nansum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=None),
+        ba.nansum(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=None),
         np.float64(15.0),
     )
 
 
 def test_batched_array_nansum_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nansum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1), axis=1),
-        np.asarray([3.0, 12]),
+        ba.nansum(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1), axis=1),
+        np.array([3.0, 12]),
     )
 
 
 def test_batched_array_nansum_out() -> None:
     out = np.array(0.0)
-    assert ba.nansum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), out=out) is out
+    assert ba.nansum(ba.array([[1, np.nan, 2], [3, 4, 5]]), out=out) is out
     assert objects_are_equal(out, np.array(15.0))
 
 
 def test_batched_array_nansum_out_axis() -> None:
     out = np.zeros(2)
-    assert ba.nansum(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), axis=1, out=out) is out
-    assert objects_are_equal(out, np.asarray([3.0, 12.0]))
+    assert ba.nansum(ba.array([[1, np.nan, 2], [3, 4, 5]]), axis=1, out=out) is out
+    assert objects_are_equal(out, np.array([3.0, 12.0]))
 
 
 #######################################
@@ -592,24 +577,22 @@ def test_batched_array_nansum_out_axis() -> None:
 
 def test_batched_array_nansum_along_batch() -> None:
     assert objects_are_equal(
-        ba.nansum_along_batch(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))),
-        np.asarray([4.0, 4.0, 7.0]),
+        ba.nansum_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]])),
+        np.array([4.0, 4.0, 7.0]),
     )
 
 
 def test_batched_array_nansum_along_batch_keepdims() -> None:
     assert objects_are_equal(
-        ba.nansum_along_batch(
-            ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]])), keepdims=True
-        ),
-        np.asarray([[4.0, 4.0, 7.0]]),
+        ba.nansum_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]]), keepdims=True),
+        np.array([[4.0, 4.0, 7.0]]),
     )
 
 
 def test_batched_array_nansum_along_batch_custom_axes() -> None:
     assert objects_are_equal(
-        ba.nansum_along_batch(ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)),
-        np.asarray([3.0, 12]),
+        ba.nansum_along_batch(ba.array([[1, np.nan, 2], [3, 4, 5]], batch_axis=1)),
+        np.array([3.0, 12]),
     )
 
 
@@ -620,49 +603,49 @@ def test_batched_array_nansum_along_batch_custom_axes() -> None:
 
 def test_batched_array_prod_1d() -> None:
     assert objects_are_equal(
-        ba.prod(ba.BatchedArray(np.array([1, 6, 2])), axis=0),
+        ba.prod(ba.array([1, 6, 2]), axis=0),
         np.int64(12),
     )
 
 
 def test_batched_array_prod_2d() -> None:
     assert objects_are_equal(
-        ba.prod(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), axis=0),
-        np.asarray([3, 24, 10]),
+        ba.prod(ba.array([[1, 6, 2], [3, 4, 5]]), axis=0),
+        np.array([3, 24, 10]),
     )
 
 
 def test_batched_array_prod_float() -> None:
     assert objects_are_equal(
-        ba.prod(ba.BatchedArray(np.array([[1.0, 6.0, 2.0], [3.0, 4.0, 5.0]])), axis=0),
-        np.asarray([3.0, 24.0, 10.0]),
+        ba.prod(ba.array([[1.0, 6.0, 2.0], [3.0, 4.0, 5.0]]), axis=0),
+        np.array([3.0, 24.0, 10.0]),
     )
 
 
 def test_batched_array_prod_axis_none() -> None:
     assert objects_are_equal(
-        ba.prod(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), axis=None),
+        ba.prod(ba.array([[1, 6, 2], [3, 4, 5]]), axis=None),
         np.int64(720),
     )
 
 
 def test_batched_array_prod_custom_axes() -> None:
     assert objects_are_equal(
-        ba.prod(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1), axis=1),
-        np.asarray([12, 60]),
+        ba.prod(ba.array([[1, 6, 2], [3, 4, 5]], batch_axis=1), axis=1),
+        np.array([12, 60]),
     )
 
 
 def test_batched_array_prod_out() -> None:
     out = np.array(0)
-    assert ba.prod(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), out=out) is out
+    assert ba.prod(ba.array([[1, 6, 2], [3, 4, 5]]), out=out) is out
     assert objects_are_equal(out, np.array(720))
 
 
 def test_batched_array_prod_out_axis() -> None:
     out = np.zeros(2)
-    assert ba.prod(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), axis=1, out=out) is out
-    assert objects_are_equal(out, np.asarray([12.0, 60.0]))
+    assert ba.prod(ba.array([[1, 6, 2], [3, 4, 5]]), axis=1, out=out) is out
+    assert objects_are_equal(out, np.array([12.0, 60.0]))
 
 
 #####################################
@@ -672,22 +655,22 @@ def test_batched_array_prod_out_axis() -> None:
 
 def test_batched_array_prod_along_batch() -> None:
     assert objects_are_equal(
-        ba.prod_along_batch(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))),
-        np.asarray([3, 24, 10]),
+        ba.prod_along_batch(ba.array([[1, 6, 2], [3, 4, 5]])),
+        np.array([3, 24, 10]),
     )
 
 
 def test_batched_array_prod_along_batch_keepdims() -> None:
     assert objects_are_equal(
-        ba.prod_along_batch(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), keepdims=True),
-        np.asarray([[3, 24, 10]]),
+        ba.prod_along_batch(ba.array([[1, 6, 2], [3, 4, 5]]), keepdims=True),
+        np.array([[3, 24, 10]]),
     )
 
 
 def test_batched_array_prod_along_batch_custom_axes() -> None:
     assert objects_are_equal(
-        ba.prod_along_batch(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)),
-        np.asarray([12, 60]),
+        ba.prod_along_batch(ba.array([[1, 6, 2], [3, 4, 5]], batch_axis=1)),
+        np.array([12, 60]),
     )
 
 
@@ -697,47 +680,47 @@ def test_batched_array_prod_along_batch_custom_axes() -> None:
 
 
 def test_batched_array_sum_1d() -> None:
-    assert objects_are_equal(ba.sum(ba.BatchedArray(np.array([1, 6, 2])), axis=0), np.int64(9))
+    assert objects_are_equal(ba.sum(ba.array([1, 6, 2]), axis=0), np.int64(9))
 
 
 def test_batched_array_sum_2d() -> None:
     assert objects_are_equal(
-        ba.sum(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), axis=0),
-        np.asarray([4, 10, 7]),
+        ba.sum(ba.array([[1, 6, 2], [3, 4, 5]]), axis=0),
+        np.array([4, 10, 7]),
     )
 
 
 def test_batched_array_sum_float() -> None:
     assert objects_are_equal(
-        ba.sum(ba.BatchedArray(np.array([[1.0, 6.0, 2.0], [3.0, 4.0, 5.0]])), axis=0),
-        np.asarray([4.0, 10.0, 7.0]),
+        ba.sum(ba.array([[1.0, 6.0, 2.0], [3.0, 4.0, 5.0]]), axis=0),
+        np.array([4.0, 10.0, 7.0]),
     )
 
 
 def test_batched_array_sum_axis_none() -> None:
     assert objects_are_equal(
-        ba.sum(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), axis=None),
+        ba.sum(ba.array([[1, 6, 2], [3, 4, 5]]), axis=None),
         np.int64(21),
     )
 
 
 def test_batched_array_sum_custom_axes() -> None:
     assert objects_are_equal(
-        ba.sum(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1), axis=1),
-        np.asarray([9, 12]),
+        ba.sum(ba.array([[1, 6, 2], [3, 4, 5]], batch_axis=1), axis=1),
+        np.array([9, 12]),
     )
 
 
 def test_batched_array_sum_out() -> None:
     out = np.array(0)
-    assert ba.sum(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), out=out) is out
+    assert ba.sum(ba.array([[1, 6, 2], [3, 4, 5]]), out=out) is out
     assert objects_are_equal(out, np.array(21))
 
 
 def test_batched_array_sum_out_axis() -> None:
     out = np.zeros(2)
-    assert ba.sum(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), axis=1, out=out) is out
-    assert objects_are_equal(out, np.asarray([9.0, 12.0]))
+    assert ba.sum(ba.array([[1, 6, 2], [3, 4, 5]]), axis=1, out=out) is out
+    assert objects_are_equal(out, np.array([9.0, 12.0]))
 
 
 ####################################
@@ -747,20 +730,20 @@ def test_batched_array_sum_out_axis() -> None:
 
 def test_batched_array_sum_along_batch() -> None:
     assert objects_are_equal(
-        ba.sum_along_batch(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))),
-        np.asarray([4, 10, 7]),
+        ba.sum_along_batch(ba.array([[1, 6, 2], [3, 4, 5]])),
+        np.array([4, 10, 7]),
     )
 
 
 def test_batched_array_sum_along_batch_keepdims() -> None:
     assert objects_are_equal(
-        ba.sum_along_batch(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]])), keepdims=True),
-        np.asarray([[4, 10, 7]]),
+        ba.sum_along_batch(ba.array([[1, 6, 2], [3, 4, 5]]), keepdims=True),
+        np.array([[4, 10, 7]]),
     )
 
 
 def test_batched_array_sum_along_batch_custom_axes() -> None:
     assert objects_are_equal(
-        ba.sum_along_batch(ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)),
-        np.asarray([9, 12]),
+        ba.sum_along_batch(ba.array([[1, 6, 2], [3, 4, 5]], batch_axis=1)),
+        np.array([9, 12]),
     )
