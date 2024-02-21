@@ -10,7 +10,7 @@ Notes and links:
 from __future__ import annotations
 
 __all__ = [
-    "batched_array",
+    "array",
     "empty",
     "empty_like",
     "full",
@@ -33,7 +33,7 @@ from redcat.ba2.core import OrderACFK, ShapeLike
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
-def batched_array(
+def array(
     data: ArrayLike | Sequence, dtype: DTypeLike = None, *, batch_axis: int = 0, **kwargs: Any
 ) -> BatchedArray:
     r"""Create an array.
@@ -59,7 +59,7 @@ def batched_array(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.batched_array(np.arange(10).reshape(2, 5))
+    >>> batch = ba2.array(np.arange(10).reshape(2, 5))
     >>> batch
     array([[0, 1, 2, 3, 4],
            [5, 6, 7, 8, 9]], batch_axis=0)

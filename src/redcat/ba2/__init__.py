@@ -9,7 +9,7 @@ __all__ = [
     "argmin_along_batch",
     "argsort",
     "argsort_along_batch",
-    "batched_array",
+    "array",
     "concatenate",
     "concatenate_along_batch",
     "cumprod",
@@ -51,7 +51,7 @@ __all__ = [
 
 from redcat.ba2.core import BatchedArray
 from redcat.ba2.creation import (
-    batched_array,
+    array,
     empty,
     empty_like,
     full,
