@@ -2268,6 +2268,83 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.argmin(axis=self._batch_axis, out=out, keepdims=keepdims)
 
+    def nanargmax(
+        self,
+        axis: SupportsIndex | None = None,
+        out: np.ndarray | None = None,
+        *,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the indices of the maximum values along an axis
+        ignoring NaNs.
+
+        Args:
+            axis: By default, the index is into the flattened array,
+                otherwise along the specified axis.
+            out: If provided, the result will be inserted into this
+                array. It should be of the appropriate shape and dtype.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The indices of the maximum values along an axis ignoring
+                NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmax()
+        5
+        >>> batch.nanargmax(keepdims=True)
+        array([[5]])
+
+        ```
+        """
+        return np.nanargmax(self._data, axis=axis, out=out, keepdims=keepdims)
+
+    def nanargmax_along_batch(
+        self,
+        out: np.ndarray | None = None,
+        *,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the indices of the maximum values along the batch axis
+        ignoring NaNs.
+
+        Args:
+            axis: By default, the index is into the flattened array,
+                otherwise along the specified axis.
+            out: If provided, the result will be inserted into this
+                array. It should be of the appropriate shape and dtype.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The indices of the maximum values along the batch axis
+                ignoring NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmax_along_batch()
+        array([1, 1, 1])
+        >>> batch.nanargmax_along_batch(keepdims=True)
+        array([[1, 1, 1]])
+
+        ```
+        """
+        return self.nanargmax(axis=self._batch_axis, out=out, keepdims=keepdims)
+
     #################
     #     Other     #
     #################

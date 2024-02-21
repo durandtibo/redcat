@@ -41,6 +41,8 @@ __all__ = [
     "true_divide",
     "zeros",
     "zeros_like",
+    "nanargmax",
+    "nanargmax_along_batch",
 ]
 
 from redcat.ba2.core import BatchedArray
@@ -85,6 +87,8 @@ from redcat.ba2.sort import (
     argmax_along_batch,
     argmin,
     argmin_along_batch,
+    nanargmax,
+    nanargmax_along_batch,
     sort,
     sort_along_batch,
 )

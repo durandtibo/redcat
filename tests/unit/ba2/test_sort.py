@@ -319,3 +319,123 @@ def test_batched_array_argmin_along_batch_out() -> None:
         is out
     )
     assert objects_are_equal(out, np.array([1, 2], dtype=int))
+
+
+#####################
+#     nanargmax     #
+#####################
+
+
+def test_batched_array_nanargmax_1d() -> None:
+    assert objects_are_equal(
+        ba.nanargmax(ba.BatchedArray(np.asarray([4, 1, np.nan, 5, 3])), axis=0),
+        np.int64(3),
+    )
+
+
+def test_batched_array_nanargmax_2d() -> None:
+    assert objects_are_equal(
+        ba.nanargmax(
+            ba.BatchedArray(np.asarray([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]])), axis=0
+        ),
+        np.asarray([3, 0]),
+    )
+
+
+def test_batched_array_nanargmax_dtype() -> None:
+    assert objects_are_equal(
+        ba.nanargmax(
+            ba.BatchedArray(np.asarray([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]])), axis=0
+        ),
+        np.asarray([3, 0]),
+    )
+
+
+def test_batched_array_nanargmax_axis_none() -> None:
+    assert objects_are_equal(
+        ba.nanargmax(
+            ba.BatchedArray(np.asarray([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]])),
+            axis=None,
+        ),
+        np.int64(1),
+    )
+
+
+def test_batched_array_nanargmax_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.nanargmax(
+            ba.BatchedArray(np.asarray([[4, 1, np.nan, 5, 3], [9, 7, 5, 6, np.nan]]), batch_axis=1),
+            axis=1,
+        ),
+        np.asarray([3, 0]),
+    )
+
+
+def test_batched_array_nanargmax_out_axis_none() -> None:
+    out = np.array(0, dtype=int)
+    assert (
+        ba.nanargmax(
+            ba.BatchedArray(np.array([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]])),
+            axis=None,
+            out=out,
+        )
+        is out
+    )
+    assert objects_are_equal(out, np.array(1, dtype=int))
+
+
+def test_batched_array_nanargmax_out_axis_0() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert (
+        ba.nanargmax(
+            ba.BatchedArray(np.array([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]])),
+            axis=0,
+            out=out,
+        )
+        is out
+    )
+    assert objects_are_equal(out, np.array([3, 0], dtype=int))
+
+
+#################################
+#     nanargmax_along_batch     #
+#################################
+
+
+def test_batched_array_nanargmax_along_batch() -> None:
+    assert objects_are_equal(
+        ba.nanargmax_along_batch(
+            ba.BatchedArray(np.asarray([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]]))
+        ),
+        np.asarray([3, 0]),
+    )
+
+
+def test_batched_array_nanargmax_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        ba.nanargmax_along_batch(
+            ba.BatchedArray(np.asarray([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]])),
+            keepdims=True,
+        ),
+        np.asarray([[3, 0]]),
+    )
+
+
+def test_batched_array_nanargmax_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.nanargmax_along_batch(
+            ba.BatchedArray(np.asarray([[4, 1, np.nan, 5, 3], [9, 7, 5, 6, np.nan]]), batch_axis=1)
+        ),
+        np.asarray([3, 0]),
+    )
+
+
+def test_batched_array_nanargmax_along_batch_out() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert (
+        ba.nanargmax_along_batch(
+            ba.BatchedArray(np.array([[4, 9], [1, np.nan], [2, 5], [5, 6], [np.nan, 8]])), out=out
+        )
+        is out
+    )
+    assert objects_are_equal(out, np.array([3, 0], dtype=int))
