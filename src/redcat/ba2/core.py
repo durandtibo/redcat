@@ -2345,6 +2345,83 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.nanargmax(axis=self._batch_axis, out=out, keepdims=keepdims)
 
+    def nanargmin(
+        self,
+        axis: SupportsIndex | None = None,
+        out: np.ndarray | None = None,
+        *,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the indices of the minimum values along an axis
+        ignoring NaNs.
+
+        Args:
+            axis: By default, the index is into the flattened array,
+                otherwise along the specified axis.
+            out: If provided, the result will be inserted into this
+                array. It should be of the appropriate shape and dtype.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The indices of the minimum values along an axis ignoring
+                NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmin()
+        0
+        >>> batch.nanargmin(keepdims=True)
+        array([[0]])
+
+        ```
+        """
+        return np.nanargmin(self._data, axis=axis, out=out, keepdims=keepdims)
+
+    def nanargmin_along_batch(
+        self,
+        out: np.ndarray | None = None,
+        *,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the indices of the minimum values along the batch axis
+        ignoring NaNs.
+
+        Args:
+            axis: By default, the index is into the flattened array,
+                otherwise along the specified axis.
+            out: If provided, the result will be inserted into this
+                array. It should be of the appropriate shape and dtype.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The indices of the minimum values along the batch axis
+                ignoring NaNs.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+        >>> batch.nanargmin_along_batch()
+        array([0, 1, 0])
+        >>> batch.nanargmin_along_batch(keepdims=True)
+        array([[0, 1, 0]])
+
+        ```
+        """
+        return self.nanargmin(axis=self._batch_axis, out=out, keepdims=keepdims)
+
     #################
     #     Other     #
     #################
