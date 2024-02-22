@@ -1541,6 +1541,111 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.cumsum(axis=self._batch_axis, dtype=dtype)
 
+    def diff(
+        self,
+        n: int = 1,
+        axis: SupportsIndex = -1,
+        prepend: ArrayLike = np._NoValue,
+        append: ArrayLike = np._NoValue,
+    ) -> TBatchedArray | np.ndarray:
+        r"""Calculate the n-th discrete difference along the given axis.
+
+        Args:
+            n: The number of times values are differenced. If zero,
+                the input is returned as-is.
+            axis: The axis along which the difference is taken,
+                default is the last axis.
+            prepend: Values to prepend to the current array along axis
+                prior to performing the difference. Scalar values are
+                expanded to arrays with length 1 in the direction of
+                axis and the shape of the input array in along all
+                other axes. Otherwise the dimension and shape must
+                match the current array except along axis.
+            append: Values to append to the current array along axis
+                prior to performing the difference. Scalar values are
+                expanded to arrays with length 1 in the direction of
+                axis and the shape of the input array in along all
+                other axes. Otherwise the dimension and shape must
+                match the current array except along axis.
+
+        Returns:
+            The n-th differences. The shape of the output is the same
+                as the current array except along axis where the
+                dimension is smaller by ``n``. The type of the output
+                is the same as the type of the difference between any
+                two elements of the array. This is the same as the type
+                of the current array in most cases.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]))
+        >>> batch.diff(n=1, axis=0)
+        array([[ 0, -1],
+               [ 1,  7],
+               [-7, -9],
+               [ 6,  7]])
+        >>> batch = BatchedArray(np.array([[9, 3, 7, 4, 0], [6, 6, 2, 3, 3]]), batch_axis=1)
+        >>> batch.diff(axis=1)
+        array([[-6,  4, -3, -4], [ 0, -4,  1,  0]])
+
+        ```
+        """
+        return np.diff(self._data, n=n, axis=axis, prepend=prepend, append=append)
+
+    def diff_along_batch(
+        self,
+        n: int = 1,
+        prepend: ArrayLike = np._NoValue,
+        append: ArrayLike = np._NoValue,
+    ) -> TBatchedArray | np.ndarray:
+        r"""Calculate the n-th discrete difference along the batch axis.
+
+        Args:
+            n: The number of times values are differenced. If zero,
+                the input is returned as-is.
+            prepend: Values to prepend to the array along the batch
+                axis prior to performing the difference. Scalar values
+                are expanded to arrays with length 1 in the direction
+                of axis and the shape of the input array in along all
+                other axes. Otherwise the dimension and shape must
+                match the current array except along axis.
+            append: Values to append to the array along the batch
+                axis prior to performing the difference. Scalar values
+                are expanded to arrays with length 1 in the direction
+                of axis and the shape of the input array in along all
+                other axes. Otherwise the dimension and shape must
+                match the current array except along axis.
+
+        Returns:
+            The n-th differences. The shape of the output is the same
+                as the current array except along the batch axis where
+                the dimension is smaller by ``n``. The type of the
+                output is the same as the type of the difference
+                between any two elements of the array. This is the same
+                as the type of the current array in most cases.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]))
+        >>> batch.diff_along_batch(n=1)
+        array([[ 0, -1],
+               [ 1,  7],
+               [-7, -9],
+               [ 6,  7]])
+        >>> batch = BatchedArray(np.array([[9, 3, 7, 4, 0], [6, 6, 2, 3, 3]]), batch_axis=1)
+        >>> batch.diff_along_batch(n=1)
+        array([[-6,  4, -3, -4], [ 0, -4,  1,  0]])
+
+        ```
+        """
+        return self.diff(n=n, axis=self._batch_axis, prepend=prepend, append=append)
+
     @overload
     def nancumprod(
         self,

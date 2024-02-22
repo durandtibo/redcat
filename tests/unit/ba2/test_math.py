@@ -326,6 +326,149 @@ def test_batched_array_cumsum_along_batch_custom_axes() -> None:
     )
 
 
+#########################
+#    Tests for diff     #
+#########################
+
+
+def test_batched_array_diff() -> None:
+    assert objects_are_equal(
+        ba.diff(ba.array([[9, 3, 7, 4, 0], [6, 6, 2, 3, 3]])),
+        np.array([[-6, 4, -3, -4], [0, -4, 1, 0]]),
+    )
+
+
+def test_batched_array_diff_axis_0() -> None:
+    assert objects_are_equal(
+        ba.diff(ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]), axis=0),
+        np.array([[0, -1], [1, 7], [-7, -9], [6, 7]]),
+    )
+
+
+def test_batched_array_diff_axis_1() -> None:
+    assert objects_are_equal(
+        ba.diff(ba.array([[9, 3, 7, 4, 0], [6, 6, 2, 3, 3]]), axis=1),
+        np.array([[-6, 4, -3, -4], [0, -4, 1, 0]]),
+    )
+
+
+def test_batched_array_diff_n_0() -> None:
+    assert objects_are_equal(
+        ba.diff(ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]), axis=0, n=0),
+        np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]),
+    )
+
+
+def test_batched_array_diff_n_2() -> None:
+    assert objects_are_equal(
+        ba.diff(ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]), axis=0, n=2),
+        np.array([[1, 8], [-8, -16], [13, 16]]),
+    )
+
+
+def test_batched_array_diff_prepend() -> None:
+    assert objects_are_equal(
+        ba.diff(
+            ba.BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]])),
+            axis=0,
+            prepend=np.array([[-1, -2]]),
+        ),
+        np.array([[7, 5], [0, -1], [1, 7], [-7, -9], [6, 7]]),
+    )
+
+
+def test_batched_array_diff_append() -> None:
+    assert objects_are_equal(
+        ba.diff(
+            ba.BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]])),
+            axis=0,
+            append=np.array([[-1, -2]]),
+        ),
+        np.array([[0, -1], [1, 7], [-7, -9], [6, 7], [-7, -9]]),
+    )
+
+
+def test_batched_array_diff_prepend_append() -> None:
+    assert objects_are_equal(
+        ba.diff(
+            ba.BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]])),
+            axis=0,
+            prepend=np.array([[-1, -2]]),
+            append=np.array([[-1, -2]]),
+        ),
+        np.array([[7, 5], [0, -1], [1, 7], [-7, -9], [6, 7], [-7, -9]]),
+    )
+
+
+def test_batched_array_diff_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.diff(ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]], batch_axis=1), axis=0),
+        np.array([[0, -1], [1, 7], [-7, -9], [6, 7]]),
+    )
+
+
+######################################
+#     Tests for diff_along_batch     #
+######################################
+
+
+def test_batched_array_diff_along_batch() -> None:
+    assert objects_are_equal(
+        ba.diff_along_batch(ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]])),
+        np.array([[0, -1], [1, 7], [-7, -9], [6, 7]]),
+    )
+
+
+def test_batched_array_diff_along_batch_n_0() -> None:
+    assert objects_are_equal(
+        ba.diff_along_batch(ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]), n=0),
+        np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]),
+    )
+
+
+def test_batched_array_diff_along_batch_n_2() -> None:
+    assert objects_are_equal(
+        ba.diff_along_batch(ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]), n=2),
+        np.array([[1, 8], [-8, -16], [13, 16]]),
+    )
+
+
+def test_batched_array_diff_along_batch_prepend() -> None:
+    assert objects_are_equal(
+        ba.diff_along_batch(
+            ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]), prepend=np.array([[-1, -2]])
+        ),
+        np.array([[7, 5], [0, -1], [1, 7], [-7, -9], [6, 7]]),
+    )
+
+
+def test_batched_array_diff_along_batch_append() -> None:
+    assert objects_are_equal(
+        ba.diff_along_batch(
+            ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]), append=np.array([[-1, -2]])
+        ),
+        np.array([[0, -1], [1, 7], [-7, -9], [6, 7], [-7, -9]]),
+    )
+
+
+def test_batched_array_diff_along_batch_prepend_append() -> None:
+    assert objects_are_equal(
+        ba.diff_along_batch(
+            ba.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]),
+            prepend=np.array([[-1, -2]]),
+            append=np.array([[-1, -2]]),
+        ),
+        np.array([[7, 5], [0, -1], [1, 7], [-7, -9], [6, 7], [-7, -9]]),
+    )
+
+
+def test_batched_array_diff_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.diff_along_batch(ba.array([[9, 3, 7, 4, 0], [6, 6, 2, 3, 3]], batch_axis=1)),
+        np.array([[-6, 4, -3, -4], [0, -4, 1, 0]]),
+    )
+
+
 ###############################
 #    Tests for nancumprod     #
 ###############################
