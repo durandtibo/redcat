@@ -31,7 +31,7 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 
 | name         | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
 |--------------|--------------------|--------------------|-------------------|
-| `array`      | :white_check_mark: |                    |                   |
+| `array`      | :white_check_mark: | :x:                |                   |
 | `copy`       |                    | :white_check_mark: |                   |
 | `empty`      | :white_check_mark: |                    |                   |
 | `empty_like` | :white_check_mark: | :white_check_mark: |                   |
@@ -139,13 +139,13 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `floor_divide`                  | :white_check_mark: | :white_check_mark: |                    |                   |
 | `fmod`                          | :white_check_mark: |                    | :white_check_mark: |                   |
 | `fmod_`                         | :x:                | :x:                | :white_check_mark: |                   |
-| `mul`                           | :white_check_mark: |                    | :white_check_mark: |                   |
+| `mul`                           | :x:                |                    | :white_check_mark: |                   |
 | `mul_`                          | :x:                | :x:                | :white_check_mark: |                   |
 | `multiply`                      | :white_check_mark: | :white_check_mark: |                    |                   |
-| `sub`                           | :white_check_mark: |                    | :white_check_mark: |                   |
+| `sub`                           | :x:                |                    | :white_check_mark: |                   |
 | `sub_`                          | :x:                | :x:                | :white_check_mark: |                   |
 | `substract`                     | :white_check_mark: | :white_check_mark: |                    |                   |
-| `truediv`                       | :white_check_mark: |                    | :white_check_mark: |                   |
+| `truediv`                       | :x:                | :x:                | :white_check_mark: |                   |
 | `truediv_`                      | :x:                | :x:                | :white_check_mark: |                   |
 | `true_divide`                   | :white_check_mark: | :white_check_mark: |                    |                   |
 | **Sums, products, differences** |                    |                    |                    |                   |
@@ -155,7 +155,9 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `cumsum_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `cumsum_along_seq`              | :x:                |                    | :x:                |                   |
 | `cumsum`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `diff`                          |                    |                    |                    |                   |
+| `diff_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `diff_along_seq`                | :x:                |                    | :x:                |                   |
+| `diff`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `ediff1d`                       |                    |                    |                    |                   |
 | `nancumprod_along_batch`        | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nancumprod_along_seq`          | :x:                |                    | :x:                |                   |

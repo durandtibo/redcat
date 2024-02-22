@@ -225,6 +225,7 @@ IN2_FUNCTIONS = [fc for fc in FUNCTIONS if fc.nin == 2]
 BATCH_TO_ARRAY_FUNCS = [
     FunctionCheck(np.cumprod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck(np.cumsum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
+    FunctionCheck(np.diff, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck(np.nancumprod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck(np.nancumsum, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
     FunctionCheck(np.nanprod, nin=1, nout=1, arrays=normal_arrays(shape=SHAPE, n=1)),
