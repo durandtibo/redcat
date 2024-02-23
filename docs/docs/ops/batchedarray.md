@@ -197,9 +197,9 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `nanmax_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nanmax_along_seq`              | :x:                |                    | :x:                |                   |
 | `nanmax`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `nanmin_along_batch`            | :x:                |                    |                    |                   |
+| `nanmin_along_batch`            | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nanmin_along_seq`              | :x:                |                    | :x:                |                   |
-| `nanmin`                        | :white_check_mark: |                    |                    |                   |
+| `nanmin`                        | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 
 ## Sorting, searching, and counting
 
