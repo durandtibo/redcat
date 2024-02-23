@@ -2250,6 +2250,88 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.max(axis=self._batch_axis, out=out, keepdims=keepdims)
 
+    def min(
+        self,
+        axis: SupportsIndex | None = None,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the minimum of an array or minimum along an axis.
+
+        Args:
+            axis: Axis or axes along which to operate. By default,
+                flattened input is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The minimum of an array or minimum along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.min()
+        6
+        >>> batch.min(axis=0)
+        array([1, 4, 2])
+        >>> batch.min(axis=0, keepdims=True)
+        array([[1, 4, 2]])
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.min(axis=1)
+        array([1, 3])
+
+        ```
+        """
+        x = self._data.min(axis=axis, out=out, keepdims=keepdims)
+        if out is not None:
+            return out
+        return x
+
+    def min_along_batch(
+        self,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the minimum along the batch axis.
+
+        Args:
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The minimum along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.min_along_batch()
+        array([1, 4, 2])
+        >>> batch.min_along_batch(keepdims=True)
+        array([[1, 4, 2]])
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.min_along_batch()
+        array([1, 3])
+
+        ```
+        """
+        return self.min(axis=self._batch_axis, out=out, keepdims=keepdims)
+
     ################
     #     Sort     #
     ################

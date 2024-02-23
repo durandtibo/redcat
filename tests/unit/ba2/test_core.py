@@ -3152,6 +3152,89 @@ def test_batched_array_max_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_min_1d() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([4, 1, 2, 5, 3])).min(axis=0),
+        np.int64(1),
+    )
+
+
+@pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
+def test_batched_array_min_2d(dtype: np.dtype) -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)).min(
+            axis=0
+        ),
+        np.array([1, 5], dtype=dtype),
+    )
+
+
+def test_batched_array_min_axis_none() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).min(axis=None),
+        np.int64(1),
+    )
+
+
+def test_batched_array_min_out_axis_none() -> None:
+    out = np.array(0, dtype=int)
+    assert ba.BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).min(out=out) is out
+    assert objects_are_equal(out, np.array(1, dtype=int))
+
+
+def test_batched_array_min_out_axis_0() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert (
+        ba.BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).min(axis=0, out=out)
+        is out
+    )
+    assert objects_are_equal(out, np.array([1, 5], dtype=int))
+
+
+def test_batched_array_min_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1).min(axis=1),
+        np.array([1, 5]),
+    )
+
+
+@pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
+def test_batched_array_min_along_batch(dtype: np.dtype) -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(
+            np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)
+        ).min_along_batch(),
+        np.array([1, 5], dtype=dtype),
+    )
+
+
+def test_batched_array_min_along_batch_out() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert (
+        ba.BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).min_along_batch(out=out)
+        is out
+    )
+    assert objects_are_equal(out, np.array([1, 5], dtype=int))
+
+
+def test_batched_array_min_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]])).min_along_batch(
+            keepdims=True
+        ),
+        np.array([[1, 5]]),
+    )
+
+
+def test_batched_array_min_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(
+            np.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]]), batch_axis=1
+        ).min_along_batch(),
+        np.array([1, 5]),
+    )
+
+
 ################
 #     Sort     #
 ################
