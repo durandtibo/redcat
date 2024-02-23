@@ -53,6 +53,8 @@ __all__ = [
     "max_along_batch",
     "min",
     "min_along_batch",
+    "nanmax",
+    "nanmax_along_batch",
 ]
 
 from redcat.ba2.core import BatchedArray
@@ -87,6 +89,8 @@ from redcat.ba2.math import (
     nancumprod_along_batch,
     nancumsum,
     nancumsum_along_batch,
+    nanmax,
+    nanmax_along_batch,
     nanprod,
     nanprod_along_batch,
     nansum,

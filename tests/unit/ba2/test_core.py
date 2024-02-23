@@ -3235,6 +3235,100 @@ def test_batched_array_min_along_batch_custom_axes() -> None:
     )
 
 
+def test_batched_array_nanmax_1d() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([4, 1, 2, np.nan, 3])).nanmax(axis=0),
+        np.float64(4.0),
+    )
+
+
+def test_batched_array_nanmax_2d() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([[4, np.nan], [1, 7], [np.nan, 5], [5, 6], [3, 8]])).nanmax(
+            axis=0
+        ),
+        np.array([5.0, 8.0]),
+    )
+
+
+def test_batched_array_nanmax_axis_none() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(np.array([[4, np.nan], [1, 7], [np.nan, 5], [5, 6], [3, 8]])).nanmax(
+            axis=None
+        ),
+        np.float64(8.0),
+    )
+
+
+def test_batched_array_nanmax_out_axis_none() -> None:
+    out = np.array(0.0)
+    assert (
+        ba.BatchedArray(np.array([[4, np.nan], [1, 7], [np.nan, 5], [5, 6], [3, 8]])).nanmax(
+            out=out
+        )
+        is out
+    )
+    assert objects_are_equal(out, np.array(8.0))
+
+
+def test_batched_array_nanmax_out_axis_0() -> None:
+    out = np.array([0.0, 0.0])
+    assert (
+        ba.BatchedArray(np.array([[4, np.nan], [1, 7], [np.nan, 5], [5, 6], [3, 8]])).nanmax(
+            axis=0, out=out
+        )
+        is out
+    )
+    assert objects_are_equal(out, np.array([5.0, 8.0]))
+
+
+def test_batched_array_nanmax_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(
+            np.array([[4, 1, np.nan, 5, 3], [np.nan, 7, 5, 6, 8]]), batch_axis=1
+        ).nanmax(axis=1),
+        np.array([5.0, 8.0]),
+    )
+
+
+def test_batched_array_nanmax_along_batch() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(
+            np.array([[4, np.nan], [1, 7], [np.nan, 5], [5, 6], [3, 8]])
+        ).nanmax_along_batch(),
+        np.array([5.0, 8.0]),
+    )
+
+
+def test_batched_array_nanmax_along_batch_out() -> None:
+    out = np.array([0.0, 0.0])
+    assert (
+        ba.BatchedArray(
+            np.array([[4, np.nan], [1, 7], [np.nan, 5], [5, 6], [3, 8]])
+        ).nanmax_along_batch(out=out)
+        is out
+    )
+    assert objects_are_equal(out, np.array([5.0, 8.0], dtype=float))
+
+
+def test_batched_array_nanmax_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(
+            np.array([[4, np.nan], [1, 7], [np.nan, 5], [5, 6], [3, 8]])
+        ).nanmax_along_batch(keepdims=True),
+        np.array([[5.0, 8.0]]),
+    )
+
+
+def test_batched_array_nanmax_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.BatchedArray(
+            np.array([[4, 1, np.nan, 5, 3], [np.nan, 7, 5, 6, 8]]), batch_axis=1
+        ).nanmax_along_batch(),
+        np.array([5.0, 8.0]),
+    )
+
+
 ################
 #     Sort     #
 ################
