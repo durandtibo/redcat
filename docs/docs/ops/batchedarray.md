@@ -158,7 +158,6 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `diff_along_batch`              | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `diff_along_seq`                | :x:                |                    | :x:                |                   |
 | `diff`                          | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
-| `ediff1d`                       |                    |                    |                    |                   |
 | `nancumprod_along_batch`        | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `nancumprod_along_seq`          | :x:                |                    | :x:                |                   |
 | `nancumprod`                    | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
@@ -187,9 +186,9 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | **Extrema Finding**             |                    |                    |                    |                   |
 | `fmax`                          | :white_check_mark: |                    |                    |                   |
 | `fmin`                          | :white_check_mark: |                    |                    |                   |
-| `max_along_batch`               | :x:                |                    |                    |                   |
+| `max_along_batch`               | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `max_along_seq`                 | :x:                |                    | :x:                |                   |
-| `max`                           | :white_check_mark: |                    |                    |                   |
+| `max`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `maximum`                       | :white_check_mark: |                    |                    |                   |
 | `min_along_batch`               | :x:                |                    |                    |                   |
 | `min_along_seq`                 | :x:                |                    | :x:                |                   |

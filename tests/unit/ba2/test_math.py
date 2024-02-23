@@ -5,6 +5,7 @@ import pytest
 from coola import objects_are_equal
 
 from redcat import ba2 as ba
+from tests.unit.ba2.test_core import NUMERIC_DTYPES
 
 ########################
 #    Tests for add     #
@@ -889,4 +890,83 @@ def test_batched_array_sum_along_batch_custom_axes() -> None:
     assert objects_are_equal(
         ba.sum_along_batch(ba.array([[1, 6, 2], [3, 4, 5]], batch_axis=1)),
         np.array([9, 12]),
+    )
+
+
+########################
+#    Tests for max     #
+########################
+
+
+def test_batched_array_max_1d() -> None:
+    assert objects_are_equal(
+        ba.max(ba.array([4, 1, 2, 5, 3]), axis=0),
+        np.int64(5),
+    )
+
+
+@pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
+def test_batched_array_max_2d(dtype: np.dtype) -> None:
+    assert objects_are_equal(
+        ba.max(ba.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype), axis=0),
+        np.array([5, 9], dtype=dtype),
+    )
+
+
+def test_batched_array_max_axis_none() -> None:
+    assert objects_are_equal(
+        ba.max(ba.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), axis=None),
+        np.int64(9),
+    )
+
+
+def test_batched_array_max_out_axis_none() -> None:
+    out = np.array(0, dtype=int)
+    assert ba.max(ba.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), out=out) is out
+    assert objects_are_equal(out, np.array(9, dtype=int))
+
+
+def test_batched_array_max_out_axis_0() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert ba.max(ba.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), axis=0, out=out) is out
+    assert objects_are_equal(out, np.array([5, 9], dtype=int))
+
+
+def test_batched_array_max_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.max(ba.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]], batch_axis=1), axis=1),
+        np.array([5, 9]),
+    )
+
+
+####################################
+#    Tests for max_along_batch     #
+####################################
+
+
+@pytest.mark.parametrize("dtype", NUMERIC_DTYPES)
+def test_batched_array_max_along_batch(dtype: np.dtype) -> None:
+    assert objects_are_equal(
+        ba.max_along_batch(ba.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]], dtype=dtype)),
+        np.array([5, 9], dtype=dtype),
+    )
+
+
+def test_batched_array_max_along_batch_out() -> None:
+    out = np.array([0, 0], dtype=int)
+    assert ba.max_along_batch(ba.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), out=out) is out
+    assert objects_are_equal(out, np.array([5, 9], dtype=int))
+
+
+def test_batched_array_max_along_batch_keepdims() -> None:
+    assert objects_are_equal(
+        ba.max_along_batch(ba.array([[4, 9], [1, 7], [2, 5], [5, 6], [3, 8]]), keepdims=True),
+        np.array([[5, 9]]),
+    )
+
+
+def test_batched_array_max_along_batch_custom_axes() -> None:
+    assert objects_are_equal(
+        ba.max_along_batch(ba.array([[4, 1, 2, 5, 3], [9, 7, 5, 6, 8]], batch_axis=1)),
+        np.array([5, 9]),
     )

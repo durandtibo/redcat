@@ -2168,6 +2168,88 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.sum(axis=self._batch_axis, dtype=dtype, keepdims=keepdims)
 
+    def max(
+        self,
+        axis: SupportsIndex | None = None,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the maximum of an array or maximum along an axis.
+
+        Args:
+            axis: Axis or axes along which to operate. By default,
+                flattened input is used.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The maximum of an array or maximum along an axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.max()
+        6
+        >>> batch.max(axis=0)
+        array([3, 6, 5])
+        >>> batch.max(axis=0, keepdims=True)
+        array([[3, 6, 5]])
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.max(axis=1)
+        array([6, 5])
+
+        ```
+        """
+        x = self._data.max(axis=axis, out=out, keepdims=keepdims)
+        if out is not None:
+            return out
+        return x
+
+    def max_along_batch(
+        self,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> np.ndarray:
+        r"""Return the maximum along the batch axis.
+
+        Args:
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the original array.
+
+        Returns:
+            The maximum along the batch axis.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+        >>> batch.max_along_batch()
+        array([3, 6, 5])
+        >>> batch.max_along_batch(keepdims=True)
+        array([[3, 6, 5]])
+        >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+        >>> batch.max_along_batch()
+        array([6, 5])
+
+        ```
+        """
+        return self.max(axis=self._batch_axis, out=out, keepdims=keepdims)
+
     ################
     #     Sort     #
     ################
