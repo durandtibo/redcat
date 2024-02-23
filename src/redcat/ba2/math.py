@@ -795,7 +795,7 @@ def min(  # noqa: A001
     >>> from redcat import ba2
     >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
     >>> ba2.min(batch)
-    6
+    1
     >>> ba2.min(batch, axis=0)
     array([1, 4, 2])
     >>> ba2.min(batch, axis=0, keepdims=True)

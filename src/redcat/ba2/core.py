@@ -2279,7 +2279,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         >>> from redcat.ba2 import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.min()
-        6
+        1
         >>> batch.min(axis=0)
         array([1, 4, 2])
         >>> batch.min(axis=0, keepdims=True)
