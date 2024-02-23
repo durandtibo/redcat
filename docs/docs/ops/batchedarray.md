@@ -190,9 +190,9 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `max_along_seq`                 | :x:                |                    | :x:                |                   |
 | `max`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `maximum`                       | :white_check_mark: |                    |                    |                   |
-| `min_along_batch`               | :x:                |                    |                    |                   |
+| `min_along_batch`               | :x:                | :white_check_mark: | :white_check_mark: |                   |
 | `min_along_seq`                 | :x:                |                    | :x:                |                   |
-| `min`                           | :white_check_mark: |                    |                    |                   |
+| `min`                           | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
 | `minimum`                       | :white_check_mark: |                    |                    |                   |
 | `nanmax_along_batch`            | :x:                |                    |                    |                   |
 | `nanmax_along_seq`              | :x:                |                    | :x:                |                   |

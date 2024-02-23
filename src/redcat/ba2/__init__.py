@@ -51,6 +51,8 @@ __all__ = [
     "zeros_like",
     "max",
     "max_along_batch",
+    "min",
+    "min_along_batch",
 ]
 
 from redcat.ba2.core import BatchedArray
@@ -78,6 +80,8 @@ from redcat.ba2.math import (
     floor_divide,
     max,
     max_along_batch,
+    min,
+    min_along_batch,
     multiply,
     nancumprod,
     nancumprod_along_batch,
