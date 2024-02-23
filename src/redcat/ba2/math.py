@@ -25,6 +25,8 @@ __all__ = [
     "sum",
     "sum_along_batch",
     "true_divide",
+    "max",
+    "max_along_batch",
 ]
 
 from typing import SupportsIndex, TypeVar
@@ -338,6 +340,7 @@ def nanprod(
     Numbers (NaNs) as one.
 
     Args:
+        a: The input array.
         axis: Axis along which the cumulative product is computed.
             By default, the input is flattened.
         dtype: Type of the returned array and of the accumulator
@@ -384,6 +387,7 @@ def nanprod_along_batch(
     a Numbers (NaNs) as one.
 
     Args:
+        a: The input array.
         dtype: Type of the returned array and of the accumulator
             in which the elements are multiplied. If dtype is not
             specified, it defaults to the dtype of ``self``,
@@ -425,6 +429,7 @@ def nansum(
     Numbers (NaNs) as zero.
 
     Args:
+        a: The input array.
         axis: Axis along which the cumulative product is computed.
             By default, the input is flattened.
         dtype: Type of the returned array and of the accumulator
@@ -471,6 +476,7 @@ def nansum_along_batch(
     Numbers (NaNs) as zero.
 
     Args:
+        a: The input array.
         dtype: Type of the returned array and of the accumulator
             in which the elements are summed. If dtype is not
             specified, it defaults to the dtype of ``self``,
@@ -511,6 +517,7 @@ def prod(
     r"""Return the product of elements along a given axis.
 
     Args:
+        a: The input array.
         axis: Axis along which the cumulative product is computed.
             By default, the input is flattened.
         dtype: Type of the returned array and of the accumulator
@@ -555,6 +562,7 @@ def prod_along_batch(
     r"""Return the product of elements along the batch axis.
 
     Args:
+        a: The input array.
         dtype: Type of the returned array and of the accumulator
             in which the elements are multiplied. If dtype is not
             specified, it defaults to the dtype of ``self``,
@@ -595,6 +603,7 @@ def sum(  # noqa: A001
     Numbers (NaNs) as zero.
 
     Args:
+        a: The input array.
         axis: Axis along which the cumulative product is computed.
             By default, the input is flattened.
         dtype: Type of the returned array and of the accumulator
@@ -641,6 +650,7 @@ def sum_along_batch(
     Numbers (NaNs) as zero.
 
     Args:
+        a: The input array.
         dtype: Type of the returned array and of the accumulator
             in which the elements are summed. If dtype is not
             specified, it defaults to the dtype of ``self``,
@@ -668,3 +678,86 @@ def sum_along_batch(
     ```
     """
     return a.sum_along_batch(dtype=dtype, keepdims=keepdims)
+
+
+def max(  # noqa: A001
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    out: np.ndarray | None = None,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the maximum of an array or maximum along an axis.
+
+    Args:
+        a: The input array.
+        axis: Axis or axes along which to operate. By default,
+            flattened input is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The maximum of an array or maximum along an axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba2.max(batch)
+    6
+    >>> ba2.max(batch, axis=0)
+    array([3, 6, 5])
+    >>> ba2.max(batch, axis=0, keepdims=True)
+    array([[3, 6, 5]])
+    >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba2.max(batch, axis=1)
+    array([6, 5])
+
+    ```
+    """
+    return a.max(axis=axis, out=out, keepdims=keepdims)
+
+
+def max_along_batch(
+    a: TBatchedArray,
+    out: np.ndarray | None = None,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the maximum along the batch axis.
+
+    Args:
+        a: The input array.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The maximum along the batch axis.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba2.max_along_batch(batch)
+    array([3, 6, 5])
+    >>> ba2.max_along_batch(batch, keepdims=True)
+    array([[3, 6, 5]])
+    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba2.max_along_batch(batch)
+    array([6, 5])
+
+    ```
+    """
+    return a.max_along_batch(out=out, keepdims=keepdims)

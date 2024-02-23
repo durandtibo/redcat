@@ -49,6 +49,8 @@ __all__ = [
     "true_divide",
     "zeros",
     "zeros_like",
+    "max",
+    "max_along_batch",
 ]
 
 from redcat.ba2.core import BatchedArray
@@ -74,6 +76,8 @@ from redcat.ba2.math import (
     diff_along_batch,
     divide,
     floor_divide,
+    max,
+    max_along_batch,
     multiply,
     nancumprod,
     nancumprod_along_batch,
