@@ -10,11 +10,19 @@ __all__ = [
     "diff_along_batch",
     "divide",
     "floor_divide",
+    "max",
+    "max_along_batch",
+    "min",
+    "min_along_batch",
     "multiply",
     "nancumprod",
     "nancumprod_along_batch",
     "nancumsum",
     "nancumsum_along_batch",
+    "nanmax",
+    "nanmax_along_batch",
+    "nanmin",
+    "nanmin_along_batch",
     "nanprod",
     "nanprod_along_batch",
     "nansum",
@@ -25,12 +33,6 @@ __all__ = [
     "sum",
     "sum_along_batch",
     "true_divide",
-    "max",
-    "max_along_batch",
-    "min",
-    "min_along_batch",
-    "nanmax",
-    "nanmax_along_batch",
 ]
 
 from typing import SupportsIndex, TypeVar
@@ -933,3 +935,88 @@ def nanmax_along_batch(
     ```
     """
     return a.nanmax_along_batch(out=out, keepdims=keepdims)
+
+
+def nanmin(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    out: np.ndarray | None = None,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the minimum of an array or minimum along an axis, ignoring
+    any NaNs.
+
+    Args:
+        a: The input array.
+        axis: Axis or axes along which to operate. By default,
+            flattened input is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The minimum of an array or minimum along an axis, ignoring
+            any NaNs.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
+    >>> ba2.nanmin(batch)
+    2.0
+    >>> ba2.nanmin(batch,axis=0)
+    array([3., 4., 2.])
+    >>> ba2.nanmin(batch, axis=0, keepdims=True)
+    array([[3., 4., 2.]])
+    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba2.nanmin(batch, axis=1)
+    array([2., 3.])
+
+    ```
+    """
+    return a.nanmin(axis=axis, out=out, keepdims=keepdims)
+
+
+def nanmin_along_batch(
+    a: TBatchedArray,
+    out: np.ndarray | None = None,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the minimum along the batch axis, ignoring any NaNs.
+
+    Args:
+        a: The input array.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The minimum along the batch axis, ignoring any NaNs.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
+    >>> ba2.nanmin_along_batch(batch)
+    array([3., 4., 2.])
+    >>> ba2.nanmin_along_batch(batch, keepdims=True)
+    array([[3., 4., 2.]])
+    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba2.nanmin_along_batch(batch)
+    array([2., 3.])
+
+    ```
+    """
+    return a.nanmin_along_batch(out=out, keepdims=keepdims)
