@@ -57,6 +57,8 @@ __all__ = [
     "true_divide",
     "zeros",
     "zeros_like",
+    "mean",
+    "mean_along_batch",
 ]
 
 from redcat.ba2.core import BatchedArray
@@ -120,3 +122,4 @@ from redcat.ba2.sort import (
     sort,
     sort_along_batch,
 )
+from redcat.ba2.stats import mean, mean_along_batch
