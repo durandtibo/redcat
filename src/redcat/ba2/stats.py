@@ -249,16 +249,15 @@ def nanmean(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
     >>> ba2.nanmean(batch)
-    3.5
+    3.0
     >>> ba2.nanmean(batch, axis=0)
-    array([2. , 5. , 3.5])
+    array([2. , 4. , 3.5])
     >>> ba2.nanmean(batch, axis=0, keepdims=True)
-    array([[2. , 5. , 3.5]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    array([[2. , 4. , 3.5]])
     >>> ba2.nanmean(batch, axis=1)
-    array([3., 4.])
+    array([1.5, 4. ])
 
     ```
     """
@@ -297,14 +296,14 @@ def nanmean_along_batch(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
     >>> ba2.nanmean_along_batch(batch)
-    array([2. , 5. , 3.5])
+    array([2. , 4. , 3.5])
     >>> ba2.nanmean_along_batch(batch, keepdims=True)
-    array([[2. , 5. , 3.5]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    array([[2. , 4. , 3.5]])
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
     >>> ba2.nanmean_along_batch(batch)
-    array([3., 4.])
+    array([1.5, 4. ])
 
     ```
     """
@@ -339,16 +338,15 @@ def nanmedian(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
     >>> ba2.nanmedian(batch)
-    3.5
+    3.0
     >>> ba2.nanmedian(batch, axis=0)
-    array([2. , 5. , 3.5])
+    array([2. , 4. , 3.5])
     >>> ba2.nanmedian(batch, axis=0, keepdims=True)
-    array([[2. , 5. , 3.5]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    array([[2. , 4. , 3.5]])
     >>> ba2.nanmedian(batch, axis=1)
-    array([3., 4.])
+    array([1.5, 4. ])
 
     ```
     """
@@ -380,14 +378,14 @@ def nanmedian_along_batch(
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
     >>> ba2.nanmedian_along_batch(batch)
-    array([2. , 5. , 3.5])
+    array([2. , 4. , 3.5])
     >>> ba2.nanmedian_along_batch(batch, keepdims=True)
-    array([[2. , 5. , 3.5]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    array([[2. , 4. , 3.5]])
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
     >>> ba2.nanmedian_along_batch(batch)
-    array([3., 4.])
+    array([1.5, 4. ])
 
     ```
     """
