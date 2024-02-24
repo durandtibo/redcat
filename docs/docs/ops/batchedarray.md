@@ -236,9 +236,9 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 | `median_along_batch`      | :x:  | :white_check_mark: | :white_check_mark: |                   |
 | `median_along_seq`        | :x:  |                    | :x:                |                   |
 | `median`                  |      | :white_check_mark: | :white_check_mark: |                   |
-| `nanmean_along_batch`     | :x:  |                    |                    |                   |
+| `nanmean_along_batch`     | :x:  | :white_check_mark: | :white_check_mark: |                   |
 | `nanmean_along_seq`       | :x:  |                    | :x:                |                   |
-| `nanmean`                 |      |                    |                    |                   |
+| `nanmean`                 |      | :white_check_mark: | :white_check_mark: |                   |
 | `nanmedian_along_batch`   | :x:  |                    |                    |                   |
 | `nanmedian_along_seq`     | :x:  |                    | :x:                |                   |
 | `nanmedian`               |      |                    |                    |                   |
