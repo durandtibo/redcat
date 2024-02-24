@@ -7,6 +7,8 @@ __all__ = [
     "median_along_batch",
     "nanmean",
     "nanmean_along_batch",
+    "nanmedian",
+    "nanmedian_along_batch",
 ]
 
 from typing import SupportsIndex, TypeVar
@@ -218,7 +220,8 @@ def nanmean(
     out: np.ndarray | None = None,
     keepdims: bool = False,
 ) -> np.ndarray:
-    r"""Return the arithmetic mean along the specified axis.
+    r"""Return the arithmetic mean along the specified axis, ignoring
+    NaNs.
 
     Args:
         a: The input array.
@@ -239,23 +242,22 @@ def nanmean(
             correctly against the original array.
 
     Returns:
-        The arithmetic mean along the specified axis.
+        The arithmetic mean along the specified axis, ignoring NaNs.
 
     Example usage:
 
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
     >>> ba2.nanmean(batch)
-    3.5
+    3.0
     >>> ba2.nanmean(batch, axis=0)
-    array([2. , 5. , 3.5])
+    array([2. , 4. , 3.5])
     >>> ba2.nanmean(batch, axis=0, keepdims=True)
-    array([[2. , 5. , 3.5]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    array([[2. , 4. , 3.5]])
     >>> ba2.nanmean(batch, axis=1)
-    array([3., 4.])
+    array([1.5, 4. ])
 
     ```
     """
@@ -268,7 +270,7 @@ def nanmean_along_batch(
     out: np.ndarray | None = None,
     keepdims: bool = False,
 ) -> np.ndarray:
-    r"""Return tne arithmetic mean along the batch axis.
+    r"""Return tne arithmetic mean along the batch axis, ignoring NaNs.
 
     Args:
         a: The input array.
@@ -287,22 +289,104 @@ def nanmean_along_batch(
             correctly against the original array.
 
     Returns:
-        The arithmetic mean along the batch axis.
+        The arithmetic mean along the batch axis, ignoring NaNs.
 
     Example usage:
 
     ```pycon
     >>> import numpy as np
     >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
     >>> ba2.nanmean_along_batch(batch)
-    array([2. , 5. , 3.5])
+    array([2. , 4. , 3.5])
     >>> ba2.nanmean_along_batch(batch, keepdims=True)
-    array([[2. , 5. , 3.5]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    array([[2. , 4. , 3.5]])
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
     >>> ba2.nanmean_along_batch(batch)
-    array([3., 4.])
+    array([1.5, 4. ])
 
     ```
     """
     return a.nanmean_along_batch(out=out, dtype=dtype, keepdims=keepdims)
+
+
+def nanmedian(
+    a: TBatchedArray,
+    axis: SupportsIndex | None = None,
+    out: np.ndarray | None = None,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return the median along the specified axis, ignoring NaNs.
+
+    Args:
+        a: The input array.
+        axis: Axis or axes along which to operate. By default,
+            flattened input is used.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The median along the specified axis, ignoring NaNs.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba2.nanmedian(batch)
+    3.0
+    >>> ba2.nanmedian(batch, axis=0)
+    array([2. , 4. , 3.5])
+    >>> ba2.nanmedian(batch, axis=0, keepdims=True)
+    array([[2. , 4. , 3.5]])
+    >>> ba2.nanmedian(batch, axis=1)
+    array([1.5, 4. ])
+
+    ```
+    """
+    return a.nanmedian(axis=axis, out=out, keepdims=keepdims)
+
+
+def nanmedian_along_batch(
+    a: TBatchedArray,
+    out: np.ndarray | None = None,
+    keepdims: bool = False,
+) -> np.ndarray:
+    r"""Return tne median along the batch axis, ignoring NaNs.
+
+    Args:
+        a: The input array.
+        out: Alternative output array in which to place the result.
+            It must have the same shape and buffer length as the
+            expected output but the type will be cast if necessary.
+        keepdims: If this is set to True, the axes which are
+            reduced are left in the result as dimensions with size
+            one. With this option, the result will broadcast
+            correctly against the original array.
+
+    Returns:
+        The median along the batch axis, ignoring NaNs.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat import ba2
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba2.nanmedian_along_batch(batch)
+    array([2. , 4. , 3.5])
+    >>> ba2.nanmedian_along_batch(batch, keepdims=True)
+    array([[2. , 4. , 3.5]])
+    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba2.nanmedian_along_batch(batch)
+    array([1.5, 4. ])
+
+    ```
+    """
+    return a.nanmedian_along_batch(out=out, keepdims=keepdims)
