@@ -94,6 +94,13 @@ __all__ = [
     "zeros_like",
 ]
 
+from redcat.ba2.utils import (
+    arrays_share_data,
+    check_data_and_axis,
+    check_same_batch_axis,
+    get_batch_axes,
+    get_data_base,
+)
 from redcat.ba.core import BatchedArray
 from redcat.ba.creation import (
     array,
@@ -183,11 +190,4 @@ from redcat.ba.func import (
     square,
     sum,
     sum_along_batch,
-)
-from redcat.ba.utils import (
-    arrays_share_data,
-    check_data_and_axis,
-    check_same_batch_axis,
-    get_batch_axes,
-    get_data_base,
 )
