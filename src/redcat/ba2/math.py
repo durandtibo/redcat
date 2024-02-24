@@ -686,6 +686,7 @@ def sum_along_batch(
     return a.sum_along_batch(dtype=dtype, keepdims=keepdims)
 
 
+@implements(np.max)
 def max(  # noqa: A001
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -769,6 +770,7 @@ def max_along_batch(
     return a.max_along_batch(out=out, keepdims=keepdims)
 
 
+@implements(np.min)
 def min(  # noqa: A001
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -852,6 +854,7 @@ def min_along_batch(
     return a.min_along_batch(out=out, keepdims=keepdims)
 
 
+@implements(np.nanmax)
 def nanmax(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -937,6 +940,7 @@ def nanmax_along_batch(
     return a.nanmax_along_batch(out=out, keepdims=keepdims)
 
 
+@implements(np.nanmin)
 def nanmin(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,

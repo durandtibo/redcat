@@ -228,35 +228,35 @@ This page shows the supported operations for `BatchedArray` and `BatchedArraySeq
 
 ## Statistics
 
-| name                      | `np` | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
-|---------------------------|------|--------------------|--------------------|-------------------|
-| `mean_along_batch`        | :x:  | :white_check_mark: | :white_check_mark: |                   |
-| `mean_along_seq`          | :x:  |                    | :x:                |                   |
-| `mean`                    |      | :white_check_mark: | :white_check_mark: |                   |
-| `median_along_batch`      | :x:  | :white_check_mark: | :white_check_mark: |                   |
-| `median_along_seq`        | :x:  |                    | :x:                |                   |
-| `median`                  |      | :white_check_mark: | :white_check_mark: |                   |
-| `nanmean_along_batch`     | :x:  | :white_check_mark: | :white_check_mark: |                   |
-| `nanmean_along_seq`       | :x:  |                    | :x:                |                   |
-| `nanmean`                 |      | :white_check_mark: | :white_check_mark: |                   |
-| `nanmedian_along_batch`   | :x:  | :white_check_mark: | :white_check_mark: |                   |
-| `nanmedian_along_seq`     | :x:  |                    | :x:                |                   |
-| `nanmedian`               |      | :white_check_mark: | :white_check_mark: |                   |
-| `nanquantile_along_batch` | :x:  |                    |                    |                   |
-| `nanquantile_along_seq`   | :x:  |                    | :x:                |                   |
-| `nanquantile`             |      |                    |                    |                   |
-| `nanstd_along_batch`      | :x:  |                    |                    |                   |
-| `nanstd_along_seq`        | :x:  |                    | :x:                |                   |
-| `nanstd`                  |      |                    |                    |                   |
-| `nanvar_along_batch`      | :x:  |                    |                    |                   |
-| `nanvar_along_seq`        | :x:  |                    | :x:                |                   |
-| `nanvar`                  |      |                    |                    |                   |
-| `quantile_along_batch`    | :x:  |                    |                    |                   |
-| `quantile_along_seq`      | :x:  |                    | :x:                |                   |
-| `quantile`                |      |                    |                    |                   |
-| `std_along_batch`         | :x:  |                    |                    |                   |
-| `std_along_seq`           | :x:  |                    | :x:                |                   |
-| `std`                     |      |                    |                    |                   |
-| `var_along_batch`         | :x:  |                    |                    |                   |
-| `var_along_seq`           | :x:  |                    | :x:                |                   |
-| `var`                     |      |                    |                    |                   |
+| name                      | `np`               | `redcat.ba`        | `BatchedArray`     | `BatchedArraySeq` |
+|---------------------------|--------------------|--------------------|--------------------|-------------------|
+| `mean_along_batch`        | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `mean_along_seq`          | :x:                |                    | :x:                |                   |
+| `mean`                    | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `median_along_batch`      | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `median_along_seq`        | :x:                |                    | :x:                |                   |
+| `median`                  | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nanmean_along_batch`     | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nanmean_along_seq`       | :x:                |                    | :x:                |                   |
+| `nanmean`                 | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nanmedian_along_batch`   | :x:                | :white_check_mark: | :white_check_mark: |                   |
+| `nanmedian_along_seq`     | :x:                |                    | :x:                |                   |
+| `nanmedian`               | :white_check_mark: | :white_check_mark: | :white_check_mark: |                   |
+| `nanquantile_along_batch` | :x:                |                    |                    |                   |
+| `nanquantile_along_seq`   | :x:                |                    | :x:                |                   |
+| `nanquantile`             |                    |                    |                    |                   |
+| `nanstd_along_batch`      | :x:                |                    |                    |                   |
+| `nanstd_along_seq`        | :x:                |                    | :x:                |                   |
+| `nanstd`                  |                    |                    |                    |                   |
+| `nanvar_along_batch`      | :x:                |                    |                    |                   |
+| `nanvar_along_seq`        | :x:                |                    | :x:                |                   |
+| `nanvar`                  |                    |                    |                    |                   |
+| `quantile_along_batch`    | :x:                |                    |                    |                   |
+| `quantile_along_seq`      | :x:                |                    | :x:                |                   |
+| `quantile`                |                    |                    |                    |                   |
+| `std_along_batch`         | :x:                |                    |                    |                   |
+| `std_along_seq`           | :x:                |                    | :x:                |                   |
+| `std`                     |                    |                    |                    |                   |
+| `var_along_batch`         | :x:                |                    |                    |                   |
+| `var_along_seq`           | :x:                |                    | :x:                |                   |
+| `var`                     |                    |                    |                    |                   |
