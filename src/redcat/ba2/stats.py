@@ -16,13 +16,14 @@ from typing import SupportsIndex, TypeVar
 import numpy as np
 from numpy.typing import DTypeLike
 
-from redcat.ba2.core import BatchedArray
+from redcat.ba2.core import BatchedArray, implements
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
+@implements(np.mean)
 def mean(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -120,6 +121,7 @@ def mean_along_batch(
     return a.mean_along_batch(out=out, dtype=dtype, keepdims=keepdims)
 
 
+@implements(np.median)
 def median(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -213,6 +215,7 @@ def median_along_batch(
     return a.median_along_batch(out=out, keepdims=keepdims)
 
 
+@implements(np.nanmean)
 def nanmean(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
@@ -310,6 +313,7 @@ def nanmean_along_batch(
     return a.nanmean_along_batch(out=out, dtype=dtype, keepdims=keepdims)
 
 
+@implements(np.nanmedian)
 def nanmedian(
     a: TBatchedArray,
     axis: SupportsIndex | None = None,
