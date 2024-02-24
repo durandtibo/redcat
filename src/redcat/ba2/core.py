@@ -3016,6 +3016,98 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.mean(axis=self._batch_axis, dtype=dtype, out=out, keepdims=keepdims)
 
+    def median(
+        self,
+        axis: SupportsIndex | None = None,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> TBatchedArray | np.ndarray:
+        r"""Return the median along the specified axis.
+
+        Args:
+            axis: Axis along which the cumulative sum is computed.
+                By default, the input is flattened.
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The median along the specified axis. If the input contains
+                integers or floats smaller than float64, then the
+                output data-type is np.float64. Otherwise, the
+                data-type of the output is the same as that of the
+                input. If out is specified, that array is returned
+                instead.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.median()
+        4.5
+        >>> batch.median(axis=0)
+        array([4., 5.])
+        >>> batch.median(axis=0, keepdims=True)
+        array([[4., 5.]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.median(axis=1)
+        array([2., 7.])
+
+        ```
+        """
+        x = np.median(self._data, axis=axis, out=out, keepdims=keepdims)
+        if out is not None:
+            return out
+        return x
+
+    def median_along_batch(
+        self,
+        out: np.ndarray | None = None,
+        keepdims: bool = False,
+    ) -> TBatchedArray | np.ndarray:
+        r"""Return the median along the batch axis.
+
+        Args:
+            out: Alternative output array in which to place the result.
+                It must have the same shape and buffer length as the
+                expected output but the type will be cast if necessary.
+            keepdims: If this is set to True, the axes which are
+                reduced are left in the result as dimensions with size
+                one. With this option, the result will broadcast
+                correctly against the array.
+
+        Returns:
+            The median along the batch axis. If the input contains
+                integers or floats smaller than float64, then the
+                output data-type is np.float64. Otherwise, the
+                data-type of the output is the same as that of the
+                input. If out is specified, that array is returned
+                instead.
+
+        Example usage:
+
+        ```pycon
+        >>> import numpy as np
+        >>> from redcat.ba2 import BatchedArray
+        >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
+        >>> batch.median_along_batch()
+        array([4., 5.])
+        >>> batch.median_along_batch(keepdims=True)
+        array([[4., 5.]])
+        >>> batch = BatchedArray(np.arange(10).reshape(2, 5), batch_axis=1)
+        >>> batch.median_along_batch()
+        array([2., 7.])
+
+        ```
+        """
+        return self.median(axis=self._batch_axis, out=out, keepdims=keepdims)
+
     #################
     #     Other     #
     #################
