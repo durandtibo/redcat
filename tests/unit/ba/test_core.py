@@ -11,7 +11,8 @@ from coola import objects_are_equal
 from numpy.typing import ArrayLike, DTypeLike
 
 from redcat import ba
-from redcat.ba import BatchedArray, arrays_share_data
+from redcat.ba import BatchedArray
+from redcat.utils.array import arrays_share_data
 from tests.conftest import future_test
 
 DTYPES = (bool, int, float)

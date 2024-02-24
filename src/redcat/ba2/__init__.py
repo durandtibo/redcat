@@ -10,6 +10,8 @@ __all__ = [
     "argsort",
     "argsort_along_batch",
     "array",
+    "check_data_and_axis",
+    "check_same_batch_axis",
     "concatenate",
     "concatenate_along_batch",
     "cumprod",
@@ -24,6 +26,7 @@ __all__ = [
     "floor_divide",
     "full",
     "full_like",
+    "get_batch_axes",
     "max",
     "max_along_batch",
     "mean",
@@ -138,3 +141,4 @@ from redcat.ba2.stats import (
     nanmedian,
     nanmedian_along_batch,
 )
+from redcat.ba2.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes

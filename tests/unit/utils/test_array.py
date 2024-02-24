@@ -8,7 +8,13 @@ from coola.utils import is_numpy_available, is_torch_available
 from pytest import mark, raises
 
 from redcat import BatchList
-from redcat.utils.array import get_div_rounding_operator, permute_along_axis, to_array
+from redcat.utils.array import (
+    arrays_share_data,
+    get_data_base,
+    get_div_rounding_operator,
+    permute_along_axis,
+    to_array,
+)
 
 if is_numpy_available():
     import numpy as np
@@ -122,3 +128,43 @@ def test_to_array_float(data: Sequence | np.ndarray) -> None:
 @torch_available
 def test_to_array_torch() -> None:
     assert np.array_equal(to_array(torch.tensor([3, 1, 2, 0, 1])), np.array([3, 1, 2, 0, 1]))
+
+
+#######################################
+#     Tests for arrays_share_data     #
+#######################################
+
+
+def test_arrays_share_data_true() -> None:
+    x = np.ones((2, 3))
+    assert arrays_share_data(x, x)
+
+
+def test_arrays_share_data_true_slice() -> None:
+    x = np.ones((2, 3))
+    assert arrays_share_data(x, x[1:])
+
+
+def test_arrays_share_data_false() -> None:
+    x = np.ones((2, 3))
+    assert not arrays_share_data(x, x.copy())
+
+
+###################################
+#     Tests for get_data_base     #
+###################################
+
+
+def test_get_data_base_true() -> None:
+    x = np.ones((2, 3))
+    assert get_data_base(x) is x
+
+
+def test_get_data_base_true_slice() -> None:
+    x = np.ones((2, 3))
+    assert get_data_base(x[1:]) is x
+
+
+def test_get_data_base_false() -> None:
+    x = np.ones((2, 3))
+    assert get_data_base(x.copy()) is not x
