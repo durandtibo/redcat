@@ -26,6 +26,10 @@ __all__ = [
     "full_like",
     "max",
     "max_along_batch",
+    "mean",
+    "mean_along_batch",
+    "median",
+    "median_along_batch",
     "min",
     "min_along_batch",
     "multiply",
@@ -39,6 +43,10 @@ __all__ = [
     "nancumsum_along_batch",
     "nanmax",
     "nanmax_along_batch",
+    "nanmean",
+    "nanmean_along_batch",
+    "nanmedian",
+    "nanmedian_along_batch",
     "nanmin",
     "nanmin_along_batch",
     "nanprod",
@@ -57,12 +65,6 @@ __all__ = [
     "true_divide",
     "zeros",
     "zeros_like",
-    "mean",
-    "mean_along_batch",
-    "median",
-    "median_along_batch",
-    "nanmean",
-    "nanmean_along_batch",
 ]
 
 from redcat.ba2.core import BatchedArray
@@ -133,4 +135,6 @@ from redcat.ba2.stats import (
     median_along_batch,
     nanmean,
     nanmean_along_batch,
+    nanmedian,
+    nanmedian_along_batch,
 )
