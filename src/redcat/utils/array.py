@@ -1,13 +1,18 @@
 from __future__ import annotations
 
-__all__ = ["get_div_rounding_operator", "permute_along_axis", "to_array"]
+__all__ = [
+    "arrays_share_data",
+    "get_data_base",
+    "get_div_rounding_operator",
+    "permute_along_axis",
+    "to_array",
+]
 
 from collections.abc import Sequence
 from typing import Callable
 
 import numpy as np
 import torch
-from numpy import ndarray
 
 from redcat.base import BaseBatch
 
@@ -39,7 +44,7 @@ def get_div_rounding_operator(mode: str | None) -> Callable:
     raise RuntimeError(f"Incorrect `rounding_mode` {mode}. Valid values are: None and 'floor'")
 
 
-def permute_along_axis(array: ndarray, permutation: ndarray, axis: int = 0) -> ndarray:
+def permute_along_axis(array: np.ndarray, permutation: np.ndarray, axis: int = 0) -> np.ndarray:
     r"""Permutes the values of a array along a given axis.
 
     Args:
@@ -91,7 +96,7 @@ def permute_along_axis(array: ndarray, permutation: ndarray, axis: int = 0) -> n
     return np.swapaxes(np.swapaxes(array, 0, axis)[permutation], 0, axis)
 
 
-def to_array(data: BaseBatch | Sequence | torch.Tensor | ndarray) -> ndarray:
+def to_array(data: BaseBatch | Sequence | torch.Tensor | np.ndarray) -> np.ndarray:
     r"""Converts the input to a ``numpy.ndarray``.
 
     Args:
@@ -112,6 +117,65 @@ def to_array(data: BaseBatch | Sequence | torch.Tensor | ndarray) -> ndarray:
     """
     if isinstance(data, BaseBatch):
         data = data.data
-    if not isinstance(data, ndarray):
+    if not isinstance(data, np.ndarray):
         data = np.asarray(data)
     return data
+
+
+def arrays_share_data(x: np.ndarray, y: np.ndarray) -> bool:
+    r"""Indicate if two arrays share the same data.
+
+    Args:
+        x: Specifies the first array.
+        y: Specifies the second array.
+
+    Returns:
+        ``True`` if the two arrays share the same data, otherwise ``False``.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.utils.array import arrays_share_data
+    >>> x = np.ones((2, 3))
+    >>> arrays_share_data(x, x)
+    True
+    >>> arrays_share_data(x, x.copy())
+    False
+    >>> y = x[1:]
+    >>> arrays_share_data(x, y)
+    True
+
+    ```
+    """
+    return get_data_base(x) is get_data_base(y)
+
+
+def get_data_base(array: np.ndarray) -> np.ndarray:
+    r"""Return the base array that owns the actual data.
+
+    Args:
+        array: Specifies the input array.
+
+    Returns:
+        The array that owns the actual data.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.utils.array import get_data_base
+    >>> x = np.ones((2, 3))
+    >>> get_data_base(x)
+    array([[1., 1., 1.],
+           [1., 1., 1.]])
+    >>> y = x[1:]
+    >>> get_data_base(y)
+    array([[1., 1., 1.],
+           [1., 1., 1.]])
+
+    ```
+    """
+    while isinstance(array.base, np.ndarray):
+        array = array.base
+    return array

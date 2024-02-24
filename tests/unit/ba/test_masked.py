@@ -14,7 +14,8 @@ import pytest
 from coola import objects_are_allclose
 from numpy import ma
 
-from redcat.ba import BatchedArray, arrays_share_data
+from redcat.ba import BatchedArray
+from redcat.utils.array import arrays_share_data
 from tests.unit.ba.test_array_compat import BATCH_CLASSES, PAIRWISE_FUNCTIONS
 
 

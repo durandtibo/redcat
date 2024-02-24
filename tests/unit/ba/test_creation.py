@@ -3,7 +3,8 @@ import pytest
 from numpy.typing import DTypeLike
 
 from redcat import ba
-from redcat.ba import BatchedArray, arrays_share_data
+from redcat.ba import BatchedArray
+from redcat.utils.array import arrays_share_data
 
 DTYPES = (bool, int, float)
 
