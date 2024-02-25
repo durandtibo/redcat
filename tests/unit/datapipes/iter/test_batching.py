@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
+import pytest
 import torch
 from coola import objects_are_equal
-from pytest import mark, raises
 from torch.utils.data.datapipes.iter import IterableWrapper
 
 from redcat import BatchDict, BatchedTensor
@@ -21,12 +21,12 @@ def test_mini_batcher_str() -> None:
     )
 
 
-@mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_mini_batcher_batch_size(batch_size: int) -> None:
     assert MiniBatcher(IterableWrapper([]), batch_size=batch_size).batch_size == batch_size
 
 
-@mark.parametrize("random_seed", (1, 2))
+@pytest.mark.parametrize("random_seed", [1, 2])
 def test_mini_batcher_random_seed(random_seed: int) -> None:
     assert (
         MiniBatcher(
@@ -302,7 +302,9 @@ def test_mini_batcher_iter_repeat() -> None:
 
 
 def test_mini_batcher_len() -> None:
-    with raises(TypeError, match="MiniBatcherIterDataPipe instance doesn't have valid length"):
+    with pytest.raises(
+        TypeError, match="MiniBatcherIterDataPipe instance doesn't have valid length"
+    ):
         len(MiniBatcher(IterableWrapper([]), batch_size=4))
 
 
