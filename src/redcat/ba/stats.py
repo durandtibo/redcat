@@ -22,8 +22,7 @@ from redcat.ba.core import BatchedArray, implements
 if TYPE_CHECKING:
     from numpy.typing import DTypeLike
 
-# Workaround because Self is not available for python 3.9 and 3.10
-# https://peps.python.org/pep-0673/
+
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 
