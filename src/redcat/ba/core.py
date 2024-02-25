@@ -1,3 +1,9 @@
+r"""Contain the implementation of ``BatchedArray``.
+
+``BatchedArray`` is a custom NumPy array container to make batch
+manipulation easier.
+"""
+
 from __future__ import annotations
 
 __all__ = ["BatchedArray", "implements"]
@@ -1183,7 +1189,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     def split_along_axis(
         self, split_size_or_sections: int | Sequence[int], axis: int = 0
     ) -> tuple[TBatchedArray, ...]:
-        r"""Splits the batch into chunks along a given axis.
+        r"""Split the batch into chunks along a given axis.
 
         Notes:
             This function has a slightly different behavior as

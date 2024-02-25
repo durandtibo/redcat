@@ -1,3 +1,5 @@
+r"""Contain utility functions to manage randomness."""
+
 from __future__ import annotations
 
 __all__ = ["get_random_rng", "randperm"]
@@ -54,18 +56,15 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
 
 
 @overload
-def randperm(n: int, rng: np.random.Generator) -> np.ndarray:
-    r"""``randperm`` with a ``numpy.ndarray``."""
+def randperm(n: int, rng: np.random.Generator) -> np.ndarray: ...
 
 
 @overload
-def randperm(n: int, rng: torch.Generator) -> torch.Tensor:
-    r"""``randperm`` with a ``torch.Tensor``."""
+def randperm(n: int, rng: torch.Generator) -> torch.Tensor: ...
 
 
 @overload
-def randperm(n: int, generator: random.Random | int | None = None) -> list[int]:
-    r"""``randperm`` with a ``list``."""
+def randperm(n: int, generator: random.Random | int | None = None) -> list[int]: ...
 
 
 def randperm(

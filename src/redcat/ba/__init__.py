@@ -1,7 +1,8 @@
 r"""Contain the implementation of ``BatchedArray`` and its associated
 functions.
 
-``BatchedArray`` is a custom NumPy array container
+``BatchedArray`` is a custom NumPy array container to make batch
+manipulation easier.
 """
 
 from __future__ import annotations

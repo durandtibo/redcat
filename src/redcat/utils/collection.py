@@ -1,3 +1,5 @@
+r"""Contain utility functions for collection objects."""
+
 from __future__ import annotations
 
 __all__ = ["to_list"]

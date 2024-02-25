@@ -275,7 +275,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def chunk_along_batch(self, chunks: int) -> tuple[TBatch, ...]:
-        r"""Splits the batch into chunks along the batch dimension.
+        r"""Split the batch into chunks along the batch dimension.
 
         Args:
             chunks: Specifies the number of chunks.
@@ -338,7 +338,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def index_select_along_batch(self, index: Tensor | Sequence[int]) -> BaseBatch:
-        r"""Selects data at the given indices along the batch dimension.
+        r"""Select data at the given indices along the batch dimension.
 
         Args:
             index: Specifies the indices to select.
@@ -367,7 +367,7 @@ class BaseBatch(Generic[T], ABC):
         """
 
     def select_along_batch(self, index: int) -> T:
-        r"""Selects the batch along the batch dimension at the given
+        r"""Select the batch along the batch dimension at the given
         index.
 
         Args:
@@ -426,7 +426,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[TBatch, ...]:
-        r"""Splits the batch into chunks along the batch dimension.
+        r"""Split the batch into chunks along the batch dimension.
 
         Args:
             split_size_or_sections: Specifies the size of a single

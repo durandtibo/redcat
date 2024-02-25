@@ -1,3 +1,5 @@
+r"""Contain utility functions for ``torch.Tensor``s."""
+
 from __future__ import annotations
 
 __all__ = [

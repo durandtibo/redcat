@@ -1,3 +1,5 @@
+r"""Contain utility functions for ``numpy.ndarray``s."""
+
 from __future__ import annotations
 
 __all__ = [
