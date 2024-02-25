@@ -11,12 +11,15 @@ import torch
 from torch import Tensor
 
 if TYPE_CHECKING:
+    import sys
     from collections.abc import Iterable, Sequence
 
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
+
 T = TypeVar("T")
-# Workaround because Self is not available for python 3.9 and 3.10
-# https://peps.python.org/pep-0673/
-TBatch = TypeVar("TBatch", bound="BaseBatch")
 
 
 class BaseBatch(Generic[T], ABC):
@@ -46,12 +49,12 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
         >>> data = batch.to_data()
         >>> data
-        tensor([[1., 1., 1.], [1., 1., 1.]])
+        array([[1., 1., 1.], [1., 1., 1.]])
 
         ```
         """
@@ -61,7 +64,7 @@ class BaseBatch(Generic[T], ABC):
     ###############################
 
     @abstractmethod
-    def clone(self) -> TBatch:
+    def clone(self) -> Self:
         r"""Create a copy of the current batch.
 
         Returns:
@@ -70,12 +73,12 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
         >>> batch_copy = batch.clone()
         >>> batch_copy
-        tensor([[1., 1., 1.], [1., 1., 1.]], batch_dim=0)
+        array([[1., 1., 1.], [1., 1., 1.]], batch_axis=0)
 
         ```
         """
@@ -103,10 +106,10 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch1 = BatchedTensor(torch.ones(2, 3))
-        >>> batch2 = BatchedTensor(torch.full((2, 3), 1.5))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch1 = BatchedArray(torch.ones(2, 3))
+        >>> batch2 = BatchedArray(torch.full((2, 3), 1.5))
         >>> batch1.allclose(batch2, atol=1, rtol=0)
         True
 
@@ -127,9 +130,9 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> BatchedTensor(torch.ones(2, 3)).allequal(BatchedTensor(torch.zeros(2, 3)))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> BatchedArray(torch.ones(2, 3)).allequal(BatchedArray(torch.zeros(2, 3)))
         False
 
         ```
@@ -140,7 +143,7 @@ class BaseBatch(Generic[T], ABC):
     ###########################################################
 
     @abstractmethod
-    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatch:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> Self:
         r"""Permutes the data/batch along the batch dimension.
 
         Args:
@@ -154,15 +157,15 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
         >>> batch.permute_along_batch([2, 1, 3, 0, 4])
-        tensor([[4, 5],
-                [2, 3],
-                [6, 7],
-                [0, 1],
-                [8, 9]], batch_dim=0)
+        array([[4, 5],
+               [2, 3],
+               [6, 7],
+               [0, 1],
+               [8, 9]], batch_axis=0)
 
         ```
         """
@@ -179,21 +182,21 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
         >>> batch.permute_along_batch_([2, 1, 3, 0, 4])
         >>> batch
-        tensor([[4, 5],
-                [2, 3],
-                [6, 7],
-                [0, 1],
-                [8, 9]], batch_dim=0)
+        array([[4, 5],
+               [2, 3],
+               [6, 7],
+               [0, 1],
+               [8, 9]], batch_axis=0)
 
         ```
         """
 
-    def shuffle_along_batch(self, generator: torch.Generator | None = None) -> TBatch:
+    def shuffle_along_batch(self, generator: torch.Generator | None = None) -> Self:
         r"""Shuffles the data/batch along the batch dimension.
 
         Args:
@@ -206,11 +209,11 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
         >>> batch.shuffle_along_batch()
-        tensor([[...]], batch_dim=0)
+        array([[...]], batch_axis=0)
 
         ```
         """
@@ -226,12 +229,12 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
         >>> batch.shuffle_along_batch_()
         >>> batch
-        tensor([[...]], batch_dim=0)
+        array([[...]], batch_axis=0)
 
         ```
         """
@@ -261,22 +264,22 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.ones(2, 3))
-        >>> batch.append(BatchedTensor(torch.zeros(1, 3)))
-        >>> batch.append(BatchedTensor(torch.full((1, 3), 2.0)))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.append(BatchedArray(np.zeros((1, 3))))
+        >>> batch.append(BatchedArray(np.full((1, 3), 2.0)))
         >>> batch
-        tensor([[1., 1., 1.],
-                [1., 1., 1.],
-                [0., 0., 0.],
-                [2., 2., 2.]], batch_dim=0)
+        array([[1., 1., 1.],
+               [1., 1., 1.],
+               [0., 0., 0.],
+               [2., 2., 2.]], batch_axis=0)
 
         ```
         """
 
     @abstractmethod
-    def chunk_along_batch(self, chunks: int) -> tuple[TBatch, ...]:
+    def chunk_along_batch(self, chunks: int) -> tuple[Self, ...]:
         r"""Split the batch into chunks along the batch dimension.
 
         Args:
@@ -291,12 +294,12 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> BatchedTensor(torch.arange(10).view(5, 2)).chunk_along_batch(chunks=3)
-        (tensor([[0, 1], [2, 3]], batch_dim=0),
-         tensor([[4, 5], [6, 7]], batch_dim=0),
-         tensor([[8, 9]], batch_dim=0))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).chunk_along_batch(chunks=3)
+        (array([[0, 1], [2, 3]], batch_axis=0),
+         array([[4, 5], [6, 7]], batch_axis=0),
+         array([[8, 9]], batch_axis=0))
 
         ```
         """
@@ -325,15 +328,15 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.ones(2, 3))
-        >>> batch.extend([BatchedTensor(torch.zeros(1, 3)), BatchedTensor(torch.full((1, 3), 2.0))])
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.ones((2, 3)))
+        >>> batch.extend([BatchedArray(np.zeros((1, 3))), BatchedArray(np.full((1, 3), 2.0))])
         >>> batch
-        tensor([[1., 1., 1.],
-                [1., 1., 1.],
-                [0., 0., 0.],
-                [2., 2., 2.]], batch_dim=0)
+        array([[1., 1., 1.],
+               [1., 1., 1.],
+               [0., 0., 0.],
+               [2., 2., 2.]], batch_axis=0)
 
         ```
         """
@@ -352,18 +355,17 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]]))
         >>> batch.index_select_along_batch([2, 4])
-        tensor([[4, 5],
-                [8, 9]], batch_dim=0)
-        >>> batch.index_select_along_batch(torch.tensor([4, 3, 2, 1, 0]))
-        tensor([[8, 9],
-                [6, 7],
-                [4, 5],
-                [2, 3],
-                [0, 1]], batch_dim=0)
+        array([[4, 5], [8, 9]], batch_axis=0)
+        >>> batch.index_select_along_batch(np.array([4, 3, 2, 1, 0]))
+        array([[8, 9],
+               [6, 7],
+               [4, 5],
+               [2, 3],
+               [0, 1]], batch_axis=0)
 
         ```
         """
@@ -382,16 +384,16 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> BatchedTensor(torch.arange(10).view(5, 2)).select_along_batch(2)
-        tensor([4, 5])
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).select_along_batch(2)
+        array([4, 5])
 
         ```
         """
 
     @abstractmethod
-    def slice_along_batch(self, start: int = 0, stop: int | None = None, step: int = 1) -> TBatch:
+    def slice_along_batch(self, start: int = 0, stop: int | None = None, step: int = 1) -> Self:
         r"""Slices the batch in the batch dimension.
 
         Args:
@@ -408,26 +410,26 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(start=2)
-        tensor([[4, 5],
-                [6, 7],
-                [8, 9]], batch_dim=0)
-        >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(stop=3)
-        tensor([[0, 1],
-                [2, 3],
-                [4, 5]], batch_dim=0)
-        >>> BatchedTensor(torch.arange(10).view(5, 2)).slice_along_batch(step=2)
-        tensor([[0, 1],
-                [4, 5],
-                [8, 9]], batch_dim=0)
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(start=2)
+        array([[4, 5],
+               [6, 7],
+               [8, 9]], batch_axis=0)
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(stop=3)
+        array([[0, 1],
+               [2, 3],
+               [4, 5]], batch_axis=0)
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(step=2)
+        array([[0, 1],
+               [4, 5],
+               [8, 9]], batch_axis=0)
 
         ```
         """
 
     @abstractmethod
-    def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[TBatch, ...]:
+    def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[Self, ...]:
         r"""Split the batch into chunks along the batch dimension.
 
         Args:
@@ -440,12 +442,12 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> BatchedTensor(torch.arange(10).view(5, 2)).split_along_batch(2)
-        (tensor([[0, 1], [2, 3]], batch_dim=0),
-         tensor([[4, 5], [6, 7]], batch_dim=0),
-         tensor([[8, 9]], batch_dim=0))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).split_along_batch(2)
+        (array([[0, 1], [2, 3]], batch_axis=0),
+         array([[4, 5], [6, 7]], batch_axis=0),
+         array([[8, 9]], batch_axis=0))
 
         ```
         """
@@ -469,9 +471,9 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(10))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(10))
         >>> batch.get_num_minibatches(batch_size=4)
         3
         >>> batch.get_num_minibatches(batch_size=4, drop_last=True)
@@ -488,7 +490,7 @@ class BaseBatch(Generic[T], ABC):
         batch_size: int,
         drop_last: bool = False,
         deepcopy: bool = False,
-    ) -> Iterable[TBatch]:
+    ) -> Iterable[Self]:
         r"""Get the mini-batches of the current batch.
 
         Args:
@@ -508,29 +510,29 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(20).view(10, 2))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.arange(20).reshape(10, 2))
         >>> list(batch.to_minibatches(batch_size=4))
-        [tensor([[0, 1],
-                 [2, 3],
-                 [4, 5],
-                 [6, 7]], batch_dim=0),
-         tensor([[ 8,  9],
-                 [10, 11],
-                 [12, 13],
-                 [14, 15]], batch_dim=0),
-         tensor([[16, 17],
-                 [18, 19]], batch_dim=0)]
+        [array([[0, 1],
+                [2, 3],
+                [4, 5],
+                [6, 7]], batch_axis=0),
+         array([[ 8,  9],
+                [10, 11],
+                [12, 13],
+                [14, 15]], batch_axis=0),
+         array([[16, 17],
+                [18, 19]], batch_axis=0)]
         >>> list(batch.to_minibatches(batch_size=4, drop_last=True))
-        [tensor([[0, 1],
-                 [2, 3],
-                 [4, 5],
-                 [6, 7]], batch_dim=0),
-         tensor([[ 8,  9],
-                 [10, 11],
-                 [12, 13],
-                 [14, 15]], batch_dim=0)]
+        [array([[0, 1],
+                [2, 3],
+                [4, 5],
+                [6, 7]], batch_axis=0),
+         array([[ 8,  9],
+                [10, 11],
+                [12, 13],
+                [14, 15]], batch_axis=0)]
 
         ```
         """
@@ -557,11 +559,11 @@ class BaseBatch(Generic[T], ABC):
         Example usage:
 
         ```pycon
-        >>> import torch
-        >>> from redcat import BatchedTensor
-        >>> batch = BatchedTensor(torch.arange(20).view(10, 2))
+        >>> import numpy as np
+        >>> from redcat.ba import BatchedArray
+        >>> batch = BatchedArray(np.ones((10, 2)))
         >>> print(batch.summary())
-        BatchedTensor(dtype=torch.int64, shape=torch.Size([10, 2]), device=cpu, batch_dim=0)
+        BatchedArray(dtype=float64, shape=(10, 2), batch_axis=0)
 
         ```
         """
