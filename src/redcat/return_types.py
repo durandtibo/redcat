@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = ["ValuesIndicesTuple"]
 
 from collections import namedtuple
-from typing import Any
 
 from coola import objects_are_equal
 from coola.utils import str_indent, str_mapping
@@ -31,14 +30,14 @@ class ValuesIndicesTuple(namedtuple("TupleValuesIndices", ["values", "indices"])
         tensor([0, 1, 2, 3, 4, 5])
     """
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ValuesIndicesTuple):
             return False
         return objects_are_equal(self.values, other.values) and objects_are_equal(
             self.indices, other.indices
         )
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self) -> str:

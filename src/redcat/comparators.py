@@ -62,7 +62,7 @@ class BatchEqualHandler(BaseEqualityHandler):
     ) -> bool:
         object_equal = batch_equal(object1, object2, config)
         if config.show_difference and not object_equal:
-            logger.info(f"batches are not equal:\n" f"object1:\n{object1}\nobject2:\n{object2}")
+            logger.info(f"batches are not equal:\nobject1:\n{object1}\nobject2:\n{object2}")
         return object_equal
 
     def set_next_handler(self, handler: BaseEqualityHandler) -> None:
@@ -76,7 +76,7 @@ class BatchEqualityComparator(BaseEqualityComparator[BaseBatch]):
         self._handler = SameObjectHandler()
         self._handler.chain(SameTypeHandler()).chain(BatchEqualHandler())
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, self.__class__)
 
     def clone(self) -> BatchEqualityComparator:

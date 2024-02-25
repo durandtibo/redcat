@@ -95,7 +95,7 @@ class BatchedTensorSeq(BatchedTensor):
         kwargs: dict[str, Any] | None = None,
     ) -> BatchedTensorSeq:
         kwargs = kwargs or {}
-        if handled_func := HANDLED_FUNCTIONS.get(func, None):
+        if handled_func := HANDLED_FUNCTIONS.get(func):
             return handled_func(*args, **kwargs)
 
         batch_dims = get_batch_dims(args, kwargs)

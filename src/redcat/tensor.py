@@ -67,7 +67,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         kwargs: dict[str, Any] | None = None,
     ) -> TBatchedTensor:
         kwargs = kwargs or {}
-        if handled_func := HANDLED_FUNCTIONS.get(func, None):
+        if handled_func := HANDLED_FUNCTIONS.get(func):
             return handled_func(*args, **kwargs)
 
         batch_dims = get_batch_dims(args, kwargs)
@@ -523,7 +523,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Comparison operations     #
     #################################
 
-    def __eq__(self, other: Any) -> TBatchedTensor:
+    def __eq__(self, other: object) -> TBatchedTensor:
         return self.eq(other)
 
     def __ge__(self, other: Any) -> TBatchedTensor:

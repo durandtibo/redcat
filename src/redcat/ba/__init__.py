@@ -1,3 +1,9 @@
+r"""Contain the implementation of ``BatchedArray`` and its associated
+functions.
+
+``BatchedArray`` is a custom NumPy array container
+"""
+
 from __future__ import annotations
 
 __all__ = [
