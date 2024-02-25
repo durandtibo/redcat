@@ -1,3 +1,7 @@
+r"""Root package of ``redcat``."""
+
+from __future__ import annotations
+
 __all__ = [
     "BaseBatch",
     "BatchDict",

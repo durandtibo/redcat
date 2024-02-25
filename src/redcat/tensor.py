@@ -35,7 +35,7 @@ HANDLED_FUNCTIONS = {}
 
 
 class BatchedTensor(BaseBatch[Tensor]):
-    r"""Implements a batched tensor to easily manipulate a batch of
+    r"""Implement a batched tensor to easily manipulate a batch of
     examples.
 
     Args:

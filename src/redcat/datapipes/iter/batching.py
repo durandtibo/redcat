@@ -1,3 +1,6 @@
+r"""Contain the implementation of a ``IterDataPipe`` to generate mini-
+batches."""
+
 from __future__ import annotations
 
 __all__ = ["MiniBatcherIterDataPipe"]
@@ -21,7 +24,7 @@ T = TypeVar("T")
 
 
 class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
-    r"""Implements a DataPipe to generate mini-batches from a batch
+    r"""Implement a DataPipe to generate mini-batches from a batch
     (``BaseBatch`` object).
 
     Args:
@@ -85,9 +88,8 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
         datapipe_or_batch = self._datapipe_or_batch
         if isinstance(datapipe_or_batch, BaseBatch):
             datapipe_or_batch = IterableWrapper([datapipe_or_batch])
-        for batch in datapipe_or_batch:
-            if self._shuffle:
-                batch = batch.shuffle_along_batch(self._generator)
+        for item in datapipe_or_batch:
+            batch = item.shuffle_along_batch(self._generator) if self._shuffle else item
             yield from batch.to_minibatches(batch_size=self._batch_size, drop_last=self._drop_last)
 
     def __len__(self) -> int:

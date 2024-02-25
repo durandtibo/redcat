@@ -1,3 +1,5 @@
+r"""Contain mathematical functions for ``BatchedArray``."""
+
 from __future__ import annotations
 
 __all__ = [

@@ -1,3 +1,5 @@
+r"""Contain the implementation of the ``BatchDict``."""
+
 from __future__ import annotations
 
 __all__ = ["BatchDict", "check_same_batch_size", "check_same_keys", "get_seq_lens"]
@@ -30,7 +32,7 @@ TBatchDict = TypeVar("TBatchDict", bound="BatchDict")
 
 
 class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
-    r"""Implements a batch object to represent a dictionary of batches.
+    r"""Implement a batch object to represent a dictionary of batches.
 
     Args:
         data: Specifies the dictionary of batches.
@@ -196,9 +198,8 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         """
         out = {}
         for key, val in self._data.items():
-            if hasattr(val, "permute_along_seq"):
-                val = val.permute_along_seq(permutation)
-            out[key] = val
+            item = val.permute_along_seq(permutation) if hasattr(val, "permute_along_seq") else val
+            out[key] = item
         return self.__class__(out)
 
     def permute_along_seq_(self, permutation: Sequence[int] | Tensor) -> None:
@@ -381,8 +382,10 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         out = {}
         for key, val in self._data.items():
             if hasattr(val, "cat_along_seq"):
-                val = val.cat_along_seq([batch[key] for batch in batches])
-            out[key] = val
+                item = val.cat_along_seq([batch[key] for batch in batches])
+            else:
+                item = val
+            out[key] = item
         return self.__class__(out)
 
     def cat_along_seq_(self, batches: TBaseBatch | Sequence[TBaseBatch]) -> None:
@@ -426,10 +429,14 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchDict, ...]:
         keys = self._data.keys()
-        batches = []
-        for values in zip(*[batch.chunk_along_batch(chunks) for batch in self._data.values()]):
-            batches.append(self.__class__(dict(zip(keys, values))))
-        return tuple(batches)
+        return tuple(
+            [
+                self.__class__(dict(zip(keys, values)))
+                for values in zip(
+                    *[batch.chunk_along_batch(chunks) for batch in self._data.values()]
+                )
+            ]
+        )
 
     def extend(self, other: Iterable[BatchDict | Sequence[TBatchDict]]) -> None:
         for batch in other:
@@ -483,8 +490,10 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         out = {}
         for key, val in self._data.items():
             if hasattr(val, "index_select_along_seq"):
-                val = val.index_select_along_seq(index)
-            out[key] = val
+                item = val.index_select_along_seq(index)
+            else:
+                item = val
+            out[key] = item
         return self.__class__(out)
 
     def repeat_along_seq(self, repeats: int) -> TBatchDict:
@@ -519,9 +528,8 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         """
         out = {}
         for key, val in self._data.items():
-            if hasattr(val, "repeat_along_seq"):
-                val = val.repeat_along_seq(repeats)
-            out[key] = val
+            item = val.repeat_along_seq(repeats) if hasattr(val, "repeat_along_seq") else val
+            out[key] = item
         return self.__class__(out)
 
     def select_along_batch(self, index: int) -> dict:
@@ -583,26 +591,33 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         out = {}
         for key, val in self._data.items():
             if hasattr(val, "slice_along_seq"):
-                val = val.slice_along_seq(start, stop, step)
-            out[key] = val
+                item = val.slice_along_seq(start, stop, step)
+            else:
+                item = val
+            out[key] = item
         return self.__class__(out)
 
     def split_along_batch(
         self, split_size_or_sections: int | Sequence[int]
     ) -> tuple[TBatchDict, ...]:
         keys = self._data.keys()
-        batches = []
-        for values in zip(
-            *[batch.split_along_batch(split_size_or_sections) for batch in self._data.values()]
-        ):
-            batches.append(self.__class__(dict(zip(keys, values))))
-        return tuple(batches)
+        return tuple(
+            [
+                self.__class__(dict(zip(keys, values)))
+                for values in zip(
+                    *[
+                        batch.split_along_batch(split_size_or_sections)
+                        for batch in self._data.values()
+                    ]
+                )
+            ]
+        )
 
     def take_along_seq(self, indices: TBaseBatch | np.ndarray | Tensor | Sequence) -> TBatchDict:
         r"""Take values along the sequence dimension.
 
         Args:
-            indices:Specifies the indices to take along the batch
+            indices: Specifies the indices to take along the batch
                 dimension.
 
         Returns:
@@ -630,9 +645,8 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         """
         out = {}
         for key, val in self._data.items():
-            if hasattr(val, "take_along_seq"):
-                val = val.take_along_seq(indices)
-            out[key] = val
+            item = val.take_along_seq(indices) if hasattr(val, "take_along_seq") else val
+            out[key] = item
         return self.__class__(out)
 
     ########################
@@ -649,10 +663,10 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
 
 
 def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
-    r"""Check if the all the batches in a group have the same batch size.
+    r"""Check if the all the batches have the same batch size.
 
     Args:
-        group: Specifies the group of batches to check.
+        data: Specifies the data to check.
 
     Raises:
         RuntimeError: if there are several batch sizes.
@@ -714,7 +728,7 @@ def check_same_keys(data1: dict, data2: dict) -> None:
     keys1 = set(data1.keys())
     keys2 = set(data2.keys())
     if keys1 != keys2:
-        msg = f"Keys do not match: ({keys1} vs {keys2})"
+        msg = f"Keys do not match: {keys1.difference(keys2)}\ndata1: {keys1}\ndata2: {keys1}"
         raise RuntimeError(msg)
 
 

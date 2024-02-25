@@ -136,8 +136,10 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         for inp in inputs:
             if isinstance(inp, self.__class__):
                 batch_axes.add(inp.batch_axis)
-                inp = inp.data
-            args.append(inp)
+                data = inp.data
+            else:
+                data = inp
+            args.append(data)
         check_same_batch_axis(batch_axes)
 
         results = self._data.__array_ufunc__(ufunc, method, *args, **kwargs)
@@ -932,8 +934,10 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         for a in arrays:
             if isinstance(a, self.__class__):
                 batch_axes.add(a.batch_axis)
-                a = a.data
-            arr.append(a)
+                data = a.data
+            else:
+                data = a
+            arr.append(data)
         check_same_batch_axis(batch_axes)
         out = np.concatenate(arr, axis=axis)
         if axis is None:

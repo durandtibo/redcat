@@ -1,3 +1,5 @@
+r"""Contain testing utility functions."""
+
 from __future__ import annotations
 
 __all__ = ["FunctionCheck", "normal_arrays", "uniform_arrays", "uniform_int_arrays"]
@@ -10,8 +12,8 @@ import numpy as np
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
-# Default shape value
-SHAPE = (4, 10)
+
+SHAPE = (4, 10)  # Default shape value
 
 
 def normal_arrays(
@@ -152,6 +154,32 @@ def uniform_int_arrays(
 
 @dataclass
 class FunctionCheck:
+    r"""Implement a class to easily check NumPy functions.
+
+    Args:
+        function: The function to check.
+        nin: The number of input arrays.
+        nout: The number of output arrays.
+        arrays: The arrays to use as input of the function.
+            If ``None``, arrays are automatically generated with values
+            sampled from a Normal distribution.
+
+    Example usage:
+
+    ```pycon
+    >>> import numpy as np
+    >>> from redcat.ba.testing import FunctionCheck
+    >>> check = FunctionCheck(np.add, nin=2, nout=1)
+    >>> check
+    FunctionCheck(function=<ufunc 'add'>, nin=2, nout=1, arrays=None)
+    >>> check = FunctionCheck(np.add, nin=2, nout=1, arrays=(np.ones((2, 3)), np.ones((2, 3))))
+    >>> check
+    FunctionCheck(function=<ufunc 'add'>, nin=2, nout=1,
+    arrays=(array([[1., 1., 1.], [1., 1., 1.]]), array([[1., 1., 1.], [1., 1., 1.]])))
+
+    ```
+    """
+
     function: Callable
     nin: int
     nout: int

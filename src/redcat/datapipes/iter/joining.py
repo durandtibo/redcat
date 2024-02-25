@@ -1,3 +1,6 @@
+r"""Contain the implementation of a ``IterDataPipe`` to join mini-
+batches."""
+
 from __future__ import annotations
 
 __all__ = ["BatchExtenderIterDataPipe", "create_large_batch"]
@@ -19,8 +22,8 @@ T = TypeVar("T")
 
 
 class BatchExtenderIterDataPipe(IterDataPipe[BaseBatch[T]]):
-    r"""Implements a DataPipe to combine several ``BaseBatch`` object
-    into a single ``BaseBatch`` object.
+    r"""Implement a DataPipe to combine several ``BaseBatch`` object into
+    a single ``BaseBatch`` object.
 
     Args:
         datapipe: Specifies the source DataPipe. The DataPipe has to

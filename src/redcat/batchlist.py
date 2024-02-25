@@ -1,3 +1,5 @@
+r"""Contain the implementation of the ``BatchList``."""
+
 from __future__ import annotations
 
 __all__ = ["BatchList"]
@@ -22,8 +24,7 @@ TBatchList = TypeVar("TBatchList", bound="BatchList")
 
 
 class BatchList(BaseBatch[list[T]]):
-    r"""Implements a batch object to easily manipulate a list of
-    examples.
+    r"""Implement a batch object to easily manipulate a list of examples.
 
     Args:
         data: Specifies the list of examples.

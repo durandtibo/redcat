@@ -1,3 +1,5 @@
+r"""Contain joining functions for ``BatchedArray``."""
+
 from __future__ import annotations
 
 __all__ = ["concatenate", "concatenate_along_batch"]

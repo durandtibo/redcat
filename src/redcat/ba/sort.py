@@ -1,3 +1,5 @@
+r"""Contain functions to sort data."""
+
 from __future__ import annotations
 
 __all__ = [
