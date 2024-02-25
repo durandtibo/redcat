@@ -113,13 +113,8 @@ def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     ```pycon
     >>> import numpy as np
     >>> import torch
-    >>> from redcat import BatchedArray, BatchedTensor
+    >>> from redcat import BatchedTensor
     >>> from redcat.utils.common import get_batch_dims
-    >>> get_batch_dims(
-    ...     args=(BatchedArray(torch.ones(2, 3)), BatchedArray(torch.ones(2, 6))),
-    ...     kwargs={"batch": BatchedArray(torch.ones(2, 4))},
-    ... )
-    {0}
     >>> get_batch_dims(
     ...     args=(BatchedTensor(torch.ones(2, 3)), BatchedTensor(torch.ones(2, 6))),
     ...     kwargs={"batch": BatchedTensor(torch.ones(2, 4))},
@@ -148,7 +143,8 @@ def get_data(data: BaseBatch[T] | Any) -> T:
     ```pycon
     >>> import numpy as np
     >>> import torch
-    >>> from redcat import BatchedArray, BatchedTensor
+    >>> from redcat import BatchedTensor
+    >>> from redcat.ba import BatchedArray
     >>> from redcat.utils.common import get_data
     >>> get_data(BatchedArray(np.ones((2, 3))))
     array([[1., 1., 1.],
@@ -162,9 +158,7 @@ def get_data(data: BaseBatch[T] | Any) -> T:
 
     ```
     """
-    from redcat import BatchedArray  # TODO: remove BatchedArray when finish
-
-    if isinstance(data, (BaseBatch, BatchedArray)):
+    if isinstance(data, BaseBatch):
         data = data.data
     return data
 
