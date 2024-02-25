@@ -976,7 +976,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def add(
         self,
         other: BatchedTensor | Tensor | float,
-        alpha: float = 1.0,
+        alpha: float = 1,
     ) -> Self:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         batch.
@@ -1012,7 +1012,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def add_(
         self,
         other: BatchedTensor | Tensor | float,
-        alpha: float = 1.0,
+        alpha: float = 1,
     ) -> None:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         batch.

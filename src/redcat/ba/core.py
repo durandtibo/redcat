@@ -491,7 +491,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self._data.__itruediv__(self._get_data(other))
         return self
 
-    def add(self, other: BatchedArray | np.ndarray | float, alpha: float = 1.0) -> Self:
+    def add(self, other: BatchedArray | np.ndarray | float, alpha: float = 1) -> Self:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         batch.
 
@@ -528,7 +528,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     def add_(
         self,
         other: BatchedArray | np.ndarray | float,
-        alpha: float = 1.0,
+        alpha: float = 1,
     ) -> None:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         batch.
@@ -797,7 +797,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     def sub_(
         self,
         other: BatchedArray | np.ndarray | float,
-        alpha: float = 1.0,
+        alpha: float = 1,
     ) -> None:
         r"""Subtracts the input ``other``, scaled by ``alpha``, to the
         ``self`` batch.
