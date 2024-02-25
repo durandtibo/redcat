@@ -51,8 +51,10 @@ def check_batched_tensor() -> None:
 
 def check_batched_tensor_seq() -> None:
     logger.info("Checking BatchedTensorSeq...")
-    assert (
-        BatchedTensorSeq(torch.arange(10).view(2, 5)).sum_along_seq().equal(torch.tensor([10, 35]))
+    batch = BatchedTensorSeq(torch.tensor([[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]))
+    assert batch.sum().equal(torch.tensor(45))
+    assert batch.add(BatchedTensorSeq(torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 0]]))).allequal(
+        BatchedTensorSeq(torch.tensor([[1, 3, 5, 7, 9], [11, 13, 15, 17, 9]]))
     )
 
 
