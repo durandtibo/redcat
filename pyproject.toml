@@ -34,7 +34,9 @@ coola = ">=0.3,<0.4"
 numpy = ">=1.22,<2.0"
 python = ">=3.9,<3.12"
 torch = ">=1.11,<3.0"  # TODO: make optional
-typing-extensions = ">=4.0,<5.0"  # TODO: make optional but make torch optional first as it is a torch dependency
+# TODO: make optional but make torch optional first as it is a torch dependency
+#  only necessary for python <3.11
+typing-extensions = { version =">=4.0,<5.0", python = "<3.11" }
 
 [tool.poetry.group.docs]
 optional = true
