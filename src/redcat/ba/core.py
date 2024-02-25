@@ -68,7 +68,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             return False
         return objects_are_equal(self.data, other.data, equal_nan=equal_nan)
 
-    def append(self: Self, other: BatchedArray | np.ndarray) -> None:
+    def append(self, other: BatchedArray | np.ndarray) -> None:
         self.concatenate_along_batch_([other])
 
     def chunk_along_batch(self, chunks: int) -> tuple[Self, ...]:
