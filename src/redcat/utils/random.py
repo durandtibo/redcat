@@ -56,15 +56,17 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
 
 
 @overload
-def randperm(n: int, rng: np.random.Generator) -> np.ndarray: ...
+def randperm(n: int, rng: np.random.Generator) -> np.ndarray: ...  # pragma: no cover
 
 
 @overload
-def randperm(n: int, rng: torch.Generator) -> torch.Tensor: ...
+def randperm(n: int, rng: torch.Generator) -> torch.Tensor: ...  # pragma: no cover
 
 
 @overload
-def randperm(n: int, generator: random.Random | int | None = None) -> list[int]: ...
+def randperm(
+    n: int, generator: random.Random | int | None = None
+) -> list[int]: ...  # pragma: no cover
 
 
 def randperm(

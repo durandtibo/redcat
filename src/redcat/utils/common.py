@@ -198,15 +198,17 @@ def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = No
 
 
 @overload
-def swap2(sequence: Tensor, index0: int, index1: int) -> Tensor: ...
+def swap2(sequence: Tensor, index0: int, index1: int) -> Tensor: ...  # pragma: no cover
 
 
 @overload
-def swap2(sequence: np.ndarray, index0: int, index1: int) -> np.ndarray: ...
+def swap2(sequence: np.ndarray, index0: int, index1: int) -> np.ndarray: ...  # pragma: no cover
 
 
 @overload
-def swap2(sequence: MutableSequence, index0: int, index1: int) -> MutableSequence: ...
+def swap2(
+    sequence: MutableSequence, index0: int, index1: int
+) -> MutableSequence: ...  # pragma: no cover
 
 
 def swap2(
