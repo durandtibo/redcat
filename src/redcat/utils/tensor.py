@@ -143,7 +143,7 @@ def compute_batch_seq_permutation(
     new_batch_dim: int,
     new_seq_dim: int,
 ) -> list[int]:
-    r"""Computes the permutation to update the batch and sequence
+    r"""Compute the permutation to update the batch and sequence
     dimensions.
 
     Args:
@@ -197,7 +197,7 @@ def compute_batch_seq_permutation(
 def get_torch_generator(
     random_seed: int = 1, device: torch.device | str | None = "cpu"
 ) -> torch.Generator:
-    r"""Creates a ``torch.Generator`` initialized with a given seed.
+    r"""Create a ``torch.Generator`` initialized with a given seed.
 
     Args:
         random_seed: Specifies a random seed.
@@ -278,7 +278,7 @@ def permute_along_dim(tensor: Tensor, permutation: Tensor, dim: int = 0) -> Tens
 
 
 def to_tensor(data: BaseBatch | Sequence | Tensor | np.ndarray) -> Tensor:
-    r"""Converts the input to a ``torch.Tensor``.
+    r"""Convert the input to a ``torch.Tensor``.
 
     Args:
         data: Specifies the data to convert to a tensor.

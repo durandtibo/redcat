@@ -599,7 +599,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         return tuple(batches)
 
     def take_along_seq(self, indices: TBaseBatch | np.ndarray | Tensor | Sequence) -> TBatchDict:
-        r"""Takes values along the sequence dimension.
+        r"""Take values along the sequence dimension.
 
         Args:
             indices:Specifies the indices to take along the batch
@@ -649,8 +649,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
 
 
 def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
-    r"""Checks if the all the batches in a group have the same batch
-    size.
+    r"""Check if the all the batches in a group have the same batch size.
 
     Args:
         group: Specifies the group of batches to check.
@@ -685,7 +684,7 @@ def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
 
 
 def check_same_keys(data1: dict, data2: dict) -> None:
-    r"""Checks if the dictionaries have the same keys.
+    r"""Check if the dictionaries have the same keys.
 
     Args:
         data1: Specifies the first dictionary.
@@ -720,7 +719,7 @@ def check_same_keys(data1: dict, data2: dict) -> None:
 
 
 def get_seq_lens(data: dict[Hashable, BaseBatch]) -> set[int]:
-    r"""Gets the sequence lengths from the inputs.
+    r"""Get the sequence lengths from the inputs.
 
     Args:
         data: Specifies the data with the sequences.

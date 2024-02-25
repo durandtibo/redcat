@@ -85,11 +85,11 @@ def test_batched_array_allclose_false_different_axes() -> None:
 
 @pytest.mark.parametrize(
     ("array", "atol"),
-    (
+    [
         (ba.full(shape=(2, 3), fill_value=1.5), 1),
         (ba.full(shape=(2, 3), fill_value=1.05), 1e-1),
         (ba.full(shape=(2, 3), fill_value=1.005), 1e-2),
-    ),
+    ],
 )
 def test_batched_array_allclose_true_atol(array: ba.BatchedArray, atol: float) -> None:
     assert ba.ones((2, 3)).allclose(array, atol=atol, rtol=0)
@@ -97,11 +97,11 @@ def test_batched_array_allclose_true_atol(array: ba.BatchedArray, atol: float) -
 
 @pytest.mark.parametrize(
     ("array", "rtol"),
-    (
+    [
         (ba.full(shape=(2, 3), fill_value=1.5), 1),
         (ba.full(shape=(2, 3), fill_value=1.05), 1e-1),
         (ba.full(shape=(2, 3), fill_value=1.005), 1e-2),
-    ),
+    ],
 )
 def test_batched_array_allclose_true_rtol(array: ba.BatchedArray, rtol: float) -> None:
     assert ba.ones((2, 3)).allclose(array, rtol=rtol)
@@ -141,7 +141,7 @@ def test_batched_array_allequal_equal_nan_true() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (ba.array([[10, 11, 12], [13, 14, 15]]), np.array([[10, 11, 12], [13, 14, 15]])),
+    [ba.array([[10, 11, 12], [13, 14, 15]]), np.array([[10, 11, 12], [13, 14, 15]])],
 )
 def test_batched_array_append(
     other: ba.BatchedArray | np.ndarray,
@@ -220,13 +220,13 @@ def test_batched_array_clone() -> None:
 
 @pytest.mark.parametrize(
     "arrays",
-    (
+    [
         [ba.array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
         (ba.array([[10, 11, 12], [13, 14, 15]]),),
         [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
-    ),
+    ],
 )
 def test_batched_array_extend(
     arrays: Iterable[ba.BatchedArray | np.ndarray],
@@ -291,7 +291,7 @@ def test_batched_array_index_select_along_batch_custom_axes() -> None:
     )
 
 
-@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", [np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)])
 def test_batched_array_permute_along_batch(permutation: Sequence[int] | np.ndarray) -> None:
     assert (
         ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
@@ -308,7 +308,7 @@ def test_batched_array_permute_along_batch_custom_axes() -> None:
     )
 
 
-@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", [np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)])
 def test_batched_array_permute_along_batch_(permutation: Sequence[int] | np.ndarray) -> None:
     batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch.permute_along_batch_(permutation)
@@ -739,7 +739,7 @@ def test_batched_array_empty_like_custom_batch_size(batch_size: int) -> None:
     assert array.batch_axis == 0
 
 
-@pytest.mark.parametrize("fill_value", (1.5, 2.0, -1.0))
+@pytest.mark.parametrize("fill_value", [1.5, 2.0, -1.0])
 def test_batched_array_full_like(fill_value: float) -> None:
     assert (
         ba.zeros(shape=(2, 3))
@@ -854,13 +854,13 @@ def test_batched_array_zeros_like_custom_batch_size(batch_size: int) -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 5), fill_value=5.0),
         np.full(shape=(2, 5), fill_value=5.0),
         ba.full(shape=(2, 1), fill_value=5),
         5,
         5.0,
-    ),
+    ],
 )
 def test_batched_array__eq__(other: np.ndarray | float) -> None:
     assert objects_are_equal(
@@ -897,13 +897,13 @@ def test_batched_array__eq__different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 5), fill_value=5.0),
         np.full(shape=(2, 5), fill_value=5.0),
         ba.full(shape=(2, 1), fill_value=5),
         5,
         5.0,
-    ),
+    ],
 )
 def test_batched_array__ge__(other: np.ndarray | float) -> None:
     assert objects_are_equal(
@@ -940,13 +940,13 @@ def test_batched_array__ge__different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 5), fill_value=5.0),
         np.full(shape=(2, 5), fill_value=5.0),
         ba.full(shape=(2, 1), fill_value=5),
         5,
         5.0,
-    ),
+    ],
 )
 def test_batched_array__gt__(other: np.ndarray | float) -> None:
     assert objects_are_equal(
@@ -983,13 +983,13 @@ def test_batched_array__gt__different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 5), fill_value=5.0),
         np.full(shape=(2, 5), fill_value=5.0),
         ba.full(shape=(2, 1), fill_value=5),
         5,
         5.0,
-    ),
+    ],
 )
 def test_batched_array__le__(other: np.ndarray | float) -> None:
     assert objects_are_equal(
@@ -1026,13 +1026,13 @@ def test_batched_array__le__different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 5), fill_value=5.0),
         np.full(shape=(2, 5), fill_value=5.0),
         ba.full(shape=(2, 1), fill_value=5),
         5,
         5.0,
-    ),
+    ],
 )
 def test_batched_array__lt__(other: np.ndarray | float) -> None:
     assert objects_are_equal(
@@ -1069,13 +1069,13 @@ def test_batched_array__lt__different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 5), fill_value=5.0),
         np.full(shape=(2, 5), fill_value=5.0),
         ba.full(shape=(2, 1), fill_value=5),
         5,
         5.0,
-    ),
+    ],
 )
 def test_batched_array__ne__(other: np.ndarray | float) -> None:
     assert objects_are_equal(
@@ -1117,13 +1117,13 @@ def test_batched_array__ne__different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.ones(shape=(2, 3)),
         np.ones(shape=(2, 3)),
         ba.ones(shape=(2, 1)),
         1,
         1.0,
-    ),
+    ],
 )
 def test_batched_array__add__(other: np.ndarray | float) -> None:
     assert (ba.zeros(shape=(2, 3)) + other).allequal(ba.ones(shape=(2, 3)))
@@ -1144,13 +1144,13 @@ def test_batched_array__add___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.ones(shape=(2, 3)),
         np.ones(shape=(2, 3)),
         ba.ones(shape=(2, 1)),
         1,
         1.0,
-    ),
+    ],
 )
 def test_batched_array__iadd__(other: np.ndarray | float) -> None:
     batch = ba.zeros(shape=(2, 3))
@@ -1173,13 +1173,13 @@ def test_batched_array__iadd___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__floordiv__(other: np.ndarray | float) -> None:
     assert (ba.ones(shape=(2, 3)) // other).allequal(ba.zeros(shape=(2, 3)))
@@ -1200,13 +1200,13 @@ def test_batched_array__floordiv___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__ifloordiv__(other: np.ndarray | float) -> None:
     batch = ba.ones(shape=(2, 3))
@@ -1229,13 +1229,13 @@ def test_batched_array__ifloordiv___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__mod__(other: np.ndarray | float) -> None:
     assert (ba.ones(shape=(2, 3)) % other).allequal(ba.ones(shape=(2, 3)))
@@ -1256,13 +1256,13 @@ def test_batched_array__mod___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__imod__(other: np.ndarray | float) -> None:
     batch = ba.ones(shape=(2, 3))
@@ -1285,13 +1285,13 @@ def test_batched_array__imod___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__mul__(other: np.ndarray | float) -> None:
     assert (ba.ones(shape=(2, 3)) * other).allequal(ba.full(shape=(2, 3), fill_value=2.0))
@@ -1312,13 +1312,13 @@ def test_batched_array__mul___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__imul__(other: np.ndarray | float) -> None:
     batch = ba.ones(shape=(2, 3))
@@ -1351,13 +1351,13 @@ def test_batched_array__neg__custom_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__sub__(other: np.ndarray | float) -> None:
     assert (ba.ones(shape=(2, 3)) - other).allequal(ba.full(shape=(2, 3), fill_value=-1.0))
@@ -1378,13 +1378,13 @@ def test_batched_array__sub___different_axes() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         ba.full(shape=(2, 3), fill_value=2.0),
         np.full(shape=(2, 3), fill_value=2.0),
         ba.full(shape=(2, 1), fill_value=2.0),
         2,
         2.0,
-    ),
+    ],
 )
 def test_batched_array__isub__(other: np.ndarray | float) -> None:
     batch = ba.ones(shape=(2, 3))
@@ -1909,13 +1909,13 @@ def test_batched_array__setitem___array_value(value: np.ndarray | ba.BatchedArra
 
 @pytest.mark.parametrize(
     "arrays",
-    (
+    [
         [ba.array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
         (ba.array([[10, 11, 12], [13, 14, 15]]),),
         [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
-    ),
+    ],
 )
 def test_batched_array_concatenate_axis_0(
     arrays: Iterable[ba.BatchedArray | np.ndarray],
@@ -1928,13 +1928,13 @@ def test_batched_array_concatenate_axis_0(
 
 @pytest.mark.parametrize(
     "arrays",
-    (
+    [
         [ba.array([[10, 11], [12, 13]])],
         [np.array([[10, 11], [12, 13]])],
         (ba.array([[10, 11], [12, 13]]),),
         [ba.array([[10], [12]]), ba.array([[11], [13]])],
         [ba.array([[10], [12]]), np.array([[11], [13]])],
-    ),
+    ],
 )
 def test_batched_array_concatenate_axis_1(
     arrays: Iterable[ba.BatchedArray | np.ndarray],
@@ -1978,13 +1978,13 @@ def test_batched_array_concatenate_different_axes() -> None:
 
 @pytest.mark.parametrize(
     "arrays",
-    (
+    [
         [ba.array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
         (ba.array([[10, 11, 12], [13, 14, 15]]),),
         [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
-    ),
+    ],
 )
 def test_batched_array_concatenate__axis_0(
     arrays: Iterable[ba.BatchedArray | np.ndarray],
@@ -1996,13 +1996,13 @@ def test_batched_array_concatenate__axis_0(
 
 @pytest.mark.parametrize(
     "arrays",
-    (
+    [
         [ba.array([[10, 11], [12, 13]])],
         [np.array([[10, 11], [12, 13]])],
         (ba.array([[10, 11], [12, 13]]),),
         [ba.array([[10], [12]]), ba.array([[11], [13]])],
         [ba.array([[10], [12]]), np.array([[11], [13]])],
-    ),
+    ],
 )
 def test_batched_array_concatenate__axis_1(
     arrays: Iterable[ba.BatchedArray | np.ndarray],
@@ -2038,13 +2038,13 @@ def test_batched_array_concatenate__different_axes() -> None:
 
 @pytest.mark.parametrize(
     "arrays",
-    (
+    [
         [ba.array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
         (ba.array([[10, 11, 12], [13, 14, 15]]),),
         [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
-    ),
+    ],
 )
 def test_batched_array_concatenate_along_batch(
     arrays: Iterable[ba.BatchedArray | np.ndarray],
@@ -2079,13 +2079,13 @@ def test_batched_array_concatenate_along_batch_different_axes() -> None:
 
 @pytest.mark.parametrize(
     "arrays",
-    (
+    [
         [ba.array([[10, 11, 12], [13, 14, 15]])],
         [np.array([[10, 11, 12], [13, 14, 15]])],
         (ba.array([[10, 11, 12], [13, 14, 15]]),),
         [ba.array([[10, 11, 12]]), ba.array([[13, 14, 15]])],
         [ba.array([[10, 11, 12]]), np.array([[13, 14, 15]])],
-    ),
+    ],
 )
 def test_batched_array_concatenate_along_batch_(
     arrays: Iterable[ba.BatchedArray | np.ndarray],
@@ -2346,7 +2346,7 @@ def test_batched_array_split_along_axis_split_list() -> None:
 ##############################################################
 
 
-@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", [np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)])
 def test_batched_array_permute_along_axis_0(permutation: Sequence[int] | np.ndarray) -> None:
     assert (
         ba.BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
@@ -2356,7 +2356,7 @@ def test_batched_array_permute_along_axis_0(permutation: Sequence[int] | np.ndar
 
 
 @pytest.mark.parametrize(
-    "permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+    "permutation", [np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)]
 )
 def test_batched_array_permute_along_axis_1(permutation: Sequence[int] | np.ndarray) -> None:
     assert (
@@ -2374,7 +2374,7 @@ def test_batched_array_permute_along_axis_custom_axes() -> None:
     )
 
 
-@pytest.mark.parametrize("permutation", (np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", [np.array([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)])
 def test_batched_array_permute_along_axis__0(permutation: Sequence[int] | np.ndarray) -> None:
     batch = ba.BatchedArray(np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     batch.permute_along_axis_(permutation, axis=0)
@@ -2382,7 +2382,7 @@ def test_batched_array_permute_along_axis__0(permutation: Sequence[int] | np.nda
 
 
 @pytest.mark.parametrize(
-    "permutation", (np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+    "permutation", [np.array([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)]
 )
 def test_batched_array_permute_along_axis__1(permutation: Sequence[int] | np.ndarray) -> None:
     batch = ba.BatchedArray(np.arange(10).reshape(2, 5))

@@ -230,11 +230,11 @@ def test_batch_dict_allclose_false_different_data() -> None:
 
 @pytest.mark.parametrize(
     ("batch", "atol"),
-    (
+    [
         (BatchDict({"key": BatchList([0.5, 1.5, 2.5, 3.5])}), 1.0),
         (BatchDict({"key": BatchList([0.05, 1.05, 2.05, 3.05])}), 1e-1),
         (BatchDict({"key": BatchList([0.005, 1.005, 2.005, 3.005])}), 1e-2),
-    ),
+    ],
 )
 def test_batch_dict_allclose_true_atol(batch: BatchList, atol: float) -> None:
     assert BatchDict({"key": BatchList([0.0, 1.0, 2.0, 3.0])}).allclose(batch, atol=atol, rtol=0)
@@ -242,11 +242,11 @@ def test_batch_dict_allclose_true_atol(batch: BatchList, atol: float) -> None:
 
 @pytest.mark.parametrize(
     ("batch", "rtol"),
-    (
+    [
         (BatchDict({"key": BatchList([1.5, 2.5, 3.5])}), 1.0),
         (BatchDict({"key": BatchList([1.05, 2.05, 3.05])}), 1e-1),
         (BatchDict({"key": BatchList([1.005, 2.005, 3.005])}), 1e-2),
-    ),
+    ],
 )
 def test_batch_dict_allclose_true_rtol(batch: BatchList, rtol: float) -> None:
     assert BatchDict({"key": BatchList([1.0, 2.0, 3.0])}).allclose(batch, rtol=rtol)
@@ -273,7 +273,7 @@ def test_batch_dict_allequal_false_different_data() -> None:
 ###########################################################
 
 
-@pytest.mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", [torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)])
 def test_batch_dict_permute_along_batch(permutation: Sequence[int] | Tensor) -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
@@ -284,7 +284,7 @@ def test_batch_dict_permute_along_batch(permutation: Sequence[int] | Tensor) -> 
     )
 
 
-@pytest.mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", [torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)])
 def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
     batch.permute_along_batch_(permutation)
@@ -294,7 +294,7 @@ def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
 
 
 @pytest.mark.parametrize(
-    "permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+    "permutation", [torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)]
 )
 def test_batch_dict_permute_along_seq(permutation: Sequence[int] | Tensor) -> None:
     assert (
@@ -322,7 +322,7 @@ def test_batch_dict_permute_along_seq_no_seq() -> None:
 
 
 @pytest.mark.parametrize(
-    "permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+    "permutation", [torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)]
 )
 def test_batch_dict_permute_along_seq_(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchDict(
@@ -578,7 +578,7 @@ def test_batch_dict_append_missing_key() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),
         BatchDict(
             {
@@ -592,7 +592,7 @@ def test_batch_dict_append_missing_key() -> None:
             BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11], [20, 21]]))}),
             BatchDict({"key1": BatchedTensorSeq(torch.tensor([[12], [22]]))}),
         ],
-    ),
+    ],
 )
 def test_batched_tensor_seq_cat_along_seq(other: BatchDict | Sequence[BatchDict]) -> None:
     assert (
@@ -623,7 +623,7 @@ def test_batch_dict_cat_along_seq_empty() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),
         BatchDict(
             {
@@ -637,7 +637,7 @@ def test_batch_dict_cat_along_seq_empty() -> None:
             BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11], [20, 21]]))}),
             BatchDict({"key1": BatchedTensorSeq(torch.tensor([[12], [22]]))}),
         ],
-    ),
+    ],
 )
 def test_batched_tensor_seq_cat_along_seq_(other: BatchDict | Sequence[BatchDict]) -> None:
     batch = BatchDict(
@@ -712,13 +712,13 @@ def test_batch_dict_chunk_along_batch_incorrect_chunks() -> None:
 
 @pytest.mark.parametrize(
     "other",
-    (
+    [
         [
             BatchDict({"key1": BatchList([4]), "key2": BatchList(["d"])}),
             BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
         ],
         [BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])})],
-    ),
+    ],
 )
 def test_batch_dict_extend(
     other: Iterable[BatchDict],
@@ -732,7 +732,7 @@ def test_batch_dict_extend(
     )
 
 
-@pytest.mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
+@pytest.mark.parametrize("index", [torch.tensor([2, 0]), [2, 0], (2, 0)])
 def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> None:
     assert (
         BatchDict(
@@ -744,7 +744,7 @@ def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> N
 
 
 @pytest.mark.parametrize(
-    "index", (torch.tensor([2, 0]), torch.tensor([[2, 0], [2, 0]]), [2, 0], (2, 0))
+    "index", [torch.tensor([2, 0]), torch.tensor([[2, 0], [2, 0]]), [2, 0], (2, 0)]
 )
 def test_batch_dict_index_select_along_seq(index: Tensor | Sequence[int]) -> None:
     assert (

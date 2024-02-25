@@ -96,7 +96,7 @@ class BatchExtenderIterDataPipe(IterDataPipe[BaseBatch[T]]):
 
 
 def create_large_batch(batches: Sequence[BaseBatch[T]]) -> BaseBatch[T]:
-    r"""Creates a large batch from a sequence of batches.
+    r"""Create a large batch from a sequence of batches.
 
     Args:
         batches: Specifies the sequence of batches.

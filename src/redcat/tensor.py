@@ -115,7 +115,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._data.shape
 
     def dim(self) -> int:
-        r"""Gets the number of dimensions.
+        r"""Get the number of dimensions.
 
         Returns:
             int: The number of dimensions
@@ -133,7 +133,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._data.dim()
 
     def ndimension(self) -> int:
-        r"""Gets the number of dimensions.
+        r"""Get the number of dimensions.
 
         Returns:
             int: The number of dimensions
@@ -151,7 +151,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self.dim()
 
     def numel(self) -> int:
-        r"""Gets the total number of elements in the tensor.
+        r"""Get the total number of elements in the tensor.
 
         Returns:
             int: The total number of elements
@@ -175,7 +175,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def contiguous(
         self, memory_format: torch.memory_format = torch.contiguous_format
     ) -> TBatchedTensor:
-        r"""Creates a batch with a contiguous representation of the data.
+        r"""Create a batch with a contiguous representation of the data.
 
         Args:
             memory_format (``torch.memory_format``, optional):
@@ -199,7 +199,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.contiguous(memory_format=memory_format))
 
     def is_contiguous(self, memory_format: torch.memory_format = torch.contiguous_format) -> bool:
-        r"""Indicates if a batch as a contiguous representation of the
+        r"""Indicate if a batch as a contiguous representation of the
         data.
 
         Args:
@@ -223,7 +223,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.is_contiguous(memory_format=memory_format)
 
-    def to(self, *args, **kwargs) -> TBatchedTensor:
+    def to(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
         r"""Moves and/or casts the data.
 
         Args:
@@ -254,8 +254,8 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Creation operations     #
     ###############################
 
-    def clone(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates a copy of the current batch.
+    def clone(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
+        r"""Create a copy of the current batch.
 
         Args:
             *args: See the documentation of ``torch.Tensor.clone``
@@ -278,8 +278,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._create_new_batch(self._data.clone(*args, **kwargs))
 
-    def empty_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates an uninitialized batch, with the same shape as the
+    def empty_like(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
+        r"""Create an uninitialized batch, with the same shape as the
         current batch.
 
         Args:
@@ -303,8 +303,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._create_new_batch(torch.empty_like(self._data, *args, **kwargs))
 
-    def full_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates a batch filled with a given scalar value, with the
+    def full_like(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
+        r"""Create a batch filled with a given scalar value, with the
         same shape as the current batch.
 
         Args:
@@ -335,7 +335,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch_size: int | None = None,
         **kwargs,
     ) -> TBatchedTensor:
-        r"""Creates a batch filled with a scalar value.
+        r"""Create a batch filled with a scalar value.
 
         By default, the tensor in the returned batch has the same
         shape, ``torch.dtype`` and ``torch.device`` as the tensor in
@@ -382,7 +382,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch_size: int | None = None,
         **kwargs,
     ) -> BatchedTensor:
-        r"""Creates a batch filled with the scalar value ``1``.
+        r"""Create a batch filled with the scalar value ``1``.
 
         By default, the tensor in the returned batch has the same
         shape, ``torch.dtype`` and ``torch.device`` as the tensor in
@@ -428,7 +428,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         batch_size: int | None = None,
         **kwargs,
     ) -> TBatchedTensor:
-        r"""Creates a batch filled with the scalar value ``0``.
+        r"""Create a batch filled with the scalar value ``0``.
 
         By default, the tensor in the returned batch has the same
         shape, ``torch.dtype`` and ``torch.device`` as the tensor
@@ -469,8 +469,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         kwargs["device"] = kwargs.get("device", self.device)
         return self._create_new_batch(torch.zeros(*shape, **kwargs))
 
-    def ones_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates a batch filled with the scalar value ``1``, with the
+    def ones_like(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
+        r"""Create a batch filled with the scalar value ``1``, with the
         same shape as the current batch.
 
         Args:
@@ -496,8 +496,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._create_new_batch(torch.ones_like(self._data, *args, **kwargs))
 
-    def zeros_like(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Creates a batch filled with the scalar value ``0``, with the
+    def zeros_like(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
+        r"""Create a batch filled with the scalar value ``0``, with the
         same shape as the current batch.
 
         Args:
@@ -563,7 +563,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return objects_are_equal(self._data, other.data)
 
     def eq(self, other: BatchedTensor | Tensor | bool | float) -> TBatchedTensor:
-        r"""Computes element-wise equality.
+        r"""Compute element-wise equality.
 
         Args:
             other: Specifies the batch to compare.
@@ -615,7 +615,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self.allequal(other)
 
     def ge(self, other: BatchedTensor | Tensor | bool | float) -> TBatchedTensor:
-        r"""Computes ``self >= other`` element-wise.
+        r"""Compute ``self >= other`` element-wise.
 
         Args:
             other: Specifies the value to compare
@@ -646,7 +646,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.ge(self, other)
 
     def gt(self, other: BatchedTensor | Tensor | bool | float) -> TBatchedTensor:
-        r"""Computes ``self > other`` element-wise.
+        r"""Compute ``self > other`` element-wise.
 
         Args:
             other: Specifies the batch to compare.
@@ -676,7 +676,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.gt(self, other)
 
     def isinf(self) -> TBatchedTensor:
-        r"""Indicates if each element of the batch is infinite (positive
+        r"""Indicate if each element of the batch is infinite (positive
         or negative infinity) or not.
 
         Returns:
@@ -700,8 +700,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.isinf(self)
 
     def isneginf(self) -> TBatchedTensor:
-        r"""Indicates if each element of the batch is negative infinity
-        or not.
+        r"""Indicate if each element of the batch is negative infinity or
+        not.
 
         Returns:
             ``BatchedTensor``:  A batch containing a boolean tensor
@@ -724,8 +724,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.isneginf(self)
 
     def isposinf(self) -> TBatchedTensor:
-        r"""Indicates if each element of the batch is positive infinity
-        or not.
+        r"""Indicate if each element of the batch is positive infinity or
+        not.
 
         Returns:
             ``BatchedTensor``:  A batch containing a boolean tensor
@@ -748,7 +748,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.isposinf(self)
 
     def isnan(self) -> TBatchedTensor:
-        r"""Indicates if each element in the batch is NaN or not.
+        r"""Indicate if each element in the batch is NaN or not.
 
         Returns:
             ``BatchedTensor``:  A batch containing a boolean tensor
@@ -771,7 +771,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.isnan(self)
 
     def le(self, other: BatchedTensor | Tensor | bool | float) -> TBatchedTensor:
-        r"""Computes ``self <= other`` element-wise.
+        r"""Compute ``self <= other`` element-wise.
 
         Args:
             other: Specifies the batch to compare.
@@ -801,7 +801,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.le(self, other)
 
     def lt(self, other: BatchedTensor | Tensor | bool | float) -> TBatchedTensor:
-        r"""Computes ``self < other`` element-wise.
+        r"""Compute ``self < other`` element-wise.
 
         Args:
             other: Specifies the batch to compare.
@@ -835,7 +835,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     #################
 
     def bool(self) -> TBatchedTensor:
-        r"""Converts the current batch to bool data type.
+        r"""Convert the current batch to bool data type.
 
         Returns:
             ``BatchedTensor``: The current batch to bool data type.
@@ -853,7 +853,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.bool())
 
     def double(self) -> TBatchedTensor:
-        r"""Converts the current batch to double (``float64``) data type.
+        r"""Convert the current batch to double (``float64``) data type.
 
         Returns:
             ``BatchedTensor``: The current batch to double data type.
@@ -871,7 +871,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.double())
 
     def float(self) -> TBatchedTensor:
-        r"""Converts the current batch to float (``float32``) data type.
+        r"""Convert the current batch to float (``float32``) data type.
 
         Returns:
             ``BatchedTensor``: The current batch to float data type.
@@ -889,7 +889,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.float())
 
     def int(self) -> TBatchedTensor:
-        r"""Converts the current batch to int (``int32``) data type.
+        r"""Convert the current batch to int (``int32``) data type.
 
         Returns:
             ``BatchedTensor``: The current batch to int data type.
@@ -907,7 +907,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.int())
 
     def long(self) -> TBatchedTensor:
-        r"""Converts the current batch to long (``int64``) data type.
+        r"""Convert the current batch to long (``int64``) data type.
 
         Returns:
             ``BatchedTensor``: The current batch to long data type.
@@ -971,8 +971,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | float,
         alpha: float = 1.0,
     ) -> TBatchedTensor:
-        r"""Adds the input ``other``, scaled by ``alpha``, to the
-        ``self`` batch.
+        r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
+        batch.
 
         Similar to ``out = self + alpha * other``
 
@@ -1009,8 +1009,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | float,
         alpha: float = 1.0,
     ) -> None:
-        r"""Adds the input ``other``, scaled by ``alpha``, to the
-        ``self`` batch.
+        r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
+        batch.
 
         Similar to ``self += alpha * other`` (in-place)
 
@@ -1116,7 +1116,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self,
         divisor: BatchedTensor | Tensor | float,
     ) -> TBatchedTensor:
-        r"""Computes the element-wise remainder of division.
+        r"""Compute the element-wise remainder of division.
 
         The current batch is the dividend.
 
@@ -1146,7 +1146,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.fmod(self, divisor)
 
     def fmod_(self, divisor: BatchedTensor | Tensor | float) -> None:
-        r"""Computes the element-wise remainder of division.
+        r"""Compute the element-wise remainder of division.
 
         The current batch is the dividend.
 
@@ -1228,7 +1228,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.mul_(other)
 
     def neg(self) -> TBatchedTensor:
-        r"""Returns a new batch with the negative of the elements.
+        r"""Return a new batch with the negative of the elements.
 
         Returns:
             ``BatchedTensor``: A new batch with the negative of
@@ -1324,7 +1324,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     ###########################################################
 
     def argsort(self, dim: int = -1, **kwargs) -> TBatchedTensor:
-        r"""Returns the indices that sort the batch along a given
+        r"""Return the indices that sort the batch along a given
         dimension in monotonic order by value.
 
         Args:
@@ -1376,8 +1376,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.argsort(dim=self._batch_dim, **kwargs)
 
-    def cumprod(self, dim: int, *args, **kwargs) -> TBatchedTensor:
-        r"""Computes the cumulative product of elements of the current
+    def cumprod(self, dim: int, *args: Any, **kwargs: Any) -> TBatchedTensor:
+        r"""Compute the cumulative product of elements of the current
         batch in a given dimension.
 
         Args:
@@ -1402,8 +1402,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.cumprod(self, dim, *args, **kwargs)
 
-    def cumprod_(self, dim: int, *args, **kwargs) -> None:
-        r"""Computes the cumulative product of elements of the current
+    def cumprod_(self, dim: int, *args: Any, **kwargs: Any) -> None:
+        r"""Compute the cumulative product of elements of the current
         batch in a given dimension.
 
         Args:
@@ -1425,8 +1425,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         self._data.cumprod_(dim, *args, **kwargs)
 
-    def cumprod_along_batch(self, *args, **kwargs) -> TBatchedTensor:
-        r"""Computes the cumulative product of elements of the current
+    def cumprod_along_batch(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
+        r"""Compute the cumulative product of elements of the current
         batch in the batch dimension.
 
         Args:
@@ -1450,8 +1450,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.cumprod(self._batch_dim, *args, **kwargs)
 
-    def cumprod_along_batch_(self, *args, **kwargs) -> None:
-        r"""Computes the cumulative product of elements of the current
+    def cumprod_along_batch_(self, *args: Any, **kwargs: Any) -> None:
+        r"""Compute the cumulative product of elements of the current
         batch in the batch dimension.
 
         Args:
@@ -1473,7 +1473,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self.cumprod_(self._batch_dim, *args, **kwargs)
 
     def cumsum(self, dim: int, **kwargs) -> TBatchedTensor:
-        r"""Computes the cumulative sum of elements of the current batch
+        r"""Compute the cumulative sum of elements of the current batch
         in a given dimension.
 
         Args:
@@ -1498,7 +1498,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.cumsum(self, dim=dim, **kwargs)
 
     def cumsum_(self, dim: int, **kwargs) -> None:
-        r"""Computes the cumulative sum of elements of the current batch
+        r"""Compute the cumulative sum of elements of the current batch
         in a given dimension.
 
         Args:
@@ -1520,7 +1520,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.cumsum_(dim=dim, **kwargs)
 
     def cumsum_along_batch(self, **kwargs) -> TBatchedTensor:
-        r"""Computes the cumulative sum of elements of the current batch
+        r"""Compute the cumulative sum of elements of the current batch
         in the batch dimension.
 
         Args:
@@ -1544,7 +1544,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self.cumsum(self._batch_dim, **kwargs)
 
     def cumsum_along_batch_(self) -> None:
-        r"""Computes the cumulative sum of elements of the current batch
+        r"""Compute the cumulative sum of elements of the current batch
         in the batch dimension.
 
         Example usage:
@@ -1562,7 +1562,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self.cumsum_(self._batch_dim)
 
     def logcumsumexp(self, dim: int) -> TBatchedTensor:
-        r"""Computes the logarithm of the cumulative summation of the
+        r"""Compute the logarithm of the cumulative summation of the
         exponentiation of elements of the current batch in a given
         dimension.
 
@@ -1588,7 +1588,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.logcumsumexp(self, dim=dim)
 
     def logcumsumexp_(self, dim: int) -> None:
-        r"""Computes the logarithm of the cumulative summation of the
+        r"""Compute the logarithm of the cumulative summation of the
         exponentiation of elements of the current batch in a given
         dimension.
 
@@ -1610,7 +1610,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data = self._data.logcumsumexp(dim=dim)
 
     def logcumsumexp_along_batch(self) -> TBatchedTensor:
-        r"""Computes the logarithm of the cumulative summation of the
+        r"""Compute the logarithm of the cumulative summation of the
         exponentiation of elements of the current batch in the batch
         dimension.
 
@@ -1636,7 +1636,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self.logcumsumexp(self._batch_dim)
 
     def logcumsumexp_along_batch_(self) -> None:
-        r"""Computes the logarithm of the cumulative summation of the
+        r"""Compute the logarithm of the cumulative summation of the
         exponentiation of elements of the current batch in the batch
         dimension.
 
@@ -1776,7 +1776,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         self._data = self.shuffle_along_dim(dim=dim, generator=generator).data
 
-    def sort(self, *args, **kwargs) -> torch.return_types.sort:
+    def sort(self, *args: Any, **kwargs: Any) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along a given dimension in
         monotonic order by value.
 
@@ -1809,7 +1809,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         out = torch.sort(self._data, *args, **kwargs)
         return type(out)([self._create_new_batch(o) for o in out])
 
-    def sort_along_batch(self, *args, **kwargs) -> torch.return_types.sort:
+    def sort_along_batch(self, *args: Any, **kwargs: Any) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
@@ -1846,7 +1846,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     ################################################
 
     def abs(self) -> TBatchedTensor:
-        r"""Computes the absolute value of each element.
+        r"""Compute the absolute value of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the absolute value of
@@ -1866,7 +1866,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.abs())
 
     def abs_(self) -> None:
-        r"""Computes the absolute value of each element.
+        r"""Compute the absolute value of each element.
 
         In-place version of ``abs()``.
 
@@ -1969,7 +1969,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.clamp_(min=min, max=max)
 
     def exp(self) -> TBatchedTensor:
-        r"""Computes the exponential of the elements.
+        r"""Compute the exponential of the elements.
 
         Returns:
             ``BatchedTensor``: A batch with the exponential of the
@@ -1989,7 +1989,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.exp(self)
 
     def exp_(self) -> None:
-        r"""Computes the exponential of the elements.
+        r"""Compute the exponential of the elements.
 
         In-place version of ``exp()``.
 
@@ -2008,7 +2008,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.exp_()
 
     def log(self) -> BatchedTensor:
-        r"""Computes the natural logarithm of the elements.
+        r"""Compute the natural logarithm of the elements.
 
         Returns:
             ``BatchedTensor``: A batch with the natural
@@ -2030,7 +2030,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.log(self)
 
     def log_(self) -> None:
-        r"""Computes the natural logarithm of the elements.
+        r"""Compute the natural logarithm of the elements.
 
         In-place version of ``log()``.
 
@@ -2051,7 +2051,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.log_()
 
     def log10(self) -> BatchedTensor:
-        r"""Computes the logarithm to the base 10 of the elements.
+        r"""Compute the logarithm to the base 10 of the elements.
 
         Returns:
             ``BatchedTensor``: A batch with the logarithm to the
@@ -2073,7 +2073,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.log10(self)
 
     def log10_(self) -> None:
-        r"""Computes the logarithm to the base 10 of the elements.
+        r"""Compute the logarithm to the base 10 of the elements.
 
         In-place version of ``log10()``.
 
@@ -2094,7 +2094,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.log10_()
 
     def log1p(self) -> BatchedTensor:
-        r"""Computes the natural logarithm of ``self + 1``.
+        r"""Compute the natural logarithm of ``self + 1``.
 
         Returns:
             ``BatchedTensor``: A batch with the natural
@@ -2116,7 +2116,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.log1p(self)
 
     def log1p_(self) -> None:
-        r"""Computes the natural logarithm of ``self + 1``.
+        r"""Compute the natural logarithm of ``self + 1``.
 
         In-place version of ``log1p()``.
 
@@ -2137,7 +2137,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.log1p_()
 
     def log2(self) -> BatchedTensor:
-        r"""Computes the logarithm to the base 2 of the elements.
+        r"""Compute the logarithm to the base 2 of the elements.
 
         Returns:
             ``BatchedTensor``: A batch with the logarithm to the
@@ -2159,7 +2159,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.log2(self)
 
     def log2_(self) -> None:
-        r"""Computes the logarithm to the base 2 of the elements.
+        r"""Compute the logarithm to the base 2 of the elements.
 
         In-place version of ``log2()``.
 
@@ -2180,7 +2180,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.log2_()
 
     def maximum(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
-        r"""Computes the element-wise maximum of ``self`` and ``other``.
+        r"""Compute the element-wise maximum of ``self`` and ``other``.
 
         Args:
             other (``BatchedTensor`` or ``torch.Tensor``): Specifies
@@ -2207,7 +2207,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(torch.maximum(self._data, other))
 
     def minimum(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
-        r"""Computes the element-wise minimum of ``self`` and ``other``.
+        r"""Compute the element-wise minimum of ``self`` and ``other``.
 
         Args:
             other (``BatchedTensor`` or ``torch.Tensor``): Specifies
@@ -2234,7 +2234,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(torch.minimum(self._data, other))
 
     def pow(self, exponent: float | BatchedTensor) -> TBatchedTensor:
-        r"""Computes the power of each element with the given exponent.
+        r"""Compute the power of each element with the given exponent.
 
         Args:
             exponent (int or float or ``BatchedTensor``): Specifies
@@ -2260,7 +2260,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.pow(self, exponent)
 
     def pow_(self, exponent: float | BatchedTensor) -> None:
-        r"""Computes the power of each element with the given exponent.
+        r"""Compute the power of each element with the given exponent.
 
         In-place version of ``pow(exponent)``.
 
@@ -2286,7 +2286,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.pow_(exponent)
 
     def rsqrt(self) -> TBatchedTensor:
-        r"""Computes the reciprocal of the square-root of each element.
+        r"""Compute the reciprocal of the square-root of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the square-root of
@@ -2306,7 +2306,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.rsqrt(self)
 
     def rsqrt_(self) -> None:
-        r"""Computes the reciprocal of the square-root of each element.
+        r"""Compute the reciprocal of the square-root of each element.
 
         In-place version of ``rsqrt()``.
 
@@ -2325,7 +2325,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.rsqrt_()
 
     def sqrt(self) -> TBatchedTensor:
-        r"""Computes the square-root of each element.
+        r"""Compute the square-root of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the square-root of
@@ -2345,7 +2345,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.sqrt(self)
 
     def sqrt_(self) -> None:
-        r"""Computes the square-root of each element.
+        r"""Compute the square-root of each element.
 
         In-place version of ``sqrt()``.
 
@@ -2367,8 +2367,8 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Reduction operations     #
     ################################
 
-    def amax(self, *args, **kwargs) -> Tensor:
-        r"""Computes the maximum value of all elements or along a
+    def amax(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the maximum value of all elements or along a
         dimension.
 
         Args:
@@ -2397,8 +2397,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.amax(*args, **kwargs)
 
-    def amax_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the maximum along the batch dimension.
+    def amax_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the maximum along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.amax``
@@ -2421,8 +2421,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.amax(self._batch_dim, *args, **kwargs)
 
-    def amin(self, *args, **kwargs) -> Tensor:
-        r"""Computes the minimum value of all elements or along a
+    def amin(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the minimum value of all elements or along a
         dimension.
 
         Args:
@@ -2451,8 +2451,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.amin(*args, **kwargs)
 
-    def amin_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the minimum along the batch dimension.
+    def amin_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the minimum along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.amin``
@@ -2475,8 +2475,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.amin(self._batch_dim, *args, **kwargs)
 
-    def argmax(self, *args, **kwargs) -> Tensor:
-        r"""Computes the indices of the maximum value of all elements or
+    def argmax(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the indices of the maximum value of all elements or
         along a specific dimension.
 
         Args:
@@ -2503,8 +2503,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.argmax(*args, **kwargs)
 
-    def argmax_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the indices of the maximum value along the batch
+    def argmax_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the indices of the maximum value along the batch
         dimension.
 
         Args:
@@ -2529,8 +2529,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.argmax(self._batch_dim, *args, **kwargs)
 
-    def argmin(self, *args, **kwargs) -> Tensor:
-        r"""Computes the indices of the minimum value of all elements or
+    def argmin(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the indices of the minimum value of all elements or
         along a specific dimension.
 
         Args:
@@ -2557,8 +2557,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.argmin(*args, **kwargs)
 
-    def argmin_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the indices of the minimum value along the batch
+    def argmin_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the indices of the minimum value along the batch
         dimension.
 
         Args:
@@ -2583,8 +2583,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.argmin(self._batch_dim, *args, **kwargs)
 
-    def max(self, *args, **kwargs) -> Tensor | torch.return_types.max:
-        r"""Computes the maximum of all elements or along a dimension.
+    def max(self, *args: Any, **kwargs: Any) -> Tensor | torch.return_types.max:
+        r"""Compute the maximum of all elements or along a dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.max``
@@ -2614,8 +2614,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.max(*args, **kwargs)
 
-    def max_along_batch(self, *args, **kwargs) -> torch.return_types.max:
-        r"""Computes the maximum values along the batch dimension.
+    def max_along_batch(self, *args: Any, **kwargs: Any) -> torch.return_types.max:
+        r"""Compute the maximum values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.max``
@@ -2643,8 +2643,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.max(self._batch_dim, *args, **kwargs)
 
-    def mean(self, *args, **kwargs) -> Tensor:
-        r"""Computes the mean of all elements.
+    def mean(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the mean of all elements.
 
         Args:
             *args: See the documentation of ``torch.Tensor.mean``
@@ -2669,8 +2669,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.mean(*args, **kwargs)
 
-    def mean_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the mean values along the batch dimension.
+    def mean_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the mean values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.mean``
@@ -2694,8 +2694,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.mean(self._batch_dim, *args, **kwargs)
 
-    def median(self, *args, **kwargs) -> Tensor | torch.return_types.median:
-        r"""Computes the median of all elements.
+    def median(self, *args: Any, **kwargs: Any) -> Tensor | torch.return_types.median:
+        r"""Compute the median of all elements.
 
         Args:
             *args: See the documentation of ``torch.Tensor.median``
@@ -2728,8 +2728,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.median(*args, **kwargs)
 
-    def median_along_batch(self, *args, **kwargs) -> torch.return_types.median:
-        r"""Computes the median values along the batch dimension.
+    def median_along_batch(self, *args: Any, **kwargs: Any) -> torch.return_types.median:
+        r"""Compute the median values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.median``
@@ -2755,8 +2755,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.median(self._batch_dim, *args, **kwargs)
 
-    def min(self, *args, **kwargs) -> Tensor | torch.return_types.min:
-        r"""Computes the minimum of all elements or along a dimension.
+    def min(self, *args: Any, **kwargs: Any) -> Tensor | torch.return_types.min:
+        r"""Compute the minimum of all elements or along a dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.min``
@@ -2786,8 +2786,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.min(*args, **kwargs)
 
-    def min_along_batch(self, *args, **kwargs) -> torch.return_types.min:
-        r"""Computes the minimum values along the batch dimension.
+    def min_along_batch(self, *args: Any, **kwargs: Any) -> torch.return_types.min:
+        r"""Compute the minimum values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.min``
@@ -2815,8 +2815,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.min(self._batch_dim, *args, **kwargs)
 
-    def nanmean(self, *args, **kwargs) -> Tensor:
-        r"""Computes the mean of all elements.
+    def nanmean(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the mean of all elements.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nanmean``
@@ -2841,8 +2841,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.nanmean(*args, **kwargs)
 
-    def nanmean_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the mean values along the batch dimension.
+    def nanmean_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the mean values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nanmean``
@@ -2868,8 +2868,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.nanmean(self._batch_dim, *args, **kwargs)
 
-    def nanmedian(self, *args, **kwargs) -> Tensor | torch.return_types.nanmedian:
-        r"""Computes the median of all elements.
+    def nanmedian(self, *args: Any, **kwargs: Any) -> Tensor | torch.return_types.nanmedian:
+        r"""Compute the median of all elements.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nanmedian``
@@ -2902,8 +2902,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.nanmedian(*args, **kwargs)
 
-    def nanmedian_along_batch(self, *args, **kwargs) -> torch.return_types.nanmedian:
-        r"""Computes the median values along the batch dimension.
+    def nanmedian_along_batch(self, *args: Any, **kwargs: Any) -> torch.return_types.nanmedian:
+        r"""Compute the median values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nanmedian``
@@ -2931,8 +2931,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.nanmedian(self._batch_dim, *args, **kwargs)
 
-    def nansum(self, *args, **kwargs) -> Tensor:
-        r"""Computes the sum of all elements.
+    def nansum(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the sum of all elements.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nansum``
@@ -2957,8 +2957,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.nansum(*args, **kwargs)
 
-    def nansum_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the sum values along the batch dimension.
+    def nansum_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the sum values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nansum``
@@ -2982,8 +2982,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.nansum(self._batch_dim, *args, **kwargs)
 
-    def prod(self, *args, **kwargs) -> Tensor:
-        r"""Computes the product of all elements.
+    def prod(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the product of all elements.
 
         Args:
             *args: See the documentation of ``torch.Tensor.prod``
@@ -3009,7 +3009,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._data.prod(*args, **kwargs)
 
     def prod_along_batch(self, keepdim: bool = False) -> Tensor:
-        r"""Computes the product values along the batch dimension.
+        r"""Compute the product values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.prod``
@@ -3033,8 +3033,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self.prod(dim=self._batch_dim, keepdim=keepdim)
 
-    def sum(self, *args, **kwargs) -> Tensor:
-        r"""Computes the sum of all elements.
+    def sum(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the sum of all elements.
 
         Args:
             *args: See the documentation of ``torch.Tensor.sum``
@@ -3059,8 +3059,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._data.sum(*args, **kwargs)
 
-    def sum_along_batch(self, *args, **kwargs) -> Tensor:
-        r"""Computes the sum values along the batch dimension.
+    def sum_along_batch(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the sum values along the batch dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.sum``
@@ -3087,7 +3087,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     ###########################################
 
     def acos(self) -> TBatchedTensor:
-        r"""Computes the inverse cosine (arccos) of each element.
+        r"""Compute the inverse cosine (arccos) of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the inverse cosine
@@ -3107,7 +3107,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.acos(self)
 
     def acos_(self) -> None:
-        r"""Computes the inverse cosine (arccos) of each element.
+        r"""Compute the inverse cosine (arccos) of each element.
 
         In-place version of ``acos()``.
 
@@ -3126,7 +3126,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.acos_()
 
     def acosh(self) -> TBatchedTensor:
-        r"""Computes the inverse hyperbolic cosine (arccosh) of each
+        r"""Compute the inverse hyperbolic cosine (arccosh) of each
         element.
 
         Returns:
@@ -3147,7 +3147,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.acosh(self)
 
     def acosh_(self) -> None:
-        r"""Computes the inverse hyperbolic cosine (arccosh) of each
+        r"""Compute the inverse hyperbolic cosine (arccosh) of each
         element.
 
         Returns:
@@ -3169,7 +3169,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.acosh_()
 
     def asin(self) -> TBatchedTensor:
-        r"""Computes the inverse cosine (arcsin) of each element.
+        r"""Compute the inverse cosine (arcsin) of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the inverse sine
@@ -3189,7 +3189,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.asin(self)
 
     def asin_(self) -> None:
-        r"""Computes the inverse sine (arcsin) of each element.
+        r"""Compute the inverse sine (arcsin) of each element.
 
         In-place version of ``asin()``.
 
@@ -3208,7 +3208,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.asin_()
 
     def asinh(self) -> TBatchedTensor:
-        r"""Computes the inverse hyperbolic sine (arcsinh) of each
+        r"""Compute the inverse hyperbolic sine (arcsinh) of each
         element.
 
         Returns:
@@ -3229,7 +3229,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.asinh(self)
 
     def asinh_(self) -> None:
-        r"""Computes the inverse hyperbolic sine (arcsinh) of each
+        r"""Compute the inverse hyperbolic sine (arcsinh) of each
         element.
 
         In-place version of ``asinh()``.
@@ -3249,7 +3249,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.asinh_()
 
     def atan(self) -> TBatchedTensor:
-        r"""Computes the inverse tangent of each element.
+        r"""Compute the inverse tangent of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the inverse tangent
@@ -3269,7 +3269,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.atan(self)
 
     def atan_(self) -> None:
-        r"""Computes the inverse tangent of each element.
+        r"""Compute the inverse tangent of each element.
 
         In-place version of ``atan()``.
 
@@ -3288,7 +3288,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.atan_()
 
     def atanh(self) -> TBatchedTensor:
-        r"""Computes the inverse hyperbolic tangent of each element.
+        r"""Compute the inverse hyperbolic tangent of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the inverse hyperbolic
@@ -3308,7 +3308,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.atanh(self)
 
     def atanh_(self) -> None:
-        r"""Computes the inverse hyperbolic tangent of each element.
+        r"""Compute the inverse hyperbolic tangent of each element.
 
         In-place version of ``atanh()``.
 
@@ -3327,7 +3327,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.atanh_()
 
     def cos(self) -> TBatchedTensor:
-        r"""Computes the cosine of each element.
+        r"""Compute the cosine of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the cosine of each
@@ -3350,7 +3350,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.cos(self)
 
     def cos_(self) -> None:
-        r"""Computes the cosine of each element.
+        r"""Compute the cosine of each element.
 
         In-place version of ``cos()``.
 
@@ -3372,7 +3372,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.cos_()
 
     def cosh(self) -> TBatchedTensor:
-        r"""Computes the hyperbolic cosine (cosh) of each element.
+        r"""Compute the hyperbolic cosine (cosh) of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the hyperbolic
@@ -3392,7 +3392,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.cosh(self)
 
     def cosh_(self) -> None:
-        r"""Computes the hyperbolic cosine (arccosh) of each element.
+        r"""Compute the hyperbolic cosine (arccosh) of each element.
 
         In-place version of ``cosh()``.
 
@@ -3411,7 +3411,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.cosh_()
 
     def sin(self) -> TBatchedTensor:
-        r"""Computes the sine of each element.
+        r"""Compute the sine of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the sine of each
@@ -3434,7 +3434,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.sin(self)
 
     def sin_(self) -> None:
-        r"""Computes the sine of each element.
+        r"""Compute the sine of each element.
 
         In-place version of ``sin()``.
 
@@ -3456,7 +3456,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.sin_()
 
     def sinh(self) -> TBatchedTensor:
-        r"""Computes the hyperbolic sine of each element.
+        r"""Compute the hyperbolic sine of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the hyperbolic sine of
@@ -3476,7 +3476,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.sinh(self)
 
     def sinh_(self) -> None:
-        r"""Computes the hyperbolic sine of each element.
+        r"""Compute the hyperbolic sine of each element.
 
         In-place version of ``sinh()``.
 
@@ -3495,7 +3495,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.sinh_()
 
     def tan(self) -> TBatchedTensor:
-        r"""Computes the tangent of each element.
+        r"""Compute the tangent of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the tangent of each
@@ -3520,7 +3520,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.tan(self)
 
     def tan_(self) -> None:
-        r"""Computes the tangent of each element.
+        r"""Compute the tangent of each element.
 
         In-place version of ``tan()``.
 
@@ -3544,7 +3544,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.tan_()
 
     def tanh(self) -> TBatchedTensor:
-        r"""Computes the tangent of each element.
+        r"""Compute the tangent of each element.
 
         Returns:
             ``BatchedTensor``: A batch with the tangent of each
@@ -3564,7 +3564,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.tanh(self)
 
     def tanh_(self) -> None:
-        r"""Computes the tangent of each element.
+        r"""Compute the tangent of each element.
 
         In-place version of ``tanh()``.
 
@@ -3587,7 +3587,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     #############################################
 
     def logical_and(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
-        r"""Computes the element-wise logical AND.
+        r"""Compute the element-wise logical AND.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -3620,7 +3620,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.logical_and(self, other)
 
     def logical_and_(self, other: BatchedTensor | Tensor) -> None:
-        r"""Computes the element-wise logical AND.
+        r"""Compute the element-wise logical AND.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -3651,7 +3651,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.logical_and_(other)
 
     def logical_not(self) -> TBatchedTensor:
-        r"""Computes the element-wise logical NOT of the current batch.
+        r"""Compute the element-wise logical NOT of the current batch.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -3676,7 +3676,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.logical_not(self)
 
     def logical_not_(self) -> None:
-        r"""Computes the element-wise logical NOT of the current batch.
+        r"""Compute the element-wise logical NOT of the current batch.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -3698,7 +3698,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.logical_not_()
 
     def logical_or(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
-        r"""Computes the element-wise logical OR.
+        r"""Compute the element-wise logical OR.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -3730,7 +3730,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.logical_or(self, other)
 
     def logical_or_(self, other: BatchedTensor | Tensor) -> None:
-        r"""Computes the element-wise logical OR.
+        r"""Compute the element-wise logical OR.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -3760,7 +3760,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self._data.logical_or_(other)
 
     def logical_xor(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
-        r"""Computes the element-wise logical XOR.
+        r"""Compute the element-wise logical XOR.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -3792,7 +3792,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.logical_xor(self, other)
 
     def logical_xor_(self, other: BatchedTensor | Tensor) -> None:
-        r"""Computes the element-wise logical XOR.
+        r"""Compute the element-wise logical XOR.
 
         Zeros are treated as ``False`` and non-zeros are treated as
         ``True``.
@@ -4225,7 +4225,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def take_along_batch(
         self, indices: BaseBatch | np.ndarray | Tensor | Sequence
     ) -> TBatchedTensor:
-        r"""Takes values along the batch dimension.
+        r"""Take values along the batch dimension.
 
         Args:
             indices (``BaseBatch`` or ``Tensor`` or sequence):
@@ -4270,7 +4270,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         indices: BaseBatch | np.ndarray | Tensor | Sequence,
         dim: int | None = None,
     ) -> TBatchedTensor | Tensor:
-        r"""Takes values along the batch dimension.
+        r"""Take values along the batch dimension.
 
         Args:
             indices (``BaseBatch`` or ``numpy.ndarray`` or
@@ -4302,7 +4302,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.take_along_dim(indices, dim=dim))
 
     def unsqueeze(self, dim: int) -> TBatchedTensor:
-        r"""Returns a new batch with a dimension of size one inserted at
+        r"""Return a new batch with a dimension of size one inserted at
         the specified position.
 
         The returned tensor shares the same underlying data with this
@@ -4345,7 +4345,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         )
 
     def view(self, *shape: tuple[int, ...]) -> Tensor:
-        r"""Creates a new tensor with the same data as the ``self`` batch
+        r"""Create a new tensor with the same data as the ``self`` batch
         but with a new shape.
 
         Args:
@@ -4372,7 +4372,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._data.view(*shape)
 
     def view_as(self, other: BatchedTensor | Tensor) -> TBatchedTensor:
-        r"""Creates a new batch with the same data as the ``self`` batch
+        r"""Create a new batch with the same data as the ``self`` batch
         but the shape of ``other``.
 
         The returned batch shares the same data and must have the
@@ -4478,7 +4478,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         )
 
     def _check_valid_dims(self, tensors: Sequence) -> None:
-        r"""Checks if the dimensions are valid.
+        r"""Check if the dimensions are valid.
 
         Args:
             tensors (``Sequence``): Specifies the sequence of
@@ -4487,7 +4487,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         check_batch_dims(get_batch_dims(tensors))
 
     def _create_new_batch(self, data: Tensor) -> TBatchedTensor:
-        r"""Creates a new batch given a ``torch.Tensor``.
+        r"""Create a new batch given a ``torch.Tensor``.
 
         Args:
             data (``torch.Tensor``): Specifies the data to put in the
@@ -4519,7 +4519,7 @@ def implements(torch_function: Callable) -> Callable:
         >>> import torch
         >>> from redcat.tensor import BatchedTensor, implements
         >>> @implements(torch.sum)
-        ... def torchsum(input: BatchedTensor, *args, **kwargs) -> torch.Tensor:
+        ... def torchsum(input: BatchedTensor, *args: Any, **kwargs: Any) -> torch.Tensor:
         ...     return torch.sum(input.data, *args, **kwargs)
         ...
         >>> torch.sum(BatchedTensor(torch.ones(2, 3)))
@@ -4535,31 +4535,31 @@ def implements(torch_function: Callable) -> Callable:
 
 
 @implements(torch.amax)
-def amax(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def amax(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.amax`` documentation."""
     return input.amax(*args, **kwargs)
 
 
 @implements(torch.amin)
-def amin(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def amin(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.amin`` documentation."""
     return input.amin(*args, **kwargs)
 
 
 @implements(torch.argmax)
-def argmax(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def argmax(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.argmax`` documentation."""
     return input.argmax(*args, **kwargs)
 
 
 @implements(torch.argmin)
-def argmin(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def argmin(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.argmin`` documentation."""
     return input.argmin(*args, **kwargs)
 
 
 @implements(torch.argsort)
-def argsort(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def argsort(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.argsort`` documentation."""
     return input.argsort(*args, **kwargs)
 
@@ -4595,7 +4595,7 @@ def maximum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTenso
 
 
 @implements(torch.mean)
-def mean(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def mean(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.mean`` documentation."""
     return input.mean(*args, **kwargs)
 
@@ -4624,7 +4624,7 @@ def minimum(input: BatchedTensor, other: BatchedTensor | Tensor) -> BatchedTenso
 
 
 @implements(torch.nanmean)
-def nanmean(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def nanmean(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.nanmean`` documentation."""
     return input.nanmean(*args, **kwargs)
 
@@ -4638,13 +4638,13 @@ def nanmedian(
 
 
 @implements(torch.nansum)
-def nansum(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def nansum(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.nansum`` documentation."""
     return input.nansum(*args, **kwargs)
 
 
 @implements(torch.prod)
-def prod(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def prod(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.prod`` documentation."""
     return input.prod(*args, **kwargs)
 
@@ -4656,7 +4656,7 @@ def select(input: BatchedTensor, dim: int, index: int) -> Tensor:  # noqa: A002
 
 
 @implements(torch.sort)
-def sort(input: BatchedTensor, *args, **kwargs) -> torch.return_types.sort:  # noqa: A002
+def sort(input: BatchedTensor, *args: Any, **kwargs: Any) -> torch.return_types.sort:  # noqa: A002
     r"""See ``torch.sort`` documentation."""
     return input.sort(*args, **kwargs)
 
@@ -4670,7 +4670,7 @@ def split(
 
 
 @implements(torch.sum)
-def torchsum(input: BatchedTensor, *args, **kwargs) -> Tensor:  # noqa: A002
+def torchsum(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A002
     r"""See ``torch.sum`` documentation.
 
     Use the name `torchsum` to avoid shadowing `sum` python builtin.

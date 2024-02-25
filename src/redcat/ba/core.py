@@ -484,8 +484,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         return self
 
     def add(self, other: BatchedArray | np.ndarray | float, alpha: float = 1.0) -> TBatchedArray:
-        r"""Adds the input ``other``, scaled by ``alpha``, to the
-        ``self`` batch.
+        r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
+        batch.
 
         Similar to ``out = self + alpha * other``
 
@@ -522,8 +522,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         other: BatchedArray | np.ndarray | float,
         alpha: float = 1.0,
     ) -> None:
-        r"""Adds the input ``other``, scaled by ``alpha``, to the
-        ``self`` batch.
+        r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
+        batch.
 
         Similar to ``self += alpha * other`` (in-place)
 
@@ -609,7 +609,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self.__ifloordiv__(divisor)
 
     def fmod(self, divisor: BatchedArray | np.ndarray | float) -> TBatchedArray:
-        r"""Computes the element-wise remainder of division.
+        r"""Compute the element-wise remainder of division.
 
         The current batch is the dividend.
 
@@ -641,7 +641,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         return self.__mod__(divisor)
 
     def fmod_(self, divisor: BatchedArray | np.ndarray | float) -> None:
-        r"""Computes the element-wise remainder of division.
+        r"""Compute the element-wise remainder of division.
 
         The current batch is the dividend.
 
@@ -727,7 +727,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self.__imul__(other)
 
     def neg(self) -> TBatchedArray:
-        r"""Returns a new batch with the negative of the elements.
+        r"""Return a new batch with the negative of the elements.
 
         Returns:
             A new batch with the negative of the elements.
@@ -1073,7 +1073,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     def index_select(
         self, index: np.ndarray | Sequence[int], axis: int | None = None
     ) -> TBatchedArray | np.ndarray:
-        r"""Returns a new array which indexes the input array along the
+        r"""Return a new array which indexes the input array along the
         given axis using the entries in ``index``.
 
         Args:
@@ -3295,7 +3295,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     #################
 
     def _check_valid_axes(self, arrays: Sequence) -> None:
-        r"""Checks if the dimensions are valid.
+        r"""Check if the dimensions are valid.
 
         Args:
             arrays: Specifies the sequence of arrays/batches to check.
