@@ -27,8 +27,8 @@ from typing import Any, TypeVar
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
-from redcat.ba2 import BatchedArray
-from redcat.ba2.core import OrderACFK, ShapeLike
+from redcat.ba import BatchedArray
+from redcat.ba.core import OrderACFK, ShapeLike
 
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
@@ -58,8 +58,8 @@ def array(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.array(np.arange(10).reshape(2, 5))
+    >>> from redcat import ba
+    >>> batch = ba.array(np.arange(10).reshape(2, 5))
     >>> batch
     array([[0, 1, 2, 3, 4],
            [5, 6, 7, 8, 9]], batch_axis=0)
@@ -96,8 +96,8 @@ def empty(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba2
-    >>> batch = ba2.empty((2, 3))
+    >>> from redcat import ba
+    >>> batch = ba.empty((2, 3))
     >>> batch
     array([...], batch_axis=0)
 
@@ -143,11 +143,11 @@ def empty_like(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> array = ba2.ones((2, 3))
-    >>> ba2.empty_like(array).shape
+    >>> from redcat import ba
+    >>> array = ba.ones((2, 3))
+    >>> ba.empty_like(array).shape
     (2, 3)
-    >>> ba2.empty_like(array, batch_size=5).shape
+    >>> ba.empty_like(array, batch_size=5).shape
     (5, 3)
 
     ```
@@ -184,8 +184,8 @@ def full(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba2
-    >>> batch = ba2.full((2, 3), fill_value=42)
+    >>> from redcat import ba
+    >>> batch = ba.full((2, 3), fill_value=42)
     >>> batch
     array([[42, 42, 42],
            [42, 42, 42]], batch_axis=0)
@@ -236,12 +236,12 @@ def full_like(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> array = ba2.zeros((2, 5))
-    >>> ba2.full_like(array, fill_value=2)
+    >>> from redcat import ba
+    >>> array = ba.zeros((2, 5))
+    >>> ba.full_like(array, fill_value=2)
     array([[2., 2., 2., 2., 2.],
            [2., 2., 2., 2., 2.]], batch_axis=0)
-    >>> ba2.full_like(array, fill_value=42, batch_size=5)
+    >>> ba.full_like(array, fill_value=42, batch_size=5)
     array([[42., 42., 42., 42., 42.],
            [42., 42., 42., 42., 42.],
            [42., 42., 42., 42., 42.],
@@ -286,8 +286,8 @@ def ones(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba2
-    >>> batch = ba2.ones((2, 3))
+    >>> from redcat import ba
+    >>> batch = ba.ones((2, 3))
     >>> batch
     array([[1., 1., 1.],
            [1., 1., 1.]], batch_axis=0)
@@ -334,12 +334,12 @@ def ones_like(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> array = ba2.zeros((2, 5))
-    >>> ba2.ones_like(array)
+    >>> from redcat import ba
+    >>> array = ba.zeros((2, 5))
+    >>> ba.ones_like(array)
     array([[1., 1., 1., 1., 1.],
            [1., 1., 1., 1., 1.]], batch_axis=0)
-    >>> ba2.ones_like(array, batch_size=5)
+    >>> ba.ones_like(array, batch_size=5)
     array([[1., 1., 1., 1., 1.],
            [1., 1., 1., 1., 1.],
            [1., 1., 1., 1., 1.],
@@ -377,8 +377,8 @@ def zeros(
     Example usage:
 
     ```pycon
-    >>> from redcat import ba2
-    >>> batch = ba2.zeros((2, 3))
+    >>> from redcat import ba
+    >>> batch = ba.zeros((2, 3))
     >>> batch
     array([[0., 0., 0.],
            [0., 0., 0.]], batch_axis=0)
@@ -425,12 +425,12 @@ def zeros_like(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> array = ba2.ones((2, 5))
-    >>> ba2.zeros_like(array)
+    >>> from redcat import ba
+    >>> array = ba.ones((2, 5))
+    >>> ba.zeros_like(array)
     array([[0., 0., 0., 0., 0.],
            [0., 0., 0., 0., 0.]], batch_axis=0)
-    >>> ba2.zeros_like(array, batch_size=5)
+    >>> ba.zeros_like(array, batch_size=5)
     array([[0., 0., 0., 0., 0.],
            [0., 0., 0., 0., 0.],
            [0., 0., 0., 0., 0.],

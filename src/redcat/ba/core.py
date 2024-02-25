@@ -9,7 +9,7 @@ import numpy as np
 from coola import objects_are_allclose, objects_are_equal
 from numpy.typing import ArrayLike, DTypeLike
 
-from redcat.ba2.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
 from redcat.base import BaseBatch
 from redcat.utils.array import to_array
 
@@ -208,8 +208,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat import ba2
-        >>> array = ba2.ones((2, 3))
+        >>> from redcat import ba
+        >>> array = ba.ones((2, 3))
         >>> x = array.copy()
         >>> x += 1
         >>> array
@@ -256,8 +256,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat import ba2
-        >>> array = ba2.ones((2, 3))
+        >>> from redcat import ba
+        >>> array = ba.ones((2, 3))
         >>> array.empty_like().shape
         (2, 3)
         >>> array.empty_like(batch_size=5).shape
@@ -307,8 +307,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> array = ba2.ones((2, 3))
+        >>> from redcat import ba
+        >>> array = ba.ones((2, 3))
         >>> array.full_like(42.0)
         array([[42., 42., 42.],
                [42., 42., 42.]], batch_axis=0)
@@ -368,8 +368,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> array = ba2.zeros((2, 3))
+        >>> from redcat import ba
+        >>> array = ba.zeros((2, 3))
         >>> array.ones_like()
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -422,8 +422,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> array = ba2.ones((2, 3))
+        >>> from redcat import ba
+        >>> array = ba.ones((2, 3))
         >>> array.zeros_like()
         array([[0., 0., 0.],
                [0., 0., 0.]], batch_axis=0)
@@ -501,9 +501,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> out = batch.add(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> out = batch.add(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -536,9 +536,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> batch.add_(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> batch.add_(ba.full((2, 3), 2.0))
         >>> batch
         array([[3., 3., 3.],
                [3., 3., 3.]], batch_axis=0)
@@ -566,9 +566,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> out = batch.floordiv(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> out = batch.floordiv(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -595,9 +595,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> batch.floordiv_(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> batch.floordiv_(ba.full((2, 3), 2.0))
         >>> batch
         array([[0., 0., 0.],
                [0., 0., 0.]], batch_axis=0)
@@ -624,9 +624,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> out = batch.fmod(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> out = batch.fmod(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -652,9 +652,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> batch.fmod_(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> batch.fmod_(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -681,9 +681,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> out = batch.mul(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> out = batch.mul(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -713,9 +713,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> batch.mul_(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> batch.mul_(ba.full((2, 3), 2.0))
         >>> batch
         array([[2., 2., 2.],
                [2., 2., 2.]], batch_axis=0)
@@ -733,8 +733,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
         >>> out = batch.neg()
         >>> batch
         array([[1., 1., 1.],
@@ -770,9 +770,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> out = batch.sub(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> out = batch.sub(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -804,9 +804,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> batch.sub_(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> batch.sub_(ba.full((2, 3), 2.0))
         >>> batch
         array([[-1., -1., -1.],
                [-1., -1., -1.]], batch_axis=0)
@@ -832,9 +832,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> out = batch.truediv(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> out = batch.truediv(ba.full((2, 3), 2.0))
         >>> batch
         array([[1., 1., 1.],
                [1., 1., 1.]], batch_axis=0)
@@ -860,9 +860,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.ones((2, 3))
-        >>> batch.truediv_(ba2.full((2, 3), 2.0))
+        >>> from redcat import ba
+        >>> batch = ba.ones((2, 3))
+        >>> batch.truediv_(ba.full((2, 3), 2.0))
         >>> batch
         array([[0.5, 0.5, 0.5],
                [0.5, 0.5, 0.5]], batch_axis=0)
@@ -905,9 +905,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
-        >>> out = batch.concatenate([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> from redcat import ba
+        >>> batch = ba.array([[0, 1, 2], [4, 5, 6]])
+        >>> out = batch.concatenate([ba.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[0, 1, 2],
                [4, 5, 6]], batch_axis=0)
@@ -946,9 +946,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
-        >>> batch.concatenate_([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> from redcat import ba
+        >>> batch = ba.array([[0, 1, 2], [4, 5, 6]])
+        >>> batch.concatenate_([ba.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[ 0,  1,  2],
                [ 4,  5,  6],
@@ -977,9 +977,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
-        >>> out = batch.concatenate_along_batch([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> from redcat import ba
+        >>> batch = ba.array([[0, 1, 2], [4, 5, 6]])
+        >>> out = batch.concatenate_along_batch([ba.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[0, 1, 2],
                [4, 5, 6]], batch_axis=0)
@@ -1006,9 +1006,9 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         Example usage:
 
         ```pycon
-        >>> from redcat import ba2
-        >>> batch = ba2.array([[0, 1, 2], [4, 5, 6]])
-        >>> batch.concatenate_along_batch_([ba2.array([[10, 11, 12], [13, 14, 15]])])
+        >>> from redcat import ba
+        >>> batch = ba.array([[0, 1, 2], [4, 5, 6]])
+        >>> batch.concatenate_along_batch_([ba.array([[10, 11, 12], [13, 14, 15]])])
         >>> batch
         array([[ 0,  1,  2],
                [ 4,  5,  6],
@@ -1041,7 +1041,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.chunk(chunks=3)
         (array([[0, 1], [2, 3]], batch_axis=0),
@@ -1086,7 +1086,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.index_select([2, 4], axis=0)
         array([[4, 5],
@@ -1119,7 +1119,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.select(index=2, axis=0)
         array([4, 5])
@@ -1152,7 +1152,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.slice_along_axis(start=2)
         array([[4, 5],
@@ -1198,7 +1198,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.split_along_axis(2, axis=0)
         (array([[0, 1], [2, 3]], batch_axis=0),
@@ -1254,7 +1254,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.permute_along_axis([2, 1, 3, 0, 4], axis=0)
         array([[4, 5],
@@ -1280,7 +1280,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.permute_along_axis_([2, 1, 3, 0, 4], axis=0)
         >>> batch
@@ -1308,7 +1308,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.shuffle_along_axis(axis=0)
         array([[...]], batch_axis=0)
@@ -1332,7 +1332,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.shuffle_along_axis_(axis=0)
         >>> batch
@@ -1390,7 +1390,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.cumprod(axis=0)
         array([[  0,   1],
@@ -1431,7 +1431,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.cumprod_along_batch()
         array([[  0,   1],
@@ -1488,7 +1488,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.cumsum(axis=0)
         array([[ 0,  1],
@@ -1528,7 +1528,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.cumsum_along_batch()
         array([[ 0,  1],
@@ -1580,7 +1580,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]))
         >>> batch.diff(n=1, axis=0)
         array([[ 0, -1],
@@ -1631,7 +1631,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]))
         >>> batch.diff_along_batch(n=1)
         array([[ 0, -1],
@@ -1692,7 +1692,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nancumprod(axis=0)
         array([[ 1.,  1.,  2.],
@@ -1731,7 +1731,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nancumprod_along_batch()
         array([[ 1.,  1.,  2.],
@@ -1787,7 +1787,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nancumsum(axis=0)
         array([[1., 0., 2.],
@@ -1826,7 +1826,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nancumsum_along_batch()
         array([[1., 0., 2.],
@@ -1871,7 +1871,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanprod(axis=0)
         array([ 3., 4., 10.])
@@ -1912,7 +1912,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanprod_along_batch()
         array([ 3., 4., 10.])
@@ -1956,7 +1956,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nansum(axis=0)
         array([4., 4., 7.])
@@ -1997,7 +1997,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nansum_along_batch()
         array([4., 4., 7.])
@@ -2039,7 +2039,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.prod(axis=0)
         array([ 3, 24, 10])
@@ -2078,7 +2078,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.prod_along_batch()
         array([ 3, 24, 10])
@@ -2120,7 +2120,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.sum(axis=0)
         array([ 4, 10, 7])
@@ -2159,7 +2159,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.sum_along_batch()
         array([ 4, 10, 7])
@@ -2194,7 +2194,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.max()
         6
@@ -2236,7 +2236,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.max_along_batch()
         array([3, 6, 5])
@@ -2276,7 +2276,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.min()
         1
@@ -2318,7 +2318,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.min_along_batch()
         array([1, 4, 2])
@@ -2360,7 +2360,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanmax()
         5.0
@@ -2402,7 +2402,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanmax_along_batch()
         array([3., 4., 5.])
@@ -2444,7 +2444,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
         >>> batch.nanmin()
         2.0
@@ -2486,7 +2486,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
         >>> batch.nanmin_along_batch()
         array([3., 4., 2.])
@@ -2520,7 +2520,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> array = batch.argsort()
         >>> array
@@ -2550,7 +2550,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> array = batch.argsort_along_batch()
         >>> array
@@ -2577,7 +2577,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.sort()
         >>> batch
@@ -2603,7 +2603,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.sort_along_batch()
         >>> batch
@@ -2640,7 +2640,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.argmax()
         1
@@ -2677,7 +2677,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.argmax_along_batch()
         array([1, 0, 1])
@@ -2714,7 +2714,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.argmin()
         0
@@ -2751,7 +2751,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
         >>> batch.argmin_along_batch()
         array([0, 1, 0])
@@ -2790,7 +2790,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanargmax()
         5
@@ -2828,7 +2828,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanargmax_along_batch()
         array([1, 1, 1])
@@ -2867,7 +2867,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanargmin()
         0
@@ -2905,7 +2905,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanargmin_along_batch()
         array([0, 1, 0])
@@ -2953,7 +2953,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.mean()
         4.5
@@ -3002,7 +3002,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.mean_along_batch()
         array([4., 5.])
@@ -3047,7 +3047,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.median()
         4.5
@@ -3094,7 +3094,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.arange(10).reshape(5, 2))
         >>> batch.median_along_batch()
         array([4., 5.])
@@ -3143,7 +3143,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanmean()
         3.0
@@ -3192,7 +3192,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanmean_along_batch()
         array([2. , 4. , 3.5])
@@ -3232,7 +3232,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanmedian()
         3.0
@@ -3273,7 +3273,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2 import BatchedArray
+        >>> from redcat.ba import BatchedArray
         >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
         >>> batch.nanmedian_along_batch()
         array([2. , 4. , 3.5])
@@ -3336,7 +3336,7 @@ def setup_rng(rng: np.random.Generator | None) -> np.random.Generator:
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat.ba2.core import setup_rng
+    >>> from redcat.ba.core import setup_rng
     >>> rng = setup_rng(None)
     >>> rng.permutation(4)
     array([...])

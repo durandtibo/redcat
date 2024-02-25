@@ -7,7 +7,7 @@ from typing import TypeVar
 
 import numpy as np
 
-from redcat.ba2.core import BatchedArray, implements
+from redcat.ba.core import BatchedArray, implements
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -38,12 +38,12 @@ def concatenate_along_batch(arrays: Sequence[TBatchedArray]) -> TBatchedArray | 
     Example usage:
 
     ```pycon
-    >>> from redcat import ba2
+    >>> from redcat import ba
     >>> arrays = [
-    ...     ba2.array([[0, 1, 2], [4, 5, 6]]),
-    ...     ba2.array([[10, 11, 12], [13, 14, 15]]),
+    ...     ba.array([[0, 1, 2], [4, 5, 6]]),
+    ...     ba.array([[10, 11, 12], [13, 14, 15]]),
     ... ]
-    >>> out = ba2.concatenate_along_batch(arrays)
+    >>> out = ba.concatenate_along_batch(arrays)
     >>> out
     array([[ 0,  1,  2],
            [ 4,  5,  6],

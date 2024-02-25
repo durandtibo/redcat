@@ -8,8 +8,8 @@ import pytest
 from coola import objects_are_equal
 from numpy.typing import DTypeLike
 
-from redcat import ba2 as ba
-from redcat.ba2.core import IndexType, SortKind, setup_rng
+from redcat import ba
+from redcat.ba.core import IndexType, SortKind, setup_rng
 
 DTYPES = (bool, int, float)
 NUMERIC_DTYPES = [np.float64, np.int64]
@@ -331,7 +331,7 @@ def test_batched_array_select_along_batch_custom_axes() -> None:
     )
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch() -> None:
     assert (
         ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
@@ -340,7 +340,7 @@ def test_batched_array_shuffle_along_batch() -> None:
     )
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch_custom_axes() -> None:
     assert (
         ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
@@ -363,14 +363,14 @@ def test_batched_array_shuffle_along_batch_different_random_seeds() -> None:
     )
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch_() -> None:
     batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch.shuffle_along_batch_()
     assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_batch__custom_axes() -> None:
     batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
     batch.shuffle_along_batch_()
@@ -2392,7 +2392,7 @@ def test_batched_array_permute_along_axis__custom_axes() -> None:
     assert batch.allequal(ba.BatchedArray(np.array([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_axis=1))
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis() -> None:
     assert (
         ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
@@ -2401,7 +2401,7 @@ def test_batched_array_shuffle_along_axis() -> None:
     )
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis_custom_axes() -> None:
     assert (
         ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
@@ -2424,14 +2424,14 @@ def test_batched_array_shuffle_along_axis_different_random_seeds() -> None:
     )
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis_() -> None:
     batch = ba.array([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
     batch.shuffle_along_axis_(axis=0)
     assert batch.allequal(ba.array([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]]))
 
 
-@patch("redcat.ba2.core.setup_rng", MOCK_PERMUTATION4)
+@patch("redcat.ba.core.setup_rng", MOCK_PERMUTATION4)
 def test_batched_array_shuffle_along_axis__custom_axes() -> None:
     batch = ba.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]], batch_axis=1)
     batch.shuffle_along_axis_(axis=1)

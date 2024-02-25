@@ -3,8 +3,8 @@ import pytest
 from coola import objects_are_equal
 from numpy.typing import DTypeLike
 
-from redcat import ba2 as ba
-from redcat.ba2 import BatchedArray
+from redcat import ba
+from redcat.ba import BatchedArray
 
 DTYPES = (bool, int, float)
 

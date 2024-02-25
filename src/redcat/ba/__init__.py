@@ -70,8 +70,8 @@ __all__ = [
     "zeros_like",
 ]
 
-from redcat.ba2.core import BatchedArray
-from redcat.ba2.creation import (
+from redcat.ba.core import BatchedArray
+from redcat.ba.creation import (
     array,
     empty,
     empty_like,
@@ -82,8 +82,8 @@ from redcat.ba2.creation import (
     zeros,
     zeros_like,
 )
-from redcat.ba2.joining import concatenate, concatenate_along_batch
-from redcat.ba2.math import (
+from redcat.ba.joining import concatenate, concatenate_along_batch
+from redcat.ba.math import (
     add,
     cumprod,
     cumprod_along_batch,
@@ -117,7 +117,7 @@ from redcat.ba2.math import (
     sum_along_batch,
     true_divide,
 )
-from redcat.ba2.sort import (
+from redcat.ba.sort import (
     argmax,
     argmax_along_batch,
     argmin,
@@ -131,7 +131,7 @@ from redcat.ba2.sort import (
     sort,
     sort_along_batch,
 )
-from redcat.ba2.stats import (
+from redcat.ba.stats import (
     mean,
     mean_along_batch,
     median,
@@ -141,4 +141,4 @@ from redcat.ba2.stats import (
     nanmedian,
     nanmedian_along_batch,
 )
-from redcat.ba2.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes

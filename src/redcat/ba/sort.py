@@ -19,7 +19,7 @@ from typing import SupportsIndex, TypeVar
 
 import numpy as np
 
-from redcat.ba2.core import BatchedArray, SortKind, implements
+from redcat.ba.core import BatchedArray, SortKind, implements
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -53,9 +53,9 @@ def argsort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatc
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.argsort_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.argsort_along_batch(batch)
     array([[0, 1, 0],
            [1, 0, 1]], batch_axis=0)
 
@@ -93,9 +93,9 @@ def sort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatched
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.sort_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.sort_along_batch(batch)
     array([[1, 4, 2],
            [3, 6, 5]], batch_axis=0)
 
@@ -140,11 +140,11 @@ def argmax_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.argmax_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.argmax_along_batch(batch)
     array([1, 0, 1])
-    >>> ba2.argmax_along_batch(batch, keepdims=True)
+    >>> ba.argmax_along_batch(batch, keepdims=True)
     array([[1, 0, 1]])
 
     ```
@@ -188,11 +188,11 @@ def argmin_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.argmin_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.argmin_along_batch(batch)
     array([0, 1, 0])
-    >>> ba2.argmin_along_batch(batch, keepdims=True)
+    >>> ba.argmin_along_batch(batch, keepdims=True)
     array([[0, 1, 0]])
 
     ```
@@ -238,11 +238,11 @@ def nanargmax_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanargmax_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanargmax_along_batch(batch)
     array([1, 1, 1])
-    >>> ba2.nanargmax_along_batch(batch, keepdims=True)
+    >>> ba.nanargmax_along_batch(batch, keepdims=True)
     array([[1, 1, 1]])
 
     ```
@@ -288,11 +288,11 @@ def nanargmin_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanargmin_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanargmin_along_batch(batch)
     array([0, 1, 0])
-    >>> ba2.nanargmin_along_batch(batch, keepdims=True)
+    >>> ba.nanargmin_along_batch(batch, keepdims=True)
     array([[0, 1, 0]])
 
     ```
