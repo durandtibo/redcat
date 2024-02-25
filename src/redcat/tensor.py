@@ -1,3 +1,9 @@
+r"""Contain the implementation of the ``BatchedTensor``.
+
+``BatchedTensor`` is a custom ``torch.Tensor`` container to make
+batch manipulation easier.
+"""
+
 from __future__ import annotations
 
 __all__ = ["BatchedTensor"]
@@ -33,11 +39,11 @@ class BatchedTensor(BaseBatch[Tensor]):
     examples.
 
     Args:
-        data (array_like): Specifies the data for the tensor. It can
+        data: Specifies the data for the tensor. It can
             be a torch.Tensor, list, tuple, NumPy ndarray, scalar,
             and other types.
         batch_dim: Specifies the batch dimension
-            in the ``torch.Tensor`` object. Default: ``0``
+            in the ``torch.Tensor`` object.
         kwargs: Keyword arguments that are passed to
             ``torch.as_tensor``.
 
@@ -53,7 +59,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                 [5, 6, 7, 8, 9]], batch_dim=0)
     """
 
-    def __init__(self, data: Any, *, batch_dim: int = 0, **kwargs) -> None:
+    def __init__(self, data: Any, *, batch_dim: int = 0, **kwargs: Any) -> None:
         super().__init__()
         self._data = torch.as_tensor(data, **kwargs)
         check_data_and_dim(self._data, batch_dim)
@@ -224,7 +230,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._data.is_contiguous(memory_format=memory_format)
 
     def to(self, *args: Any, **kwargs: Any) -> TBatchedTensor:
-        r"""Moves and/or casts the data.
+        r"""Move and/or cast the data.
 
         Args:
             *args: See the documentation of ``torch.Tensor.to``
@@ -333,7 +339,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self,
         fill_value: float | bool,
         batch_size: int | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> TBatchedTensor:
         r"""Create a batch filled with a scalar value.
 
@@ -380,7 +386,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def new_ones(
         self,
         batch_size: int | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> BatchedTensor:
         r"""Create a batch filled with the scalar value ``1``.
 
@@ -426,7 +432,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def new_zeros(
         self,
         batch_size: int | None = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> TBatchedTensor:
         r"""Create a batch filled with the scalar value ``0``.
 
@@ -977,30 +983,28 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``out = self + alpha * other``
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the other value to add to the
+            other: Specifies the other value to add to the
                 current batch.
-            alpha (int or float, optional): Specifies the scale of the
-                batch to add. Default: ``1.0``
+            alpha: Specifies the scale of the batch to add.
 
         Returns:
-            ``BatchedTensor``: A new batch containing the addition of
-                the two batches.
+            A new batch containing the addition of the two batches.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> out = batch.add(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[1., 1., 1.],
+                [1., 1., 1.]], batch_dim=0)
+        >>> out
+        tensor([[3., 3., 3.],
+                [3., 3., 3.]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.add(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
-            >>> out
-            tensor([[3., 3., 3.],
-                    [3., 3., 3.]], batch_dim=0)
+        ```
         """
         return torch.add(self, other, alpha=alpha)
 
@@ -1015,23 +1019,22 @@ class BatchedTensor(BaseBatch[Tensor]):
         Similar to ``self += alpha * other`` (in-place)
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the other value to add to the
+            other: Specifies the other value to add to the
                 current batch.
-            alpha (int or float, optional): Specifies the scale of the
-                batch to add. Default: ``1.0``
+            alpha: Specifies the scale of the batch to add.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> batch.add_(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[3., 3., 3.],
+                [3., 3., 3.]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.add_(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[3., 3., 3.],
-                    [3., 3., 3.]], batch_dim=0)
+        ```
         """
         self._check_valid_dims((self, other))
         self._data.add_(other, alpha=alpha)
@@ -1041,39 +1044,37 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | float,
         rounding_mode: str | None = None,
     ) -> TBatchedTensor:
-        r"""Divides the ``self`` batch by the input ``other`.
+        r"""Divide the ``self`` batch by the input ``other`.
 
         Similar to ``out = self / other``
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the dividend.
-            rounding_mode (str or ``None``, optional): Specifies the
-                type of rounding applied to the result.
+            other: Specifies the dividend.
+            rounding_mode: Specifies the type of rounding applied to
+                the result.
                 - ``None``: true division.
                 - ``"trunc"``: rounds the results of the division
                     towards zero.
                 - ``"floor"``: floor division.
-                Default: ``None``
 
         Returns:
-            ``BatchedTensor``: A new batch containing the division
-                of the two batches.
+            A new batch containing the division of the two batches.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> out = batch.div(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[1., 1., 1.],
+                [1., 1., 1.]], batch_dim=0)
+        >>> out
+        tensor([[0.5000, 0.5000, 0.5000],
+                [0.5000, 0.5000, 0.5000]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.div(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
-            >>> out
-            tensor([[0.5000, 0.5000, 0.5000],
-                    [0.5000, 0.5000, 0.5000]], batch_dim=0)
+        ```
         """
         return torch.div(self, other, rounding_mode=rounding_mode)
 
@@ -1082,32 +1083,31 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | float,
         rounding_mode: str | None = None,
     ) -> None:
-        r"""Divides the ``self`` batch by the input ``other`.
+        r"""Divide the ``self`` batch by the input ``other`.
 
         Similar to ``self /= other`` (in-place)
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the dividend.
-            rounding_mode (str or ``None``, optional): Specifies the
-                type of rounding applied to the result.
+            other: Specifies the dividend.
+            rounding_mode: Specifies the type of rounding applied to
+                the result.
                 - ``None``: true division.
                 - ``"trunc"``: rounds the results of the division
                     towards zero.
                 - ``"floor"``: floor division.
-                Default: ``None``
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> batch.div_(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[0.5000, 0.5000, 0.5000],
+                [0.5000, 0.5000, 0.5000]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.div_(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[0.5000, 0.5000, 0.5000],
-                    [0.5000, 0.5000, 0.5000]], batch_dim=0)
+        ```
         """
         self._check_valid_dims((self, other))
         self._data.div_(other, rounding_mode=rounding_mode)
@@ -1121,27 +1121,28 @@ class BatchedTensor(BaseBatch[Tensor]):
         The current batch is the dividend.
 
         Args:
-            divisor (``BatchedTensor`` or ``torch.Tensor`` or int
-                or float): Specifies the divisor.
+            divisor: Specifies the divisor.
 
         Returns:
-            ``BatchedTensor``: A new batch containing the
-                element-wise remainder of division.
+            A new batch containing the element-wise remainder of
+                division.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.fmod(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
-            >>> out
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> out = batch.fmod(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[1., 1., 1.],
+                [1., 1., 1.]], batch_dim=0)
+        >>> out
+        tensor([[1., 1., 1.],
+                [1., 1., 1.]], batch_dim=0)
+
+        ```
         """
         return torch.fmod(self, divisor)
 
@@ -1151,36 +1152,35 @@ class BatchedTensor(BaseBatch[Tensor]):
         The current batch is the dividend.
 
         Args:
-            divisor (``BatchedTensor`` or ``torch.Tensor`` or int
-                or float): Specifies the divisor.
+            divisor: Specifies the divisor.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> batch.fmod_(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[1., 1., 1.],
+                [1., 1., 1.]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.fmod_(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
+        ```
         """
         self._check_valid_dims((self, divisor))
         self._data.fmod_(divisor)
 
     def mul(self, other: BatchedTensor | Tensor | float) -> TBatchedTensor:
-        r"""Multiplies the ``self`` batch by the input ``other`.
+        r"""Multiply the ``self`` batch by the input ``other`.
 
         Similar to ``out = self * other``
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the value to multiply.
+            other: Specifies the value to multiply.
 
         Returns:
-            ``BatchedTensor``: A new batch containing the
-                multiplication of the two batches.
+            A new batch containing the multiplication of the two
+                batches.
 
         Example usage:
 
@@ -1200,29 +1200,29 @@ class BatchedTensor(BaseBatch[Tensor]):
         return torch.mul(self, other)
 
     def mul_(self, other: BatchedTensor | Tensor | float) -> None:
-        r"""Multiplies the ``self`` batch by the input ``other`.
+        r"""Multiply the ``self`` batch by the input ``other`.
 
         Similar to ``self *= other`` (in-place)
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the value to multiply.
+            other: Specifies the value to multiply.
 
         Returns:
-            ``BatchedTensor``: A new batch containing the
-                multiplication of the two batches.
+            A new batch containing the multiplication of the two
+                batches.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> batch.mul_(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[2., 2., 2.],
+                [2., 2., 2.]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.mul_(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[2., 2., 2.],
-                    [2., 2., 2.]], batch_dim=0)
+        ```
         """
         self._check_valid_dims((self, other))
         self._data.mul_(other)
@@ -1231,23 +1231,23 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Return a new batch with the negative of the elements.
 
         Returns:
-            ``BatchedTensor``: A new batch with the negative of
-                the elements.
+            A new batch with the negative of the elements.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> out = batch.neg()
+        >>> batch
+        tensor([[1., 1., 1.],
+                [1., 1., 1.]], batch_dim=0)
+        >>> out
+        tensor([[-1., -1., -1.],
+                [-1., -1., -1.]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.neg()
-            >>> batch
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
-            >>> out
-            tensor([[-1., -1., -1.],
-                    [-1., -1., -1.]], batch_dim=0)
+        ```
         """
         return torch.neg(self)
 
@@ -1256,35 +1256,33 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | float,
         alpha: float = 1,
     ) -> TBatchedTensor:
-        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        r"""Subtract the input ``other``, scaled by ``alpha``, to the
         ``self`` batch.
 
         Similar to ``out = self - alpha * other``
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the value to subtract.
-            alpha (int or float, optional): Specifies the scale of the
-                batch to substract. Default: ``1``
+            other: Specifies the value to subtract.
+            alpha: Specifies the scale of the batch to substract.
 
         Returns:
-            ``BatchedTensor``: A new batch containing the diffence of
-                the two batches.
+            A new batch containing the diffence of the two batches.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> out = batch.sub(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[1., 1., 1.],
+                [1., 1., 1.]], batch_dim=0)
+        >>> out
+        tensor([[-1., -1., -1.],
+                [-1., -1., -1.]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> out = batch.sub(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[1., 1., 1.],
-                    [1., 1., 1.]], batch_dim=0)
-            >>> out
-            tensor([[-1., -1., -1.],
-                    [-1., -1., -1.]], batch_dim=0)
+        ```
         """
         return torch.sub(self, other, alpha=alpha)
 
@@ -1293,28 +1291,27 @@ class BatchedTensor(BaseBatch[Tensor]):
         other: BatchedTensor | Tensor | float,
         alpha: float = 1,
     ) -> None:
-        r"""Subtracts the input ``other``, scaled by ``alpha``, to the
+        r"""Subtract the input ``other``, scaled by ``alpha``, to the
         ``self`` batch.
 
         Similar to ``self -= alpha * other`` (in-place)
 
         Args:
-            other (``BatchedTensor`` or ``torch.Tensor`` or int or
-                float): Specifies the value to subtract.
-            alpha (int or float, optional): Specifies the scale of the
-                batch to substract. Default: ``1``
+            other: Specifies the value to subtract.
+            alpha: Specifies the scale of the batch to substract.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.ones(2, 3))
+        >>> batch.sub_(BatchedTensor(torch.full((2, 3), 2.0)))
+        >>> batch
+        tensor([[-1., -1., -1.],
+                [-1., -1., -1.]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.ones(2, 3))
-            >>> batch.sub_(BatchedTensor(torch.full((2, 3), 2.0)))
-            >>> batch
-            tensor([[-1., -1., -1.],
-                    [-1., -1., -1.]], batch_dim=0)
+        ```
         """
         self._check_valid_dims((self, other))
         self._data.sub_(other, alpha=alpha)
@@ -1323,7 +1320,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def argsort(self, dim: int = -1, **kwargs) -> TBatchedTensor:
+    def argsort(self, dim: int = -1, **kwargs: Any) -> TBatchedTensor:
         r"""Return the indices that sort the batch along a given
         dimension in monotonic order by value.
 
@@ -1349,7 +1346,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return self._create_new_batch(torch.argsort(self._data, dim=dim, **kwargs))
 
-    def argsort_along_batch(self, **kwargs) -> TBatchedTensor:
+    def argsort_along_batch(self, **kwargs: Any) -> TBatchedTensor:
         r"""Sorts the elements of the batch along the batch dimension in
         monotonic order by value.
 
@@ -1472,7 +1469,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         self.cumprod_(self._batch_dim, *args, **kwargs)
 
-    def cumsum(self, dim: int, **kwargs) -> TBatchedTensor:
+    def cumsum(self, dim: int, **kwargs: Any) -> TBatchedTensor:
         r"""Compute the cumulative sum of elements of the current batch
         in a given dimension.
 
@@ -1497,7 +1494,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         return torch.cumsum(self, dim=dim, **kwargs)
 
-    def cumsum_(self, dim: int, **kwargs) -> None:
+    def cumsum_(self, dim: int, **kwargs: Any) -> None:
         r"""Compute the cumulative sum of elements of the current batch
         in a given dimension.
 
@@ -1519,7 +1516,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         """
         self._data.cumsum_(dim=dim, **kwargs)
 
-    def cumsum_along_batch(self, **kwargs) -> TBatchedTensor:
+    def cumsum_along_batch(self, **kwargs: Any) -> TBatchedTensor:
         r"""Compute the cumulative sum of elements of the current batch
         in the batch dimension.
 
@@ -1667,29 +1664,29 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Permutes the data/batch along a given dimension.
 
         Args:
-            permutation (sequence or ``torch.Tensor`` of type long
-                and shape ``(dimension,)``): Specifies the permutation
+            permutation: Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
             dim: Specifies the dimension where the permutation
                 is computed.
 
         Returns:
-            ``BatchedTensor``: A new batch with permuted data.
+            A new batch with permuted data.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> batch.permute_along_dim([2, 1, 3, 0, 4], dim=0)
+        tensor([[4, 5],
+                [2, 3],
+                [6, 7],
+                [0, 1],
+                [8, 9]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.permute_along_dim([2, 1, 3, 0, 4], dim=0)
-            tensor([[4, 5],
-                    [2, 3],
-                    [6, 7],
-                    [0, 1],
-                    [8, 9]], batch_dim=0)
+        ```
         """
         return self.index_select(dim=dim, index=permutation)
 
@@ -1697,8 +1694,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Permutes the data/batch along a given dimension.
 
         Args:
-            permutation (sequence or ``torch.Tensor`` of type long
-                and shape ``(dimension,)``): Specifies the permutation
+            permutation: Specifies the permutation
                 to use on the data. The dimension of the permutation
                 input should be compatible with the shape of the data.
             dim: Specifies the dimension where the permutation
@@ -1706,18 +1702,19 @@ class BatchedTensor(BaseBatch[Tensor]):
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> batch.permute_along_dim_([2, 1, 3, 0, 4], dim=0)
+        >>> batch
+        tensor([[4, 5],
+                [2, 3],
+                [6, 7],
+                [0, 1],
+                [8, 9]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.permute_along_dim_([2, 1, 3, 0, 4], dim=0)
-            >>> batch
-            tensor([[4, 5],
-                    [2, 3],
-                    [6, 7],
-                    [0, 1],
-                    [8, 9]], batch_dim=0)
+        ```
         """
         self._data = self.permute_along_dim(dim=dim, permutation=permutation).data
 
@@ -1733,18 +1730,18 @@ class BatchedTensor(BaseBatch[Tensor]):
                 Default: ``None``
 
         Returns:
-            ``BatchedTensor``:  A new batch with shuffled data
-                along a given dimension.
+            A new batch with shuffled data along a given dimension.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> batch.shuffle_along_dim(dim=0)
+        tensor([[...]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.shuffle_along_dim(dim=0)
-            tensor([[...]], batch_dim=0)
+        ```
         """
         return self.index_select(
             dim=dim, index=torch.randperm(self._data.shape[dim], generator=generator)
@@ -3012,24 +3009,24 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Compute the product values along the batch dimension.
 
         Args:
-            *args: See the documentation of ``torch.Tensor.prod``
-            **kwargs: See the documentation of ``torch.Tensor.prod``
+            keepdim: Indicates if the output tensor has ``dim``
+                retained or not.
 
         Returns:
-            ``torch.Tensor``: A batch with
-                the product values along the batch dimension.
+            A tensor with the product values along the batch dimension.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.tensor([[1, 6], [2, 7], [3, 8], [4, 9], [5, 1]]))
+        >>> batch.prod_along_batch()
+        tensor([ 120, 3024])
+        >>> batch.prod_along_batch(keepdim=True)
+        tensor([[ 120, 3024]])
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[1, 6], [2, 7], [3, 8], [4, 9], [5, 1]]))
-            >>> batch.prod_along_batch()
-            tensor([ 120, 3024])
-            >>> batch.prod_along_batch(keepdim=True)
-            tensor([[ 120, 3024]])
+        ```
         """
         return self.prod(dim=self._batch_dim, keepdim=keepdim)
 
@@ -3845,29 +3842,31 @@ class BatchedTensor(BaseBatch[Tensor]):
         tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor],
         dim: int = 0,
     ) -> TBatchedTensor:
-        r"""Concatenates the data of the batches to the current batch
+        r"""Concatenate the data of the batches to the current batch
         along a given dimension and creates a new batch.
 
         Args:
-            tensors (``BatchedTensor`` or ``torch.Tensor`` or
-                ``Iterable``): Specifies the batches to concatenate.
+            tensors: Specifies the batches to concatenate.
+                Non-empty tensors provided must have the same shape,
+                except in the cat dimension.
+            dim: The dimension over which the tensors are concatenated.
 
         Returns:
-            ``BatchedTensor``: A batch with the concatenated data
-                in the batch dimension.
+            A batch with the concatenated data in the batch dimension.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        >>> batch.cat(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
+        tensor([[ 0,  1,  2],
+                [ 4,  5,  6],
+                [10, 11, 12],
+                [13, 14, 15]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.cat(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
-            tensor([[ 0,  1,  2],
-                    [ 4,  5,  6],
-                    [10, 11, 12],
-                    [13, 14, 15]], batch_dim=0)
+        ```
         """
         if isinstance(tensors, (BatchedTensor, Tensor)):
             tensors = [tensors]
@@ -3888,26 +3887,29 @@ class BatchedTensor(BaseBatch[Tensor]):
         tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor],
         dim: int = 0,
     ) -> None:
-        r"""Concatenates the data of the batches to the current batch
+        r"""Concatenate the data of the batches to the current batch
         along a given dimension and creates a new batch.
 
         Args:
-            tensor (``BatchedTensor`` or ``torch.Tensor`` or
-                ``Iterable``): Specifies the batches to concatenate.
+            tensors: Specifies the tensors to concatenate.
+                Non-empty tensors provided must have the same shape,
+                except in the cat dimension.
+            dim: The dimension over which the tensors are concatenated.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        >>> batch.cat_(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
+        >>> batch
+        tensor([[ 0,  1,  2],
+                [ 4,  5,  6],
+                [10, 11, 12],
+                [13, 14, 15]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.cat_(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
-            >>> batch
-            tensor([[ 0,  1,  2],
-                    [ 4,  5,  6],
-                    [10, 11, 12],
-                    [13, 14, 15]], batch_dim=0)
+        ```
         """
         self._data = self.cat(tensors, dim=dim).data
 
@@ -3918,39 +3920,38 @@ class BatchedTensor(BaseBatch[Tensor]):
         along the batch dimension and creates a new batch.
 
         Args:
-            tensors (``BatchedTensor`` or ``torch.Tensor`` or
-                ``Iterable``): Specifies the batches to concatenate.
+            tensors: Specifies the batches to concatenate.
 
         Returns:
-            ``BatchedTensor``: A batch with the concatenated data
-                in the batch dimension.
+            A batch with the concatenated data in the batch dimension.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        >>> batch.cat_along_batch(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
+        tensor([[ 0,  1,  2],
+                [ 4,  5,  6],
+                [10, 11, 12],
+                [13, 14, 15]], batch_dim=0)
+        >>> batch = BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]))
+        >>> batch.cat_along_batch(
+        ...     [
+        ...         BatchedTensor(torch.tensor([[10, 12], [11, 13]])),
+        ...         BatchedTensor(torch.tensor([[20, 22], [21, 23]])),
+        ...     ]
+        ... )
+        tensor([[ 0,  4],
+                [ 1,  5],
+                [ 2,  6],
+                [10, 12],
+                [11, 13],
+                [20, 22],
+                [21, 23]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.cat_along_batch(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
-            tensor([[ 0,  1,  2],
-                    [ 4,  5,  6],
-                    [10, 11, 12],
-                    [13, 14, 15]], batch_dim=0)
-            >>> batch = BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]))
-            >>> batch.cat_along_batch(
-            ...     [
-            ...         BatchedTensor(torch.tensor([[10, 12], [11, 13]])),
-            ...         BatchedTensor(torch.tensor([[20, 22], [21, 23]])),
-            ...     ]
-            ... )
-            tensor([[ 0,  4],
-                    [ 1,  5],
-                    [ 2,  6],
-                    [10, 12],
-                    [11, 13],
-                    [20, 22],
-                    [21, 23]], batch_dim=0)
+        ```
         """
         return self.cat(tensors, dim=self._batch_dim)
 
@@ -3961,42 +3962,42 @@ class BatchedTensor(BaseBatch[Tensor]):
         along the batch dimension and creates a new batch.
 
         Args:
-            tensors (``BatchedTensor`` or ``torch.Tensor`` or
-                ``Iterable``): Specifies the batches to concatenate.
+            tensors: Specifies the batches to concatenate.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
+        >>> batch.cat_along_batch_(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
+        >>> batch
+        tensor([[ 0,  1,  2],
+                [ 4,  5,  6],
+                [10, 11, 12],
+                [13, 14, 15]], batch_dim=0)
+        >>> batch = BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]))
+        >>> batch.cat_along_batch_(
+        ...     [
+        ...         BatchedTensor(torch.tensor([[10, 12], [11, 13]])),
+        ...         BatchedTensor(torch.tensor([[20, 22], [21, 23]])),
+        ...     ]
+        ... )
+        >>> batch
+        tensor([[ 0,  4],
+                [ 1,  5],
+                [ 2,  6],
+                [10, 12],
+                [11, 13],
+                [20, 22],
+                [21, 23]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.tensor([[0, 1, 2], [4, 5, 6]]))
-            >>> batch.cat_along_batch_(BatchedTensor(torch.tensor([[10, 11, 12], [13, 14, 15]])))
-            >>> batch
-            tensor([[ 0,  1,  2],
-                    [ 4,  5,  6],
-                    [10, 11, 12],
-                    [13, 14, 15]], batch_dim=0)
-            >>> batch = BatchedTensor(torch.tensor([[0, 4], [1, 5], [2, 6]]))
-            >>> batch.cat_along_batch_(
-            ...     [
-            ...         BatchedTensor(torch.tensor([[10, 12], [11, 13]])),
-            ...         BatchedTensor(torch.tensor([[20, 22], [21, 23]])),
-            ...     ]
-            ... )
-            >>> batch
-            tensor([[ 0,  4],
-                    [ 1,  5],
-                    [ 2,  6],
-                    [10, 12],
-                    [11, 13],
-                    [20, 22],
-                    [21, 23]], batch_dim=0)
+        ```
         """
         self.cat_(tensors, dim=self._batch_dim)
 
     def chunk(self, chunks: int, dim: int = 0) -> tuple[TBatchedTensor, ...]:
-        r"""Splits the batch into chunks along a given dimension.
+        r"""Split the batch into chunks along a given dimension.
 
         Args:
             chunks: Specifies the number of chunks.
@@ -4028,7 +4029,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         self.cat_along_batch_(other)
 
     def index_select(self, dim: int, index: Tensor | Sequence[int]) -> TBatchedTensor:
-        r"""Selects data at the given indices along a given dimension.
+        r"""Select data at the given indices along a given dimension.
 
         Args:
             dim: Specifies the index dimension.
@@ -4063,8 +4064,8 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self.index_select(self._batch_dim, index)
 
     def masked_fill(self, mask: BatchedTensor | Tensor, value: bool | float) -> TBatchedTensor:
-        r"""Fills elements of ``self`` batch with ``value`` where
-        ``mask`` is ``True``.
+        r"""Fill elements of ``self`` batch with ``value`` where ``mask``
+        is ``True``.
 
         Args:
             mask (``BatchedTensor`` or ``torch.Tensor``):
@@ -4103,7 +4104,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         return self._create_new_batch(self._data.masked_fill(to_tensor(mask.data), value))
 
     def select(self, dim: int, index: int) -> Tensor:
-        r"""Selects the batch along the batch dimension at the given
+        r"""Select the batch along the batch dimension at the given
         index.
 
         Args:
@@ -4188,7 +4189,7 @@ class BatchedTensor(BaseBatch[Tensor]):
     def split(
         self, split_size_or_sections: int | Sequence[int], dim: int = 0
     ) -> tuple[TBatchedTensor, ...]:
-        r"""Splits the batch into chunks along a given dimension.
+        r"""Split the batch into chunks along a given dimension.
 
         Args:
             split_size_or_sections (int or sequence): Specifies the
@@ -4254,16 +4255,14 @@ class BatchedTensor(BaseBatch[Tensor]):
         self,
         indices: BaseBatch | np.ndarray | Tensor | Sequence,
         dim: None = None,
-    ) -> Tensor:
-        r"""See documentation of ``take_along_dim``."""
+    ) -> Tensor: ...
 
     @overload
     def take_along_dim(
         self,
         indices: BaseBatch | np.ndarray | Tensor | Sequence,
         dim: int,
-    ) -> TBatchedTensor:
-        r"""See documentation of ``take_along_dim``."""
+    ) -> TBatchedTensor: ...
 
     def take_along_dim(
         self,
@@ -4273,27 +4272,25 @@ class BatchedTensor(BaseBatch[Tensor]):
         r"""Take values along the batch dimension.
 
         Args:
-            indices (``BaseBatch`` or ``numpy.ndarray`` or
-                ``torch.Tensor`` or `` Specifies the indices to take
-                along the batch dimension.
-            dim (int or ``None``, optional): Specifies the dimension
-                to select along. Default: ``None``
+            indices: Specifies the indices to take along the batch
+                dimension.
+            dim: Specifies the dimension to select along.
 
         Returns:
-            ``BatchedTensor`` or ``torch.Tensor``: The batch with the
-                selected data.
+            The batch with the selected data.
 
         Example usage:
 
-        .. code-block:: pycon
+        ```pycon
+        >>> import torch
+        >>> from redcat import BatchedTensor
+        >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
+        >>> batch.take_along_dim(BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])), dim=0)
+        tensor([[6, 5],
+                [0, 7],
+                [2, 9]], batch_dim=0)
 
-            >>> import torch
-            >>> from redcat import BatchedTensor
-            >>> batch = BatchedTensor(torch.arange(10).view(5, 2))
-            >>> batch.take_along_dim(BatchedTensor(torch.tensor([[3, 2], [0, 3], [1, 4]])), dim=0)
-            tensor([[6, 5],
-                    [0, 7],
-                    [2, 9]], batch_dim=0)
+        ```
         """
         self._check_valid_dims((self, indices))
         indices = to_tensor(indices).long()
@@ -4313,8 +4310,7 @@ class BatchedTensor(BaseBatch[Tensor]):
                 singleton dimension.
 
         Returns:
-            ``BatchedTensor``: A new batch with an added singleton
-                dimension.
+            A new batch with an added singleton dimension.
 
         Example usage:
 
@@ -4503,7 +4499,7 @@ class BatchedTensor(BaseBatch[Tensor]):
 
 
 def implements(torch_function: Callable) -> Callable:
-    """Registers a torch function override for BatchedTensor.
+    """Register a torch function override for BatchedTensor.
 
     Args:
         torch_function (``Callable``):  Specifies the torch function
@@ -4582,7 +4578,7 @@ def chunk(tensor: BatchedTensor, chunks: int, dim: int = 0) -> tuple[BatchedTens
 # Use the name `torchmax` to avoid shadowing `max` python builtin.
 @implements(torch.max)
 def torchmax(
-    input: BatchedTensor, *args, **kwargs  # noqa: A002
+    input: BatchedTensor, *args: Any, **kwargs: Any  # noqa: A002
 ) -> Tensor | torch.return_types.max:
     r"""See ``torch.max`` documentation."""
     return input.max(*args, **kwargs)
@@ -4602,7 +4598,7 @@ def mean(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa: A0
 
 @implements(torch.median)
 def median(
-    input: BatchedTensor, *args, **kwargs  # noqa: A002
+    input: BatchedTensor, *args: Any, **kwargs: Any  # noqa: A002
 ) -> Tensor | torch.return_types.median:
     r"""See ``torch.median`` documentation."""
     return input.median(*args, **kwargs)
@@ -4611,7 +4607,7 @@ def median(
 # Use the name `torchmin` to avoid shadowing `min` python builtin.
 @implements(torch.min)
 def torchmin(
-    input: BatchedTensor, *args, **kwargs  # noqa: A002
+    input: BatchedTensor, *args: Any, **kwargs: Any  # noqa: A002
 ) -> Tensor | torch.return_types.min:
     r"""See ``torch.min`` documentation."""
     return input.min(*args, **kwargs)
@@ -4631,7 +4627,7 @@ def nanmean(input: BatchedTensor, *args: Any, **kwargs: Any) -> Tensor:  # noqa:
 
 @implements(torch.nanmedian)
 def nanmedian(
-    input: BatchedTensor, *args, **kwargs  # noqa: A002
+    input: BatchedTensor, *args: Any, **kwargs: Any  # noqa: A002
 ) -> Tensor | torch.return_types.nanmedian:
     r"""See ``torch.nanmedian`` documentation."""
     return input.nanmedian(*args, **kwargs)

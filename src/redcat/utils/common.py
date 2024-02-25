@@ -1,3 +1,5 @@
+r"""Contain utility functions."""
+
 from __future__ import annotations
 
 __all__ = [
@@ -196,24 +198,21 @@ def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = No
 
 
 @overload
-def swap2(sequence: Tensor, index0: int, index1: int) -> Tensor:
-    r"""``swap2`` for a ``torch.Tensor``."""
+def swap2(sequence: Tensor, index0: int, index1: int) -> Tensor: ...
 
 
 @overload
-def swap2(sequence: np.ndarray, index0: int, index1: int) -> np.ndarray:
-    r"""``swap2`` for a ``numpy.ndarray``."""
+def swap2(sequence: np.ndarray, index0: int, index1: int) -> np.ndarray: ...
 
 
 @overload
-def swap2(sequence: MutableSequence, index0: int, index1: int) -> MutableSequence:
-    r"""``swap2`` for a mutable sequence."""
+def swap2(sequence: MutableSequence, index0: int, index1: int) -> MutableSequence: ...
 
 
 def swap2(
     sequence: Tensor | np.ndarray | MutableSequence, index0: int, index1: int
 ) -> Tensor | np.ndarray | MutableSequence:
-    r"""Swaps two values in a mutable sequence.
+    r"""Swap two values in a mutable sequence.
 
     The swap is performed in-place.
 
