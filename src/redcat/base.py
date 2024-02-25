@@ -1,3 +1,5 @@
+r"""Contain the base class to implement a batch."""
+
 from __future__ import annotations
 
 __all__ = ["BaseBatch"]
@@ -301,7 +303,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def extend(self, other: Iterable[BaseBatch]) -> None:
-        r"""Extends the current batch by appending all the batches from
+        r"""Extend the current batch by appending all the batches from
         the iterable.
 
         This method should be used with batches of similar nature.

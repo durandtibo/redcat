@@ -1,3 +1,6 @@
+r"""Contain the implementation of a ``IterDataPipe`` to shuffle mini-
+batches."""
+
 from __future__ import annotations
 
 __all__ = ["BatchShufflerIterDataPipe"]
@@ -20,7 +23,7 @@ T = TypeVar("T")
 
 
 class BatchShufflerIterDataPipe(IterDataPipe[BaseBatch[T]]):
-    r"""Implements a DataPipe to shuffle data in ``BaseBatch`` objects.
+    r"""Implement a DataPipe to shuffle data in ``BaseBatch`` objects.
 
     Args:
         datapipe: Specifies the source DataPipe. The DataPipe has to

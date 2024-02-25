@@ -1,3 +1,5 @@
+r"""Contain the definition of some types."""
+
 from __future__ import annotations
 
 __all__ = ["IndexType", "IndicesType", "RNGType"]

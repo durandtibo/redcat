@@ -5,7 +5,8 @@ import logging
 import numpy as np
 import torch
 
-from redcat import BatchDict, BatchedArray, BatchedTensor, BatchedTensorSeq, BatchList
+from redcat import BatchDict, BatchedTensor, BatchedTensorSeq, BatchList
+from redcat.ba import BatchedArray
 
 logger = logging.getLogger(__name__)
 

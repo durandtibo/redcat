@@ -1,3 +1,5 @@
+r"""Contain functions to compute statistics on ``BatchedArray``."""
+
 from __future__ import annotations
 
 __all__ = [

@@ -214,11 +214,12 @@ def full_like(
     r"""Return an array of ones with the same shape and type as a given
     array.
 
-    Equivalent of ``numpy.ones_like`` for ``BatchedArray``.
+    Equivalent of ``numpy.full_like`` for ``BatchedArray``.
 
     Args:
         a: The shape and data-type of a define these same attributes
             of the returned array.
+        fill_value: Specifies the fill value.
         dtype: Overrides the data type of the result.
         order: Overrides the memory layout of the result. ‘C’ means
             C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``a`` is

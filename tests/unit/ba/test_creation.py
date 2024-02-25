@@ -1,10 +1,16 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pytest
 from coola import objects_are_equal
-from numpy.typing import DTypeLike
 
 from redcat import ba
 from redcat.ba import BatchedArray
+
+if TYPE_CHECKING:
+    from numpy.typing import DTypeLike
 
 DTYPES = (bool, int, float)
 
