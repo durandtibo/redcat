@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from unittest.mock import patch
 
+import pytest
 import torch
 from coola import objects_are_equal
-from pytest import mark, raises
 from torch import Tensor
 
 from redcat import BatchList
@@ -15,13 +15,13 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
 
-@mark.parametrize("data", ([1, 2, 3, 4], ["a", "b", "c"]))
+@pytest.mark.parametrize("data", ([1, 2, 3, 4], ["a", "b", "c"]))
 def test_batch_list_init_data(data: list) -> None:
     assert BatchList(data).data == data
 
 
 def test_batch_list_init_data_incorrect_type() -> None:
-    with raises(TypeError, match="Incorrect type. Expect a list but received"):
+    with pytest.raises(TypeError, match="Incorrect type. Expect a list but received"):
         BatchList((1, 2, 3, 4))
 
 
@@ -29,7 +29,7 @@ def test_batch_list_str() -> None:
     assert str(BatchList(["a", "b", "c"])).startswith("BatchList(")
 
 
-@mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_batch_list_batch_size(batch_size: int) -> None:
     assert BatchList(["a"] * batch_size).batch_size == batch_size
 
@@ -73,7 +73,7 @@ def test_batch_list_allclose_false_different_data() -> None:
     assert not BatchList(["a", "b", "c"]).allclose(BatchList(["a", "b", "c", "d"]))
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     ("batch", "atol"),
     (
         (BatchList([0.5, 1.5, 2.5, 3.5]), 1.0),
@@ -85,7 +85,7 @@ def test_batch_list_allclose_true_atol(batch: BatchList, atol: float) -> None:
     assert BatchList([0.0, 1.0, 2.0, 3.0]).allclose(batch, atol=atol, rtol=0)
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     ("batch", "rtol"),
     (
         (BatchList([1.5, 2.5, 3.5]), 1.0),
@@ -114,7 +114,7 @@ def test_batch_list_allequal_false_different_data() -> None:
 ###########################################################
 
 
-@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
 def test_batch_list_permute_along_batch(permutation: Sequence[int] | Tensor) -> None:
     assert (
         BatchList(["a", "b", "c", "d"])
@@ -123,7 +123,7 @@ def test_batch_list_permute_along_batch(permutation: Sequence[int] | Tensor) -> 
     )
 
 
-@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
 def test_batch_list_permute_along_batch_(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchList(["a", "b", "c", "d"])
     batch.permute_along_batch_(permutation)
@@ -211,14 +211,14 @@ def test_batch_list__setitem___int() -> None:
     assert batch.allequal(BatchList([7, "b", "c", "d", "e"]))
 
 
-@mark.parametrize("value", ([1, 2], (1, 2), BatchList([1, 2])))
+@pytest.mark.parametrize("value", ([1, 2], (1, 2), BatchList([1, 2])))
 def test_batch_list__setitem___slice(value: Sequence | BatchList) -> None:
     batch = BatchList(["a", "b", "c", "d", "e"])
     batch[1:3] = value
     assert batch.allequal(BatchList(["a", 1, 2, "d", "e"]))
 
 
-@mark.parametrize("other", (BatchList(["d", "e"]), ["d", "e"], ("d", "e")))
+@pytest.mark.parametrize("other", (BatchList(["d", "e"]), ["d", "e"], ("d", "e")))
 def test_batch_list_append(other: BatchList | Tensor) -> None:
     batch = BatchList(["a", "b", "c"])
     batch.append(other)
@@ -240,11 +240,11 @@ def test_batch_list_chunk_along_batch_3() -> None:
 
 
 def test_batch_list_chunk_along_batch_incorrect_chunks() -> None:
-    with raises(RuntimeError, match="chunks has to be greater than 0 but received"):
+    with pytest.raises(RuntimeError, match="chunks has to be greater than 0 but received"):
         BatchList(list(range(5))).chunk_along_batch(chunks=0)
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     "other",
     (
         [BatchList(["d"]), BatchList(["e"])],
@@ -260,7 +260,7 @@ def test_batch_list_extend(
     assert batch.allequal(BatchList(["a", "b", "c", "d", "e"]))
 
 
-@mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
+@pytest.mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
 def test_batch_list_index_select_along_batch(index: Tensor | Sequence[int]) -> None:
     assert (
         BatchList(["a", "b", "c", "d", "e"])
@@ -351,14 +351,14 @@ def test_batch_list_split_along_batch_split_size_list_empty() -> None:
 ########################
 
 
-@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 4), (4, 3)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), [(1, 10), (2, 5), (3, 4), (4, 3)])
 def test_batch_list_get_num_minibatches_drop_last_false(
     batch_size: int, num_minibatches: int
 ) -> None:
     assert BatchList(list(range(10))).get_num_minibatches(batch_size) == num_minibatches
 
 
-@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 3), (4, 2)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), [(1, 10), (2, 5), (3, 3), (4, 2)])
 def test_batch_list_get_num_minibatches_drop_last_true(
     batch_size: int, num_minibatches: int
 ) -> None:

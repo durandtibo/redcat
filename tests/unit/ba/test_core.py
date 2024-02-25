@@ -53,7 +53,7 @@ def test_batched_array_init_no_check() -> None:
 ################################
 
 
-@pytest.mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_batched_array_batch_size(batch_size: int) -> None:
     assert ba.BatchedArray(np.arange(batch_size)).batch_size == batch_size
 
@@ -260,14 +260,14 @@ def test_batched_array_extend_different_axes() -> None:
         batch.extend([ba.zeros((2, 2), batch_axis=1)])
 
 
-@pytest.mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 4), (4, 3)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), [(1, 10), (2, 5), (3, 4), (4, 3)])
 def test_batched_array_get_num_minibatches_drop_last_false(
     batch_size: int, num_minibatches: int
 ) -> None:
     assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size) == num_minibatches
 
 
-@pytest.mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 3), (4, 2)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), [(1, 10), (2, 5), (3, 3), (4, 2)])
 def test_batched_array_get_num_minibatches_drop_last_true(
     batch_size: int, num_minibatches: int
 ) -> None:
@@ -730,7 +730,7 @@ def test_batched_array_empty_like_custom_axes() -> None:
     assert array.batch_axis == 1
 
 
-@pytest.mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_batched_array_empty_like_custom_batch_size(batch_size: int) -> None:
     array = ba.zeros(shape=(2, 3)).empty_like(batch_size=batch_size)
     assert isinstance(array, ba.BatchedArray)
@@ -774,7 +774,7 @@ def test_batched_array_full_like_target_dtype(dtype: np.dtype) -> None:
     )
 
 
-@pytest.mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_batched_array_full_like_custom_batch_size(batch_size: int) -> None:
     assert (
         ba.zeros(shape=(2, 3))
@@ -807,7 +807,7 @@ def test_batched_array_ones_like_target_dtype(dtype: np.dtype) -> None:
     assert ba.zeros((2, 3)).ones_like(dtype=dtype).allequal(ba.ones(shape=(2, 3), dtype=dtype))
 
 
-@pytest.mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_batched_array_ones_like_custom_batch_size(batch_size: int) -> None:
     assert ba.zeros((2, 3)).ones_like(batch_size=batch_size).allequal(ba.ones((batch_size, 3)))
 
@@ -840,7 +840,7 @@ def test_batched_array_zeros_like_target_dtype(dtype: np.dtype) -> None:
     )
 
 
-@pytest.mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_batched_array_zeros_like_custom_batch_size(batch_size: int) -> None:
     assert (
         ba.ones(shape=(2, 3)).zeros_like(batch_size=batch_size).allequal(ba.zeros((batch_size, 3)))

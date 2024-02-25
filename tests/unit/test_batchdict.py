@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from unittest.mock import Mock, patch
 
+import pytest
 import torch
 from coola import objects_are_equal
-from pytest import mark, raises
 from torch import Tensor
 
 from redcat import BaseBatch, BatchDict, BatchedTensorSeq, BatchList
@@ -30,7 +30,7 @@ def test_batch_dict_init_data_2_items() -> None:
 
 
 def test_batch_dict_init_data_different_batch_sizes() -> None:
-    with raises(
+    with pytest.raises(
         RuntimeError,
         match="Incorrect batch size. A single batch size is expected but received several values:",
     ):
@@ -38,12 +38,12 @@ def test_batch_dict_init_data_different_batch_sizes() -> None:
 
 
 def test_batch_dict_init_data_empty() -> None:
-    with raises(RuntimeError, match="The dictionary cannot be empty"):
+    with pytest.raises(RuntimeError, match="The dictionary cannot be empty"):
         BatchDict({})
 
 
 def test_batch_dict_init_data_incorrect_type() -> None:
-    with raises(TypeError, match="Incorrect type. Expect a dict but received"):
+    with pytest.raises(TypeError, match="Incorrect type. Expect a dict but received"):
         BatchDict(BatchList([1, 2, 3, 4]))
 
 
@@ -51,7 +51,7 @@ def test_batch_dict_str() -> None:
     assert str(BatchDict({"key": BatchList([1, 2, 3, 4])})).startswith("BatchDict(")
 
 
-@mark.parametrize("batch_size", (1, 2))
+@pytest.mark.parametrize("batch_size", [1, 2])
 def test_batch_dict_batch_size(batch_size: int) -> None:
     assert (
         BatchDict(
@@ -81,7 +81,7 @@ def test_batch_dict__getitem__() -> None:
 
 
 def test_batch_dict__getitem__missing_key() -> None:
-    with raises(KeyError):
+    with pytest.raises(KeyError):
         BatchDict({"key1": BatchList([1, 2, 3])})["key2"]
 
 
@@ -122,7 +122,7 @@ def test_batch_dict__setitem__new_key() -> None:
 
 def test_batch_dict__setitem__incorrect_batch_size() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3])})
-    with raises(RuntimeError, match="Incorrect batch size."):
+    with pytest.raises(RuntimeError, match="Incorrect batch size."):
         batch["key2"] = BatchList(["a", "b", "c", "d"])
 
 
@@ -228,7 +228,7 @@ def test_batch_dict_allclose_false_different_data() -> None:
     )
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     ("batch", "atol"),
     (
         (BatchDict({"key": BatchList([0.5, 1.5, 2.5, 3.5])}), 1.0),
@@ -240,7 +240,7 @@ def test_batch_dict_allclose_true_atol(batch: BatchList, atol: float) -> None:
     assert BatchDict({"key": BatchList([0.0, 1.0, 2.0, 3.0])}).allclose(batch, atol=atol, rtol=0)
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     ("batch", "rtol"),
     (
         (BatchDict({"key": BatchList([1.5, 2.5, 3.5])}), 1.0),
@@ -273,7 +273,7 @@ def test_batch_dict_allequal_false_different_data() -> None:
 ###########################################################
 
 
-@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
 def test_batch_dict_permute_along_batch(permutation: Sequence[int] | Tensor) -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
@@ -284,7 +284,7 @@ def test_batch_dict_permute_along_batch(permutation: Sequence[int] | Tensor) -> 
     )
 
 
-@mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
+@pytest.mark.parametrize("permutation", (torch.tensor([2, 1, 3, 0]), [2, 1, 3, 0], (2, 1, 3, 0)))
 def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
     batch.permute_along_batch_(permutation)
@@ -293,7 +293,9 @@ def test_batch_dict_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
     )
 
 
-@mark.parametrize("permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+@pytest.mark.parametrize(
+    "permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+)
 def test_batch_dict_permute_along_seq(permutation: Sequence[int] | Tensor) -> None:
     assert (
         BatchDict(
@@ -319,7 +321,9 @@ def test_batch_dict_permute_along_seq_no_seq() -> None:
     )
 
 
-@mark.parametrize("permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0)))
+@pytest.mark.parametrize(
+    "permutation", (torch.tensor([2, 4, 1, 3, 0]), [2, 4, 1, 3, 0], (2, 4, 1, 3, 0))
+)
 def test_batch_dict_permute_along_seq_(permutation: Sequence[int] | Tensor) -> None:
     batch = BatchDict(
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
@@ -445,7 +449,7 @@ def test_batch_dict_shuffle_along_seq_multiple_sequence_lengths() -> None:
             "key2": BatchedTensorSeq(torch.ones(2, 3)),
         }
     )
-    with raises(
+    with pytest.raises(
         RuntimeError, match="Invalid operation because the batch has multiple sequence lengths"
     ):
         batch.shuffle_along_seq()
@@ -507,7 +511,7 @@ def test_batch_dict_shuffle_along_seq__multiple_sequence_lengths() -> None:
             "key2": BatchedTensorSeq(torch.ones(2, 3)),
         }
     )
-    with raises(
+    with pytest.raises(
         RuntimeError, match="Invalid operation because the batch has multiple sequence lengths"
     ):
         batch.shuffle_along_seq_()
@@ -568,11 +572,11 @@ def test_batch_dict_append_2_items() -> None:
 
 def test_batch_dict_append_missing_key() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3]), "key2": BatchList(["a", "b", "c"])})
-    with raises(RuntimeError, match="Keys do not match"):
+    with pytest.raises(RuntimeError, match="Keys do not match"):
         batch.append(BatchDict({"key2": BatchList(["a", "b"])}))
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     "other",
     (
         BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),
@@ -617,7 +621,7 @@ def test_batch_dict_cat_along_seq_empty() -> None:
     )
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     "other",
     (
         BatchDict({"key1": BatchedTensorSeq(torch.tensor([[10, 11, 12], [20, 21, 22]]))}),
@@ -700,13 +704,13 @@ def test_batch_dict_chunk_along_batch_1_item() -> None:
 
 
 def test_batch_dict_chunk_along_batch_incorrect_chunks() -> None:
-    with raises(RuntimeError, match="chunks has to be greater than 0 but received"):
+    with pytest.raises(RuntimeError, match="chunks has to be greater than 0 but received"):
         BatchDict(
             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
         ).chunk_along_batch(chunks=0)
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     "other",
     (
         [
@@ -728,7 +732,7 @@ def test_batch_dict_extend(
     )
 
 
-@mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
+@pytest.mark.parametrize("index", (torch.tensor([2, 0]), [2, 0], (2, 0)))
 def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> None:
     assert (
         BatchDict(
@@ -739,7 +743,9 @@ def test_batch_dict_index_select_along_batch(index: Tensor | Sequence[int]) -> N
     )
 
 
-@mark.parametrize("index", (torch.tensor([2, 0]), torch.tensor([[2, 0], [2, 0]]), [2, 0], (2, 0)))
+@pytest.mark.parametrize(
+    "index", (torch.tensor([2, 0]), torch.tensor([[2, 0], [2, 0]]), [2, 0], (2, 0))
+)
 def test_batch_dict_index_select_along_seq(index: Tensor | Sequence[int]) -> None:
     assert (
         BatchDict(
@@ -1063,7 +1069,7 @@ def test_batch_dict_split_along_batch_split_size_list_empty() -> None:
 
 
 # def test_batch_dict_split_along_batch_incorrect_split_size() -> None:
-#     with raises(RuntimeError, match="chunks has to be greater than 0 but received"):
+#     with pytest.raises(RuntimeError, match="chunks has to be greater than 0 but received"):
 #         BatchDict(
 #             {"key1": BatchList([1, 2, 3, 4, 5]), "key2": BatchList(["a", "b", "c", "d", "e"])}
 #         ).split_along_batch(split_size_or_sections=0)
@@ -1102,7 +1108,7 @@ def test_batch_dict_take_along_seq_empty() -> None:
 ########################
 
 
-@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 4), (4, 3)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), [(1, 10), (2, 5), (3, 4), (4, 3)])
 def test_batch_dict_get_num_minibatches_drop_last_false(
     batch_size: int, num_minibatches: int
 ) -> None:
@@ -1117,7 +1123,7 @@ def test_batch_dict_get_num_minibatches_drop_last_false(
     )
 
 
-@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 3), (4, 2)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), [(1, 10), (2, 5), (3, 3), (4, 2)])
 def test_batch_dict_get_num_minibatches_drop_last_true(
     batch_size: int, num_minibatches: int
 ) -> None:
@@ -1273,12 +1279,12 @@ def test_check_batch_size_2_items_same_batch_size() -> None:
 
 
 def test_check_batch_size_empty() -> None:
-    with raises(RuntimeError, match="The dictionary cannot be empty"):
+    with pytest.raises(RuntimeError, match="The dictionary cannot be empty"):
         check_same_batch_size({})
 
 
 def test_check_batch_size_2_items_different_batch_size() -> None:
-    with raises(
+    with pytest.raises(
         RuntimeError,
         match="Incorrect batch size. A single batch size is expected but received several values:",
     ):
@@ -1301,12 +1307,12 @@ def test_check_same_keys_same() -> None:
 
 
 def test_check_same_keys_different_names() -> None:
-    with raises(RuntimeError, match="Keys do not match"):
+    with pytest.raises(RuntimeError, match="Keys do not match"):
         check_same_keys({"key1": 1, "key2": 2}, {"key": 20, "key1": 10})
 
 
 def test_check_same_keys_missing_key() -> None:
-    with raises(RuntimeError, match="Keys do not match"):
+    with pytest.raises(RuntimeError, match="Keys do not match"):
         check_same_keys({"key1": 1, "key2": 2}, {"key1": 10})
 
 

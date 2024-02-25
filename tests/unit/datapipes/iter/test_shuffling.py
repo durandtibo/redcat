@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from unittest.mock import Mock, patch
 
+import pytest
 import torch
 from coola import objects_are_equal
-from pytest import mark, raises
 from torch.utils.data.datapipes.iter import IterableWrapper
 
 from redcat import BatchedTensor
@@ -19,7 +19,7 @@ def test_batch_shuffler_str() -> None:
     assert str(BatchShuffler(IterableWrapper([]))).startswith("BatchShufflerIterDataPipe(")
 
 
-@mark.parametrize("random_seed", (1, 2))
+@pytest.mark.parametrize("random_seed", [1, 2])
 def test_batch_shuffler_iter_random_seed(random_seed: int) -> None:
     assert BatchShuffler(IterableWrapper([]), random_seed=random_seed).random_seed == random_seed
 
@@ -68,5 +68,5 @@ def test_batch_shuffler_len() -> None:
 
 def test_batch_shuffler_no_len() -> None:
     datapipe = IterableWrapper(BatchedTensor(torch.arange(5).add(i)) for i in range(3))
-    with raises(TypeError, match="object of type .* has no len()"):
+    with pytest.raises(TypeError, match="object of type .* has no len()"):
         len(BatchShuffler(datapipe))

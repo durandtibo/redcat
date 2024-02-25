@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from unittest.mock import Mock
 
+import pytest
 import torch
 from coola import objects_are_equal
-from pytest import mark, raises
 from torch.utils.data.datapipes.iter import IterableWrapper
 
 from redcat import BatchedTensor
@@ -20,14 +20,14 @@ def test_batch_extender_str() -> None:
     assert str(BatchExtender(IterableWrapper([]))).startswith("BatchExtenderIterDataPipe(")
 
 
-@mark.parametrize("buffer_size", (1, 2, 3))
+@pytest.mark.parametrize("buffer_size", [1, 2, 3])
 def test_batch_extender_buffer_size(buffer_size: int) -> None:
     assert BatchExtender(IterableWrapper([]), buffer_size=buffer_size)._buffer_size == buffer_size
 
 
-@mark.parametrize("buffer_size", (0, -1))
+@pytest.mark.parametrize("buffer_size", [0, -1])
 def test_batch_extender_incorrect_buffer_size(buffer_size: int) -> None:
-    with raises(ValueError, match="buffer_size should be greater or equal to 1"):
+    with pytest.raises(ValueError, match="buffer_size should be greater or equal to 1"):
         BatchExtender(IterableWrapper([]), buffer_size=buffer_size)
 
 
@@ -61,16 +61,16 @@ def test_batch_extender_iter_drop_last() -> None:
     )
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     ("num_samples", "buffer_size", "length"),
-    (
+    [
         (1, 1, 1),
         (5, 10, 0),
         (10, 10, 1),
         (11, 10, 1),
         (20, 10, 2),
         (21, 10, 2),
-    ),
+    ],
 )
 def test_batch_extender_len_drop_last_true(num_samples: int, buffer_size: int, length: int) -> None:
     assert (
@@ -85,16 +85,16 @@ def test_batch_extender_len_drop_last_true(num_samples: int, buffer_size: int, l
     )
 
 
-@mark.parametrize(
+@pytest.mark.parametrize(
     ("num_samples", "buffer_size", "length"),
-    (
+    [
         (1, 1, 1),
         (5, 10, 1),
         (10, 10, 1),
         (11, 10, 2),
         (20, 10, 2),
         (21, 10, 3),
-    ),
+    ],
 )
 def test_batch_extender_len_drop_last_false(
     num_samples: int, buffer_size: int, length: int
@@ -107,7 +107,7 @@ def test_batch_extender_len_drop_last_false(
 
 def test_batch_extender_no_len() -> None:
     datapipe = IterableWrapper({"key": i} for i in range(5))
-    with raises(TypeError, match="object of type .* has no len()"):
+    with pytest.raises(TypeError, match="object of type .* has no len()"):
         len(BatchExtender(datapipe))
 
 
