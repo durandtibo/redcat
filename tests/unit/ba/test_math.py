@@ -22,7 +22,7 @@ from tests.unit.ba.test_core import NUMERIC_DTYPES
         2.0,
     ],
 )
-def test_batched_array_add(other: np.ndarray | int | float) -> None:
+def test_batched_array_add(other: np.ndarray | float) -> None:
     assert ba.add(ba.ones((2, 3)), other).allequal(ba.full(shape=(2, 3), fill_value=3.0))
 
 
@@ -55,7 +55,7 @@ def test_batched_array_add_different_axes() -> None:
         2.0,
     ],
 )
-def test_batched_array_divide(other: np.ndarray | int | float) -> None:
+def test_batched_array_divide(other: np.ndarray | float) -> None:
     assert ba.divide(ba.ones((2, 3)), other).allequal(ba.full(shape=(2, 3), fill_value=0.5))
 
 
@@ -86,7 +86,7 @@ def test_batched_array_divide_incorrect_batch_axis() -> None:
         2.0,
     ],
 )
-def test_batched_array_floor_divide(other: np.ndarray | int | float) -> None:
+def test_batched_array_floor_divide(other: np.ndarray | float) -> None:
     assert ba.floor_divide(ba.ones((2, 3)), other).allequal(ba.zeros(shape=(2, 3)))
 
 
@@ -117,7 +117,7 @@ def test_batched_array_floor_divide_incorrect_batch_axis() -> None:
         2.0,
     ],
 )
-def test_batched_array_multiply(other: np.ndarray | int | float) -> None:
+def test_batched_array_multiply(other: np.ndarray | float) -> None:
     assert ba.multiply(ba.ones((2, 3)), other).allequal(ba.full(shape=(2, 3), fill_value=2.0))
 
 
@@ -148,7 +148,7 @@ def test_batched_array_multiply_incorrect_batch_axis() -> None:
         2.0,
     ],
 )
-def test_batched_array_subtract(other: np.ndarray | int | float) -> None:
+def test_batched_array_subtract(other: np.ndarray | float) -> None:
     assert ba.subtract(ba.ones((2, 3)), other).allequal(ba.full(shape=(2, 3), fill_value=-1.0))
 
 
@@ -179,7 +179,7 @@ def test_batched_array_subtract_incorrect_batch_axis() -> None:
         2.0,
     ],
 )
-def test_batched_array_true_divide(other: np.ndarray | int | float) -> None:
+def test_batched_array_true_divide(other: np.ndarray | float) -> None:
     assert ba.true_divide(ba.ones((2, 3)), other).allequal(ba.full(shape=(2, 3), fill_value=0.5))
 
 

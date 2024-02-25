@@ -100,13 +100,13 @@ def test_permute_along_axis_3d_axis_2() -> None:
 @numpy_available
 @pytest.mark.parametrize(
     "data",
-    (
+    [
         np.array([3, 1, 2, 0, 1]),
         [3, 1, 2, 0, 1],
         (3, 1, 2, 0, 1),
         BatchList([3, 1, 2, 0, 1]),
         BatchedArray(np.array([3, 1, 2, 0, 1])),
-    ),
+    ],
 )
 def test_to_array_long(data: Sequence | np.ndarray) -> None:
     assert np.array_equal(to_array(data), np.array([3, 1, 2, 0, 1]))
@@ -115,13 +115,13 @@ def test_to_array_long(data: Sequence | np.ndarray) -> None:
 @numpy_available
 @pytest.mark.parametrize(
     "data",
-    (
+    [
         np.array([3.0, 1.0, 2.0, 0.0, 1.0]),
         [3.0, 1.0, 2.0, 0.0, 1.0],
         (3.0, 1.0, 2.0, 0.0, 1.0),
         BatchList([3.0, 1.0, 2.0, 0.0, 1.0]),
         BatchedArray(np.array([3.0, 1.0, 2.0, 0.0, 1.0])),
-    ),
+    ],
 )
 def test_to_array_float(data: Sequence | np.ndarray) -> None:
     assert np.array_equal(to_array(data), np.array([3.0, 1.0, 2.0, 0.0, 1.0]))
