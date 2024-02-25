@@ -129,7 +129,7 @@ class BatchedTensorSeq(BatchedTensor):
         seq_len: int | None = None,
         **kwargs,
     ) -> BatchedTensorSeq:
-        r"""Creates a batch filled with a scalar value.
+        r"""Create a batch filled with a scalar value.
 
         By default, the tensor in the returned batch has the same
         shape, ``torch.dtype`` and ``torch.device`` as the tensor in
@@ -185,7 +185,7 @@ class BatchedTensorSeq(BatchedTensor):
         seq_len: int | None = None,
         **kwargs,
     ) -> BatchedTensorSeq:
-        r"""Creates a batch filled with the scalar value ``1``.
+        r"""Create a batch filled with the scalar value ``1``.
 
         By default, the tensor in the returned batch has the same
         shape, ``torch.dtype`` and ``torch.device`` as the tensor in
@@ -240,7 +240,7 @@ class BatchedTensorSeq(BatchedTensor):
         seq_len: int | None = None,
         **kwargs,
     ) -> BatchedTensorSeq:
-        r"""Creates a batch filled with the scalar value ``0``.
+        r"""Create a batch filled with the scalar value ``0``.
 
         By default, the tensor in the returned batch has the same
         shape, ``torch.dtype`` and ``torch.device`` as the tensor
@@ -291,7 +291,7 @@ class BatchedTensorSeq(BatchedTensor):
 
     @classmethod
     def from_seq_batch(cls, data: Any, **kwargs) -> BatchedTensorSeq:
-        r"""Creates a batch where the first dimension is the sequence
+        r"""Create a batch where the first dimension is the sequence
         dimension and the second dimension is the batch dimension.
 
         Args:
@@ -370,8 +370,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.argsort(dim=self._seq_dim, **kwargs)
 
-    def cumprod_along_seq(self, *args, **kwargs) -> BatchedTensorSeq:
-        r"""Computes the cumulative product of elements of the current
+    def cumprod_along_seq(self, *args: Any, **kwargs: Any) -> BatchedTensorSeq:
+        r"""Compute the cumulative product of elements of the current
         batch in the sequence dimension.
 
         Args:
@@ -395,8 +395,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.cumprod(self._seq_dim, *args, **kwargs)
 
-    def cumprod_along_seq_(self, *args, **kwargs) -> None:
-        r"""Computes the cumulative product of elements of the current
+    def cumprod_along_seq_(self, *args: Any, **kwargs: Any) -> None:
+        r"""Compute the cumulative product of elements of the current
         batch in the sequence dimension.
 
         Args:
@@ -418,7 +418,7 @@ class BatchedTensorSeq(BatchedTensor):
         self.cumprod_(self._seq_dim, *args, **kwargs)
 
     def cumsum_along_seq(self, **kwargs) -> BatchedTensorSeq:
-        r"""Computes the cumulative sum of elements of the current batch
+        r"""Compute the cumulative sum of elements of the current batch
         in the sequence dimension.
 
         Args:
@@ -442,7 +442,7 @@ class BatchedTensorSeq(BatchedTensor):
         return self.cumsum(dim=self._seq_dim, **kwargs)
 
     def cumsum_along_seq_(self) -> None:
-        r"""Computes the cumulative sum of elements of the current batch
+        r"""Compute the cumulative sum of elements of the current batch
         in the sequence dimension.
 
         Example usage:
@@ -460,7 +460,7 @@ class BatchedTensorSeq(BatchedTensor):
         self.cumsum_(self._seq_dim)
 
     def logcumsumexp_along_seq(self) -> BatchedTensorSeq:
-        r"""Computes the logarithm of the cumulative summation of the
+        r"""Compute the logarithm of the cumulative summation of the
         exponentiation of elements of the current batch in the sequence
         dimension.
 
@@ -482,7 +482,7 @@ class BatchedTensorSeq(BatchedTensor):
         return self.logcumsumexp(self._seq_dim)
 
     def logcumsumexp_along_seq_(self) -> None:
-        r"""Computes the logarithm of the cumulative summation of the
+        r"""Compute the logarithm of the cumulative summation of the
         exponentiation of elements of the current batch in the sequence
         dimension.
 
@@ -592,7 +592,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.permute_along_seq_(torch.randperm(self.seq_len, generator=generator))
 
-    def sort_along_seq(self, *args, **kwargs) -> torch.return_types.sort:
+    def sort_along_seq(self, *args: Any, **kwargs: Any) -> torch.return_types.sort:
         r"""Sorts the elements of the batch along the sequence dimension
         in monotonic order by value.
 
@@ -636,8 +636,8 @@ class BatchedTensorSeq(BatchedTensor):
     #     Reduction operations     #
     ################################
 
-    def amax_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the maximum along the sequence dimension.
+    def amax_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the maximum along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.amax``
@@ -660,8 +660,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.amax(self._seq_dim, *args, **kwargs)
 
-    def amin_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the minimum along the sequence dimension.
+    def amin_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the minimum along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.amin``
@@ -684,8 +684,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.amin(self._seq_dim, *args, **kwargs)
 
-    def argmax_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the indices of the maximum value along the sequence
+    def argmax_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the indices of the maximum value along the sequence
         dimension.
 
         Args:
@@ -710,8 +710,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.argmax(self._seq_dim, *args, **kwargs)
 
-    def argmin_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the indices of the minimum value along the sequence
+    def argmin_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the indices of the minimum value along the sequence
         dimension.
 
         Args:
@@ -736,8 +736,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.argmin(self._seq_dim, *args, **kwargs)
 
-    def max_along_seq(self, *args, **kwargs) -> torch.return_types.max:
-        r"""Computes the maximum values along the sequence dimension.
+    def max_along_seq(self, *args: Any, **kwargs: Any) -> torch.return_types.max:
+        r"""Compute the maximum values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.max``
@@ -765,8 +765,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.max(self._seq_dim, *args, **kwargs)
 
-    def mean_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the mean values along the sequence dimension.
+    def mean_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the mean values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.mean``
@@ -791,8 +791,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.mean(self._seq_dim, *args, **kwargs)
 
-    def median_along_seq(self, *args, **kwargs) -> torch.return_types.median:
-        r"""Computes the median values along the sequence dimension.
+    def median_along_seq(self, *args: Any, **kwargs: Any) -> torch.return_types.median:
+        r"""Compute the median values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.median``
@@ -818,8 +818,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.median(self._seq_dim, *args, **kwargs)
 
-    def min_along_seq(self, *args, **kwargs) -> torch.return_types.min:
-        r"""Computes the minimum values along the sequence dimension.
+    def min_along_seq(self, *args: Any, **kwargs: Any) -> torch.return_types.min:
+        r"""Compute the minimum values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.min``
@@ -848,8 +848,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.min(self._seq_dim, *args, **kwargs)
 
-    def nanmean_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the mean values along the sequence dimension.
+    def nanmean_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the mean values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nanmean``
@@ -873,8 +873,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.nanmean(self._seq_dim, *args, **kwargs)
 
-    def nanmedian_along_seq(self, *args, **kwargs) -> torch.return_types.nanmedian:
-        r"""Computes the median values along the sequence dimension.
+    def nanmedian_along_seq(self, *args: Any, **kwargs: Any) -> torch.return_types.nanmedian:
+        r"""Compute the median values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nanmedian``
@@ -900,8 +900,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.nanmedian(self._seq_dim, *args, **kwargs)
 
-    def nansum_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the sum values along the sequence dimension.
+    def nansum_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the sum values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.nansum``
@@ -923,8 +923,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.nansum(self._seq_dim, *args, **kwargs)
 
-    def prod_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the product values along the sequence dimension.
+    def prod_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the product values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.prod``
@@ -948,8 +948,8 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.prod(self._seq_dim, *args, **kwargs)
 
-    def sum_along_seq(self, *args, **kwargs) -> Tensor:
-        r"""Computes the sum values along the sequence dimension.
+    def sum_along_seq(self, *args: Any, **kwargs: Any) -> Tensor:
+        r"""Compute the sum values along the sequence dimension.
 
         Args:
             *args: See the documentation of ``torch.Tensor.sum``
@@ -1326,7 +1326,7 @@ class BatchedTensorSeq(BatchedTensor):
     def take_along_seq(
         self, indices: BaseBatch | np.ndarray | Tensor | Sequence
     ) -> BatchedTensorSeq:
-        r"""Takes values along the sequence dimension.
+        r"""Take values along the sequence dimension.
 
         Args:
             indices (``BaseBatch`` or ``numpy.ndarray`` or
@@ -1367,7 +1367,7 @@ class BatchedTensorSeq(BatchedTensor):
 
 
 def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
-    r"""Checks if the tensor ``data``, ``batch_dim`` and ``seq_dim`` are
+    r"""Check if the tensor ``data``, ``batch_dim`` and ``seq_dim`` are
     correct.
 
     Args:
@@ -1417,7 +1417,7 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
 def from_sequences(
     sequences: Iterable[torch.Tensor], padding_value: bool | float = 0
 ) -> BatchedTensorSeq:
-    r"""Converts variable length sequences to a single padded tensor.
+    r"""Convert variable length sequences to a single padded tensor.
 
     Args:
         sequences (iterable): Specifies an iterable over the variable

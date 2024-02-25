@@ -24,7 +24,7 @@ else:  # pragma: no cover
 
 
 def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Random:
-    r"""Gets a random number generator.
+    r"""Get a random number generator.
 
     Args:
         rng_or_seed: Specifies the pseudorandom number generator for
@@ -71,7 +71,7 @@ def randperm(n: int, generator: random.Random | int | None = None) -> list[int]:
 def randperm(
     n: int, rng_or_seed: RNGType | int | None = None
 ) -> torch.Tensor | np.ndarray | list[int]:
-    r"""Creates a random permutation of integers from ``0`` to ``n - 1``.
+    r"""Create a random permutation of integers from ``0`` to ``n - 1``.
 
     Args:
         n: Specifies the number of items.

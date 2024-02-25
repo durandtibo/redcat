@@ -36,7 +36,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def to_data(self) -> Any:
-        r"""Returns the internal data without the batch wrapper.
+        r"""Return the internal data without the batch wrapper.
 
         Returns:
             The internal data.
@@ -60,7 +60,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def clone(self) -> TBatch:
-        r"""Creates a copy of the current batch.
+        r"""Create a copy of the current batch.
 
         Returns:
             A copy of the current batch.
@@ -249,7 +249,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def append(self, other: BaseBatch) -> None:
-        r"""Appends a new batch to the current batch along the batch
+        r"""Append a new batch to the current batch along the batch
         dimension.
 
         Args:
@@ -453,7 +453,7 @@ class BaseBatch(Generic[T], ABC):
     ########################
 
     def get_num_minibatches(self, batch_size: int, drop_last: bool = False) -> int:
-        r"""Gets the number of mini-batches for a given batch size.
+        r"""Get the number of mini-batches for a given batch size.
 
         Args:
             batch_size: Specifies the target batch size of the
@@ -487,7 +487,7 @@ class BaseBatch(Generic[T], ABC):
         drop_last: bool = False,
         deepcopy: bool = False,
     ) -> Iterable[TBatch]:
-        r"""Gets the mini-batches of the current batch.
+        r"""Get the mini-batches of the current batch.
 
         Args:
             batch_size: Specifies the target batch size of the
@@ -547,7 +547,7 @@ class BaseBatch(Generic[T], ABC):
 
     @abstractmethod
     def summary(self) -> str:
-        r"""Returns a summary of the current batch.
+        r"""Return a summary of the current batch.
 
         Returns:
             The summary of the current batch

@@ -25,7 +25,7 @@ T = TypeVar("T")
 
 
 def check_batch_dims(dims: set[int]) -> None:
-    r"""Gets the batch dimensions from the inputs.
+    r"""Get the batch dimensions from the inputs.
 
     Args:
         dims: Specifies the batch dims to check.
@@ -48,7 +48,7 @@ def check_batch_dims(dims: set[int]) -> None:
 
 
 def check_data_and_dim(data: ndarray | Tensor, batch_dim: int) -> None:
-    r"""Checks if the array ``data`` and ``batch_dim`` are correct.
+    r"""Check if the array ``data`` and ``batch_dim`` are correct.
 
     Args:
         data: Specifies the array in the batch.
@@ -78,7 +78,7 @@ def check_data_and_dim(data: ndarray | Tensor, batch_dim: int) -> None:
 
 
 def check_seq_dims(dims: set[int]) -> None:
-    r"""Gets the sequence dimensions from the inputs.
+    r"""Get the sequence dimensions from the inputs.
 
     Args:
         dims: Specifies the sequence dims to check.
@@ -101,7 +101,7 @@ def check_seq_dims(dims: set[int]) -> None:
 
 
 def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:
-    r"""Gets the batch dimensions from the inputs.
+    r"""Get the batch dimensions from the inputs.
 
     Args:
         args: Variable length argument list.
@@ -132,7 +132,7 @@ def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
 
 
 def get_data(data: BaseBatch[T] | Any) -> T:
-    r"""Gets the data from a batch or the input data.
+    r"""Get the data from a batch or the input data.
 
     Args:
         data: Specifies the data.
@@ -166,7 +166,7 @@ def get_data(data: BaseBatch[T] | Any) -> T:
 
 
 def get_seq_dims(args: Iterable[Any, ...], kwargs: Mapping[str, Any] | None = None) -> set[int]:
-    r"""Gets the sequence dimensions from the inputs.
+    r"""Get the sequence dimensions from the inputs.
 
     Args:
         args: Variable length argument list.

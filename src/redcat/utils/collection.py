@@ -9,7 +9,7 @@ from redcat import BaseBatch
 
 
 def to_list(data: list | tuple | Tensor | ndarray | BaseBatch) -> list:
-    r"""Converts an input data to a list.
+    r"""Convert an input data to a list.
 
     Args:
         data: Specifies the data to convert.

@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 
 def get_div_rounding_operator(mode: str | None) -> Callable:
-    r"""Gets the rounding operator for a division.
+    r"""Get the rounding operator for a division.
 
     Args:
         mode: Specifies the type of rounding applied to the result.
@@ -101,7 +101,7 @@ def permute_along_axis(array: np.ndarray, permutation: np.ndarray, axis: int = 0
 
 
 def to_array(data: BaseBatch | Sequence | torch.Tensor | np.ndarray) -> np.ndarray:
-    r"""Converts the input to a ``numpy.ndarray``.
+    r"""Convert the input to a ``numpy.ndarray``.
 
     Args:
         data: Specifies the data to convert to an array.
