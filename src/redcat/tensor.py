@@ -4255,14 +4255,14 @@ class BatchedTensor(BaseBatch[Tensor]):
         self,
         indices: BaseBatch | np.ndarray | Tensor | Sequence,
         dim: None = None,
-    ) -> Tensor: ...
+    ) -> Tensor: ...  # pragma: no cover
 
     @overload
     def take_along_dim(
         self,
         indices: BaseBatch | np.ndarray | Tensor | Sequence,
         dim: int,
-    ) -> TBatchedTensor: ...
+    ) -> TBatchedTensor: ...  # pragma: no cover
 
     def take_along_dim(
         self,

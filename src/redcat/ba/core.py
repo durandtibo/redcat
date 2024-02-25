@@ -9,7 +9,7 @@ from __future__ import annotations
 __all__ = ["BatchedArray", "implements"]
 
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from typing import TYPE_CHECKING, Any, Literal, SupportsIndex, TypeVar, Union, overload
+from typing import TYPE_CHECKING, Any, Literal, SupportsIndex, Union, overload
 
 import numpy as np
 from coola import objects_are_allclose, objects_are_equal
@@ -22,9 +22,6 @@ if TYPE_CHECKING:
     from numpy.typing import ArrayLike, DTypeLike
     from typing_extensions import Self
 
-# Workaround because Self is not available for python 3.9 and 3.10
-# https://peps.python.org/pep-0673/
-TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 
 IndexType = Union[int, slice, list[int], np.ndarray, None]
 OrderACFK = Literal["A", "C", "F", "K"]
@@ -71,22 +68,22 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             return False
         return objects_are_equal(self.data, other.data, equal_nan=equal_nan)
 
-    def append(self, other: TBatchedArray | np.ndarray) -> None:
+    def append(self: Self, other: BatchedArray | np.ndarray) -> None:
         self.concatenate_along_batch_([other])
 
-    def chunk_along_batch(self, chunks: int) -> tuple[TBatchedArray, ...]:
+    def chunk_along_batch(self, chunks: int) -> tuple[Self, ...]:
         return self.chunk(chunks, self._batch_axis)
 
-    def clone(self) -> TBatchedArray:
+    def clone(self) -> Self:
         return self._create_new_batch(self._data.copy())
 
-    def extend(self, other: Iterable[TBatchedArray | np.ndarray]) -> None:
+    def extend(self, other: Iterable[BatchedArray | np.ndarray]) -> None:
         self.concatenate_along_batch_(other)
 
-    def index_select_along_batch(self, index: np.ndarray | Sequence[int]) -> TBatchedArray:
+    def index_select_along_batch(self, index: np.ndarray | Sequence[int]) -> Self:
         return self.index_select(index=index, axis=self._batch_axis)
 
-    def permute_along_batch(self, permutation: np.ndarray | Sequence[int]) -> TBatchedArray:
+    def permute_along_batch(self, permutation: np.ndarray | Sequence[int]) -> Self:
         return self.permute_along_axis(permutation, axis=self._batch_axis)
 
     def permute_along_batch_(self, permutation: np.ndarray | Sequence[int]) -> None:
@@ -95,20 +92,16 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     def select_along_batch(self, index: int) -> np.ndarray:
         return self.select(index=index, axis=self._batch_axis)
 
-    def shuffle_along_batch(self, rng: np.random.Generator | None = None) -> TBatchedArray:
+    def shuffle_along_batch(self, rng: np.random.Generator | None = None) -> Self:
         return self.shuffle_along_axis(axis=self._batch_axis, rng=rng)
 
     def shuffle_along_batch_(self, rng: np.random.Generator | None = None) -> None:
         self.shuffle_along_axis_(axis=self._batch_axis, rng=rng)
 
-    def slice_along_batch(
-        self, start: int = 0, stop: int | None = None, step: int = 1
-    ) -> TBatchedArray:
+    def slice_along_batch(self, start: int = 0, stop: int | None = None, step: int = 1) -> Self:
         return self.slice_along_axis(self._batch_axis, start, stop, step)
 
-    def split_along_batch(
-        self, split_size_or_sections: int | Sequence[int]
-    ) -> tuple[TBatchedArray, ...]:
+    def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[Self, ...]:
         return self.split_along_axis(split_size_or_sections, axis=self._batch_axis)
 
     def summary(self) -> str:
@@ -131,7 +124,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         method: Literal["__call__", "reduce", "reduceat", "accumulate", "outer", "inner"],
         *inputs: Any,
         **kwargs: Any,
-    ) -> TBatchedArray | tuple[TBatchedArray, ...]:
+    ) -> Self | tuple[Self, ...]:
         args = []
         batch_axes = set()
         for inp in inputs:
@@ -154,7 +147,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         types: tuple,
         args: Sequence[Any] = (),
         kwargs: Mapping[str, Any] | None = None,
-    ) -> TBatchedArray | tuple[TBatchedArray, ...]:
+    ) -> Self | tuple[Self, ...]:
         if not all(issubclass(t, self.__class__) for t in types):
             return NotImplemented
         return HANDLED_FUNCTIONS[func](*args, **kwargs)
@@ -202,7 +195,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     #     Creation operations     #
     ###############################
 
-    def copy(self, order: OrderACFK = "C") -> TBatchedArray:
+    def copy(self, order: OrderACFK = "C") -> Self:
         r"""Return a copy of the array.
 
         Args:
@@ -241,7 +234,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         subok: bool = True,
         shape: ShapeLike = None,
         batch_size: int | None = None,
-    ) -> TBatchedArray:
+    ) -> Self:
         r"""Return an array without initializing entries, with the same
         shape as the current array.
 
@@ -291,7 +284,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         subok: bool = True,
         shape: ShapeLike = None,
         batch_size: int | None = None,
-    ) -> TBatchedArray:
+    ) -> Self:
         r"""Return an array filled with the scalar value ``1``, with the
         same shape as the current array.
 
@@ -353,7 +346,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         subok: bool = True,
         shape: ShapeLike = None,
         batch_size: int | None = None,
-    ) -> TBatchedArray:
+    ) -> Self:
         r"""Return an array filled with the scalar value ``1``, with the
         same shape as the current array.
 
@@ -407,7 +400,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         subok: bool = True,
         shape: ShapeLike = None,
         batch_size: int | None = None,
-    ) -> TBatchedArray:
+    ) -> Self:
         r"""Return an array filled with the scalar value ``0``, with the
         same shape as the current array.
 
@@ -492,7 +485,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self._data.__itruediv__(self._get_data(other))
         return self
 
-    def add(self, other: BatchedArray | np.ndarray | float, alpha: float = 1.0) -> TBatchedArray:
+    def add(self, other: BatchedArray | np.ndarray | float, alpha: float = 1.0) -> Self:
         r"""Add the input ``other``, scaled by ``alpha``, to the ``self``
         batch.
 
@@ -558,7 +551,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self.__iadd__(other * alpha)
 
-    def floordiv(self, divisor: BatchedArray | np.ndarray | float) -> TBatchedArray:
+    def floordiv(self, divisor: BatchedArray | np.ndarray | float) -> Self:
         r"""Return the largest integer smaller or equal to the division
         of the inputs.
 
@@ -617,7 +610,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self.__ifloordiv__(divisor)
 
-    def fmod(self, divisor: BatchedArray | np.ndarray | float) -> TBatchedArray:
+    def fmod(self, divisor: BatchedArray | np.ndarray | float) -> Self:
         r"""Compute the element-wise remainder of division.
 
         The current batch is the dividend.
@@ -674,7 +667,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self.__imod__(divisor)
 
-    def mul(self, other: BatchedArray | np.ndarray | float) -> TBatchedArray:
+    def mul(self, other: BatchedArray | np.ndarray | float) -> Self:
         r"""Multiplies the ``self`` batch by the input ``other`.
 
         Similar to ``out = self * other``
@@ -735,7 +728,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self.__imul__(other)
 
-    def neg(self) -> TBatchedArray:
+    def neg(self) -> Self:
         r"""Return a new batch with the negative of the elements.
 
         Returns:
@@ -762,7 +755,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self,
         other: BatchedArray | np.ndarray | float,
         alpha: float = 1,
-    ) -> TBatchedArray:
+    ) -> Self:
         r"""Subtracts the input ``other``, scaled by ``alpha``, to the
         ``self`` batch.
 
@@ -826,7 +819,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self.__isub__(other * alpha)
 
-    def truediv(self, divisor: BatchedArray | np.ndarray | float) -> TBatchedArray:
+    def truediv(self, divisor: BatchedArray | np.ndarray | float) -> Self:
         r"""Return the division of the inputs.
 
         The current batch is the dividend/numerator.
@@ -888,17 +881,17 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
     @overload
     def concatenate(
-        self, arrays: Iterable[TBatchedArray | np.ndarray], axis: None = ...
+        self, arrays: Iterable[BatchedArray | np.ndarray], axis: None = ...
     ) -> np.ndarray: ...  # pragma: no cover
 
     @overload
     def concatenate(
-        self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int = ...
-    ) -> TBatchedArray: ...  # pragma: no cover
+        self, arrays: Iterable[BatchedArray | np.ndarray], axis: int = ...
+    ) -> Self: ...  # pragma: no cover
 
     def concatenate(
-        self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int | None = 0
-    ) -> TBatchedArray | np.ndarray:
+        self, arrays: Iterable[BatchedArray | np.ndarray], axis: int | None = 0
+    ) -> Self | np.ndarray:
         r"""Join a sequence of arrays along an existing axis.
 
         Args:
@@ -945,7 +938,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             return out
         return self._create_new_batch(out)
 
-    def concatenate_(self, arrays: Iterable[TBatchedArray | np.ndarray], axis: int = 0) -> None:
+    def concatenate_(self, arrays: Iterable[BatchedArray | np.ndarray], axis: int = 0) -> None:
         r"""Join a sequence of arrays along an existing axis in-place.
 
         Args:
@@ -972,9 +965,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self._data = self.concatenate(arrays, axis).data
 
-    def concatenate_along_batch(
-        self, arrays: Iterable[TBatchedArray | np.ndarray]
-    ) -> TBatchedArray:
+    def concatenate_along_batch(self, arrays: Iterable[BatchedArray | np.ndarray]) -> Self:
         r"""Join a sequence of arrays along the batch axis.
 
         Args:
@@ -1006,7 +997,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         return self.concatenate(arrays, axis=self._batch_axis)
 
-    def concatenate_along_batch_(self, arrays: Iterable[TBatchedArray | np.ndarray]) -> None:
+    def concatenate_along_batch_(self, arrays: Iterable[BatchedArray | np.ndarray]) -> None:
         r"""Join a sequence of arrays along the batch axis in-place.
 
         Args:
@@ -1036,7 +1027,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     #     Array manipulation routines | Splitting arrays     #
     ##########################################################
 
-    def chunk(self, chunks: int, axis: int = 0) -> tuple[TBatchedArray, ...]:
+    def chunk(self, chunks: int, axis: int = 0) -> tuple[Self, ...]:
         r"""Split an array into the specified number of chunks. Each
         chunk is a view of the input array.
 
@@ -1079,11 +1070,11 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     @overload
     def index_select(
         self, index: np.ndarray | Sequence[int], axis: int = ...
-    ) -> TBatchedArray: ...  # pragma: no cover
+    ) -> Self: ...  # pragma: no cover
 
     def index_select(
         self, index: np.ndarray | Sequence[int], axis: int | None = None
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return a new array which indexes the input array along the
         given axis using the entries in ``index``.
 
@@ -1148,7 +1139,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         start: int = 0,
         stop: int | None = None,
         step: int = 1,
-    ) -> TBatchedArray:
+    ) -> Self:
         r"""Slice the batch in a given axis.
 
         Args:
@@ -1193,7 +1184,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
 
     def split_along_axis(
         self, split_size_or_sections: int | Sequence[int], axis: int = 0
-    ) -> tuple[TBatchedArray, ...]:
+    ) -> tuple[Self, ...]:
         r"""Split the batch into chunks along a given axis.
 
         Notes:
@@ -1250,9 +1241,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             value = value.data
         self._data[index] = value
 
-    def permute_along_axis(
-        self, permutation: np.ndarray | Sequence[int], axis: int
-    ) -> TBatchedArray:
+    def permute_along_axis(self, permutation: np.ndarray | Sequence[int], axis: int) -> Self:
         r"""Permute the data/batch along a given axis.
 
         Args:
@@ -1306,9 +1295,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         self._data = np.take(self._data, indices=to_array(permutation), axis=axis)
 
-    def shuffle_along_axis(
-        self, axis: int, rng: np.random.Generator | None = None
-    ) -> TBatchedArray:
+    def shuffle_along_axis(self, axis: int, rng: np.random.Generator | None = None) -> Self:
         r"""Shuffle the data/batch along a given axis.
 
         Args:
@@ -1374,14 +1361,14 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         axis: SupportsIndex = ...,
         dtype: DTypeLike = ...,
         out: np.ndarray | None = ...,
-    ) -> TBatchedArray: ...  # pragma: no cover
+    ) -> Self: ...  # pragma: no cover
 
     def cumprod(
         self,
         axis: SupportsIndex | None = None,
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the cumulative product of elements along a given axis.
 
         Args:
@@ -1426,7 +1413,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             x = self._create_new_batch(x)
         return x
 
-    def cumprod_along_batch(self, dtype: DTypeLike = None) -> TBatchedArray:
+    def cumprod_along_batch(self, dtype: DTypeLike = None) -> Self:
         r"""Return the cumulative product of elements along the batch
         axis.
 
@@ -1472,14 +1459,14 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         axis: SupportsIndex = ...,
         dtype: DTypeLike = ...,
         out: np.ndarray | None = ...,
-    ) -> TBatchedArray: ...  # pragma: no cover
+    ) -> Self: ...  # pragma: no cover
 
     def cumsum(
         self,
         axis: SupportsIndex | None = None,
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the cumulative sum of elements along a given axis.
 
         Args:
@@ -1524,7 +1511,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             x = self._create_new_batch(x)
         return x
 
-    def cumsum_along_batch(self, dtype: DTypeLike = None) -> TBatchedArray:
+    def cumsum_along_batch(self, dtype: DTypeLike = None) -> Self:
         r"""Return the cumulative sum of elements along the batch axis.
 
         Args:
@@ -1561,7 +1548,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         axis: SupportsIndex = -1,
         prepend: ArrayLike = np._NoValue,
         append: ArrayLike = np._NoValue,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Calculate the n-th discrete difference along the given axis.
 
         Args:
@@ -1614,7 +1601,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         n: int = 1,
         prepend: ArrayLike = np._NoValue,
         append: ArrayLike = np._NoValue,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Calculate the n-th discrete difference along the batch axis.
 
         Args:
@@ -1674,14 +1661,14 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         axis: SupportsIndex = ...,
         dtype: DTypeLike = ...,
         out: np.ndarray | None = ...,
-    ) -> TBatchedArray: ...  # pragma: no cover
+    ) -> Self: ...  # pragma: no cover
 
     def nancumprod(
         self,
         axis: SupportsIndex | None = None,
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the cumulative product of elements along a given axis
         treating Not a Numbers (NaNs) as one.
 
@@ -1725,7 +1712,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             x = self._create_new_batch(x)
         return x
 
-    def nancumprod_along_batch(self, dtype: DTypeLike = None) -> TBatchedArray:
+    def nancumprod_along_batch(self, dtype: DTypeLike = None) -> Self:
         r"""Return the cumulative product of elements along the batch
         axis treating Not a Numbers (NaNs) as one.
 
@@ -1769,14 +1756,14 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         axis: SupportsIndex = ...,
         dtype: DTypeLike = ...,
         out: np.ndarray | None = ...,
-    ) -> TBatchedArray: ...  # pragma: no cover
+    ) -> Self: ...  # pragma: no cover
 
     def nancumsum(
         self,
         axis: SupportsIndex | None = None,
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the cumulative sum of elements along a given axis
         treating Not a Numbers (NaNs) as zero.
 
@@ -1820,7 +1807,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             x = self._create_new_batch(x)
         return x
 
-    def nancumsum_along_batch(self, dtype: DTypeLike = None) -> TBatchedArray:
+    def nancumsum_along_batch(self, dtype: DTypeLike = None) -> Self:
         r"""Return the cumulative sum of elements along the batch axis
         treating Not a Numbers (NaNs) as zero.
 
@@ -1856,7 +1843,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the product of elements along a given axis treating
         Not a Numbers (NaNs) as one.
 
@@ -1902,7 +1889,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             return out
         return x
 
-    def nanprod_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> TBatchedArray:
+    def nanprod_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> Self:
         r"""Return the product of elements along the batch axis treating
         Not a Numbers (NaNs) as one.
 
@@ -1941,7 +1928,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the sum of elements along a given axis treating Not a
         Numbers (NaNs) as zero.
 
@@ -1987,7 +1974,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             return out
         return x
 
-    def nansum_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> TBatchedArray:
+    def nansum_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> Self:
         r"""Return the sum of elements along the batch axis treating Not
         a Numbers (NaNs) as zero.
 
@@ -2026,7 +2013,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the product of elements along a given axis.
 
         Args:
@@ -2070,7 +2057,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             return out
         return x
 
-    def prod_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> TBatchedArray:
+    def prod_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> Self:
         r"""Return the product of elements along the batch axis.
 
         Args:
@@ -2107,7 +2094,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the sum of elements along a given axis.
 
         Args:
@@ -2151,7 +2138,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
             return out
         return x
 
-    def sum_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> TBatchedArray:
+    def sum_along_batch(self, dtype: DTypeLike = None, keepdims: bool = False) -> Self:
         r"""Return the sum of elements along the batch axis.
 
         Args:
@@ -2940,7 +2927,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the arithmetic mean along the specified axis.
 
         Args:
@@ -2991,7 +2978,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the arithmetic mean along the batch axis.
 
         Args:
@@ -3035,7 +3022,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         axis: SupportsIndex | None = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the median along the specified axis.
 
         Args:
@@ -3084,7 +3071,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the median along the batch axis.
 
         Args:
@@ -3128,7 +3115,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the arithmetic mean along the specified axis, ignoring
         NaNs.
 
@@ -3180,7 +3167,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         dtype: DTypeLike = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the arithmetic mean along the batch axis, ignoring
         NaNs.
 
@@ -3225,7 +3212,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         axis: SupportsIndex | None = None,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the median along the specified axis, ignoring NaNs.
 
         Args:
@@ -3268,7 +3255,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         self,
         out: np.ndarray | None = None,
         keepdims: bool = False,
-    ) -> TBatchedArray | np.ndarray:
+    ) -> Self | np.ndarray:
         r"""Return the median along the batch axis, ignoring NaNs.
 
         Args:
@@ -3313,7 +3300,7 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         """
         check_same_batch_axis(get_batch_axes(arrays))
 
-    def _create_new_batch(self, data: np.ndarray) -> TBatchedArray:
+    def _create_new_batch(self, data: np.ndarray) -> Self:
         return self.__class__(data, **self._get_kwargs())
 
     def _get_kwargs(self) -> dict:
