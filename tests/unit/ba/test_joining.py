@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from redcat import ba2 as ba
+from redcat import ba
 
 ################################
 #    Tests for concatenate     #

@@ -7,8 +7,8 @@ import pytest
 from coola import objects_are_allclose
 from pytest import mark
 
-from redcat.ba2 import BatchedArray
-from redcat.ba2.testing import (
+from redcat.ba import BatchedArray
+from redcat.ba.testing import (
     FunctionCheck,
     normal_arrays,
     uniform_arrays,

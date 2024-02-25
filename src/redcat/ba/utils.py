@@ -24,7 +24,7 @@ def check_same_batch_axis(axes: set[int]) -> None:
     Example usage:
 
     ```pycon
-    >>> from redcat.ba2 import check_same_batch_axis
+    >>> from redcat.ba import check_same_batch_axis
     >>> check_same_batch_axis({0})
 
     ```
@@ -47,7 +47,7 @@ def check_data_and_axis(data: ndarray, batch_axis: int) -> None:
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat.ba2 import check_data_and_axis
+    >>> from redcat.ba import check_data_and_axis
     >>> check_data_and_axis(np.ones((2, 3)), batch_axis=0)
 
     ```
@@ -74,11 +74,11 @@ def get_batch_axes(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None)
     Example usage:
 
     ```pycon
-    >>> from redcat import ba2
-    >>> from redcat.ba2 import get_batch_axes
+    >>> from redcat import ba
+    >>> from redcat.ba import get_batch_axes
     >>> get_batch_axes(
-    ...     args=(ba2.ones((2, 3)), ba2.ones((2, 6))),
-    ...     kwargs={"batch": ba2.ones((2, 4))},
+    ...     args=(ba.ones((2, 3)), ba.ones((2, 6))),
+    ...     kwargs={"batch": ba.ones((2, 4))},
     ... )
     {0}
 

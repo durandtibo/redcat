@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from redcat import ba2 as ba
-from tests.unit.ba2.test_core import NUMERIC_DTYPES
+from redcat import ba
+from tests.unit.ba.test_core import NUMERIC_DTYPES
 
 ########################
 #    Tests for add     #

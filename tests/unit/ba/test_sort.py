@@ -4,9 +4,9 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from redcat import ba2 as ba
-from redcat.ba2.core import SortKind
-from tests.unit.ba2.test_core import NUMERIC_DTYPES, SORT_KINDS
+from redcat import ba
+from redcat.ba.core import SortKind
+from tests.unit.ba.test_core import NUMERIC_DTYPES, SORT_KINDS
 
 ###################
 #     argsort     #

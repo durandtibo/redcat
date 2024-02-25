@@ -40,7 +40,7 @@ from typing import SupportsIndex, TypeVar
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
-from redcat.ba2.core import BatchedArray, implements
+from redcat.ba.core import BatchedArray, implements
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -84,9 +84,9 @@ def cumprod_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatchedAr
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.arange(10).reshape(5, 2))
-    >>> ba2.cumprod_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.cumprod_along_batch(batch)
     array([[  0,   1],
            [  0,   3],
            [  0,  15],
@@ -128,9 +128,9 @@ def cumsum_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatchedArr
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.arange(10).reshape(5, 2))
-    >>> ba2.cumsum_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.arange(10).reshape(5, 2))
+    >>> ba.cumsum_along_batch(batch)
     array([[ 0,  1],
            [ 2,  4],
            [ 6,  9],
@@ -183,15 +183,15 @@ def diff(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]))
-    >>> ba2.diff(batch, n=1, axis=0)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]))
+    >>> ba.diff(batch, n=1, axis=0)
     array([[ 0, -1],
            [ 1,  7],
            [-7, -9],
            [ 6,  7]])
     >>> batch = BatchedArray(np.array([[9, 3, 7, 4, 0], [6, 6, 2, 3, 3]]), batch_axis=1)
-    >>> ba2.diff(batch, axis=1)
+    >>> ba.diff(batch, axis=1)
     array([[-6,  4, -3, -4], [ 0, -4,  1,  0]])
 
     ```
@@ -236,15 +236,15 @@ def diff_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
+    >>> from redcat import ba
     >>> batch = BatchedArray(np.array([[6, 3], [6, 2], [7, 9], [0, 0], [6, 7]]))
-    >>> ba2.diff_along_batch(batch, n=1)
+    >>> ba.diff_along_batch(batch, n=1)
     array([[ 0, -1],
            [ 1,  7],
            [-7, -9],
            [ 6,  7]])
     >>> batch = BatchedArray(np.array([[9, 3, 7, 4, 0], [6, 6, 2, 3, 3]]), batch_axis=1)
-    >>> ba2.diff_along_batch(batch, n=1)
+    >>> ba.diff_along_batch(batch, n=1)
     array([[-6,  4, -3, -4], [ 0, -4,  1,  0]])
 
     ```
@@ -282,9 +282,9 @@ def nancumprod_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatche
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nancumprod_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nancumprod_along_batch(batch)
     array([[ 1.,  1.,  2.],
            [ 3.,  4., 10.]], batch_axis=0)
 
@@ -323,9 +323,9 @@ def nancumsum_along_batch(a: TBatchedArray, dtype: DTypeLike = None) -> TBatched
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nancumsum_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nancumsum_along_batch(batch)
     array([[1., 0., 2.],
            [4., 4., 7.]], batch_axis=0)
 
@@ -371,14 +371,14 @@ def nanprod(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanprod(batch, axis=0)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanprod(batch, axis=0)
     array([ 3., 4., 10.])
-    >>> ba2.nanprod(batch, axis=0, keepdims=True)
+    >>> ba.nanprod(batch, axis=0, keepdims=True)
     array([[ 3., 4., 10.]])
     >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.nanprod(batch, axis=1)
+    >>> ba.nanprod(batch, axis=1)
     array([ 2., 60.])
 
     ```
@@ -413,9 +413,9 @@ def nanprod_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanprod_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanprod_along_batch(batch)
     array([ 3., 4., 10.])
 
     ```
@@ -460,14 +460,14 @@ def nansum(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nansum(batch, axis=0)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nansum(batch, axis=0)
     array([4., 4., 7.])
-    >>> ba2.nansum(batch, axis=0, keepdims=True)
+    >>> ba.nansum(batch, axis=0, keepdims=True)
     array([[4., 4., 7.]])
     >>> batch = BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.nansum(batch, axis=1)
+    >>> ba.nansum(batch, axis=1)
     array([ 3., 12.])
 
     ```
@@ -502,9 +502,9 @@ def nansum_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nansum_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nansum_along_batch(batch)
     array([4., 4., 7.])
 
     ```
@@ -547,14 +547,14 @@ def prod(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.prod(batch, axis=0)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.prod(batch, axis=0)
     array([ 3, 24, 10])
-    >>> ba2.prod(batch, axis=0, keepdims=True)
+    >>> ba.prod(batch, axis=0, keepdims=True)
     array([[ 3, 24, 10]])
     >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.prod(batch, axis=1)
+    >>> ba.prod(batch, axis=1)
     array([12, 60])
 
     ```
@@ -587,9 +587,9 @@ def prod_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.prod_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.prod_along_batch(batch)
     array([ 3, 24, 10])
 
     ```
@@ -634,14 +634,14 @@ def sum(  # noqa: A001
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.sum(batch, axis=0)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.sum(batch, axis=0)
     array([ 4, 10, 7])
-    >>> ba2.sum(batch, axis=0, keepdims=True)
+    >>> ba.sum(batch, axis=0, keepdims=True)
     array([[ 4, 10, 7]])
     >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.sum(batch, axis=1)
+    >>> ba.sum(batch, axis=1)
     array([ 9, 12])
 
     ```
@@ -676,9 +676,9 @@ def sum_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.sum_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.sum_along_batch(batch)
     array([ 4, 10, 7])
 
     ```
@@ -714,16 +714,16 @@ def max(  # noqa: A001
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.max(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.max(batch)
     6
-    >>> ba2.max(batch, axis=0)
+    >>> ba.max(batch, axis=0)
     array([3, 6, 5])
-    >>> ba2.max(batch, axis=0, keepdims=True)
+    >>> ba.max(batch, axis=0, keepdims=True)
     array([[3, 6, 5]])
     >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.max(batch, axis=1)
+    >>> ba.max(batch, axis=1)
     array([6, 5])
 
     ```
@@ -755,14 +755,14 @@ def max_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.max_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.max_along_batch(batch)
     array([3, 6, 5])
-    >>> ba2.max_along_batch(batch, keepdims=True)
+    >>> ba.max_along_batch(batch, keepdims=True)
     array([[3, 6, 5]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.max_along_batch(batch)
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.max_along_batch(batch)
     array([6, 5])
 
     ```
@@ -798,16 +798,16 @@ def min(  # noqa: A001
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.min(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.min(batch)
     1
-    >>> ba2.min(batch, axis=0)
+    >>> ba.min(batch, axis=0)
     array([1, 4, 2])
-    >>> ba2.min(batch, axis=0, keepdims=True)
+    >>> ba.min(batch, axis=0, keepdims=True)
     array([[1, 4, 2]])
     >>> batch = BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.min(batch, axis=1)
+    >>> ba.min(batch, axis=1)
     array([1, 3])
 
     ```
@@ -839,14 +839,14 @@ def min_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
-    >>> ba2.min_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]))
+    >>> ba.min_along_batch(batch)
     array([1, 4, 2])
-    >>> ba2.min_along_batch(batch, keepdims=True)
+    >>> ba.min_along_batch(batch, keepdims=True)
     array([[1, 4, 2]])
-    >>> batch = ba2.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.min_along_batch(batch)
+    >>> batch = ba.BatchedArray(np.array([[1, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.min_along_batch(batch)
     array([1, 3])
 
     ```
@@ -884,16 +884,16 @@ def nanmax(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanmax(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmax(batch)
     5.0
-    >>> ba2.nanmax(batch,axis=0)
+    >>> ba.nanmax(batch,axis=0)
     array([3., 4., 5.])
-    >>> ba2.nanmax(batch, axis=0, keepdims=True)
+    >>> ba.nanmax(batch, axis=0, keepdims=True)
     array([[3., 4., 5.]])
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.nanmax(batch, axis=1)
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmax(batch, axis=1)
     array([2., 5.])
 
     ```
@@ -925,14 +925,14 @@ def nanmax_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
-    >>> ba2.nanmax_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
+    >>> ba.nanmax_along_batch(batch)
     array([3., 4., 5.])
-    >>> ba2.nanmax_along_batch(batch, keepdims=True)
+    >>> ba.nanmax_along_batch(batch, keepdims=True)
     array([[3., 4., 5.]])
-    >>> batch = ba2.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.nanmax_along_batch(batch)
+    >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmax_along_batch(batch)
     array([2., 5.])
 
     ```
@@ -970,16 +970,16 @@ def nanmin(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
-    >>> ba2.nanmin(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
+    >>> ba.nanmin(batch)
     2.0
-    >>> ba2.nanmin(batch,axis=0)
+    >>> ba.nanmin(batch,axis=0)
     array([3., 4., 2.])
-    >>> ba2.nanmin(batch, axis=0, keepdims=True)
+    >>> ba.nanmin(batch, axis=0, keepdims=True)
     array([[3., 4., 2.]])
-    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.nanmin(batch, axis=1)
+    >>> batch = ba.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmin(batch, axis=1)
     array([2., 3.])
 
     ```
@@ -1011,14 +1011,14 @@ def nanmin_along_batch(
 
     ```pycon
     >>> import numpy as np
-    >>> from redcat import ba2
-    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
-    >>> ba2.nanmin_along_batch(batch)
+    >>> from redcat import ba
+    >>> batch = ba.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
+    >>> ba.nanmin_along_batch(batch)
     array([3., 4., 2.])
-    >>> ba2.nanmin_along_batch(batch, keepdims=True)
+    >>> ba.nanmin_along_batch(batch, keepdims=True)
     array([[3., 4., 2.]])
-    >>> batch = ba2.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]), batch_axis=1)
-    >>> ba2.nanmin_along_batch(batch)
+    >>> batch = ba.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]), batch_axis=1)
+    >>> ba.nanmin_along_batch(batch)
     array([2., 3.])
 
     ```

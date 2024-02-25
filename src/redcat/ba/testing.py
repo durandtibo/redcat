@@ -37,7 +37,7 @@ def normal_arrays(
     Example usage:
 
     ```pycon
-    >>> from redcat.ba2.testing import normal_arrays
+    >>> from redcat.ba.testing import normal_arrays
     >>> arrays = normal_arrays(shape=(2, 3), n=1)
     >>> arrays
     (array([[...]]),)
@@ -84,7 +84,7 @@ def uniform_arrays(
     Example usage:
 
     ```pycon
-    >>> from redcat.ba2.testing import uniform_arrays
+    >>> from redcat.ba.testing import uniform_arrays
     >>> arrays = uniform_arrays(shape=(2, 3), n=1)
     >>> arrays
     (array([[...]]),)
@@ -130,7 +130,7 @@ def uniform_int_arrays(
     Example usage:
 
     ```pycon
-    >>> from redcat.ba2.testing import uniform_arrays
+    >>> from redcat.ba.testing import uniform_arrays
     >>> arrays = uniform_int_arrays(shape=(2, 3), n=1)
     >>> arrays
     (array([[...]]),)
@@ -164,7 +164,7 @@ class FunctionCheck:
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2.testing import FunctionCheck
+        >>> from redcat.ba.testing import FunctionCheck
         >>> check = FunctionCheck(np.add, nin=2, nout=1)
         >>> arrays = check.get_arrays()
         >>> arrays
@@ -194,7 +194,7 @@ class FunctionCheck:
 
         ```pycon
         >>> import numpy as np
-        >>> from redcat.ba2.testing import FunctionCheck
+        >>> from redcat.ba.testing import FunctionCheck
         >>> check = FunctionCheck.create_ufunc(np.add)
         >>> check.nin
         2

@@ -3,8 +3,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from redcat import ba2 as ba
-from redcat.ba2 import check_data_and_axis, check_same_batch_axis, get_batch_axes
+from redcat import ba
+from redcat.ba import check_data_and_axis, check_same_batch_axis, get_batch_axes
 
 ###########################################
 #     Tests for check_same_batch_axis     #

@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from redcat.ba2.testing import (
+from redcat.ba.testing import (
     FunctionCheck,
     normal_arrays,
     uniform_arrays,
