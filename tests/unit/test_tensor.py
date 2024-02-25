@@ -222,7 +222,7 @@ def test_batched_tensor_full_like_target_dtype(dtype: torch.dtype) -> None:
 
 
 @mark.parametrize("fill_value", (1, 2.0, True))
-def test_batched_tensor_new_full_fill_value(fill_value: float | int | bool) -> None:
+def test_batched_tensor_new_full_fill_value(fill_value: float | bool) -> None:
     assert (
         BatchedTensor(torch.zeros(2, 3))
         .new_full(fill_value)
@@ -448,7 +448,7 @@ def test_batched_tensor_zeros_like_target_dtype(dtype: torch.dtype) -> None:
         5.0,
     ),
 )
-def test_batched_tensor__eq__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__eq__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) == other).equal(
         BatchedTensor(
             torch.tensor(
@@ -469,7 +469,7 @@ def test_batched_tensor__eq__(other: BatchedTensor | Tensor | int | float) -> No
         5.0,
     ),
 )
-def test_batched_tensor__ge__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__ge__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) >= other).equal(
         BatchedTensor(
             torch.tensor(
@@ -490,7 +490,7 @@ def test_batched_tensor__ge__(other: BatchedTensor | Tensor | int | float) -> No
         5.0,
     ),
 )
-def test_batched_tensor__gt__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__gt__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) > other).equal(
         BatchedTensor(
             torch.tensor(
@@ -511,7 +511,7 @@ def test_batched_tensor__gt__(other: BatchedTensor | Tensor | int | float) -> No
         5.0,
     ),
 )
-def test_batched_tensor__le__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__le__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) <= other).equal(
         BatchedTensor(
             torch.tensor(
@@ -532,7 +532,7 @@ def test_batched_tensor__le__(other: BatchedTensor | Tensor | int | float) -> No
         5.0,
     ),
 )
-def test_batched_tensor__lt__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__lt__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.arange(10).view(2, 5)) < other).equal(
         BatchedTensor(
             torch.tensor(
@@ -601,7 +601,7 @@ def test_batched_tensor_allclose_true_rtol(batch: BatchedTensor, rtol: float) ->
         5.0,
     ),
 )
-def test_batched_tensor_eq(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_eq(other: BatchedTensor | Tensor | float) -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
         .eq(other)
@@ -664,7 +664,7 @@ def test_batched_tensor_equal_false_different_batch_dim() -> None:
         5.0,
     ),
 )
-def test_batched_tensor_ge(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_ge(other: BatchedTensor | Tensor | float) -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
         .ge(other)
@@ -705,7 +705,7 @@ def test_batched_tensor_ge_custom_batch_dim() -> None:
         5.0,
     ),
 )
-def test_batched_tensor_gt(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_gt(other: BatchedTensor | Tensor | float) -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
         .gt(other)
@@ -858,7 +858,7 @@ def test_batched_tensor_isnan_custom_batch_dim() -> None:
         5.0,
     ),
 )
-def test_batched_tensor_le(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_le(other: BatchedTensor | Tensor | float) -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
         .le(other)
@@ -899,7 +899,7 @@ def test_batched_tensor_le_custom_batch_dim() -> None:
         5.0,
     ),
 )
-def test_batched_tensor_lt(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_lt(other: BatchedTensor | Tensor | float) -> None:
     assert (
         BatchedTensor(torch.arange(10).view(2, 5))
         .lt(other)
@@ -1035,7 +1035,7 @@ def test_batched_tensor_long_custom_batch_dim() -> None:
         1.0,
     ),
 )
-def test_batched_tensor__add__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__add__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.zeros(2, 3)) + other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -1049,7 +1049,7 @@ def test_batched_tensor__add__(other: BatchedTensor | Tensor | int | float) -> N
         1.0,
     ),
 )
-def test_batched_tensor__iadd__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__iadd__(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.zeros(2, 3))
     batch += other
     assert batch.equal(BatchedTensor(torch.ones(2, 3)))
@@ -1065,7 +1065,7 @@ def test_batched_tensor__iadd__(other: BatchedTensor | Tensor | int | float) -> 
         2.0,
     ),
 )
-def test_batched_tensor__floordiv__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__floordiv__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.ones(2, 3)) // other).equal(BatchedTensor(torch.zeros(2, 3)))
 
 
@@ -1079,7 +1079,7 @@ def test_batched_tensor__floordiv__(other: BatchedTensor | Tensor | int | float)
         2.0,
     ),
 )
-def test_batched_tensor__ifloordiv__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__ifloordiv__(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch //= other
     assert batch.equal(BatchedTensor(torch.zeros(2, 3)))
@@ -1095,7 +1095,7 @@ def test_batched_tensor__ifloordiv__(other: BatchedTensor | Tensor | int | float
         2.0,
     ),
 )
-def test_batched_tensor__mul__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__mul__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.ones(2, 3)) * other).equal(BatchedTensor(torch.full((2, 3), 2.0)))
 
 
@@ -1109,7 +1109,7 @@ def test_batched_tensor__mul__(other: BatchedTensor | Tensor | int | float) -> N
         2.0,
     ),
 )
-def test_batched_tensor__imul__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__imul__(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch *= other
     assert batch.equal(BatchedTensor(torch.full((2, 3), 2.0)))
@@ -1129,7 +1129,7 @@ def test_batched_tensor__neg__() -> None:
         2.0,
     ),
 )
-def test_batched_tensor__sub__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__sub__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.ones(2, 3)) - other).equal(BatchedTensor(-torch.ones(2, 3)))
 
 
@@ -1143,7 +1143,7 @@ def test_batched_tensor__sub__(other: BatchedTensor | Tensor | int | float) -> N
         2.0,
     ),
 )
-def test_batched_tensor__isub__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__isub__(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch -= other
     assert batch.equal(BatchedTensor(-torch.ones(2, 3)))
@@ -1159,7 +1159,7 @@ def test_batched_tensor__isub__(other: BatchedTensor | Tensor | int | float) -> 
         2.0,
     ),
 )
-def test_batched_tensor__truediv__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__truediv__(other: BatchedTensor | Tensor | float) -> None:
     assert (BatchedTensor(torch.ones(2, 3)) / other).equal(BatchedTensor(torch.full((2, 3), 0.5)))
 
 
@@ -1173,7 +1173,7 @@ def test_batched_tensor__truediv__(other: BatchedTensor | Tensor | int | float) 
         2.0,
     ),
 )
-def test_batched_tensor__itruediv__(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor__itruediv__(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch /= other
     assert batch.equal(BatchedTensor(torch.full((2, 3), 0.5)))
@@ -1189,7 +1189,7 @@ def test_batched_tensor__itruediv__(other: BatchedTensor | Tensor | int | float)
         2.0,
     ),
 )
-def test_batched_tensor_add(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_add(other: BatchedTensor | Tensor | float) -> None:
     assert BatchedTensor(torch.ones(2, 3)).add(other).equal(BatchedTensor(torch.full((2, 3), 3.0)))
 
 
@@ -1233,7 +1233,7 @@ def test_batched_tensor_add_incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_add_(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_add_(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch.add_(other)
     assert batch.equal(BatchedTensor(torch.full((2, 3), 3.0)))
@@ -1273,7 +1273,7 @@ def test_batched_tensor_add__incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_div(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_div(other: BatchedTensor | Tensor | float) -> None:
     assert BatchedTensor(torch.ones(2, 3)).div(other).equal(BatchedTensor(torch.full((2, 3), 0.5)))
 
 
@@ -1309,7 +1309,7 @@ def test_batched_tensor_div_incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_div_(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_div_(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch.div_(other)
     assert batch.equal(BatchedTensor(torch.full((2, 3), 0.5)))
@@ -1343,7 +1343,7 @@ def test_batched_tensor_div__incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_fmod(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_fmod(other: BatchedTensor | Tensor | float) -> None:
     assert BatchedTensor(torch.ones(2, 3)).fmod(other).equal(BatchedTensor(torch.ones(2, 3)))
 
 
@@ -1371,7 +1371,7 @@ def test_batched_tensor_fmod_incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_fmod_(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_fmod_(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch.fmod_(other)
     assert batch.equal(BatchedTensor(torch.ones(2, 3)))
@@ -1399,7 +1399,7 @@ def test_batched_tensor_fmod__incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_mul(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_mul(other: BatchedTensor | Tensor | float) -> None:
     assert BatchedTensor(torch.ones(2, 3)).mul(other).equal(BatchedTensor(torch.full((2, 3), 2.0)))
 
 
@@ -1427,7 +1427,7 @@ def test_batched_tensor_mul_incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_mul_(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_mul_(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch.mul_(other)
     assert batch.equal(BatchedTensor(torch.full((2, 3), 2.0)))
@@ -1467,7 +1467,7 @@ def test_batched_tensor_custom_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_sub(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_sub(other: BatchedTensor | Tensor | float) -> None:
     assert BatchedTensor(torch.ones(2, 3)).sub(other).equal(BatchedTensor(-torch.ones(2, 3)))
 
 
@@ -1511,7 +1511,7 @@ def test_batched_tensor_sub_incorrect_batch_dim() -> None:
         2.0,
     ),
 )
-def test_batched_tensor_sub_(other: BatchedTensor | Tensor | int | float) -> None:
+def test_batched_tensor_sub_(other: BatchedTensor | Tensor | float) -> None:
     batch = BatchedTensor(torch.ones(2, 3))
     batch.sub_(other)
     assert batch.equal(BatchedTensor(-torch.ones(2, 3)))
@@ -2876,7 +2876,7 @@ def test_batched_tensor_minimum_incorrect_batch_dim() -> None:
     "exponent",
     (BatchedTensor(torch.full((2, 5), 2.0)), torch.full((2, 5), 2.0), 2, 2.0),
 )
-def test_batched_tensor_pow(exponent: BatchedTensor | int | float) -> None:
+def test_batched_tensor_pow(exponent: BatchedTensor | float) -> None:
     assert (
         BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5))
         .pow(exponent)
@@ -2932,7 +2932,7 @@ def test_batched_tensor_pow_incorrect_batch_dim() -> None:
     "exponent",
     (BatchedTensor(torch.full((2, 5), 2.0)), torch.full((2, 5), 2.0), 2, 2.0),
 )
-def test_batched_tensor_pow_(exponent: BatchedTensor | int | float) -> None:
+def test_batched_tensor_pow_(exponent: BatchedTensor | float) -> None:
     batch = BatchedTensor(torch.arange(10, dtype=torch.float).view(2, 5))
     batch.pow_(exponent)
     assert batch.equal(

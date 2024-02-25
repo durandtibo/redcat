@@ -3,9 +3,9 @@ from __future__ import annotations
 from functools import partial
 from typing import TYPE_CHECKING
 
+import pytest
 import torch
 from coola import objects_are_allclose, objects_are_equal
-from pytest import mark
 
 from redcat import BatchedTensor, BatchedTensorSeq
 from redcat.utils.tensor import get_available_devices
@@ -23,63 +23,63 @@ DTYPES = (torch.float, torch.long)
 SHAPES = ((2, 3), (2, 3, 4), (2, 3, 4, 5))
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("device", get_available_devices())
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("device", get_available_devices())
 def test_tensor_device(cls: type[BatchedTensor], device: str) -> None:
     tensor = torch.ones(2, 3, device=device)
     assert cls(tensor).device == tensor.device
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_tensor_dim(cls: type[BatchedTensor]) -> None:
     tensor = torch.ones(2, 3)
     assert cls(tensor).dim() == tensor.dim()
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dtype", DTYPES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("dtype", DTYPES)
 def test_tensor_dtype(cls: type[BatchedTensor], dtype: torch.dtype) -> None:
     tensor = torch.ones(2, 3, dtype=dtype)
     assert cls(tensor).dtype == tensor.dtype
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_tensor_is_contiguous(cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(2, 3)
     assert cls(tensor).is_contiguous() == tensor.is_contiguous()
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("shape", SHAPES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("shape", SHAPES)
 def test_tensor_ndim(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
     tensor = torch.ones(*shape)
     assert cls(tensor).ndim == tensor.ndim
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("shape", SHAPES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("shape", SHAPES)
 def test_tensor_ndimension(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
     tensor = torch.ones(*shape)
     assert cls(tensor).ndimension() == tensor.ndimension()
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("shape", SHAPES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("shape", SHAPES)
 def test_tensor_numel(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
     tensor = torch.ones(*shape)
     assert cls(tensor).numel() == tensor.numel()
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("shape", SHAPES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("shape", SHAPES)
 def test_tensor_shape(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
     tensor = torch.rand(*shape)
     assert cls(tensor).shape == tensor.shape
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
-@mark.parametrize("dtype", DTYPES)
-@mark.parametrize("device", get_available_devices())
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("dtype", DTYPES)
+@pytest.mark.parametrize("device", get_available_devices())
 def test_tensor_to(cls: type[BatchedTensor], dtype: torch.dtype, device: str) -> None:
     tensor = torch.ones(2, 3, dtype=dtype)
     batch = cls(tensor)
@@ -255,43 +255,43 @@ BATCH_TO_TENSOR_TUPLE = (
 )
 
 
-@mark.parametrize("func", UNARY_FUNCTIONS)
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("func", UNARY_FUNCTIONS)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_unary(func: Callable, cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(2, 3).mul(2.0)
     assert func(cls(tensor)).allclose(cls(func(tensor)), equal_nan=True)
 
 
-@mark.parametrize("func", PAIRWISE_FUNCTIONS)
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("func", PAIRWISE_FUNCTIONS)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_pairwise(func: Callable, cls: type[BatchedTensor]) -> None:
     tensor1 = torch.rand(2, 3)
     tensor2 = torch.rand(2, 3) + 1.0
     assert func(cls(tensor1), cls(tensor2)).allclose(cls(func(tensor1, tensor2)), equal_nan=True)
 
 
-@mark.parametrize("func", BATCH_TO_TENSOR)
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("func", BATCH_TO_TENSOR)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_batch_to_tensor(func: Callable, cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(2, 3)
     assert objects_are_allclose(func(cls(tensor)), func(tensor), equal_nan=True)
 
 
-@mark.parametrize("func", BATCH_TUPLE)
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("func", BATCH_TUPLE)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_batch_tuple(func: Callable, cls: type[BatchedTensor]) -> None:
     x = torch.rand(6, 10)
     assert objects_are_equal(tuple(func(cls(x))), tuple(cls(y) for y in func(x)))
 
 
-@mark.parametrize("func", BATCH_TO_TENSOR_TUPLE)
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("func", BATCH_TO_TENSOR_TUPLE)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_batch_to_tensor_tuple(func: Callable, cls: type[BatchedTensor]) -> None:
     x = torch.rand(6, 10)
     assert objects_are_equal(func(cls(x)), func(x))
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_torch_cat(cls: type[BatchedTensor]) -> None:
     assert torch.cat(
         tensors=[
@@ -308,7 +308,7 @@ def test_torch_cat(cls: type[BatchedTensor]) -> None:
     )
 
 
-@mark.parametrize("cls", BATCH_CLASSES)
+@pytest.mark.parametrize("cls", BATCH_CLASSES)
 def test_take_along_dim(cls: type[BatchedTensor]) -> None:
     tensor = torch.rand(4, 6)
     indices = torch.randint(0, 3, size=(4, 6))

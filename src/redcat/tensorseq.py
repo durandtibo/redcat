@@ -124,7 +124,7 @@ class BatchedTensorSeq(BatchedTensor):
 
     def new_full(
         self,
-        fill_value: float | int | bool,
+        fill_value: float | bool,
         batch_size: int | None = None,
         seq_len: int | None = None,
         **kwargs,
@@ -1415,7 +1415,7 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
 
 
 def from_sequences(
-    sequences: Iterable[torch.Tensor], padding_value: bool | int | float = 0
+    sequences: Iterable[torch.Tensor], padding_value: bool | float = 0
 ) -> BatchedTensorSeq:
     r"""Converts variable length sequences to a single padded tensor.
 
