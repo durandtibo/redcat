@@ -12,16 +12,19 @@ __all__ = [
     "to_tensor",
 ]
 
-from collections.abc import Sequence
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
-import numpy as np
 import torch
 from coola.utils.tensor import get_available_devices
 from torch import Tensor
 
 from redcat.base import BaseBatch
 from redcat.utils.common import swap2
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    import numpy as np
 
 DeviceType = Union[torch.device, str, int]
 
@@ -169,15 +172,17 @@ def compute_batch_seq_permutation(
     ```
     """
     if old_batch_dim == old_seq_dim:
-        raise RuntimeError(
+        msg = (
             f"Incorrect old_batch_dim ({old_batch_dim}) and old_seq_dim ({old_seq_dim}). "
             "The dimensions should be different"
         )
+        raise RuntimeError(msg)
     if new_batch_dim == new_seq_dim:
-        raise RuntimeError(
+        msg = (
             f"Incorrect new_batch_dim ({new_batch_dim}) and new_seq_dim ({new_seq_dim}). "
             "The dimensions should be different"
         )
+        raise RuntimeError(msg)
     dims = list(range(num_dims))
     swap2(dims, old_batch_dim, new_batch_dim)  # Swap batch dim
     if old_batch_dim == new_seq_dim and old_seq_dim == new_batch_dim:

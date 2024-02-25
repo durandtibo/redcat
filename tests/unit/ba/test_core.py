@@ -1,15 +1,19 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING
 from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
 from coola import objects_are_equal
-from numpy.typing import DTypeLike
 
 from redcat import ba
 from redcat.ba.core import IndexType, SortKind, setup_rng
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
+    from numpy.typing import DTypeLike
 
 DTYPES = (bool, int, float)
 NUMERIC_DTYPES = [np.float64, np.int64]
@@ -256,14 +260,14 @@ def test_batched_array_extend_different_axes() -> None:
         batch.extend([ba.zeros((2, 2), batch_axis=1)])
 
 
-@pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 4), (4, 3)))
 def test_batched_array_get_num_minibatches_drop_last_false(
     batch_size: int, num_minibatches: int
 ) -> None:
     assert ba.ones(shape=(10, 2)).get_num_minibatches(batch_size) == num_minibatches
 
 
-@pytest.mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+@pytest.mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 3), (4, 2)))
 def test_batched_array_get_num_minibatches_drop_last_true(
     batch_size: int, num_minibatches: int
 ) -> None:

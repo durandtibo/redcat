@@ -8,13 +8,16 @@ __all__ = [
     "to_array",
 ]
 
-from collections.abc import Sequence
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 import numpy as np
-import torch
 
 from redcat.base import BaseBatch
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    import torch
 
 
 def get_div_rounding_operator(mode: str | None) -> Callable:
@@ -41,7 +44,8 @@ def get_div_rounding_operator(mode: str | None) -> Callable:
         return np.true_divide
     if mode == "floor":
         return np.floor_divide
-    raise RuntimeError(f"Incorrect `rounding_mode` {mode}. Valid values are: None and 'floor'")
+    msg = f"Incorrect `rounding_mode` {mode}. Valid values are: None and 'floor'"
+    raise RuntimeError(msg)
 
 
 def permute_along_axis(array: np.ndarray, permutation: np.ndarray, axis: int = 0) -> np.ndarray:

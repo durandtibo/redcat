@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
@@ -13,6 +13,9 @@ from redcat.ba.testing import (
     uniform_arrays,
     uniform_int_arrays,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
 
 
 @dataclass
@@ -43,48 +46,48 @@ FUCTION_ARRAYS = [normal_arrays, uniform_arrays, uniform_int_arrays]
 def test_normal_arrays(array_seq_shape: ArraySeqShape) -> None:
     arrays = normal_arrays(shape=array_seq_shape.in_shape, n=array_seq_shape.n)
     assert len(arrays) == array_seq_shape.n
-    assert all([arr.dtype == np.float64 for arr in arrays])
-    assert all([arr.shape == array_seq_shape.out_shape for arr in arrays])
+    assert all(arr.dtype == np.float64 for arr in arrays)
+    assert all(arr.shape == array_seq_shape.out_shape for arr in arrays)
 
 
 @pytest.mark.parametrize("array_seq_shape", ARRAY_SEQ_SHAPES)
 def test_uniform_arrays(array_seq_shape: ArraySeqShape) -> None:
     arrays = uniform_arrays(shape=array_seq_shape.in_shape, n=array_seq_shape.n)
     assert len(arrays) == array_seq_shape.n
-    assert all([arr.dtype == np.float64 for arr in arrays])
-    assert all([arr.shape == array_seq_shape.out_shape for arr in arrays])
-    assert all([arr.min() >= 0.0 for arr in arrays])
-    assert all([arr.max() < 1.0 for arr in arrays])
+    assert all(arr.dtype == np.float64 for arr in arrays)
+    assert all(arr.shape == array_seq_shape.out_shape for arr in arrays)
+    assert all(arr.min() >= 0.0 for arr in arrays)
+    assert all(arr.max() < 1.0 for arr in arrays)
 
 
 @pytest.mark.parametrize(("low", "high"), [(-1.0, 1.0), (2.0, 5.0), (1.0, 100)])
 def test_uniform_arrays_low_high(low: float, high: float) -> None:
     arrays = uniform_arrays(shape=(4, 10), n=2, low=low, high=high)
     assert len(arrays) == 2
-    assert all([arr.dtype == np.float64 for arr in arrays])
-    assert all([arr.shape == (4, 10) for arr in arrays])
-    assert all([arr.min() >= low for arr in arrays])
-    assert all([arr.max() < high for arr in arrays])
+    assert all(arr.dtype == np.float64 for arr in arrays)
+    assert all(arr.shape == (4, 10) for arr in arrays)
+    assert all(arr.min() >= low for arr in arrays)
+    assert all(arr.max() < high for arr in arrays)
 
 
 @pytest.mark.parametrize("array_seq_shape", ARRAY_SEQ_SHAPES)
 def test_uniform_int_arrays(array_seq_shape: ArraySeqShape) -> None:
     arrays = uniform_int_arrays(shape=array_seq_shape.in_shape, n=array_seq_shape.n)
     assert len(arrays) == array_seq_shape.n
-    assert all([arr.dtype == np.int64 for arr in arrays])
-    assert all([arr.shape == array_seq_shape.out_shape for arr in arrays])
-    assert all([arr.min() >= 0 for arr in arrays])
-    assert all([arr.max() <= 100 for arr in arrays])
+    assert all(arr.dtype == np.int64 for arr in arrays)
+    assert all(arr.shape == array_seq_shape.out_shape for arr in arrays)
+    assert all(arr.min() >= 0 for arr in arrays)
+    assert all(arr.max() <= 100 for arr in arrays)
 
 
 @pytest.mark.parametrize(("low", "high"), [(-5, 5), (2, 10), (1, 100)])
 def test_uniform_int_arrays_low_high(low: int, high: int) -> None:
     arrays = uniform_int_arrays(shape=(4, 10), n=2, low=low, high=high)
     assert len(arrays) == 2
-    assert all([arr.dtype == np.int64 for arr in arrays])
-    assert all([arr.shape == (4, 10) for arr in arrays])
-    assert all([arr.min() >= low for arr in arrays])
-    assert all([arr.max() <= high for arr in arrays])
+    assert all(arr.dtype == np.int64 for arr in arrays)
+    assert all(arr.shape == (4, 10) for arr in arrays)
+    assert all(arr.min() >= low for arr in arrays)
+    assert all(arr.max() <= high for arr in arrays)
 
 
 @pytest.mark.parametrize("function", FUCTION_ARRAYS)
@@ -125,7 +128,7 @@ def test_function_check_get_arrays() -> None:
 def test_function_check_get_arrays_none() -> None:
     arrays = FunctionCheck(np.add, nin=2, nout=1).get_arrays()
     assert len(arrays) == 2
-    assert all([arr.shape == (4, 10) for arr in arrays])
+    assert all(arr.shape == (4, 10) for arr in arrays)
 
 
 def test_function_check_create_ufunc_add() -> None:
@@ -135,7 +138,7 @@ def test_function_check_create_ufunc_add() -> None:
     assert check.nout == 1
     arrays = check.get_arrays()
     assert len(arrays) == 2
-    assert all([arr.shape == (4, 10) for arr in arrays])
+    assert all(arr.shape == (4, 10) for arr in arrays)
 
 
 def test_function_check_create_ufunc_add_arrays() -> None:

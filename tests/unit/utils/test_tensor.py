@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 import numpy as np
+import pytest
 import torch
 from coola.testing import numpy_available, torch_available
-from pytest import mark, raises
 from torch import Tensor
 
 from redcat import BatchedTensor, BatchList
@@ -18,6 +18,9 @@ from redcat.utils.tensor import (
     permute_along_dim,
     to_tensor,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 ##########################################
 #     Tests for align_to_batch_first     #
@@ -143,12 +146,12 @@ def test_compute_batch_seq_permutation_update_seq_dim() -> None:
 
 
 def test_compute_batch_seq_permutation_incorrect_old_dims() -> None:
-    with raises(RuntimeError, match=r"Incorrect old_batch_dim (.*) and old_seq_dim (.*)."):
+    with pytest.raises(RuntimeError, match=r"Incorrect old_batch_dim (.*) and old_seq_dim (.*)."):
         compute_batch_seq_permutation(5, 1, 1, 0, 1)
 
 
 def test_compute_batch_seq_permutation_incorrect_new_dims() -> None:
-    with raises(RuntimeError, match=r"Incorrect new_batch_dim (.*) and new_seq_dim (.*)."):
+    with pytest.raises(RuntimeError, match=r"Incorrect new_batch_dim (.*) and new_seq_dim (.*)."):
         compute_batch_seq_permutation(5, 0, 1, 1, 1)
 
 
@@ -212,30 +215,30 @@ def test_permute_along_dim_3d_dim_2() -> None:
 
 
 @torch_available
-@mark.parametrize(
+@pytest.mark.parametrize(
     "data",
-    (
+    [
         torch.tensor([3, 1, 2, 0, 1]),
         [3, 1, 2, 0, 1],
         (3, 1, 2, 0, 1),
         BatchList([3, 1, 2, 0, 1]),
         BatchedTensor(torch.tensor([3, 1, 2, 0, 1])),
-    ),
+    ],
 )
 def test_to_tensor_long(data: Sequence | Tensor) -> None:
     assert to_tensor(data).equal(torch.tensor([3, 1, 2, 0, 1], dtype=torch.long))
 
 
 @torch_available
-@mark.parametrize(
+@pytest.mark.parametrize(
     "data",
-    (
+    [
         torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0]),
         [3.0, 1.0, 2.0, 0.0, 1.0],
         (3.0, 1.0, 2.0, 0.0, 1.0),
         BatchList([3.0, 1.0, 2.0, 0.0, 1.0]),
         BatchedTensor(torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0])),
-    ),
+    ],
 )
 def test_to_tensor_float(data: Sequence | Tensor) -> None:
     assert to_tensor(data).equal(torch.tensor([3.0, 1.0, 2.0, 0.0, 1.0], dtype=torch.float))

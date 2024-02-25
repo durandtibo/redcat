@@ -6,9 +6,8 @@ from __future__ import annotations
 __all__ = ["BatchEqualityComparator", "BatchEqualHandler"]
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from coola.equality import EqualityConfig
 from coola.equality.comparators import BaseEqualityComparator
 from coola.equality.handlers import (
     BaseEqualityHandler,
@@ -18,6 +17,9 @@ from coola.equality.handlers import (
 from coola.equality.testers import EqualityTester
 
 from redcat.base import BaseBatch
+
+if TYPE_CHECKING:
+    from coola.equality import EqualityConfig
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +64,7 @@ class BatchEqualHandler(BaseEqualityHandler):
     ) -> bool:
         object_equal = batch_equal(object1, object2, config)
         if config.show_difference and not object_equal:
-            logger.info(f"batches are not equal:\n" f"object1:\n{object1}\nobject2:\n{object2}")
+            logger.info(f"batches are not equal:\nobject1:\n{object1}\nobject2:\n{object2}")
         return object_equal
 
     def set_next_handler(self, handler: BaseEqualityHandler) -> None:
@@ -76,7 +78,7 @@ class BatchEqualityComparator(BaseEqualityComparator[BaseBatch]):
         self._handler = SameObjectHandler()
         self._handler.chain(SameTypeHandler()).chain(BatchEqualHandler())
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         return isinstance(other, self.__class__)
 
     def clone(self) -> BatchEqualityComparator:

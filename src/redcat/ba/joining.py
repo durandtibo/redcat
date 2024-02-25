@@ -2,12 +2,14 @@ from __future__ import annotations
 
 __all__ = ["concatenate", "concatenate_along_batch"]
 
-from collections.abc import Sequence
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
 
 from redcat.ba.core import BatchedArray, implements
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/

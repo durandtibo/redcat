@@ -62,7 +62,7 @@ def test_batch_extender_iter_drop_last() -> None:
 
 
 @mark.parametrize(
-    "num_samples,buffer_size,length",
+    ("num_samples", "buffer_size", "length"),
     (
         (1, 1, 1),
         (5, 10, 0),
@@ -86,7 +86,7 @@ def test_batch_extender_len_drop_last_true(num_samples: int, buffer_size: int, l
 
 
 @mark.parametrize(
-    "num_samples,buffer_size,length",
+    ("num_samples", "buffer_size", "length"),
     (
         (1, 1, 1),
         (5, 10, 1),

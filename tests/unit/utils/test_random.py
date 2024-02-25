@@ -3,10 +3,10 @@ from __future__ import annotations
 import random
 from unittest.mock import Mock
 
+import pytest
 from coola import objects_are_equal
 from coola.testing import numpy_available, torch_available
 from coola.utils import is_numpy_available, is_torch_available
-from pytest import mark, raises
 
 from redcat.utils.random import get_random_rng, randperm
 from redcat.utils.tensor import get_torch_generator
@@ -41,7 +41,7 @@ def test_get_random_rng_none() -> None:
 
 
 def test_get_random_rng_incorrect() -> None:
-    with raises(RuntimeError, match="Invalid `rng_or_seed`"):
+    with pytest.raises(RuntimeError, match="Invalid `rng_or_seed`"):
         get_random_rng("meow")
 
 
@@ -51,7 +51,7 @@ def test_get_random_rng_incorrect() -> None:
 
 
 @torch_available
-@mark.parametrize("n", (1, 2, 4))
+@pytest.mark.parametrize("n", [1, 2, 4])
 def test_randperm_torch(n: int) -> None:
     out = randperm(n, get_torch_generator(42))
     assert torch.is_tensor(out)
@@ -74,7 +74,7 @@ def test_randperm_torch_different_random_seeds() -> None:
 
 
 @numpy_available
-@mark.parametrize("n", (1, 2, 4))
+@pytest.mark.parametrize("n", [1, 2, 4])
 def test_randperm_numpy(n: int) -> None:
     out = randperm(n, np.random.default_rng(42))
     assert isinstance(out, np.ndarray)
@@ -96,7 +96,7 @@ def test_randperm_numpy_different_random_seeds() -> None:
     )
 
 
-@mark.parametrize("n", (1, 2, 4))
+@pytest.mark.parametrize("n", [1, 2, 4])
 def test_randperm_random(n: int) -> None:
     out = randperm(n, random.Random(42))
     assert isinstance(out, list)
@@ -112,7 +112,7 @@ def test_randperm_random_different_random_seeds() -> None:
     assert not objects_are_equal(randperm(100, random.Random(1)), randperm(100, random.Random(2)))
 
 
-@mark.parametrize("n", (1, 2, 4))
+@pytest.mark.parametrize("n", [1, 2, 4])
 def test_randperm_int(n: int) -> None:
     out = randperm(n, 42)
     assert isinstance(out, list)
@@ -128,7 +128,7 @@ def test_randperm_int_different_random_seeds() -> None:
     assert not objects_are_equal(randperm(100, 1), randperm(100, 2))
 
 
-@mark.parametrize("n", (1, 2, 4))
+@pytest.mark.parametrize("n", [1, 2, 4])
 def test_randperm_none(n: int) -> None:
     out = randperm(n)
     assert isinstance(out, list)

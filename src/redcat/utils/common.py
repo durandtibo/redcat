@@ -10,14 +10,16 @@ __all__ = [
 ]
 
 import copy
-from collections.abc import Iterable, Mapping, MutableSequence
-from typing import Any, TypeVar, overload
-
-import numpy as np
-from numpy import ndarray
-from torch import Tensor
+from typing import TYPE_CHECKING, Any, TypeVar, overload
 
 from redcat.base import BaseBatch
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping, MutableSequence
+
+    import numpy as np
+    from numpy import ndarray
+    from torch import Tensor
 
 T = TypeVar("T")
 
@@ -41,7 +43,8 @@ def check_batch_dims(dims: set[int]) -> None:
     ```
     """
     if len(dims) != 1:
-        raise RuntimeError(f"The batch dimensions do not match. Received multiple values: {dims}")
+        msg = f"The batch dimensions do not match. Received multiple values: {dims}"
+        raise RuntimeError(msg)
 
 
 def check_data_and_dim(data: ndarray | Tensor, batch_dim: int) -> None:
@@ -67,11 +70,11 @@ def check_data_and_dim(data: ndarray | Tensor, batch_dim: int) -> None:
     """
     ndim = data.ndim
     if ndim < 1:
-        raise RuntimeError(f"data needs at least 1 dimensions (received: {ndim})")
+        msg = f"data needs at least 1 dimensions (received: {ndim})"
+        raise RuntimeError(msg)
     if batch_dim < 0 or batch_dim >= ndim:
-        raise RuntimeError(
-            f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {ndim - 1}]"
-        )
+        msg = f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {ndim - 1}]"
+        raise RuntimeError(msg)
 
 
 def check_seq_dims(dims: set[int]) -> None:
@@ -93,9 +96,8 @@ def check_seq_dims(dims: set[int]) -> None:
     ```
     """
     if len(dims) != 1:
-        raise RuntimeError(
-            f"The sequence dimensions do not match. Received multiple values: {dims}"
-        )
+        msg = f"The sequence dimensions do not match. Received multiple values: {dims}"
+        raise RuntimeError(msg)
 
 
 def get_batch_dims(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:

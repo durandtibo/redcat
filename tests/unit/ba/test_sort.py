@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pytest
 from coola import objects_are_equal
 
 from redcat import ba
-from redcat.ba.core import SortKind
 from tests.unit.ba.test_core import NUMERIC_DTYPES, SORT_KINDS
+
+if TYPE_CHECKING:
+    from redcat.ba.core import SortKind
 
 ###################
 #     argsort     #

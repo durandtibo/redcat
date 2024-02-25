@@ -3,12 +3,13 @@ from __future__ import annotations
 __all__ = ["get_random_rng", "randperm"]
 
 import random
-from typing import overload
+from typing import TYPE_CHECKING, overload
 from unittest.mock import Mock
 
 from coola.utils import is_numpy_available, is_torch_available
 
-from redcat.types import RNGType
+if TYPE_CHECKING:
+    from redcat.types import RNGType
 
 if is_numpy_available():
     import numpy as np
@@ -48,7 +49,8 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
         return random.Random()
     if isinstance(rng_or_seed, int):
         return random.Random(rng_or_seed)
-    raise RuntimeError(f"Invalid `rng_or_seed`: {rng_or_seed}")
+    msg = f"Invalid `rng_or_seed`: {rng_or_seed}"
+    raise RuntimeError(msg)
 
 
 @overload

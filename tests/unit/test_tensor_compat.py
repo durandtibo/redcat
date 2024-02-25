@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from functools import partial
+from typing import TYPE_CHECKING
 
 import torch
 from coola import objects_are_allclose, objects_are_equal
@@ -9,6 +9,9 @@ from pytest import mark
 
 from redcat import BatchedTensor, BatchedTensorSeq
 from redcat.utils.tensor import get_available_devices
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 BATCH_CLASSES = (
     BatchedTensor,
