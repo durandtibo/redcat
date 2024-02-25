@@ -30,9 +30,15 @@ from redcat.utils.tensor import (
 )
 
 if TYPE_CHECKING:
+    import sys
     from collections.abc import Callable, Iterable, Sequence
 
     import numpy as np
+
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
 
 HANDLED_FUNCTIONS = {
     torch.amax: tensor.amax,
@@ -102,7 +108,7 @@ class BatchedTensorSeq(BatchedTensor):
         types: tuple[type, ...],
         args: tuple[Any, ...] = (),
         kwargs: dict[str, Any] | None = None,
-    ) -> BatchedTensorSeq:
+    ) -> Self:
         kwargs = kwargs or {}
         if handled_func := HANDLED_FUNCTIONS.get(func):
             return handled_func(*args, **kwargs)
@@ -134,7 +140,7 @@ class BatchedTensorSeq(BatchedTensor):
         batch_size: int | None = None,
         seq_len: int | None = None,
         **kwargs: Any,
-    ) -> BatchedTensorSeq:
+    ) -> Self:
         r"""Create a batch filled with a scalar value.
 
         By default, the tensor in the returned batch has the same
@@ -190,7 +196,7 @@ class BatchedTensorSeq(BatchedTensor):
         batch_size: int | None = None,
         seq_len: int | None = None,
         **kwargs: Any,
-    ) -> BatchedTensorSeq:
+    ) -> Self:
         r"""Create a batch filled with the scalar value ``1``.
 
         By default, the tensor in the returned batch has the same
@@ -245,7 +251,7 @@ class BatchedTensorSeq(BatchedTensor):
         batch_size: int | None = None,
         seq_len: int | None = None,
         **kwargs: Any,
-    ) -> BatchedTensorSeq:
+    ) -> Self:
         r"""Create a batch filled with the scalar value ``0``.
 
         By default, the tensor in the returned batch has the same
@@ -296,7 +302,7 @@ class BatchedTensorSeq(BatchedTensor):
         return self._create_new_batch(torch.zeros(*shape, **kwargs))
 
     @classmethod
-    def from_seq_batch(cls, data: Any, **kwargs: Any) -> BatchedTensorSeq:
+    def from_seq_batch(cls, data: Any, **kwargs: Any) -> Self:
         r"""Create a batch where the first dimension is the sequence
         dimension and the second dimension is the batch dimension.
 
@@ -352,7 +358,7 @@ class BatchedTensorSeq(BatchedTensor):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def argsort_along_seq(self, **kwargs: Any) -> BatchedTensorSeq:
+    def argsort_along_seq(self, **kwargs: Any) -> Self:
         r"""Sorts the elements of the batch along the sequence dimension
         in monotonic order by value.
 
@@ -376,7 +382,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.argsort(dim=self._seq_dim, **kwargs)
 
-    def cumprod_along_seq(self, *args: Any, **kwargs: Any) -> BatchedTensorSeq:
+    def cumprod_along_seq(self, *args: Any, **kwargs: Any) -> Self:
         r"""Compute the cumulative product of elements of the current
         batch in the sequence dimension.
 
@@ -423,7 +429,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.cumprod_(self._seq_dim, *args, **kwargs)
 
-    def cumsum_along_seq(self, **kwargs: Any) -> BatchedTensorSeq:
+    def cumsum_along_seq(self, **kwargs: Any) -> Self:
         r"""Compute the cumulative sum of elements of the current batch
         in the sequence dimension.
 
@@ -465,7 +471,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.cumsum_(self._seq_dim)
 
-    def logcumsumexp_along_seq(self) -> BatchedTensorSeq:
+    def logcumsumexp_along_seq(self) -> Self:
         r"""Compute the logarithm of the cumulative summation of the
         exponentiation of elements of the current batch in the sequence
         dimension.
@@ -506,7 +512,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.logcumsumexp_(self._seq_dim)
 
-    def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> BatchedTensorSeq:
+    def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> Self:
         r"""Permute the data along the sequence dimension.
 
         Args:
@@ -555,7 +561,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.permute_along_dim_(permutation, dim=self._seq_dim)
 
-    def shuffle_along_seq(self, generator: torch.Generator | None = None) -> BatchedTensorSeq:
+    def shuffle_along_seq(self, generator: torch.Generator | None = None) -> Self:
         r"""Shuffle the data along the sequence dimension.
 
         Args:
@@ -982,7 +988,7 @@ class BatchedTensorSeq(BatchedTensor):
     #    Indexing, slicing, joining, mutating operations     #
     ##########################################################
 
-    def align_as(self, other: BatchedTensorSeq) -> BatchedTensorSeq:
+    def align_as(self, other: BatchedTensorSeq) -> Self:
         r"""Aligns the current batch with the batch ``other``.
 
         This method makes sure the batch and sequence dimensions
@@ -1037,7 +1043,7 @@ class BatchedTensorSeq(BatchedTensor):
             seq_dim=other.seq_dim,
         )
 
-    def align_to_batch_seq(self) -> BatchedTensorSeq:
+    def align_to_batch_seq(self) -> Self:
         r"""Aligns the current batch to the batch-sequence format.
 
         Returns:
@@ -1061,7 +1067,7 @@ class BatchedTensorSeq(BatchedTensor):
             seq_dim=1,
         )
 
-    def align_to_seq_batch(self) -> BatchedTensorSeq:
+    def align_to_seq_batch(self) -> Self:
         r"""Aligns the current batch to the sequence-batch format.
 
         Returns:
@@ -1089,7 +1095,7 @@ class BatchedTensorSeq(BatchedTensor):
 
     def cat_along_seq(
         self, tensors: BatchedTensor | Tensor | Iterable[BatchedTensor | Tensor]
-    ) -> BatchedTensorSeq:
+    ) -> Self:
         r"""Concatenate the data of the batches to the current batch
         along the sequence dimension and creates a new batch.
 
@@ -1173,7 +1179,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         self.cat_(tensors, dim=self._seq_dim)
 
-    def chunk_along_seq(self, chunks: int) -> tuple[BatchedTensorSeq, ...]:
+    def chunk_along_seq(self, chunks: int) -> tuple[Self, ...]:
         r"""Split the batch into chunks along the sequence dimension.
 
         Args:
@@ -1197,7 +1203,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.chunk(chunks, self._seq_dim)
 
-    def index_select_along_seq(self, index: Tensor | Sequence[int]) -> BatchedTensorSeq:
+    def index_select_along_seq(self, index: Tensor | Sequence[int]) -> Self:
         r"""Slice the batch along the sequence dimension at the given
         indices.
 
@@ -1237,7 +1243,7 @@ class BatchedTensorSeq(BatchedTensor):
             data[batch_index, index].view(self.batch_size, seq_len, *data.shape[2:])
         ).align_as(self)
 
-    def repeat_along_seq(self, repeats: int) -> BatchedTensorSeq:
+    def repeat_along_seq(self, repeats: int) -> Self:
         r"""Repeats the batch along the sequence dimension.
 
         Args:
@@ -1288,9 +1294,7 @@ class BatchedTensorSeq(BatchedTensor):
             batch_dim=self._batch_dim if self._seq_dim > self._batch_dim else self._batch_dim - 1,
         )
 
-    def slice_along_seq(
-        self, start: int = 0, stop: int | None = None, step: int = 1
-    ) -> BatchedTensorSeq:
+    def slice_along_seq(self, start: int = 0, stop: int | None = None, step: int = 1) -> Self:
         r"""Slices the batch in the sequence dimension.
 
         Args:
@@ -1324,14 +1328,10 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.slice_along_dim(self._seq_dim, start, stop, step)
 
-    def split_along_seq(
-        self, split_size_or_sections: int | Sequence[int]
-    ) -> tuple[BatchedTensorSeq, ...]:
+    def split_along_seq(self, split_size_or_sections: int | Sequence[int]) -> tuple[Self, ...]:
         return self.split(split_size_or_sections, dim=self._seq_dim)
 
-    def take_along_seq(
-        self, indices: BaseBatch | np.ndarray | Tensor | Sequence
-    ) -> BatchedTensorSeq:
+    def take_along_seq(self, indices: BaseBatch | np.ndarray | Tensor | Sequence) -> Self:
         r"""Take values along the sequence dimension.
 
         Args:
@@ -1355,7 +1355,7 @@ class BatchedTensorSeq(BatchedTensor):
         """
         return self.take_along_dim(indices, dim=self._seq_dim)
 
-    def unsqueeze(self, dim: int) -> BatchedTensorSeq:
+    def unsqueeze(self, dim: int) -> Self:
         return self.__class__(
             self._data.unsqueeze(dim=dim),
             batch_dim=(
@@ -1420,9 +1420,7 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
 #     return decorator
 
 
-def from_sequences(
-    sequences: Iterable[torch.Tensor], padding_value: bool | float = 0
-) -> BatchedTensorSeq:
+def from_sequences(sequences: Iterable[torch.Tensor], padding_value: bool | float = 0) -> Self:
     r"""Convert variable length sequences to a single padded tensor.
 
     Args:

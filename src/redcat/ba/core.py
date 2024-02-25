@@ -19,8 +19,14 @@ from redcat.base import BaseBatch
 from redcat.utils.array import to_array
 
 if TYPE_CHECKING:
+    import sys
+
     from numpy.typing import ArrayLike, DTypeLike
-    from typing_extensions import Self
+
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
 
 
 IndexType = Union[int, slice, list[int], np.ndarray, None]

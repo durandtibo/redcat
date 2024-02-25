@@ -21,12 +21,17 @@ from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_
 from redcat.utils.tensor import to_tensor
 
 if TYPE_CHECKING:
+    import sys
     from collections.abc import Callable, Iterable, Sequence
 
     import numpy as np
-    from typing_extensions import Self
 
     from redcat.types import IndexType
+
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
 
 
 HANDLED_FUNCTIONS = {}
