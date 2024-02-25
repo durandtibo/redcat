@@ -20,6 +20,7 @@ from redcat.utils.array import to_array
 
 if TYPE_CHECKING:
     from numpy.typing import ArrayLike, DTypeLike
+    from typing_extensions import Self
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -461,32 +462,32 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
     #     Arithmetical operators     #
     ##################################
 
-    def __iadd__(self, other: Any) -> TBatchedArray:
+    def __iadd__(self, other: Any) -> Self:
         self._check_valid_axes((self, other))
         self._data.__iadd__(self._get_data(other))
         return self
 
-    def __ifloordiv__(self, other: Any) -> TBatchedArray:
+    def __ifloordiv__(self, other: Any) -> Self:
         self._check_valid_axes((self, other))
         self._data.__ifloordiv__(self._get_data(other))
         return self
 
-    def __imod__(self, other: Any) -> TBatchedArray:
+    def __imod__(self, other: Any) -> Self:
         self._check_valid_axes((self, other))
         self._data.__imod__(self._get_data(other))
         return self
 
-    def __imul__(self, other: Any) -> TBatchedArray:
+    def __imul__(self, other: Any) -> Self:
         self._check_valid_axes((self, other))
         self._data.__imul__(self._get_data(other))
         return self
 
-    def __isub__(self, other: Any) -> TBatchedArray:
+    def __isub__(self, other: Any) -> Self:
         self._check_valid_axes((self, other))
         self._data.__isub__(self._get_data(other))
         return self
 
-    def __itruediv__(self, other: Any) -> TBatchedArray:
+    def __itruediv__(self, other: Any) -> Self:
         self._check_valid_axes((self, other))
         self._data.__itruediv__(self._get_data(other))
         return self
