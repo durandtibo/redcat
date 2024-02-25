@@ -8,7 +8,7 @@ from coola import objects_are_allclose
 from pytest import mark
 
 from redcat.ba import BatchedArray
-from redcat.ba.testing import FunctionCheck, uniform_arrays, uniform_int_arrays
+from redcat.ba2.testing import FunctionCheck, uniform_arrays, uniform_int_arrays
 
 BATCH_CLASSES = (BatchedArray, partial(BatchedArray, batch_axis=1))
 DTYPES = (int, float)
