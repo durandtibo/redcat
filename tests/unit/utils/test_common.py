@@ -6,7 +6,8 @@ import numpy as np
 import torch
 from pytest import mark, raises
 
-from redcat import BatchedArray, BatchedTensor, BatchedTensorSeq
+from redcat import BatchedTensor, BatchedTensorSeq
+from redcat.ba import BatchedArray
 from redcat.utils.common import (
     check_batch_dims,
     check_data_and_dim,
@@ -76,20 +77,6 @@ def test_check_seq_dims_incorrect() -> None:
 ####################################
 #     Tests for get_batch_dims     #
 ####################################
-
-
-def test_get_batch_dims_1_array() -> None:
-    assert get_batch_dims(
-        (BatchedArray(np.ones((2, 3))), BatchedArray(np.ones((2, 3)))),
-        {"val": BatchedArray(np.ones((2, 3)))},
-    ) == {0}
-
-
-def test_get_batch_dims_2_array() -> None:
-    assert get_batch_dims(
-        (BatchedArray(np.ones((2, 3))), BatchedArray(np.ones((2, 3)), batch_dim=1)),
-        {"val": BatchedArray(np.ones((2, 3)))},
-    ) == {0, 1}
 
 
 def test_get_batch_dims_1_tensor() -> None:
