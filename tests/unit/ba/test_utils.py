@@ -62,4 +62,4 @@ def test_get_batch_axes_2_array() -> None:
 
 
 def test_get_batch_axes_empty() -> None:
-    assert get_batch_axes(tuple()) == set()
+    assert get_batch_axes(()) == set()

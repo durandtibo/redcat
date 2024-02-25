@@ -3,15 +3,17 @@ from __future__ import annotations
 __all__ = ["BatchedArray", "implements"]
 
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from typing import Any, Literal, SupportsIndex, TypeVar, Union, overload
+from typing import TYPE_CHECKING, Any, Literal, SupportsIndex, TypeVar, Union, overload
 
 import numpy as np
 from coola import objects_are_allclose, objects_are_equal
-from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba.utils import check_data_and_axis, check_same_batch_axis, get_batch_axes
 from redcat.base import BaseBatch
 from redcat.utils.array import to_array
+
+if TYPE_CHECKING:
+    from numpy.typing import ArrayLike, DTypeLike
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -1051,7 +1053,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
         ```
         """
         if chunks == 0:
-            raise RuntimeError("chunk expects `chunks` to be greater than 0, got: 0")
+            msg = "chunk expects `chunks` to be greater than 0, got: 0"
+            raise RuntimeError(msg)
         return tuple(
             self._create_new_batch(chunk)
             for chunk in np.array_split(self._data, indices_or_sections=chunks, axis=axis)

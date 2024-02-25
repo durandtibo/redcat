@@ -6,10 +6,12 @@ __all__ = [
     "get_batch_axes",
 ]
 
-from collections.abc import Iterable, Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from numpy import ndarray
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
+
+    from numpy import ndarray
 
 
 def check_same_batch_axis(axes: set[int]) -> None:
@@ -30,7 +32,8 @@ def check_same_batch_axis(axes: set[int]) -> None:
     ```
     """
     if len(axes) != 1:
-        raise RuntimeError(f"The batch axes do not match. Received multiple values: {axes}")
+        msg = f"The batch axes do not match. Received multiple values: {axes}"
+        raise RuntimeError(msg)
 
 
 def check_data_and_axis(data: ndarray, batch_axis: int) -> None:
@@ -54,11 +57,11 @@ def check_data_and_axis(data: ndarray, batch_axis: int) -> None:
     """
     ndim = data.ndim
     if ndim < 1:
-        raise RuntimeError(f"data needs at least 1 axis (received: {ndim})")
+        msg = f"data needs at least 1 axis (received: {ndim})"
+        raise RuntimeError(msg)
     if batch_axis < 0 or batch_axis >= ndim:
-        raise RuntimeError(
-            f"Incorrect `batch_axis` ({batch_axis}) but the value should be in [0, {ndim - 1}]"
-        )
+        msg = f"Incorrect `batch_axis` ({batch_axis}) but the value should be in [0, {ndim - 1}]"
+        raise RuntimeError(msg)
 
 
 def get_batch_axes(args: Iterable[Any], kwargs: Mapping[str, Any] | None = None) -> set[int]:

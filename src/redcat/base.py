@@ -3,11 +3,13 @@ from __future__ import annotations
 __all__ = ["BaseBatch"]
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterable, Sequence
-from typing import Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import torch
 from torch import Tensor
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
 
 T = TypeVar("T")
 # Workaround because Self is not available for python 3.9 and 3.10

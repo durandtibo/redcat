@@ -11,12 +11,14 @@ __all__ = [
     "nanmedian_along_batch",
 ]
 
-from typing import SupportsIndex, TypeVar
+from typing import TYPE_CHECKING, SupportsIndex, TypeVar
 
 import numpy as np
-from numpy.typing import DTypeLike
 
 from redcat.ba.core import BatchedArray, implements
+
+if TYPE_CHECKING:
+    from numpy.typing import DTypeLike
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/

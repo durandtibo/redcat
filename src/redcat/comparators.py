@@ -6,9 +6,8 @@ from __future__ import annotations
 __all__ = ["BatchEqualityComparator", "BatchEqualHandler"]
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from coola.equality import EqualityConfig
 from coola.equality.comparators import BaseEqualityComparator
 from coola.equality.handlers import (
     BaseEqualityHandler,
@@ -18,6 +17,9 @@ from coola.equality.handlers import (
 from coola.equality.testers import EqualityTester
 
 from redcat.base import BaseBatch
+
+if TYPE_CHECKING:
+    from coola.equality import EqualityConfig
 
 logger = logging.getLogger(__name__)
 

@@ -21,14 +21,18 @@ __all__ = [
     "zeros_like",
 ]
 
-from collections.abc import Sequence
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 import numpy as np
-from numpy.typing import ArrayLike, DTypeLike
 
 from redcat.ba import BatchedArray
-from redcat.ba.core import OrderACFK, ShapeLike
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from numpy.typing import ArrayLike, DTypeLike
+
+    from redcat.ba.core import OrderACFK, ShapeLike
 
 TBatchedArray = TypeVar("TBatchedArray", bound="BatchedArray")
 

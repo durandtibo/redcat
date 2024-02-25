@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 from unittest.mock import Mock
 
+import pytest
 from coola.testing import numpy_available, torch_available
 from coola.utils import is_numpy_available, is_torch_available
-from pytest import mark, raises
 
 from redcat import BatchList
+from redcat.ba import BatchedArray
 from redcat.utils.array import (
     arrays_share_data,
     get_data_base,
@@ -15,6 +16,9 @@ from redcat.utils.array import (
     permute_along_axis,
     to_array,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 if is_numpy_available():
     import numpy as np
@@ -42,7 +46,7 @@ def test_get_div_rounding_operator_mode_floor() -> None:
 
 
 def test_get_div_rounding_operator_mode_incorrect() -> None:
-    with raises(RuntimeError, match="Incorrect `rounding_mode`"):
+    with pytest.raises(RuntimeError, match="Incorrect `rounding_mode`"):
         get_div_rounding_operator("incorrect")
 
 
@@ -94,15 +98,14 @@ def test_permute_along_axis_3d_axis_2() -> None:
 
 
 @numpy_available
-@mark.parametrize(
+@pytest.mark.parametrize(
     "data",
     (
         np.array([3, 1, 2, 0, 1]),
         [3, 1, 2, 0, 1],
         (3, 1, 2, 0, 1),
         BatchList([3, 1, 2, 0, 1]),
-        # TODO: uncomment after BatchedArray is a BaseBatch
-        # BatchedArray(np.array([3, 1, 2, 0, 1])),
+        BatchedArray(np.array([3, 1, 2, 0, 1])),
     ),
 )
 def test_to_array_long(data: Sequence | np.ndarray) -> None:
@@ -110,15 +113,14 @@ def test_to_array_long(data: Sequence | np.ndarray) -> None:
 
 
 @numpy_available
-@mark.parametrize(
+@pytest.mark.parametrize(
     "data",
     (
         np.array([3.0, 1.0, 2.0, 0.0, 1.0]),
         [3.0, 1.0, 2.0, 0.0, 1.0],
         (3.0, 1.0, 2.0, 0.0, 1.0),
         BatchList([3.0, 1.0, 2.0, 0.0, 1.0]),
-        # TODO: uncomment after BatchedArray is a BaseBatch
-        # BatchedArray(np.array([3.0, 1.0, 2.0, 0.0, 1.0])),
+        BatchedArray(np.array([3.0, 1.0, 2.0, 0.0, 1.0])),
     ),
 )
 def test_to_array_float(data: Sequence | np.ndarray) -> None:

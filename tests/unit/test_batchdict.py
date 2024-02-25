@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from typing import TYPE_CHECKING
 from unittest.mock import Mock, patch
 
 import torch
@@ -11,6 +11,9 @@ from torch import Tensor
 from redcat import BaseBatch, BatchDict, BatchedTensorSeq, BatchList
 from redcat.batchdict import check_same_batch_size, check_same_keys, get_seq_lens
 from redcat.utils.tensor import get_torch_generator
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
 
 
 def test_batch_dict_init_data_1_item() -> None:
@@ -226,7 +229,7 @@ def test_batch_dict_allclose_false_different_data() -> None:
 
 
 @mark.parametrize(
-    "batch,atol",
+    ("batch", "atol"),
     (
         (BatchDict({"key": BatchList([0.5, 1.5, 2.5, 3.5])}), 1.0),
         (BatchDict({"key": BatchList([0.05, 1.05, 2.05, 3.05])}), 1e-1),
@@ -238,7 +241,7 @@ def test_batch_dict_allclose_true_atol(batch: BatchList, atol: float) -> None:
 
 
 @mark.parametrize(
-    "batch,rtol",
+    ("batch", "rtol"),
     (
         (BatchDict({"key": BatchList([1.5, 2.5, 3.5])}), 1.0),
         (BatchDict({"key": BatchList([1.05, 2.05, 3.05])}), 1e-1),
@@ -711,7 +714,6 @@ def test_batch_dict_chunk_along_batch_incorrect_chunks() -> None:
             BatchDict({"key1": BatchList([5]), "key2": BatchList(["e"])}),
         ],
         [BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])})],
-        [BatchDict({"key1": BatchList([4, 5]), "key2": BatchList(["d", "e"])})],
     ),
 )
 def test_batch_dict_extend(
@@ -1056,7 +1058,7 @@ def test_batch_dict_split_along_batch_split_size_list_empty() -> None:
                 "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h"]),
             }
         ).split_along_batch([]),
-        tuple(),
+        (),
     )
 
 
@@ -1100,7 +1102,7 @@ def test_batch_dict_take_along_seq_empty() -> None:
 ########################
 
 
-@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 4), (4, 3)))
 def test_batch_dict_get_num_minibatches_drop_last_false(
     batch_size: int, num_minibatches: int
 ) -> None:
@@ -1115,7 +1117,7 @@ def test_batch_dict_get_num_minibatches_drop_last_false(
     )
 
 
-@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 3), (4, 2)))
 def test_batch_dict_get_num_minibatches_drop_last_true(
     batch_size: int, num_minibatches: int
 ) -> None:
@@ -1243,14 +1245,6 @@ def test_batch_dict_to_minibatches_drop_last_true_10_batch_size_4() -> None:
 
 
 def test_batch_dict_summary() -> None:
-    print(
-        BatchDict(
-            {
-                "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-                "key2": BatchList(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]),
-            }
-        ).summary()
-    )
     assert BatchDict(
         {
             "key1": BatchList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),

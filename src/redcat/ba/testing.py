@@ -2,10 +2,13 @@ from __future__ import annotations
 
 __all__ = ["FunctionCheck", "normal_arrays", "uniform_arrays", "uniform_int_arrays"]
 
-from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
 
 # Default shape value
 SHAPE = (4, 10)

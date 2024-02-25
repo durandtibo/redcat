@@ -3,19 +3,23 @@ from __future__ import annotations
 __all__ = ["BatchedTensor"]
 
 import functools
-from collections.abc import Callable, Iterable, Sequence
 from itertools import chain
-from typing import Any, TypeVar, overload
+from typing import TYPE_CHECKING, Any, TypeVar, overload
 
-import numpy as np
 import torch
 from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
 
 from redcat.base import BaseBatch
-from redcat.types import IndexType
 from redcat.utils.common import check_batch_dims, check_data_and_dim, get_batch_dims
 from redcat.utils.tensor import to_tensor
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Sequence
+
+    import numpy as np
+
+    from redcat.types import IndexType
 
 # Workaround because Self is not available for python 3.9 and 3.10
 # https://peps.python.org/pep-0673/
@@ -4255,7 +4259,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         indices: BaseBatch | np.ndarray | Tensor | Sequence,
         dim: None = None,
     ) -> Tensor:
-        r"""See documentation of ``take_along_dim``"""
+        r"""See documentation of ``take_along_dim``."""
 
     @overload
     def take_along_dim(
@@ -4263,7 +4267,7 @@ class BatchedTensor(BaseBatch[Tensor]):
         indices: BaseBatch | np.ndarray | Tensor | Sequence,
         dim: int,
     ) -> TBatchedTensor:
-        r"""See documentation of ``take_along_dim``"""
+        r"""See documentation of ``take_along_dim``."""
 
     def take_along_dim(
         self,

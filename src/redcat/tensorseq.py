@@ -6,10 +6,8 @@ __all__ = [
     "from_sequences",
 ]
 
-from collections.abc import Callable, Iterable, Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import numpy as np
 import torch
 from coola import objects_are_allclose, objects_are_equal
 from torch import Tensor
@@ -24,6 +22,11 @@ from redcat.utils.tensor import (
     compute_batch_seq_permutation,
     to_tensor,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Sequence
+
+    import numpy as np
 
 HANDLED_FUNCTIONS = {
     torch.amax: tensor.amax,
@@ -1008,10 +1011,11 @@ class BatchedTensorSeq(BatchedTensor):
                     [1, 3, 5, 7, 9]], batch_dim=0, seq_dim=1)
         """
         if not isinstance(other, self.__class__):
-            raise TypeError(
+            msg = (
                 f"Incorrect type {type(other)}. No implementation available to `align_as` "
                 f"{type(self)} with {type(other)}"
             )
+            raise TypeError(msg)
         return self.__class__(
             self._data.permute(  # Align only the batch and sequence dims
                 *compute_batch_seq_permutation(
@@ -1386,17 +1390,17 @@ def check_data_and_dims(data: Tensor, batch_dim: int, seq_dim: int) -> None:
         >>> check_data_and_dims(torch.ones(2, 3), batch_dim=0, seq_dim=1)
     """
     if data.dim() < 2:
-        raise RuntimeError(f"data needs at least 2 dimensions (received: {data.dim()})")
+        msg = f"data needs at least 2 dimensions (received: {data.dim()})"
+        raise RuntimeError(msg)
     if batch_dim < 0 or batch_dim >= data.dim():
-        raise RuntimeError(
-            f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {data.dim() - 1}]"
-        )
+        msg = f"Incorrect batch_dim ({batch_dim}) but the value should be in [0, {data.dim() - 1}]"
+        raise RuntimeError(msg)
     if seq_dim < 0 or seq_dim >= data.dim():
-        raise RuntimeError(
-            f"Incorrect seq_dim ({seq_dim}) but the value should be in [0, {data.dim() - 1}]"
-        )
+        msg = f"Incorrect seq_dim ({seq_dim}) but the value should be in [0, {data.dim() - 1}]"
+        raise RuntimeError(msg)
     if batch_dim == seq_dim:
-        raise RuntimeError(f"batch_dim ({batch_dim}) and seq_dim ({seq_dim}) have to be different")
+        msg = f"batch_dim ({batch_dim}) and seq_dim ({seq_dim}) have to be different"
+        raise RuntimeError(msg)
 
 
 # def implements(torch_function: Callable) -> Callable:

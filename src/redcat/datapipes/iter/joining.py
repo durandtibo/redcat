@@ -3,13 +3,15 @@ from __future__ import annotations
 __all__ = ["BatchExtenderIterDataPipe", "create_large_batch"]
 
 import logging
-from collections.abc import Iterator, Sequence
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from coola.utils.format import str_indent
 from torch.utils.data import IterDataPipe
 
 from redcat.base import BaseBatch
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator, Sequence
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +65,8 @@ class BatchExtenderIterDataPipe(IterDataPipe[BaseBatch[T]]):
     ) -> None:
         self._datapipe = datapipe
         if buffer_size < 1:
-            raise ValueError(
-                f"buffer_size should be greater or equal to 1 (received: {buffer_size})"
-            )
+            msg = f"buffer_size should be greater or equal to 1 (received: {buffer_size})"
+            raise ValueError(msg)
         self._buffer_size = int(buffer_size)
         self._drop_last = bool(drop_last)
 

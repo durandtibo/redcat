@@ -3,8 +3,7 @@ from __future__ import annotations
 __all__ = ["MiniBatcherIterDataPipe"]
 
 import logging
-from collections.abc import Iterator
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from coola.utils.format import str_indent
 from torch.utils.data import IterDataPipe
@@ -12,6 +11,9 @@ from torch.utils.data.datapipes.iter import IterableWrapper
 
 from redcat.base import BaseBatch
 from redcat.utils.tensor import get_torch_generator
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +95,8 @@ class MiniBatcherIterDataPipe(IterDataPipe[BaseBatch[T]]):
             return self._datapipe_or_batch.get_num_minibatches(
                 batch_size=self._batch_size, drop_last=self._drop_last
             )
-        raise TypeError(f"{type(self).__qualname__} instance doesn't have valid length")
+        msg = f"{type(self).__qualname__} instance doesn't have valid length"
+        raise TypeError(msg)
 
     def __str__(self) -> str:
         return (

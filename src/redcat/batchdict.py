@@ -11,15 +11,17 @@ from collections.abc import (
     Sequence,
     ValuesView,
 )
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
-import numpy as np
 import torch
 from coola import objects_are_allclose, objects_are_equal
 from coola.utils.format import str_indent, str_mapping
 from torch import Tensor
 
 from redcat.base import BaseBatch
+
+if TYPE_CHECKING:
+    import numpy as np
 
 TBaseBatch = TypeVar("TBaseBatch", bound=BaseBatch)
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -56,7 +58,8 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
 
     def __init__(self, data: dict[Hashable, TBaseBatch]) -> None:
         if not isinstance(data, dict):
-            raise TypeError(f"Incorrect type. Expect a dict but received {type(data)}")
+            msg = f"Incorrect type. Expect a dict but received {type(data)}"
+            raise TypeError(msg)
         check_same_batch_size(data)
         self._data = data
 
@@ -90,9 +93,10 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
 
     def __setitem__(self, key: Hashable, value: TBaseBatch) -> None:
         if value.batch_size != self.batch_size:
-            raise RuntimeError(
+            msg = (
                 f"Incorrect batch size. Expected {self.batch_size} but received {value.batch_size}"
             )
+            raise RuntimeError(msg)
         self._data[key] = value
 
     def get(self, key: Hashable, default: TBaseBatch | None = None) -> TBaseBatch | None:
@@ -275,9 +279,8 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         if not seq_lens:
             return self
         if len(seq_lens) > 1:
-            raise RuntimeError(
-                f"Invalid operation because the batch has multiple sequence lengths: {seq_lens}"
-            )
+            msg = f"Invalid operation because the batch has multiple sequence lengths: {seq_lens}"
+            raise RuntimeError(msg)
         return self.permute_along_seq(torch.randperm(seq_lens.pop(), generator=generator))
 
     def shuffle_along_seq_(self, generator: torch.Generator | None = None) -> None:
@@ -316,9 +319,8 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         if not seq_lens:
             return
         if len(seq_lens) > 1:
-            raise RuntimeError(
-                f"Invalid operation because the batch has multiple sequence lengths: {seq_lens}"
-            )
+            msg = f"Invalid operation because the batch has multiple sequence lengths: {seq_lens}"
+            raise RuntimeError(msg)
         self.permute_along_seq_(torch.randperm(seq_lens.pop(), generator=generator))
 
     ################################################
@@ -426,7 +428,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         keys = self._data.keys()
         batches = []
         for values in zip(*[batch.chunk_along_batch(chunks) for batch in self._data.values()]):
-            batches.append(self.__class__({key: value for key, value in zip(keys, values)}))
+            batches.append(self.__class__(dict(zip(keys, values))))
         return tuple(batches)
 
     def extend(self, other: Iterable[BatchDict | Sequence[TBatchDict]]) -> None:
@@ -593,7 +595,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         for values in zip(
             *[batch.split_along_batch(split_size_or_sections) for batch in self._data.values()]
         ):
-            batches.append(self.__class__({key: value for key, value in zip(keys, values)}))
+            batches.append(self.__class__(dict(zip(keys, values))))
         return tuple(batches)
 
     def take_along_seq(self, indices: TBaseBatch | np.ndarray | Tensor | Sequence) -> TBatchDict:
@@ -671,13 +673,15 @@ def check_same_batch_size(data: dict[Hashable, BaseBatch]) -> None:
     ```
     """
     if not data:
-        raise RuntimeError("The dictionary cannot be empty")
+        msg = "The dictionary cannot be empty"
+        raise RuntimeError(msg)
     batch_sizes = {val.batch_size for val in data.values()}
     if len(batch_sizes) != 1:
-        raise RuntimeError(
+        msg = (
             "Incorrect batch size. A single batch size is expected but received several values: "
             f"{batch_sizes}"
         )
+        raise RuntimeError(msg)
 
 
 def check_same_keys(data1: dict, data2: dict) -> None:
@@ -711,7 +715,8 @@ def check_same_keys(data1: dict, data2: dict) -> None:
     keys1 = set(data1.keys())
     keys2 = set(data2.keys())
     if keys1 != keys2:
-        raise RuntimeError(f"Keys do not match: ({keys1} vs {keys2})")
+        msg = f"Keys do not match: ({keys1} vs {keys2})"
+        raise RuntimeError(msg)
 
 
 def get_seq_lens(data: dict[Hashable, BaseBatch]) -> set[int]:

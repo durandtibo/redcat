@@ -1,7 +1,7 @@
 import numpy as np
+import pytest
 import torch
 from coola.testing import numpy_available, torch_available
-from pytest import mark
 
 from redcat import BatchList
 from redcat.utils.collection import to_list
@@ -11,7 +11,7 @@ from redcat.utils.collection import to_list
 #############################
 
 
-@mark.parametrize("data", ([], [1, 2, 3], ["a", "b", "c", "d"]))
+@pytest.mark.parametrize("data", [[], [1, 2, 3], ["a", "b", "c", "d"]])
 def test_to_list_list(data: list) -> None:
     assert to_list(data) is data
 

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Iterable, Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import patch
 
 import numpy as np
@@ -13,10 +12,14 @@ from torch import Tensor
 from torch.overrides import is_tensor_like
 
 from redcat import BaseBatch, BatchedTensor, BatchedTensorSeq, BatchList
-from redcat.tensor import IndexType
 from redcat.tensorseq import check_data_and_dims, from_sequences
 from redcat.utils.tensor import get_available_devices, get_torch_generator
 from tests.conftest import torch_greater_equal_1_13
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Sequence
+
+    from redcat.tensor import IndexType
 
 DTYPES = (torch.bool, torch.int, torch.long, torch.float, torch.double)
 
@@ -665,7 +668,7 @@ def test_batched_tensor_seq_allclose_false_different_seq_dim() -> None:
 
 
 @mark.parametrize(
-    "batch,atol",
+    ("batch", "atol"),
     (
         (BatchedTensorSeq(torch.ones(2, 3) + 0.5), 1),
         (BatchedTensorSeq(torch.ones(2, 3) + 0.05), 1e-1),
@@ -677,7 +680,7 @@ def test_batched_tensor_seq_allclose_true_atol(batch: BatchedTensorSeq, atol: fl
 
 
 @mark.parametrize(
-    "batch,rtol",
+    ("batch", "rtol"),
     (
         (BatchedTensorSeq(torch.ones(2, 3) + 0.5), 1),
         (BatchedTensorSeq(torch.ones(2, 3) + 0.05), 1e-1),
@@ -2028,7 +2031,6 @@ def test_batched_tensor_seq_cumprod_along_seq() -> None:
 
 
 def test_batched_tensor_seq_cumprod_along_seq_custom_dims() -> None:
-    print(BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2)).cumprod_along_seq())
     assert (
         BatchedTensorSeq.from_seq_batch(torch.arange(10).view(5, 2))
         .cumprod_along_seq()
@@ -8340,14 +8342,14 @@ def test_batched_tensor_seq_view_as_incorrect_seq_dim() -> None:
 ########################
 
 
-@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 4), (4, 3)))
+@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 4), (4, 3)))
 def test_batched_tensor_seq_get_num_minibatches_drop_last_false(
     batch_size: int, num_minibatches: int
 ) -> None:
     assert BatchedTensorSeq(torch.ones(10, 2)).get_num_minibatches(batch_size) == num_minibatches
 
 
-@mark.parametrize("batch_size,num_minibatches", ((1, 10), (2, 5), (3, 3), (4, 2)))
+@mark.parametrize(("batch_size", "num_minibatches"), ((1, 10), (2, 5), (3, 3), (4, 2)))
 def test_batched_tensor_seq_get_num_minibatches_drop_last_true(
     batch_size: int, num_minibatches: int
 ) -> None:

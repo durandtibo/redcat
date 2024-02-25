@@ -4,13 +4,16 @@ __all__ = ["BatchList"]
 
 import copy
 import math
-from collections.abc import Callable, Iterable, Sequence
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from coola import objects_are_allclose, objects_are_equal
-from torch import Tensor
 
 from redcat.base import BaseBatch
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable, Sequence
+
+    from torch import Tensor
 
 T = TypeVar("T")
 # Workaround because Self is not available for python 3.9 and 3.10
@@ -41,7 +44,8 @@ class BatchList(BaseBatch[list[T]]):
 
     def __init__(self, data: list[T]) -> None:
         if not isinstance(data, list):
-            raise TypeError(f"Incorrect type. Expect a list but received {type(data)}")
+            msg = f"Incorrect type. Expect a list but received {type(data)}"
+            raise TypeError(msg)
         self._data = data
 
     def __repr__(self) -> str:
@@ -124,7 +128,8 @@ class BatchList(BaseBatch[list[T]]):
 
     def chunk_along_batch(self, chunks: int) -> tuple[TBatchList, ...]:
         if chunks < 1:
-            raise RuntimeError(f"chunks has to be greater than 0 but received {chunks}")
+            msg = f"chunks has to be greater than 0 but received {chunks}"
+            raise RuntimeError(msg)
         return self.split_along_batch(math.ceil(self.batch_size / chunks))
 
     def extend(self, other: Iterable[BatchList | Sequence[T]]) -> None:

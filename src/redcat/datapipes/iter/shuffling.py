@@ -3,14 +3,16 @@ from __future__ import annotations
 __all__ = ["BatchShufflerIterDataPipe"]
 
 import logging
-from collections.abc import Iterator
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from coola.utils.format import str_indent
 from torch.utils.data import IterDataPipe
 
 from redcat.base import BaseBatch
 from redcat.utils.tensor import get_torch_generator
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 logger = logging.getLogger(__name__)
 
