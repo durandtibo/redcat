@@ -13,14 +13,17 @@ from coola import objects_are_allclose, objects_are_equal
 from redcat.base import BaseBatch
 
 if TYPE_CHECKING:
+    import sys
     from collections.abc import Callable, Iterable, Sequence
 
     from torch import Tensor
 
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
+
 T = TypeVar("T")
-# Workaround because Self is not available for python 3.9 and 3.10
-# https://peps.python.org/pep-0673/
-TBatchList = TypeVar("TBatchList", bound="BatchList")
 
 
 class BatchList(BaseBatch[list[T]]):
@@ -71,7 +74,7 @@ class BatchList(BaseBatch[list[T]]):
     #     Creation operations     #
     ###############################
 
-    def clone(self) -> TBatchList:
+    def clone(self) -> Self:
         return self._create_new_batch(copy.deepcopy(self._data))
 
     #################################
@@ -96,7 +99,7 @@ class BatchList(BaseBatch[list[T]]):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatchList:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> Self:
         return self._create_new_batch([self._data[i] for i in permutation])
 
     def permute_along_batch_(self, permutation: Sequence[int] | Tensor) -> None:
@@ -127,7 +130,7 @@ class BatchList(BaseBatch[list[T]]):
             other = other.data
         self._data.extend(other)
 
-    def chunk_along_batch(self, chunks: int) -> tuple[TBatchList, ...]:
+    def chunk_along_batch(self, chunks: int) -> tuple[Self, ...]:
         if chunks < 1:
             msg = f"chunks has to be greater than 0 but received {chunks}"
             raise RuntimeError(msg)
@@ -137,20 +140,16 @@ class BatchList(BaseBatch[list[T]]):
         for batch in other:
             self.append(batch)
 
-    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchList:
+    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> Self:
         return self._create_new_batch([self._data[i] for i in index])
 
     def select_along_batch(self, index: int) -> T:
         return self._data[index]
 
-    def slice_along_batch(
-        self, start: int = 0, stop: int | None = None, step: int = 1
-    ) -> TBatchList:
+    def slice_along_batch(self, start: int = 0, stop: int | None = None, step: int = 1) -> Self:
         return self._create_new_batch(self._data[start:stop:step])
 
-    def split_along_batch(
-        self, split_size_or_sections: int | Sequence[int]
-    ) -> tuple[TBatchList, ...]:
+    def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[Self, ...]:
         if isinstance(split_size_or_sections, int):
             return tuple(
                 self._create_new_batch(self._data[i : i + split_size_or_sections])
@@ -171,7 +170,7 @@ class BatchList(BaseBatch[list[T]]):
     #     Other     #
     #################
 
-    def apply(self, fn: Callable[[T], T]) -> TBatchList:
+    def apply(self, fn: Callable[[T], T]) -> Self:
         r"""Apply a function to transform the element in the list of the
         current batch.
 
@@ -194,7 +193,7 @@ class BatchList(BaseBatch[list[T]]):
 
         ```
         """
-        return self._create_new_batch([fn(val) for val in self._data])
+        return self._create_new_batch(list(map(fn, self._data)))
 
     def apply_(self, fn: Callable[[T], T]) -> None:
         r"""Apply a function to transform the element in the list of the
@@ -219,10 +218,10 @@ class BatchList(BaseBatch[list[T]]):
 
         ```
         """
-        self._data = [fn(val) for val in self._data]
+        self._data = self.apply(fn).data
 
     def summary(self) -> str:
         return f"{self.__class__.__qualname__}(batch_size={self.batch_size})"
 
-    def _create_new_batch(self, data: list[T]) -> TBatchList:
+    def _create_new_batch(self, data: list[T]) -> Self:
         return self.__class__(data)

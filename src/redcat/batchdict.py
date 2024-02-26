@@ -23,12 +23,16 @@ from torch import Tensor
 from redcat.base import BaseBatch
 
 if TYPE_CHECKING:
+    import sys
+
     import numpy as np
 
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
+
 TBaseBatch = TypeVar("TBaseBatch", bound=BaseBatch)
-# Workaround because Self is not available for python 3.9 and 3.10
-# https://peps.python.org/pep-0673/
-TBatchDict = TypeVar("TBatchDict", bound="BatchDict")
 
 
 class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
@@ -124,7 +128,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     #     Creation operations     #
     ###############################
 
-    def clone(self) -> TBatchDict:
+    def clone(self) -> Self:
         return self.__class__({key: batch.clone() for key, batch in self._data.items()})
 
     #################################
@@ -149,7 +153,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     #     Mathematical | advanced arithmetical operations     #
     ###########################################################
 
-    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> TBatchDict:
+    def permute_along_batch(self, permutation: Sequence[int] | Tensor) -> Self:
         return self.__class__(
             {k: v.permute_along_batch(permutation) for k, v in self._data.items()}
         )
@@ -158,7 +162,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         for value in self._data.values():
             value.permute_along_batch_(permutation)
 
-    def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> TBatchDict:
+    def permute_along_seq(self, permutation: Sequence[int] | Tensor) -> Self:
         r"""Permutes the data along the sequence dimension.
 
         The same permutation is applied on all the sequences. This
@@ -242,7 +246,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             if hasattr(val, "permute_along_seq_"):
                 val.permute_along_seq_(permutation)
 
-    def shuffle_along_seq(self, generator: torch.Generator | None = None) -> TBatchDict:
+    def shuffle_along_seq(self, generator: torch.Generator | None = None) -> Self:
         r"""Shuffles the data along the sequence dimension.
 
         This method should be called only if all the sequences have
@@ -341,7 +345,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
         for key, value in self._data.items():
             value.append(other[key])
 
-    def cat_along_seq(self, batches: TBaseBatch | Sequence[TBaseBatch]) -> TBatchDict:
+    def cat_along_seq(self, batches: TBaseBatch | Sequence[TBaseBatch]) -> Self:
         r"""Concatenates the data of the batches to the current batch
         along the sequence dimension and creates a new batch.
 
@@ -427,7 +431,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             if hasattr(val, "cat_along_seq_"):
                 val.cat_along_seq_([batch[key] for batch in batches])
 
-    def chunk_along_batch(self, chunks: int) -> tuple[TBatchDict, ...]:
+    def chunk_along_batch(self, chunks: int) -> tuple[Self, ...]:
         keys = self._data.keys()
         return tuple(
             [
@@ -438,16 +442,16 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             ]
         )
 
-    def extend(self, other: Iterable[BatchDict | Sequence[TBatchDict]]) -> None:
+    def extend(self, other: Iterable[BatchDict | Sequence[BatchDict]]) -> None:
         for batch in other:
             self.append(batch)
 
-    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> TBatchDict:
+    def index_select_along_batch(self, index: Tensor | Sequence[int]) -> Self:
         return self.__class__(
             {key: value.index_select_along_batch(index) for key, value in self._data.items()}
         )
 
-    def index_select_along_seq(self, index: Tensor | Sequence[int]) -> TBatchDict:
+    def index_select_along_seq(self, index: Tensor | Sequence[int]) -> Self:
         r"""Slices the batch along the sequence dimension at the given
         indices.
 
@@ -496,7 +500,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             out[key] = item
         return self.__class__(out)
 
-    def repeat_along_seq(self, repeats: int) -> TBatchDict:
+    def repeat_along_seq(self, repeats: int) -> Self:
         r"""Repeats the batch along the sequence dimension.
 
         Args:
@@ -535,14 +539,12 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
     def select_along_batch(self, index: int) -> dict:
         return {key: value.select_along_batch(index) for key, value in self._data.items()}
 
-    def slice_along_batch(
-        self, start: int = 0, stop: int | None = None, step: int = 1
-    ) -> TBatchDict:
+    def slice_along_batch(self, start: int = 0, stop: int | None = None, step: int = 1) -> Self:
         return self.__class__(
             {key: value.slice_along_batch(start, stop, step) for key, value in self._data.items()}
         )
 
-    def slice_along_seq(self, start: int = 0, stop: int | None = None, step: int = 1) -> TBatchDict:
+    def slice_along_seq(self, start: int = 0, stop: int | None = None, step: int = 1) -> Self:
         r"""Slices the batch in the sequence dimension.
 
         Args:
@@ -597,9 +599,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             out[key] = item
         return self.__class__(out)
 
-    def split_along_batch(
-        self, split_size_or_sections: int | Sequence[int]
-    ) -> tuple[TBatchDict, ...]:
+    def split_along_batch(self, split_size_or_sections: int | Sequence[int]) -> tuple[Self, ...]:
         keys = self._data.keys()
         return tuple(
             [
@@ -613,7 +613,7 @@ class BatchDict(BaseBatch[dict[Hashable, TBaseBatch]]):
             ]
         )
 
-    def take_along_seq(self, indices: TBaseBatch | np.ndarray | Tensor | Sequence) -> TBatchDict:
+    def take_along_seq(self, indices: TBaseBatch | np.ndarray | Tensor | Sequence) -> Self:
         r"""Take values along the sequence dimension.
 
         Args:
