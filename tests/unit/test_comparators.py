@@ -19,45 +19,45 @@ def config() -> EqualityConfig:
 
 BATCH_EQUAL = [
     pytest.param(
-        ExamplePair(object1=BatchList([]), object2=BatchList([])),
+        ExamplePair(actual=BatchList([]), expected=BatchList([])),
         id="list empty",
     ),
     pytest.param(
-        ExamplePair(object1=BatchList([1, 2, 3]), object2=BatchList([1, 2, 3])),
+        ExamplePair(actual=BatchList([1, 2, 3]), expected=BatchList([1, 2, 3])),
         id="list int",
     ),
     pytest.param(
         ExamplePair(
-            object1=BatchList([1.0, 2.0, 3.0, 4.0]), object2=BatchList([1.0, 2.0, 3.0, 4.0])
+            actual=BatchList([1.0, 2.0, 3.0, 4.0]), expected=BatchList([1.0, 2.0, 3.0, 4.0])
         ),
         id="list float",
     ),
     pytest.param(
-        ExamplePair(object1=BatchList(["a", "b", "c"]), object2=BatchList(["a", "b", "c"])),
+        ExamplePair(actual=BatchList(["a", "b", "c"]), expected=BatchList(["a", "b", "c"])),
         id="list str",
     ),
 ]
 BATCH_NOT_EQUAL = [
     pytest.param(
         ExamplePair(
-            object1=BatchList([1, 2, 3]),
-            object2=BatchList([1, 2, 4]),
+            actual=BatchList([1, 2, 3]),
+            expected=BatchList([1, 2, 4]),
             expected_message="batches are not equal:",
         ),
         id="different values",
     ),
     pytest.param(
         ExamplePair(
-            object1=BatchList([1, 2, 3]),
-            object2=BatchList([1, 2, 3, 4]),
+            actual=BatchList([1, 2, 3]),
+            expected=BatchList([1, 2, 3, 4]),
             expected_message="batches are not equal:",
         ),
         id="different batch sizes",
     ),
     pytest.param(
         ExamplePair(
-            object1=BatchList([1, 2, 3]),
-            object2=[1, 2, 3, 4],
+            actual=BatchList([1, 2, 3]),
+            expected=[1, 2, 3, 4],
             expected_message="objects have different types:",
         ),
         id="different types",
@@ -66,7 +66,7 @@ BATCH_NOT_EQUAL = [
 BATCH_EQUAL_TOLERANCE = [
     # atol
     pytest.param(
-        ExamplePair(object1=BatchList([1, 2, 3]), object2=BatchList([1, 2, 4]), atol=1.0),
+        ExamplePair(actual=BatchList([1, 2, 3]), expected=BatchList([1, 2, 4]), atol=1.0),
         id="atol=1",
     ),
 ]
@@ -102,7 +102,7 @@ def test_batch_equal_handler_handle_true(config: EqualityConfig) -> None:
 
 
 @pytest.mark.parametrize(
-    ("object1", "object2"),
+    ("actual", "expected"),
     [
         (BatchList([1, 2, 3]), BatchList([1, 2, 4])),
         (BatchList([1, 2, 3]), BatchList([1, 2, 3, 4])),
@@ -110,9 +110,9 @@ def test_batch_equal_handler_handle_true(config: EqualityConfig) -> None:
     ],
 )
 def test_batch_equal_handler_handle_false(
-    object1: BaseBatch, object2: BaseBatch, config: EqualityConfig
+    actual: BaseBatch, expected: BaseBatch, config: EqualityConfig
 ) -> None:
-    assert not BatchEqualHandler().handle(object1, object2, config)
+    assert not BatchEqualHandler().handle(actual, expected, config)
 
 
 def test_batch_equal_handler_handle_false_show_difference(
@@ -122,7 +122,7 @@ def test_batch_equal_handler_handle_false_show_difference(
     handler = BatchEqualHandler()
     with caplog.at_level(logging.INFO):
         assert not handler.handle(
-            object1=BatchList([1, 2, 3]), object2=BatchList([1, 2, 4]), config=config
+            actual=BatchList([1, 2, 3]), expected=BatchList([1, 2, 4]), config=config
         )
         assert caplog.messages[-1].startswith("batches are not equal:")
 
@@ -168,7 +168,7 @@ def test_batch_equality_comparator_equal_yes(
 ) -> None:
     comparator = BatchEqualityComparator()
     with caplog.at_level(logging.INFO):
-        assert comparator.equal(object1=example.object1, object2=example.object2, config=config)
+        assert comparator.equal(actual=example.actual, expected=example.expected, config=config)
         assert not caplog.messages
 
 
@@ -181,7 +181,7 @@ def test_batch_equality_comparator_equal_yes_show_difference(
     config.show_difference = True
     comparator = BatchEqualityComparator()
     with caplog.at_level(logging.INFO):
-        assert comparator.equal(object1=example.object1, object2=example.object2, config=config)
+        assert comparator.equal(actual=example.actual, expected=example.expected, config=config)
         assert not caplog.messages
 
 
@@ -193,7 +193,7 @@ def test_batch_equality_comparator_equal_false(
 ) -> None:
     comparator = BatchEqualityComparator()
     with caplog.at_level(logging.INFO):
-        assert not comparator.equal(object1=example.object1, object2=example.object2, config=config)
+        assert not comparator.equal(actual=example.actual, expected=example.expected, config=config)
         assert not caplog.messages
 
 
@@ -206,7 +206,7 @@ def test_batch_equality_comparator_equal_false_show_difference(
     config.show_difference = True
     comparator = BatchEqualityComparator()
     with caplog.at_level(logging.INFO):
-        assert not comparator.equal(object1=example.object1, object2=example.object2, config=config)
+        assert not comparator.equal(actual=example.actual, expected=example.expected, config=config)
         assert caplog.messages[-1].startswith(example.expected_message)
 
 
@@ -215,8 +215,8 @@ def test_batch_equality_comparator_equal_nan(config: EqualityConfig, equal_nan: 
     config.equal_nan = equal_nan
     assert (
         BatchEqualityComparator().equal(
-            object1=BatchList([1, 2, float("nan")]),
-            object2=BatchList([1, 2, float("nan")]),
+            actual=BatchList([1, 2, float("nan")]),
+            expected=BatchList([1, 2, float("nan")]),
             config=config,
         )
         == equal_nan
@@ -230,5 +230,5 @@ def test_batch_equality_comparator_equal_true_tolerance(
     config.atol = example.atol
     config.rtol = example.rtol
     assert BatchEqualityComparator().equal(
-        object1=example.object1, object2=example.object2, config=config
+        actual=example.actual, expected=example.expected, config=config
     )

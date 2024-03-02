@@ -58,13 +58,13 @@ class BatchEqualHandler(BaseEqualityHandler):
 
     def handle(
         self,
-        object1: BaseBatch,
-        object2: BaseBatch,
+        actual: BaseBatch,
+        expected: BaseBatch,
         config: EqualityConfig,
     ) -> bool:
-        object_equal = batch_equal(object1, object2, config)
+        object_equal = batch_equal(actual, expected, config)
         if config.show_difference and not object_equal:
-            logger.info(f"batches are not equal:\nobject1:\n{object1}\nobject2:\n{object2}")
+            logger.info(f"batches are not equal:\nactual:\n{actual}\nexpected:\n{expected}")
         return object_equal
 
     def set_next_handler(self, handler: BaseEqualityHandler) -> None:
@@ -84,8 +84,8 @@ class BatchEqualityComparator(BaseEqualityComparator[BaseBatch]):
     def clone(self) -> BatchEqualityComparator:
         return self.__class__()
 
-    def equal(self, object1: BaseBatch, object2: Any, config: EqualityConfig) -> bool:
-        return self._handler.handle(object1=object1, object2=object2, config=config)
+    def equal(self, actual: BaseBatch, expected: Any, config: EqualityConfig) -> bool:
+        return self._handler.handle(actual, expected, config=config)
 
 
 def batch_equal(batch1: BaseBatch, batch2: BaseBatch, config: EqualityConfig) -> bool:
