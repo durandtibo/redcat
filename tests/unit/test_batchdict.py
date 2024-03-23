@@ -345,7 +345,10 @@ def test_batch_dict_permute_along_seq__no_seq() -> None:
     assert batch.allequal(BatchDict({"key": BatchList(["a", "b"])}))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_dict_shuffle_along_batch() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
@@ -382,7 +385,10 @@ def test_batch_dict_shuffle_along_batch_multiple_shuffle() -> None:
     assert not batch.shuffle_along_batch(generator).allequal(batch.shuffle_along_batch(generator))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_dict_shuffle_along_batch_() -> None:
     batch = BatchDict({"key1": BatchList([1, 2, 3, 4]), "key2": BatchList(["a", "b", "c", "d"])})
     batch.shuffle_along_batch_()
@@ -415,7 +421,10 @@ def test_batch_dict_shuffle_along_batch__different_random_seeds() -> None:
     assert not batch1.allequal(batch2)
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_dict_shuffle_along_seq_mix() -> None:
     assert (
         BatchDict(
@@ -433,7 +442,10 @@ def test_batch_dict_shuffle_along_seq_mix() -> None:
     )
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_dict_shuffle_along_seq_no_seq() -> None:
     assert (
         BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
@@ -481,7 +493,10 @@ def test_batch_dict_shuffle_along_seq_multiple_shuffle() -> None:
     assert not batch.shuffle_along_seq(generator).allequal(batch.shuffle_along_seq(generator))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_dict_shuffle_along_seq__mix() -> None:
     batch = BatchDict(
         {"key1": BatchedTensorSeq(torch.arange(10).view(2, 5)), "key2": BatchList(["a", "b"])}
@@ -497,7 +512,10 @@ def test_batch_dict_shuffle_along_seq__mix() -> None:
     )
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 4, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_dict_shuffle_along_seq__no_seq() -> None:
     batch = BatchDict({"key1": BatchList([1, 2]), "key2": BatchList(["a", "b"])})
     batch.shuffle_along_seq_()

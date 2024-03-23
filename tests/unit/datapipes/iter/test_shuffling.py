@@ -24,7 +24,10 @@ def test_batch_shuffler_iter_random_seed(random_seed: int) -> None:
     assert BatchShuffler(IterableWrapper([]), random_seed=random_seed).random_seed == random_seed
 
 
-@patch("redcat.tensor.torch.randperm", lambda *args, **kwargs: torch.tensor([0, 2, 1, 3]))
+@patch(
+    "redcat.tensor.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([0, 2, 1, 3]),  # noqa: ARG005
+)
 def test_batch_shuffler_iter() -> None:
     assert objects_are_equal(
         tuple(

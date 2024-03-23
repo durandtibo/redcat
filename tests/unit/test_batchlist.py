@@ -130,7 +130,10 @@ def test_batch_list_permute_along_batch_(permutation: Sequence[int] | Tensor) ->
     assert batch.allequal(BatchList(["c", "b", "d", "a"]))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_list_shuffle_along_batch() -> None:
     assert (
         BatchList(["a", "b", "c", "d"])
@@ -159,7 +162,10 @@ def test_batch_list_shuffle_along_batch_multiple_shuffle() -> None:
     assert not batch.shuffle_along_batch(generator).allequal(batch.shuffle_along_batch(generator))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batch_list_shuffle_along_batch_() -> None:
     batch = BatchList(["a", "b", "c", "d"])
     batch.shuffle_along_batch_()

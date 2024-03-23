@@ -46,7 +46,7 @@ def test_check_data_and_dim_correct(array: np.ndarray | torch.Tensor) -> None:
 @pytest.mark.parametrize("array", [np.array(2), torch.tensor(2)])
 def test_check_data_and_dim_incorrect_data_dim(array: np.ndarray | torch.Tensor) -> None:
     with pytest.raises(RuntimeError, match=r"data needs at least 1 dimensions \(received: 0\)"):
-        check_data_and_dim(np.array(2), batch_dim=0)
+        check_data_and_dim(array, batch_dim=0)
 
 
 @pytest.mark.parametrize("array", [np.ones((2, 3)), torch.ones(2, 3)])
@@ -57,7 +57,7 @@ def test_check_data_and_dim_incorrect_batch_dim(
     with pytest.raises(
         RuntimeError, match=r"Incorrect batch_dim \(.*\) but the value should be in \[0, 1\]"
     ):
-        check_data_and_dim(np.ones((2, 3)), batch_dim=batch_dim)
+        check_data_and_dim(array, batch_dim=batch_dim)
 
 
 ####################################

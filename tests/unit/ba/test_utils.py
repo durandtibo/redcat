@@ -34,7 +34,7 @@ def test_check_data_and_axis_correct(array: np.ndarray) -> None:
 @pytest.mark.parametrize("array", [np.array(2), np.array(5)])
 def test_check_data_and_axis_incorrect_data_axis(array: np.ndarray) -> None:
     with pytest.raises(RuntimeError, match=r"data needs at least 1 axis \(received: 0\)"):
-        check_data_and_axis(np.array(2), batch_axis=0)
+        check_data_and_axis(array, batch_axis=0)
 
 
 @pytest.mark.parametrize("array", [np.ones((2, 3)), np.zeros((2, 3))])
@@ -43,7 +43,7 @@ def test_check_data_and_axis_incorrect_batch_axis(array: np.ndarray, batch_axis:
     with pytest.raises(
         RuntimeError, match=r"Incorrect `batch_axis` \(.*\) but the value should be in \[0, 1\]"
     ):
-        check_data_and_axis(np.ones((2, 3)), batch_axis=batch_axis)
+        check_data_and_axis(array, batch_axis=batch_axis)
 
 
 ####################################
