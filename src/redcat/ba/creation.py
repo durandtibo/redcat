@@ -127,16 +127,16 @@ def empty_like(
         a: The shape and data-type of a define these same attributes
             of the returned array.
         dtype: Overrides the data type of the result.
-        order: Overrides the memory layout of the result. ‘C’ means
-            C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``a`` is
-            Fortran contiguous, ‘C’ otherwise. ‘K’ means match the
+        order: Overrides the memory layout of the result. 'C' means
+            C-order, 'F' means F-order, 'A' means 'F' if ``a`` is
+            Fortran contiguous, 'C' otherwise. 'K' means match the
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
             array.
-        shape: Overrides the shape of the result. If order=’K’ and the
+        shape: Overrides the shape of the result. If order='K' and the
             number of dimensions is unchanged, will try to keep order,
-            otherwise, order=’C’ is implied.
+            otherwise, order='C' is implied.
         batch_size: Overrides the batch size. If ``None``,
             the batch size of the current batch is used.
 
@@ -221,16 +221,16 @@ def full_like(
             of the returned array.
         fill_value: Specifies the fill value.
         dtype: Overrides the data type of the result.
-        order: Overrides the memory layout of the result. ‘C’ means
-            C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``a`` is
-            Fortran contiguous, ‘C’ otherwise. ‘K’ means match the
+        order: Overrides the memory layout of the result. 'C' means
+            C-order, 'F' means F-order, 'A' means 'F' if ``a`` is
+            Fortran contiguous, 'C' otherwise. 'K' means match the
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
             array.
-        shape: Overrides the shape of the result. If order=’K’ and the
+        shape: Overrides the shape of the result. If order='K' and the
             number of dimensions is unchanged, will try to keep order,
-            otherwise, order=’C’ is implied.
+            otherwise, order='C' is implied.
         batch_size: Overrides the batch size. If ``None``,
             the batch size of the current batch is used.
 
@@ -319,16 +319,16 @@ def ones_like(
         a: The shape and data-type of a define these same attributes
             of the returned array.
         dtype: Overrides the data type of the result.
-        order: Overrides the memory layout of the result. ‘C’ means
-            C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``a`` is
-            Fortran contiguous, ‘C’ otherwise. ‘K’ means match the
+        order: Overrides the memory layout of the result. 'C' means
+            C-order, 'F' means F-order, 'A' means 'F' if ``a`` is
+            Fortran contiguous, 'C' otherwise. 'K' means match the
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
             array.
-        shape: Overrides the shape of the result. If order=’K’ and the
+        shape: Overrides the shape of the result. If order='K' and the
             number of dimensions is unchanged, will try to keep order,
-            otherwise, order=’C’ is implied.
+            otherwise, order='C' is implied.
         batch_size: Overrides the batch size. If ``None``,
             the batch size of the current batch is used.
 
@@ -410,16 +410,16 @@ def zeros_like(
         a: The shape and data-type of a define these same attributes
             of the returned array.
         dtype: Overrides the data type of the result.
-        order: Overrides the memory layout of the result. ‘C’ means
-            C-order, ‘F’ means F-order, ‘A’ means ‘F’ if ``a`` is
-            Fortran contiguous, ‘C’ otherwise. ‘K’ means match the
+        order: Overrides the memory layout of the result. 'C' means
+            C-order, 'F' means F-order, 'A' means 'F' if ``a`` is
+            Fortran contiguous, 'C' otherwise. 'K' means match the
             layout of ``a`` as closely as possible.
         subok: If True, then the newly created array will use the
             sub-class type of ``a``, otherwise it will be a base-class
             array.
-        shape: Overrides the shape of the result. If order=’K’ and the
+        shape: Overrides the shape of the result. If order='K' and the
             number of dimensions is unchanged, will try to keep order,
-            otherwise, order=’C’ is implied.
+            otherwise, order='C' is implied.
         batch_size: Overrides the batch size. If ``None``,
             the batch size of the current batch is used.
 

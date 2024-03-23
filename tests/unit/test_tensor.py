@@ -2104,7 +2104,10 @@ def test_batched_tensor_permute_along_dim__custom_dims() -> None:
     assert batch.equal(BatchedTensor(torch.tensor([[2, 1, 3, 0], [6, 5, 7, 4]]), batch_dim=1))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_batch() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
@@ -2113,7 +2116,10 @@ def test_batched_tensor_shuffle_along_batch() -> None:
     )
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_batch_custom_dims() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
@@ -2144,14 +2150,20 @@ def test_batched_tensor_shuffle_along_batch_multiple_shuffle() -> None:
     assert not batch.shuffle_along_batch(generator).equal(batch.shuffle_along_batch(generator))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_batch_() -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     batch.shuffle_along_batch_()
     assert batch.equal(BatchedTensor(torch.tensor([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_batch__custom_dims() -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
     batch.shuffle_along_batch_()
@@ -2176,7 +2188,10 @@ def test_batched_tensor_shuffle_along_batch__different_random_seeds() -> None:
     assert not batch1.equal(batch2)
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_dim() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
@@ -2185,7 +2200,10 @@ def test_batched_tensor_shuffle_along_dim() -> None:
     )
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_dim_custom_dims() -> None:
     assert (
         BatchedTensor(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
@@ -2210,14 +2228,20 @@ def test_batched_tensor_shuffle_along_dim_different_random_seeds() -> None:
     )
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_dim_() -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]]))
     batch.shuffle_along_dim_(dim=0)
     assert batch.equal(BatchedTensor(torch.tensor([[6, 7, 8], [3, 4, 5], [9, 10, 11], [0, 1, 2]])))
 
 
-@patch("redcat.base.torch.randperm", lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]))
+@patch(
+    "redcat.base.torch.randperm",
+    lambda *args, **kwargs: torch.tensor([2, 1, 3, 0]),  # noqa: ARG005
+)
 def test_batched_tensor_shuffle_along_dim__custom_dims() -> None:
     batch = BatchedTensor(torch.tensor([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11]]), batch_dim=1)
     batch.shuffle_along_dim_(dim=1)

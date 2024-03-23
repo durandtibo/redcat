@@ -205,7 +205,7 @@ def test_mini_batcher_iter_drop_last_true_batch_size_4() -> None:
 
 @patch(
     "redcat.tensor.torch.randperm",
-    lambda *args, **kwargs: torch.tensor([5, 4, 6, 3, 7, 2, 8, 1, 9, 0]),
+    lambda *args, **kwargs: torch.tensor([5, 4, 6, 3, 7, 2, 8, 1, 9, 0]),  # noqa: ARG005
 )
 def test_mini_batcher_iter_shuffle_true() -> None:
     assert objects_are_equal(

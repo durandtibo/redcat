@@ -81,7 +81,8 @@ def test_tensor_shape(cls: type[BatchedTensor], shape: tuple[int, ...]) -> None:
 @pytest.mark.parametrize("dtype", DTYPES)
 @pytest.mark.parametrize("device", get_available_devices())
 def test_tensor_to(cls: type[BatchedTensor], dtype: torch.dtype, device: str) -> None:
-    tensor = torch.ones(2, 3, dtype=dtype)
+    device = torch.device(device)
+    tensor = torch.ones(2, 3, dtype=dtype, device=device)
     batch = cls(tensor)
     assert batch.dtype == tensor.dtype
     assert batch.device == tensor.device

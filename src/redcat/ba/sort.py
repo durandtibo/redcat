@@ -39,11 +39,11 @@ def argsort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatc
 
     Args:
         a: The input array.
-        kind: Sorting algorithm. The default is ‘quicksort’.
-            Note that both ‘stable’ and ‘mergesort’ use timsort
+        kind: Sorting algorithm. The default is 'quicksort'.
+            Note that both 'stable' and 'mergesort' use timsort
             under the covers and, in general, the actual
             implementation will vary with datatype.
-            The ‘mergesort’ option is retained for backwards
+            The 'mergesort' option is retained for backwards
             compatibility.
 
     Returns:
@@ -79,11 +79,11 @@ def sort_along_batch(a: TBatchedArray, kind: SortKind | None = None) -> TBatched
 
     Args:
         a: The input array.
-        kind: Sorting algorithm. The default is ‘quicksort’.
-            Note that both ‘stable’ and ‘mergesort’ use timsort
+        kind: Sorting algorithm. The default is 'quicksort'.
+            Note that both 'stable' and 'mergesort' use timsort
             under the covers and, in general, the actual
             implementation will vary with datatype.
-            The ‘mergesort’ option is retained for backwards
+            The 'mergesort' option is retained for backwards
             compatibility.
 
     Returns:
