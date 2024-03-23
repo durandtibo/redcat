@@ -48,9 +48,9 @@ def get_random_rng(rng_or_seed: random.Random | int | None = None) -> random.Ran
     if isinstance(rng_or_seed, random.Random):
         return rng_or_seed
     if rng_or_seed is None:
-        return random.Random()
+        return random.Random()  # noqa: S311
     if isinstance(rng_or_seed, int):
-        return random.Random(rng_or_seed)
+        return random.Random(rng_or_seed)  # noqa: S311
     msg = f"Invalid `rng_or_seed`: {rng_or_seed}"
     raise RuntimeError(msg)
 

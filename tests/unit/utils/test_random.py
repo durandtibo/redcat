@@ -28,7 +28,7 @@ else:  # pragma: no cover
 
 
 def test_get_random_rng_random() -> None:
-    rng = random.Random(42)
+    rng = random.Random(42)  # noqa: S311
     assert get_random_rng(rng) is rng
 
 
@@ -98,18 +98,22 @@ def test_randperm_numpy_different_random_seeds() -> None:
 
 @pytest.mark.parametrize("n", [1, 2, 4])
 def test_randperm_random(n: int) -> None:
-    out = randperm(n, random.Random(42))
+    out = randperm(n, random.Random(42))  # noqa: S311
     assert isinstance(out, list)
     assert len(out) == n
     assert len(set(out)) == n
 
 
 def test_randperm_random_same_random_seed() -> None:
-    assert objects_are_equal(randperm(100, random.Random(1)), randperm(100, random.Random(1)))
+    assert objects_are_equal(
+        randperm(100, random.Random(1)), randperm(100, random.Random(1))  # noqa: S311
+    )
 
 
 def test_randperm_random_different_random_seeds() -> None:
-    assert not objects_are_equal(randperm(100, random.Random(1)), randperm(100, random.Random(2)))
+    assert not objects_are_equal(
+        randperm(100, random.Random(1)), randperm(100, random.Random(2))  # noqa: S311
+    )
 
 
 @pytest.mark.parametrize("n", [1, 2, 4])
