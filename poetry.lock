@@ -333,17 +333,17 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "feu"
-version = "0.0.2"
+version = "0.0.3"
 description = "A light library to help to manage packages"
 optional = false
-python-versions = ">=3.9,<3.13"
+python-versions = "<3.13,>=3.9"
 files = [
-    {file = "feu-0.0.2-py3-none-any.whl", hash = "sha256:705d2ff8a46b70303b0ab428aca426b332c31c610e5486e661cf3387b2f59ab0"},
-    {file = "feu-0.0.2.tar.gz", hash = "sha256:895f39314843543b7a9c9d92b58457c369cb2e335bab23527ba4831d091b36c0"},
+    {file = "feu-0.0.3-py3-none-any.whl", hash = "sha256:6d178329cd43f327c1871f28c1fdc71d9527536977401ec1e0f1cd63ff195d28"},
+    {file = "feu-0.0.3.tar.gz", hash = "sha256:f344ffc35d968edb7bf996666925a50e4d56ab8274d388c960a7908753433ba7"},
 ]
 
 [package.dependencies]
-packaging = ">=22.0,<24.0"
+packaging = ">=21.0,<25.0"
 
 [[package]]
 name = "filelock"
@@ -976,13 +976,13 @@ files = [
 
 [[package]]
 name = "packaging"
-version = "23.2"
+version = "24.0"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7"},
-    {file = "packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5"},
+    {file = "packaging-24.0-py3-none-any.whl", hash = "sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5"},
+    {file = "packaging-24.0.tar.gz", hash = "sha256:eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9"},
 ]
 
 [[package]]
@@ -1651,4 +1651,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "b7c0e508d8f01c116ae483f6a2080742d2070de0c3ca5a72072f9c5448be21a8"
+content-hash = "6b1dd671b832356c2f2a5c5c4e97e90b6360f391fc075eaac5d2d34853c3e1e8"
