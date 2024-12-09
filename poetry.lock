@@ -208,17 +208,17 @@ files = [
 
 [[package]]
 name = "coola"
-version = "0.8.3"
+version = "0.8.5"
 description = "Library to check equality between two complex/nested objects"
 optional = false
-python-versions = "<3.13,>=3.9"
+python-versions = "<3.14,>=3.9"
 files = [
-    {file = "coola-0.8.3-py3-none-any.whl", hash = "sha256:7b901a82a47535732a5fb7d889facd89fd31f15caf2167c6be858a481e3dd754"},
-    {file = "coola-0.8.3.tar.gz", hash = "sha256:209b83549868a1071f1b0d843a21eca4c2384196aa84646e4e9a85ddb1b7ea86"},
+    {file = "coola-0.8.5-py3-none-any.whl", hash = "sha256:d4f218fbb052f5352977e7a6d7ba805de1d41e388ad5236c617dfa0d4144ca99"},
+    {file = "coola-0.8.5.tar.gz", hash = "sha256:63dfb9fa1f8fc2c6ed7de817d660352c16db7bd84dda1d4f9e98aa535c3199d6"},
 ]
 
 [package.extras]
-all = ["jax (>=0.4.1,<1.0)", "jaxlib (>=0.4.1,<1.0)", "numpy (>=1.21,<3.0)", "packaging (>=21.0,<25.0)", "pandas (>=1.3,<3.0)", "polars (>=0.18.3,<2.0)", "pyarrow (>=10.0,<18.0)", "torch (>=1.11,<2.3)", "torch (>=1.11,<3.0)", "xarray (>=2023.1)"]
+all = ["jax (>=0.4.17,<1.0)", "jax (>=0.4.34,<1.0)", "jax (>=0.4.6,<0.4.31)", "jax (>=0.4.6,<1.0)", "jaxlib (>=0.4.17,<1.0)", "jaxlib (>=0.4.34,<1.0)", "jaxlib (>=0.4.6,<0.4.31)", "jaxlib (>=0.4.6,<1.0)", "numpy (>=1.21,<3.0)", "packaging (>=21.0,<25.0)", "pandas (>=1.3,<3.0)", "polars (>=0.18.3,<2.0)", "pyarrow (>=10.0,<19.0)", "torch (>=1.11,<2.3)", "torch (>=1.11,<3.0)", "xarray (>=2023.1)"]
 
 [[package]]
 name = "coverage"
@@ -1115,13 +1115,13 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "3.8.0"
+version = "4.0.1"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "pre_commit-3.8.0-py2.py3-none-any.whl", hash = "sha256:9a90a53bf82fdd8778d58085faf8d83df56e40dfe18f45b19446e26bf1b3a63f"},
-    {file = "pre_commit-3.8.0.tar.gz", hash = "sha256:8bb6494d4a20423842e198980c9ecf9f96607a07ea29549e180eef9ae80fe7af"},
+    {file = "pre_commit-4.0.1-py2.py3-none-any.whl", hash = "sha256:efde913840816312445dc98787724647c65473daefe420785f885e8ed9a06878"},
+    {file = "pre_commit-4.0.1.tar.gz", hash = "sha256:80905ac375958c0444c65e9cebebd948b3cdb518f335a091a670a89d652139d2"},
 ]
 
 [package.dependencies]
@@ -1795,4 +1795,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "c0823d4914524ae6ee3f51450d707b6e5abf60ce32a29d89c72be26d7bb1d9f1"
+content-hash = "8a5762900e2378ea64d37dfd5fcc353be2ee846b179ea700272988dfab1add43"
