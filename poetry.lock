@@ -358,22 +358,23 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "feu"
-version = "0.3.0"
+version = "0.3.3"
 description = "A light library to help to manage packages"
 optional = false
 python-versions = "<3.14,>=3.9"
 groups = ["dev"]
 files = [
-    {file = "feu-0.3.0-py3-none-any.whl", hash = "sha256:fec3f7a289ae0a594541a235a5526363dd48accf00025a8e860f974c498a2a22"},
-    {file = "feu-0.3.0.tar.gz", hash = "sha256:ccaa1a1e9371765fe75878550de296a418ddabf60ba801b69228b6db5e717200"},
+    {file = "feu-0.3.3-py3-none-any.whl", hash = "sha256:c2cf3e2fbebced3b7232f1dd594b5349ff44c3735b2ab95f90f5038a1f9ce0d3"},
+    {file = "feu-0.3.3.tar.gz", hash = "sha256:7f34612ad39548615547ea6cbcda9919cf2b09a0d5180873a45eaacd56d97c19"},
 ]
 
 [package.dependencies]
-packaging = ">=21.0,<25.0"
+packaging = ">=21.0,<26.0"
 
 [package.extras]
 all = ["click (>=8.1,<9.0)"]
 cli = ["click (>=8.1,<9.0)"]
+git = ["gitpython (>=3.1.41,<4.0)"]
 
 [[package]]
 name = "filelock"
