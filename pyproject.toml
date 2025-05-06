@@ -32,7 +32,7 @@ packages = [
 [tool.poetry.dependencies]
 # Core dependencies
 coola = ">=0.4,<1.0"
-numpy = ">=1.22,<2.0"
+numpy = ">=1.22,<3.0"
 python = ">=3.9,<3.13"
 # TODO: make optional
 torch = [
@@ -48,7 +48,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.5"
-mkdocstrings = { extras = ["python"], version = ">=0.24,<0.30" }
+mkdocstrings = { extras = ["python"], version = ">=0.29,<1.0" }
 
 [tool.poetry.group.dev.dependencies]
 black = ">=25.1"
