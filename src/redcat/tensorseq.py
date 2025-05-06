@@ -1358,10 +1358,8 @@ class BatchedTensorSeq(BatchedTensor):
     def unsqueeze(self, dim: int) -> Self:
         return self.__class__(
             self._data.unsqueeze(dim=dim),
-            batch_dim=(
-                self._batch_dim + 1 if self._batch_dim >= dim and dim >= 0 else self._batch_dim
-            ),
-            seq_dim=self._seq_dim + 1 if self._seq_dim >= dim and dim >= 0 else self._seq_dim,
+            batch_dim=(self._batch_dim + 1 if self._batch_dim >= dim >= 0 else self._batch_dim),
+            seq_dim=self._seq_dim + 1 if self._seq_dim >= dim >= 0 else self._seq_dim,
         )
 
     def _check_valid_dims(self, tensors: Sequence) -> None:

@@ -1298,6 +1298,8 @@ class BatchedArray(BaseBatch[np.ndarray], np.lib.mixins.NDArrayOperatorsMixin):
                [6, 7],
                [0, 1],
                [8, 9]], batch_axis=0)
+
+        ```
         """
         self._data = np.take(self._data, indices=to_array(permutation), axis=axis)
 

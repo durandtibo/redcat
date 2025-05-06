@@ -90,6 +90,9 @@ from redcat.ba.creation import (
     zeros_like,
 )
 from redcat.ba.joining import concatenate, concatenate_along_batch
+from redcat.ba.math import max  # noqa: A004
+from redcat.ba.math import min  # noqa: A004
+from redcat.ba.math import sum  # noqa: A004
 from redcat.ba.math import (
     add,
     cumprod,
@@ -100,9 +103,7 @@ from redcat.ba.math import (
     diff_along_batch,
     divide,
     floor_divide,
-    max,
     max_along_batch,
-    min,
     min_along_batch,
     multiply,
     nancumprod,
@@ -120,7 +121,6 @@ from redcat.ba.math import (
     prod,
     prod_along_batch,
     subtract,
-    sum,
     sum_along_batch,
     true_divide,
 )

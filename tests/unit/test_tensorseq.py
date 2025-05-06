@@ -7462,7 +7462,7 @@ def test_batched_tensor_seq_index_select_along_batch_extra_dims() -> None:
     "index", [torch.tensor([2, 0]), torch.tensor([[2, 0], [2, 0]]), [2, 0], (2, 0)]
 )
 def test_batched_tensor_seq_index_select_along_seq(
-    index: Tensor | list[int] | tuple[int, ...]
+    index: Tensor | list[int] | tuple[int, ...],
 ) -> None:
     assert (
         BatchedTensorSeq(torch.arange(10).view(2, 5))
