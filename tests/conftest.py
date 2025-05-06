@@ -1,4 +1,4 @@
-__all__ = ["torch_greater_equal_1_13", "TORCH_GREATER_EQUAL_1_13"]
+__all__ = ["TORCH_GREATER_EQUAL_1_13", "torch_greater_equal_1_13"]
 
 import operator
 

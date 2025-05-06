@@ -890,7 +890,7 @@ def nanmax(
     >>> batch = ba.BatchedArray(np.array([[1, np.nan, 2], [3, 4, 5]]))
     >>> ba.nanmax(batch)
     5.0
-    >>> ba.nanmax(batch,axis=0)
+    >>> ba.nanmax(batch, axis=0)
     array([3., 4., 5.])
     >>> ba.nanmax(batch, axis=0, keepdims=True)
     array([[3., 4., 5.]])
@@ -976,7 +976,7 @@ def nanmin(
     >>> batch = ba.BatchedArray(np.array([[np.nan, 6, 2], [3, 4, 5]]))
     >>> ba.nanmin(batch)
     2.0
-    >>> ba.nanmin(batch,axis=0)
+    >>> ba.nanmin(batch, axis=0)
     array([3., 4., 2.])
     >>> ba.nanmin(batch, axis=0, keepdims=True)
     array([[3., 4., 2.]])

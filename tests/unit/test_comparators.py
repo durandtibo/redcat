@@ -12,7 +12,7 @@ from redcat.comparators import BatchEqualHandler, BatchEqualityComparator
 from tests.unit.helpers import ExamplePair
 
 
-@pytest.fixture()
+@pytest.fixture
 def config() -> EqualityConfig:
     return EqualityConfig(tester=EqualityTester())
 

@@ -296,7 +296,9 @@ class BaseBatch(Generic[T], ABC):
         ```pycon
         >>> import numpy as np
         >>> from redcat.ba import BatchedArray
-        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).chunk_along_batch(chunks=3)
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).chunk_along_batch(
+        ...     chunks=3
+        ... )
         (array([[0, 1], [2, 3]], batch_axis=0),
          array([[4, 5], [6, 7]], batch_axis=0),
          array([[8, 9]], batch_axis=0))
@@ -412,15 +414,21 @@ class BaseBatch(Generic[T], ABC):
         ```pycon
         >>> import numpy as np
         >>> from redcat.ba import BatchedArray
-        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(start=2)
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(
+        ...     start=2
+        ... )
         array([[4, 5],
                [6, 7],
                [8, 9]], batch_axis=0)
-        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(stop=3)
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(
+        ...     stop=3
+        ... )
         array([[0, 1],
                [2, 3],
                [4, 5]], batch_axis=0)
-        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(step=2)
+        >>> BatchedArray(np.array([[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]])).slice_along_batch(
+        ...     step=2
+        ... )
         array([[0, 1],
                [4, 5],
                [8, 9]], batch_axis=0)

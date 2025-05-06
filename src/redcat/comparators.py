@@ -3,7 +3,7 @@ r"""Contain some comparators to use ``BaseBatch`` objects with
 
 from __future__ import annotations
 
-__all__ = ["BatchEqualityComparator", "BatchEqualHandler"]
+__all__ = ["BatchEqualHandler", "BatchEqualityComparator"]
 
 import logging
 from typing import TYPE_CHECKING, Any
