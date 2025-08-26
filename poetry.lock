@@ -404,22 +404,22 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "feu"
-version = "0.3.4"
+version = "0.3.5"
 description = "A light library to help to manage packages"
 optional = false
 python-versions = "<3.14,>=3.9"
 groups = ["dev"]
 files = [
-    {file = "feu-0.3.4-py3-none-any.whl", hash = "sha256:2b475ad1ab2826d5aece14cbc1581b22d387822e31dd38ca609736bd00ce6c81"},
-    {file = "feu-0.3.4.tar.gz", hash = "sha256:6c044cf32c4a75d94f384ee88fe38a58b5ef56f9e7428fb266edae567c8a7410"},
+    {file = "feu-0.3.5-py3-none-any.whl", hash = "sha256:b112dd5336eb6bf7d130dc8fce4a70572ee98e557fe4fa1d8fc3dd283e8e5823"},
+    {file = "feu-0.3.5.tar.gz", hash = "sha256:103073a8fcb16124901736e4223e4c3d55a020e78a7551623725b70ecb61ad2d"},
 ]
 
 [package.dependencies]
 packaging = ">=21.0,<26.0"
 
 [package.extras]
-all = ["click (>=8.1,<9.0)"]
-cli = ["click (>=8.1,<9.0)"]
+all = ["click (>=8.1,<8.2) ; python_version == \"3.9\"", "click (>=8.1,<9.0)"]
+cli = ["click (>=8.1,<8.2) ; python_version == \"3.9\"", "click (>=8.1,<9.0)"]
 git = ["gitpython (>=3.1.41,<4.0)"]
 
 [[package]]
